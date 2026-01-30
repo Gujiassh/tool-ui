@@ -804,7 +804,6 @@ export default function WeatherCompositorSandbox() {
     rain,
     lightning,
     snow,
-    post: mergedParams.post,
   };
 
   const debouncedParams = useDebounce(currentParams, 300);
