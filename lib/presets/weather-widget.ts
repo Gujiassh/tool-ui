@@ -3,9 +3,9 @@ import type { PresetWithCodeGen } from "./types";
 
 export type WeatherWidgetPresetName =
   | "thunderstorm"
-  | "cloudy-sunset"
   | "cold-snap"
   | "rainy-week"
+  | "cloudy-sunset"
   | "sunny-forecast";
 
 function generateWeatherWidgetCode(data: SerializableWeatherWidget): string {
@@ -54,30 +54,7 @@ export const weatherWidgetPresets: Record<
         { day: "Sat", tempMin: 58, tempMax: 76, condition: "clear" },
       ],
       unit: "fahrenheit",
-      updatedAt: "2026-01-28T17:30:00Z",
-    } satisfies SerializableWeatherWidget,
-    generateExampleCode: generateWeatherWidgetCode,
-  },
-  "cloudy-sunset": {
-    description: "Dramatic overcast sunset",
-    data: {
-      id: "weather-widget-cloudy-sunset",
-      location: "Santa Fe, NM",
-      current: {
-        temp: 48,
-        tempMin: 32,
-        tempMax: 52,
-        condition: "overcast",
-      },
-      forecast: [
-        { day: "Tue", tempMin: 28, tempMax: 49, condition: "cloudy" },
-        { day: "Wed", tempMin: 30, tempMax: 54, condition: "partly-cloudy" },
-        { day: "Thu", tempMin: 33, tempMax: 58, condition: "clear" },
-        { day: "Fri", tempMin: 35, tempMax: 56, condition: "partly-cloudy" },
-        { day: "Sat", tempMin: 31, tempMax: 51, condition: "cloudy" },
-      ],
-      unit: "fahrenheit",
-      updatedAt: "2026-01-28T17:45:00Z",
+      updatedAt: "2026-01-28T22:30:00Z",
     } satisfies SerializableWeatherWidget,
     generateExampleCode: generateWeatherWidgetCode,
   },
@@ -123,6 +100,30 @@ export const weatherWidgetPresets: Record<
         { day: "Fri", tempMin: 46, tempMax: 55, condition: "cloudy" },
       ],
       unit: "fahrenheit",
+      updatedAt: "2026-01-28T16:00:00Z",
+    } satisfies SerializableWeatherWidget,
+    generateExampleCode: generateWeatherWidgetCode,
+  },
+  "cloudy-sunset": {
+    description: "Dramatic overcast sunset",
+    data: {
+      id: "weather-widget-cloudy-sunset",
+      location: "Santa Fe, NM",
+      current: {
+        temp: 48,
+        tempMin: 32,
+        tempMax: 52,
+        condition: "overcast",
+      },
+      forecast: [
+        { day: "Tue", tempMin: 28, tempMax: 49, condition: "cloudy" },
+        { day: "Wed", tempMin: 30, tempMax: 54, condition: "partly-cloudy" },
+        { day: "Thu", tempMin: 33, tempMax: 58, condition: "clear" },
+        { day: "Fri", tempMin: 35, tempMax: 56, condition: "partly-cloudy" },
+        { day: "Sat", tempMin: 31, tempMax: 51, condition: "cloudy" },
+      ],
+      unit: "fahrenheit",
+      updatedAt: "2026-01-28T17:45:00Z",
     } satisfies SerializableWeatherWidget,
     generateExampleCode: generateWeatherWidgetCode,
   },
