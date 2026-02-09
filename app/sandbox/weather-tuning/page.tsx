@@ -127,9 +127,7 @@ export default function WeatherTuningPage() {
             onApplied={() => {
               // After applying to the repo, treat the studio as "clean" so the next
               // Apply only includes new changes (avoids the feeling of stale deltas).
-              state.setCheckpointOverrides({});
-              state.setCheckpoints({});
-              state.setSignedOff(new Set());
+              state.clearStudioDeltas();
             }}
           />
         </div>
