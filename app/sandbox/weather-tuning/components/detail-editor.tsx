@@ -5,7 +5,7 @@ import { RotateCcw, Eye, EyeOff, CheckCircle2, Copy } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects";
-import { WeatherDataOverlay } from "./weather-data-overlay";
+import { WeatherDataOverlay, createWeatherOverlayStubData } from "./weather-data-overlay";
 import { GlassControls } from "./glass-controls";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import { CONDITION_LABELS } from "../../weather-compositor/presets";
@@ -78,6 +78,10 @@ export function DetailEditor({
     () => mapCompositorParamsToCanvasProps(params),
     [params],
   );
+  const overlayData = useMemo(
+    () => createWeatherOverlayStubData(condition),
+    [condition],
+  );
   const label = CONDITION_LABELS[condition];
 
   const allCheckpointsReviewed = checkpoints
@@ -104,33 +108,8 @@ export function DetailEditor({
             <div className="absolute inset-0 z-20">
               <WeatherDataOverlay
                 glassParams={params.glass}
-                location="San Francisco, CA"
-                condition={condition}
-                temperature={72}
-                tempHigh={78}
-                tempLow={65}
-                humidity={45}
-                windSpeed={8}
-                visibility={10}
-                forecast={[
-                  {
-                    day: "Today",
-                    tempMin: 65,
-                    tempMax: 78,
-                    condition: condition,
-                  },
-                  {
-                    day: "Tue",
-                    tempMin: 64,
-                    tempMax: 77,
-                    condition: "partly-cloudy",
-                  },
-                  { day: "Wed", tempMin: 62, tempMax: 75, condition: "cloudy" },
-                  { day: "Thu", tempMin: 60, tempMax: 73, condition: "rain" },
-                  { day: "Fri", tempMin: 63, tempMax: 76, condition: "clear" },
-                ]}
-                unit="fahrenheit"
                 timeOfDay={params.celestial.timeOfDay}
+                {...overlayData}
               />
             </div>
           )}
