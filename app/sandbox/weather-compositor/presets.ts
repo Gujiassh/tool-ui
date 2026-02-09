@@ -204,27 +204,6 @@ export interface CheckpointOverrides {
   midnight: ConditionOverrides;
 }
 
-export interface CompositorStateV1 {
-  activeCondition: WeatherCondition;
-  globalSettings: GlobalSettings;
-  overrides: Partial<Record<WeatherCondition, ConditionOverrides>>;
-}
-
-export interface CompositorStateV2 {
-  version: 2;
-  activeCondition: WeatherCondition;
-  globalSettings: GlobalSettings;
-  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
-}
-
-export interface CompositorStateV3 {
-  version: 3;
-  activeCondition: WeatherCondition;
-  globalSettings: GlobalSettings;
-  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
-  curveConfig?: unknown;
-}
-
 export interface CompositorStateV4 {
   version: 4;
   activeCondition: WeatherCondition;
@@ -940,67 +919,6 @@ function createEmptyCheckpointOverrides(): CheckpointOverrides {
   };
 }
 
-
-function migrateV1ToV2(v1: CompositorStateV1): CompositorStateV2 {
-  const checkpointOverrides: Partial<
-    Record<WeatherCondition, CheckpointOverrides>
-  > = {};
-
-  for (const [condition, override] of Object.entries(v1.overrides)) {
-    if (override && Object.keys(override).length > 0) {
-      checkpointOverrides[condition as WeatherCondition] = {
-        dawn: structuredClone(override),
-        noon: structuredClone(override),
-        dusk: structuredClone(override),
-        midnight: structuredClone(override),
-      };
-    }
-  }
-
-  return {
-    version: 2,
-    activeCondition: v1.activeCondition,
-    globalSettings: v1.globalSettings,
-    checkpointOverrides,
-  };
-}
-
-function migrateV2ToV4(v2: CompositorStateV2): CompositorStateV4 {
-  return {
-    version: 4,
-    activeCondition: v2.activeCondition,
-    globalSettings: v2.globalSettings,
-    checkpointOverrides: v2.checkpointOverrides,
-  };
-}
-
-function migrateV3ToV4(v3: CompositorStateV3): CompositorStateV4 {
-  return {
-    version: 4,
-    activeCondition: v3.activeCondition,
-    globalSettings: v3.globalSettings,
-    checkpointOverrides: v3.checkpointOverrides,
-  };
-}
-
-function isV1State(state: unknown): state is CompositorStateV1 {
-  if (!state || typeof state !== "object") return false;
-  const s = state as Record<string, unknown>;
-  return s.version === undefined && "overrides" in s;
-}
-
-function isV2State(state: unknown): state is CompositorStateV2 {
-  if (!state || typeof state !== "object") return false;
-  const s = state as Record<string, unknown>;
-  return s.version === 2 && "checkpointOverrides" in s;
-}
-
-function isV3State(state: unknown): state is CompositorStateV3 {
-  if (!state || typeof state !== "object") return false;
-  const s = state as Record<string, unknown>;
-  return s.version === 3 && "checkpointOverrides" in s;
-}
-
 function isV4State(state: unknown): state is CompositorStateV4 {
   if (!state || typeof state !== "object") return false;
   const s = state as Record<string, unknown>;
@@ -1017,25 +935,6 @@ export function loadFromStorage(): CompositorState | null {
 
     if (isV4State(parsed)) {
       return parsed;
-    }
-
-    if (isV3State(parsed)) {
-      const migrated = migrateV3ToV4(parsed);
-      saveToStorage(migrated);
-      return migrated;
-    }
-
-    if (isV2State(parsed)) {
-      const migrated = migrateV2ToV4(parsed);
-      saveToStorage(migrated);
-      return migrated;
-    }
-
-    if (isV1State(parsed)) {
-      const v2 = migrateV1ToV2(parsed);
-      const v4 = migrateV2ToV4(v2);
-      saveToStorage(v4);
-      return v4;
     }
 
     return null;
@@ -1083,22 +982,6 @@ export function importFromFile(file: File): Promise<CompositorState> {
 
         if (isV4State(parsed)) {
           resolve(parsed);
-          return;
-        }
-
-        if (isV3State(parsed)) {
-          resolve(migrateV3ToV4(parsed));
-          return;
-        }
-
-        if (isV2State(parsed)) {
-          resolve(migrateV2ToV4(parsed));
-          return;
-        }
-
-        if (isV1State(parsed)) {
-          const v2 = migrateV1ToV2(parsed);
-          resolve(migrateV2ToV4(v2));
           return;
         }
 
