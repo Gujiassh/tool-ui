@@ -17,7 +17,7 @@ import {
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import type { TimeCheckpoint } from "../types";
 import type { TuningStateReturn } from "../hooks/use-tuning-state";
-import { TIME_CHECKPOINTS, TIME_CHECKPOINT_ORDER } from "../lib/constants";
+import { TIME_CHECKPOINT_ORDER } from "../lib/constants";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import {
   WeatherDataOverlay,

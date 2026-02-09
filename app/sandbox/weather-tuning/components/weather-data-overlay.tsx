@@ -7,6 +7,7 @@ import {
   getSceneBrightnessFromTimeOfDay,
   getWeatherTheme,
   useGlassStyles,
+  resolveGlassBackdropFilterStyles,
   type WeatherTheme,
 } from "@/components/tool-ui/weather-widget/effects";
 import type { GlassParams } from "../../weather-compositor/presets";
@@ -145,7 +146,11 @@ export function WeatherDataOverlay({
   const cardRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Glass effect styles applied directly to forecast container
+  // Glass effect styles applied directly to forecast container.
+  // Mirror the production widget behavior:
+  // - SVG distortion is enabled by default (unless explicitly disabled)
+  // - When SVG filter isn't active yet (e.g. width/height are 0), fall back to a simple blur
+  const glassEnabled = glassParams?.enabled !== false;
   const glassStyles = useGlassStyles({
     width: cardDimensions.width,
     height: cardDimensions.height,
@@ -156,7 +161,7 @@ export function WeatherDataOverlay({
     blur: glassParams?.blur ?? 1.5,
     brightness: glassParams?.brightness ?? 0.8,
     saturation: glassParams?.saturation ?? 1.3,
-    enabled: glassParams?.enabled ?? false,
+    enabled: glassEnabled,
   });
 
   useEffect(() => {
@@ -356,10 +361,10 @@ export function WeatherDataOverlay({
                   backgroundColor: isDark
                     ? `rgba(255, 255, 255, ${bgOpacity})`
                     : `rgba(0, 0, 0, ${bgOpacity})`,
-                  // Apply glass effect or fallback blur
-                  ...(glassParams?.enabled ? glassStyles : {
-                    backdropFilter: `blur(${blurAmount}px)`,
-                    WebkitBackdropFilter: `blur(${blurAmount}px)`,
+                  // Apply SVG glass effect when supported, fall back to simple blur
+                  ...resolveGlassBackdropFilterStyles({
+                    glassStyles,
+                    blurAmount,
                   }),
                 }}
               />
