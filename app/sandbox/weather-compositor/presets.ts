@@ -151,6 +151,27 @@ export interface SnowParams {
   visibility: number;
 }
 
+export interface PostParams {
+  enabled: boolean;
+  haze: number;
+  hazeHorizon: number;
+  hazeDesaturation: number;
+  hazeContrast: number;
+  bloomIntensity: number;
+  bloomThreshold: number;
+  bloomKnee: number;
+  bloomRadius: number;
+  bloomTapScale: number;
+  exposureIntensity: number;
+  exposureDesaturation: number;
+  exposureRecovery: number;
+  godRayIntensity: number;
+  godRayDecay: number;
+  godRayDensity: number;
+  godRayWeight: number;
+  godRaySamples: number;
+}
+
 export interface ConditionOverrides {
   layers?: Partial<LayerToggles>;
   celestial?: Partial<CelestialParams>;
@@ -158,6 +179,7 @@ export interface ConditionOverrides {
   rain?: Partial<RainParams>;
   lightning?: Partial<LightningParams>;
   snow?: Partial<SnowParams>;
+  post?: Partial<PostParams>;
 }
 
 export interface GlobalSettings {
@@ -191,6 +213,7 @@ export interface FullCompositorParams {
   rain: RainParams;
   lightning: LightningParams;
   snow: SnowParams;
+  post: PostParams;
 }
 
 export function getBaseParamsForCondition(
@@ -306,6 +329,26 @@ export function getBaseParamsForCondition(
       sparkle: 0.2,
       visibility: 1.0,
     },
+    post: {
+      enabled: true,
+      haze: 0,
+      hazeHorizon: 0.5,
+      hazeDesaturation: 0.3,
+      hazeContrast: 0.2,
+      bloomIntensity: 0,
+      bloomThreshold: 0.8,
+      bloomKnee: 0.5,
+      bloomRadius: 8,
+      bloomTapScale: 1,
+      exposureIntensity: 0,
+      exposureDesaturation: 0.3,
+      exposureRecovery: 2,
+      godRayIntensity: 0,
+      godRayDecay: 0.96,
+      godRayDensity: 0.5,
+      godRayWeight: 0.3,
+      godRaySamples: 60,
+    },
   };
 
   // Apply tuned defaults for this condition/checkpoint as part of the base
@@ -328,6 +371,7 @@ export function mergeWithOverrides(
     rain: { ...base.rain, ...overrides.rain },
     lightning: { ...base.lightning, ...overrides.lightning },
     snow: { ...base.snow, ...overrides.snow },
+    post: { ...base.post, ...overrides.post },
   };
 }
 
@@ -359,6 +403,9 @@ export function extractOverrides(
 
   const snowDiff = diffObjects(current.snow, base.snow);
   if (Object.keys(snowDiff).length > 0) overrides.snow = snowDiff;
+
+  const postDiff = diffObjects(current.post, base.post);
+  if (Object.keys(postDiff).length > 0) overrides.post = postDiff;
 
   return overrides;
 }
