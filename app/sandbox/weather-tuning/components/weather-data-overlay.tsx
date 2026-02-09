@@ -366,14 +366,16 @@ export function WeatherDataOverlay({
               }}
             />
             <div
-              className="relative overflow-hidden rounded-xl border p-3"
+              className="relative overflow-hidden rounded-xl p-3"
               style={{
                 backgroundColor: isDark
                   ? `rgba(255, 255, 255, ${bgOpacity})`
                   : `rgba(0, 0, 0, ${bgOpacity})`,
-                borderColor: isDark
-                  ? `rgba(255, 255, 255, ${borderOpacity})`
-                  : `rgba(0, 0, 0, ${borderOpacity})`,
+                // Draw a hairline border *inside* the glass container so it sits
+                // above the SVG backdrop-filter, but doesn't get distorted by it.
+                boxShadow: isDark
+                  ? `inset 0 0 0 0.5px rgba(255, 255, 255, ${borderOpacity})`
+                  : `inset 0 0 0 0.5px rgba(0, 0, 0, ${borderOpacity})`,
                 ...resolveGlassBackdropFilterStyles({
                   glassStyles,
                   blurAmount,
