@@ -261,6 +261,12 @@ export function WeatherDataOverlay({
     ? "0 1px 8px rgba(0,0,0,0.3)"
     : "0 1px 8px rgba(255,255,255,0.3)";
 
+  // Fluid type scales with the widget container size. (Requires container-type:size.)
+  const locationFontSize = "clamp(13px, 7.5cqmin, 17px)";
+  const temperatureFontSize = "clamp(48px, 32cqmin, 72px)";
+  const degreeFontSize = "clamp(18px, 12cqmin, 28px)";
+  const hiLoFontSize = "clamp(11px, 6.5cqmin, 15px)";
+
   return (
     <div
       ref={containerRef}
@@ -274,10 +280,11 @@ export function WeatherDataOverlay({
         <div className="flex flex-col items-start">
           <h2
             className={cn(
-              "text-[17px] font-medium tracking-tight",
+              "font-medium tracking-tight",
               textSecondary,
             )}
             style={{
+              fontSize: locationFontSize,
               fontFamily: '"SF Pro Display", system-ui, sans-serif',
               textShadow: shadowStyle,
             }}
@@ -288,10 +295,11 @@ export function WeatherDataOverlay({
           <div className="flex items-start gap-1.5">
             <span
               className={cn(
-                "text-[72px] font-[200] leading-none tracking-[-0.04em]",
+                "font-[200] leading-none tracking-[-0.04em]",
                 textPrimary,
               )}
               style={{
+                fontSize: temperatureFontSize,
                 fontFamily:
                   '"SF Pro Display", "Helvetica Neue", system-ui, sans-serif',
                 fontFeatureSettings: '"tnum"',
@@ -304,8 +312,11 @@ export function WeatherDataOverlay({
               {Math.round(temperature)}
             </span>
             <span
-              className={cn("mt-2 text-[28px] font-[200]", textMuted)}
-              style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
+              className={cn("mt-2 font-[200]", textMuted)}
+              style={{
+                fontSize: degreeFontSize,
+                fontFamily: '"SF Pro Display", system-ui, sans-serif',
+              }}
               aria-hidden="true"
             >
               °{unitSymbol}
@@ -316,11 +327,11 @@ export function WeatherDataOverlay({
             className="mt-1 flex items-center gap-4"
             style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
           >
-            <span className="text-[15px] font-light tabular-nums">
+            <span className="font-light tabular-nums" style={{ fontSize: hiLoFontSize }}>
               <span className={textSubtle}>H </span>
               <span className={textPrimary}>{Math.round(tempHigh)}°</span>
             </span>
-            <span className="text-[15px] font-light tabular-nums">
+            <span className="font-light tabular-nums" style={{ fontSize: hiLoFontSize }}>
               <span className={textSubtle}>L </span>
               <span className={textPrimary}>{Math.round(tempLow)}°</span>
             </span>
