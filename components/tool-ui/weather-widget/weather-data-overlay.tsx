@@ -334,7 +334,8 @@ export function WeatherDataOverlay({
       {/* Forecast strip - hidden at small container sizes (less inset than header) */}
       {forecast.length > 0 && (
         <div className="px-3 pb-3">
-          <div ref={cardRef} className="relative hidden @[280px]/weather:block">
+          {/* Show the strip earlier, but progressively reduce content as width shrinks. */}
+          <div ref={cardRef} className="relative hidden @[225px]/weather:block">
             {/* Edge shine - outside overflow-hidden so it aligns with border */}
             <div
               className="pointer-events-none absolute inset-0 z-10 rounded-xl transition-opacity duration-300 ease-out"
@@ -399,7 +400,13 @@ export function WeatherDataOverlay({
                         {index === 0 ? "Now" : day.day}
                       </span>
                       <DayIcon
-                        className={cn("my-0.5 size-5", textSecondary)}
+                        className={cn(
+                          "my-0.5 size-5",
+                          textSecondary,
+                          // At narrower widths (but still showing the strip),
+                          // omit the icon to preserve legibility.
+                          "hidden @[280px]/weather:block",
+                        )}
                         strokeWidth={1.5}
                         aria-hidden="true"
                       />
