@@ -294,6 +294,26 @@ export function useTuningState() {
     [],
   );
 
+  const updateCheckpointOverrides = useCallback(
+    (
+      condition: WeatherCondition,
+      checkpoint: TimeCheckpoint,
+      newOverrides: ConditionOverrides,
+    ) => {
+      withCheckpointOverrides((prev) => {
+        const existing = prev[condition] ?? createEmptyCheckpointOverrides();
+        return {
+          ...prev,
+          [condition]: {
+            ...existing,
+            [checkpoint]: newOverrides,
+          },
+        };
+      });
+    },
+    [withCheckpointOverrides],
+  );
+
   const updateParameterAtCheckpoint = useCallback(
     (
       condition: WeatherCondition,
@@ -316,26 +336,6 @@ export function useTuningState() {
       updateCheckpointOverrides(condition, checkpoint, newOverrides);
     },
     [getBaseParamsForCheckpoint, getFullParamsForCheckpoint, updateCheckpointOverrides],
-  );
-
-  const updateCheckpointOverrides = useCallback(
-    (
-      condition: WeatherCondition,
-      checkpoint: TimeCheckpoint,
-      newOverrides: ConditionOverrides,
-    ) => {
-      withCheckpointOverrides((prev) => {
-        const existing = prev[condition] ?? createEmptyCheckpointOverrides();
-        return {
-          ...prev,
-          [condition]: {
-            ...existing,
-            [checkpoint]: newOverrides,
-          },
-        };
-      });
-    },
-    [withCheckpointOverrides],
   );
 
   const updateParams = useCallback(
