@@ -596,6 +596,45 @@ export function useTuningState() {
     [updateParameterAtCheckpoint],
   );
 
+  const bulkUpdateParameterAcrossCheckpoints = useCallback(
+    (
+      condition: WeatherCondition,
+      checkpoints: TimeCheckpoint[],
+      layer: LayerKey,
+      parameter: string,
+      value: number | boolean,
+    ) => {
+      withCheckpointOverrides((prev) => {
+        const existing = prev[condition] ?? createEmptyCheckpointOverrides();
+        const updated = { ...existing };
+
+        for (const checkpoint of checkpoints) {
+          const base = getBaseParamsForCheckpoint(condition, checkpoint);
+          const userOverrides = existing[checkpoint];
+          const full = userOverrides ? mergeWithOverrides(base, userOverrides) : base;
+
+          const nextGroup = {
+            ...(full[layer] as unknown as Record<string, number | boolean>),
+            [parameter]: value,
+          };
+          const nextFull = {
+            ...full,
+            [layer]: nextGroup,
+          } as FullCompositorParams;
+
+          const newOverrides = extractOverrides(nextFull, base);
+          updated[checkpoint] = newOverrides;
+        }
+
+        return {
+          ...prev,
+          [condition]: updated,
+        };
+      });
+    },
+    [getBaseParamsForCheckpoint, withCheckpointOverrides],
+  );
+
   const goToCheckpoint = useCallback(
     (condition: WeatherCondition, checkpoint: TimeCheckpoint) => {
       const { value } = TIME_CHECKPOINTS[checkpoint];
@@ -690,6 +729,7 @@ export function useTuningState() {
     updateParams,
     updateParameterAtCheckpoint,
     bulkUpdateParameter,
+    bulkUpdateParameterAcrossCheckpoints,
     resetCondition,
     copyLayerFromCondition,
     copyLayerToAllConditions,

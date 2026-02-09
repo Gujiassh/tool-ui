@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/ui/cn";
 import { Slider } from "@/components/ui/slider";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
@@ -82,15 +82,21 @@ function CheckpointSlider({
   min: number;
   max: number;
   step: number;
-  onChange: (value: number) => void;
+  onChange: (value: number, opts: { bulkAcrossTimes: boolean }) => void;
   label: string;
 }) {
   const isChanged = Math.abs(value - baseValue) > 0.001;
   const displayValue = value.toFixed(2);
+  const [bulkAcrossTimes, setBulkAcrossTimes] = useState(false);
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="relative">
+      <div
+        className="relative"
+        onPointerDownCapture={(e) => setBulkAcrossTimes(e.metaKey)}
+        onPointerUpCapture={() => setBulkAcrossTimes(false)}
+        onPointerCancel={() => setBulkAcrossTimes(false)}
+      >
         {isChanged && (
           <div
             className="absolute top-1/2 h-1 w-1 -translate-y-1/2 rounded-full bg-muted-foreground/40"
@@ -106,7 +112,7 @@ function CheckpointSlider({
           min={min}
           max={max}
           step={step}
-          onValueChange={([next]) => onChange(next)}
+          onValueChange={([next]) => onChange(next, { bulkAcrossTimes })}
           className="relative w-full [&_[data-slot=slider-track]]:h-0.5 [&_[data-slot=slider-range]]:bg-foreground/20"
         />
       </div>
@@ -187,15 +193,25 @@ function ParameterTimeRow({
             max={param.max}
             step={param.step}
             label={`${param.label} ${checkpoint}`}
-            onChange={(next) =>
+            onChange={(next, { bulkAcrossTimes }) => {
+              if (bulkAcrossTimes) {
+                tuningState.bulkUpdateParameterAcrossCheckpoints(
+                  condition,
+                  TIME_CHECKPOINT_ORDER,
+                  layer,
+                  param.key,
+                  next,
+                );
+                return;
+              }
               tuningState.updateParameterAtCheckpoint(
                 condition,
                 checkpoint,
                 layer,
                 param.key,
                 next,
-              )
-            }
+              );
+            }}
           />
         );
       })}
