@@ -12,6 +12,7 @@ import {
   readToolUiTunedPresetsFromDisk,
   TOOL_UI_TUNED_PRESETS_PATH,
 } from "../_lib/tuned-presets-io";
+import { mapToolUiPresetsToCompositor } from "../../../sandbox/weather-tuning/lib/tool-ui-import";
 
 export const runtime = "nodejs";
 
@@ -20,16 +21,14 @@ export async function POST(request: Request) {
     return new Response("Disabled in production.", { status: 403 });
   }
 
-  let payload:
-    | {
-        checkpointOverrides?: Partial<
-          Record<WeatherCondition, CheckpointOverrides>
-        >;
-        signedOff?: WeatherCondition[];
-      }
-    | null = null;
+  type ApplyPayload = {
+    checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+    signedOff?: WeatherCondition[];
+  };
+
+  let payload: ApplyPayload | null = null;
   try {
-    payload = (await request.json()) as typeof payload;
+    payload = (await request.json()) as ApplyPayload;
   } catch {
     return new Response("Invalid JSON payload.", { status: 400 });
   }
@@ -59,5 +58,6 @@ export async function POST(request: Request) {
   return Response.json({
     ok: true,
     path: "components/tool-ui/weather-widget/effects/tuned-presets.ts",
+    checkpointOverrides: mapToolUiPresetsToCompositor(merged),
   });
 }

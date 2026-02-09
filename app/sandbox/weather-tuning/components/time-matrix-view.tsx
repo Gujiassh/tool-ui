@@ -143,8 +143,8 @@ function ParameterTimeRow({
         checkpoint,
       );
 
-      const layerParams = full[layer] as Record<string, unknown>;
-      const baseParams = base[layer] as Record<string, unknown>;
+      const layerParams = full[layer] as unknown as Record<string, unknown>;
+      const baseParams = base[layer] as unknown as Record<string, unknown>;
 
       const value = getNumericValue(layerParams, param.key);
       const baseValue = getNumericValue(baseParams, param.key);

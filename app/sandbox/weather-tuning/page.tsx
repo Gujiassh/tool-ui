@@ -124,13 +124,16 @@ export default function WeatherTuningPage() {
           <ExportPanel
             checkpointOverrides={state.checkpointOverrides}
             signedOff={state.signedOff}
-            onApplied={() => {
-              // Keep the studio state after apply so the tuned values remain visible.
-              // Clearing deltas here makes the UI appear to "reset" because the studio
-              // doesn't currently re-import repo presets as its base state.
+            onApplied={(checkpointOverrides) => {
+              // Saving means "these values are the new defaults".
+              // Adopt the repo presets as the new baseline and clear user deltas,
+              // keeping the current visual output stable.
+              state.setRepoCheckpointOverrides(checkpointOverrides);
+              state.clearStudioDeltas();
             }}
             onRecovered={(checkpointOverrides) => {
-              state.setCheckpointOverrides(checkpointOverrides);
+              state.setRepoCheckpointOverrides(checkpointOverrides);
+              state.clearStudioDeltas();
             }}
           />
         </div>
