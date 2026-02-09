@@ -335,7 +335,7 @@ export function WeatherDataOverlay({
       {forecast.length > 0 && (
         <div className="px-3 pb-3">
           {/* Show the strip earlier, but progressively reduce content as width shrinks. */}
-          <div ref={cardRef} className="relative hidden @[225px]/weather:block">
+          <div ref={cardRef} className="relative hidden @[245px]/weather:block">
             {/* Edge shine - outside overflow-hidden so it aligns with border */}
             <div
               className="pointer-events-none absolute inset-0 z-10 rounded-xl transition-opacity duration-300 ease-out"
