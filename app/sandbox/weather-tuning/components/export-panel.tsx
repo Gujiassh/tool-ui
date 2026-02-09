@@ -9,11 +9,13 @@ import type { CheckpointOverrides } from "../../weather-compositor/presets";
 interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
   signedOff: Set<WeatherCondition>;
+  onApplied?: () => void;
 }
 
 export function ExportPanel({
   checkpointOverrides,
   signedOff,
+  onApplied,
 }: ExportPanelProps) {
   const [applyStatus, setApplyStatus] = useState<
     "idle" | "saving" | "success" | "error"
@@ -60,8 +62,9 @@ export function ExportPanel({
           ? payload.path
           : "components/tool-ui/weather-widget/effects/tuned-presets.ts";
 
-      setToast(`Applied tuning → ${filePath}`);
+      setToast(`Applied tuning (and cleared studio deltas) → ${filePath}`);
       setApplyStatus("success");
+      onApplied?.();
       setTimeout(() => setApplyStatus("idle"), 2000);
     } catch (error) {
       console.error("Failed to apply export.", error);
