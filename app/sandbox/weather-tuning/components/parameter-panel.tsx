@@ -1260,6 +1260,9 @@ export function ParameterPanel({
 
               <div className="border-border/30 my-2 border-t" />
 
+              <p className="text-muted-foreground/40 px-1.5 py-1 text-[10px] italic">
+                Lightning flash response — requires lightning enabled
+              </p>
               <ParameterRow
                 label="Exposure Intensity"
                 value={params.post.exposureIntensity}
@@ -1306,6 +1309,9 @@ export function ParameterPanel({
 
               <div className="border-border/30 my-2 border-t" />
 
+              <p className="text-muted-foreground/40 px-1.5 py-1 text-[10px] italic">
+                Crepuscular rays — only visible at dawn &amp; dusk
+              </p>
               <ParameterRow
                 label="God Rays Intensity"
                 value={params.post.godRayIntensity}

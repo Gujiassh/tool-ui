@@ -7,6 +7,10 @@ import type {
   FullCompositorParams,
   CheckpointOverrides,
 } from "../../weather-compositor/presets";
+import type {
+  Curve,
+  WeatherTuningConfig,
+} from "../../weather-compositor/tuning/tuning-schema";
 import {
   getBaseParamsForCondition,
   mergeWithOverrides,
@@ -15,11 +19,14 @@ import {
   saveToStorage,
   DEFAULT_CHECKPOINT_OVERRIDES,
   WEATHER_CONDITIONS,
+  type CompositorState,
 } from "../../weather-compositor/presets";
 import {
-  getInterpolatedOverrides,
-  getNearestCheckpoint,
-} from "../../weather-compositor/interpolation";
+  resolveWeatherParams,
+  curveConfigToCheckpointOverrides,
+} from "../../weather-compositor/tuning/tuning-resolver";
+import { checkpointOverridesToConfig } from "../../weather-compositor/tuning/migrate-checkpoints";
+import { getNearestCheckpoint } from "../../weather-compositor/interpolation";
 import type {
   ConditionCheckpoints,
   CompareMode,
@@ -60,6 +67,96 @@ const DEFAULT_GLASS_PARAMS: GlassEffectParams = {
   brightness: 0.8,
   saturation: 1.3,
 };
+
+function normalizeKnotsToCheckpoints(
+  knots: Array<{ t: number; value: number | boolean }>,
+): Array<{ t: number; value: number | boolean }> {
+  const map = new Map<TimeCheckpoint, { t: number; value: number | boolean }>();
+  for (const knot of knots) {
+    const checkpoint = getNearestCheckpoint(knot.t);
+    map.set(checkpoint, {
+      t: TIME_CHECKPOINTS[checkpoint].value,
+      value: knot.value,
+    });
+  }
+
+  return TIME_CHECKPOINT_ORDER.filter((checkpoint) =>
+    map.has(checkpoint),
+  ).map((checkpoint) => map.get(checkpoint)!);
+}
+
+function normalizeCurveToCheckpoints(curve: Curve): Curve {
+  return { ...curve, knots: normalizeKnotsToCheckpoints(curve.knots) };
+}
+
+function normalizeCurveMapToCheckpoints(
+  curves: Record<string, Curve> | undefined,
+): Record<string, Curve> | undefined {
+  if (!curves) return curves;
+  const next: Record<string, Curve> = {};
+  for (const [key, curve] of Object.entries(curves)) {
+    next[key] = normalizeCurveToCheckpoints(curve);
+  }
+  return next;
+}
+
+function normalizeCurveConfigToCheckpoints(
+  config: WeatherTuningConfig,
+): WeatherTuningConfig {
+  const nextConditions: WeatherTuningConfig["conditions"] = {};
+  for (const [condition, profile] of Object.entries(config.conditions ?? {})) {
+    nextConditions[condition] = {
+      ...profile,
+      curves: normalizeCurveMapToCheckpoints(profile.curves),
+    };
+  }
+
+  return {
+    ...config,
+    global: normalizeCurveMapToCheckpoints(config.global),
+    conditions: nextConditions,
+    specialCases: config.specialCases?.map((specialCase) => ({
+      ...specialCase,
+      curves: normalizeCurveMapToCheckpoints(specialCase.curves) ?? {},
+    })),
+  };
+}
+
+function hasOffCheckpointKnots(config: WeatherTuningConfig): boolean {
+  const checkpointValues = new Set(
+    TIME_CHECKPOINT_ORDER.map((checkpoint) => TIME_CHECKPOINTS[checkpoint].value),
+  );
+  const isCheckpointTime = (t: number) => {
+    for (const value of checkpointValues) {
+      if (Math.abs(t - value) < 0.0001) return true;
+    }
+    return false;
+  };
+
+  const hasOffCurve = (curve: Curve) =>
+    curve.knots.some((knot) => !isCheckpointTime(knot.t));
+
+  if (config.global) {
+    for (const curve of Object.values(config.global)) {
+      if (hasOffCurve(curve)) return true;
+    }
+  }
+
+  for (const profile of Object.values(config.conditions ?? {})) {
+    if (!profile.curves) continue;
+    for (const curve of Object.values(profile.curves)) {
+      if (hasOffCurve(curve)) return true;
+    }
+  }
+
+  for (const specialCase of config.specialCases ?? []) {
+    for (const curve of Object.values(specialCase.curves)) {
+      if (hasOffCurve(curve)) return true;
+    }
+  }
+
+  return false;
+}
 
 interface WorkflowState {
   checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>;
@@ -117,9 +214,10 @@ function mergeConditionOverrides(
 }
 
 export function useTuningState() {
-  const [checkpointOverrides, setCheckpointOverrides] = useState<
-    Partial<Record<WeatherCondition, CheckpointOverrides>>
-  >({});
+  const [curveConfig, setCurveConfig] = useState(() => ({
+    version: 1,
+    conditions: {},
+  }));
   const [globalTimeOfDay, setGlobalTimeOfDay] = useState(DEFAULT_TIME_OF_DAY);
   const [activeEditCheckpoint, setActiveEditCheckpoint] =
     useState<TimeCheckpoint>(() => getNearestCheckpoint(DEFAULT_TIME_OF_DAY));
@@ -145,13 +243,24 @@ export function useTuningState() {
     useState<GlassEffectParams>(DEFAULT_GLASS_PARAMS);
 
   useEffect(() => {
-    const compositorState = loadFromStorage();
+    const compositorState = loadFromStorage() as CompositorState | null;
     if (compositorState) {
-      setCheckpointOverrides(compositorState.checkpointOverrides);
-      setGlobalTimeOfDay(compositorState.globalSettings.timeOfDay);
-      setActiveEditCheckpoint(
-        getNearestCheckpoint(compositorState.globalSettings.timeOfDay),
+      const storedConfig =
+        "curveConfig" in compositorState && compositorState.curveConfig
+          ? compositorState.curveConfig
+          : checkpointOverridesToConfig(
+              compositorState.checkpointOverrides ?? {},
+            );
+      const normalizedConfig = normalizeCurveConfigToCheckpoints(
+        storedConfig as WeatherTuningConfig,
       );
+      setCurveConfig(normalizedConfig);
+
+      const storedTime = compositorState.globalSettings.timeOfDay;
+      const nearest = getNearestCheckpoint(storedTime);
+      const snappedTime = TIME_CHECKPOINTS[nearest].value;
+      setGlobalTimeOfDay(snappedTime);
+      setActiveEditCheckpoint(nearest);
     }
 
     const workflowState = loadWorkflowState();
@@ -163,16 +272,39 @@ export function useTuningState() {
     setIsHydrated(true);
   }, []);
 
+  const tuningConfig = useMemo(() => curveConfig, [curveConfig]);
+
+  const hasOffCheckpointKeyframes = useMemo(
+    () => hasOffCheckpointKnots(tuningConfig as WeatherTuningConfig),
+    [tuningConfig],
+  );
+
+  const checkpointOverrides = useMemo(
+    () =>
+      curveConfigToCheckpointOverrides(
+        tuningConfig,
+        WEATHER_CONDITIONS,
+      ),
+    [tuningConfig],
+  );
+
   useEffect(() => {
     if (!isHydrated) return;
 
     saveToStorage({
-      version: 2,
+      version: 3,
       activeCondition: selectedCondition ?? "clear",
       globalSettings: { timeOfDay: globalTimeOfDay },
       checkpointOverrides,
+      curveConfig: tuningConfig,
     });
-  }, [checkpointOverrides, globalTimeOfDay, selectedCondition, isHydrated]);
+  }, [
+    checkpointOverrides,
+    globalTimeOfDay,
+    selectedCondition,
+    tuningConfig,
+    isHydrated,
+  ]);
 
   useEffect(() => {
     if (!isHydrated) return;
@@ -229,47 +361,39 @@ export function useTuningState() {
     [getTimestamp],
   );
 
+  const resolveParamsAtTime = useCallback(
+    (condition: WeatherCondition, timeOfDay: number): FullCompositorParams => {
+      const timestamp = getTimestamp(timeOfDay);
+      const base = getBaseParamsForCondition(condition, timestamp);
+      base.celestial.timeOfDay = timeOfDay;
+
+      return resolveWeatherParams({
+        config: tuningConfig,
+        condition,
+        timeOfDay,
+        baseParams: base,
+      });
+    },
+    [getTimestamp, tuningConfig],
+  );
+
   // Get full params including user overrides for a specific checkpoint
   const getFullParamsForCheckpoint = useCallback(
     (
       condition: WeatherCondition,
       checkpoint: TimeCheckpoint,
     ): FullCompositorParams => {
-      const base = getBaseParamsForCheckpoint(condition, checkpoint);
-      const userOverrides = checkpointOverrides[condition]?.[checkpoint];
-      if (userOverrides) {
-        return mergeWithOverrides(base, userOverrides);
-      }
-      return base;
+      const checkpointTime = TIME_CHECKPOINTS[checkpoint].value;
+      return resolveParamsAtTime(condition, checkpointTime);
     },
-    [getBaseParamsForCheckpoint, checkpointOverrides],
+    [resolveParamsAtTime],
   );
 
   const getParamsForCondition = useCallback(
     (condition: WeatherCondition): FullCompositorParams => {
-      const timestamp = getTimestamp(globalTimeOfDay);
-      const base = getBaseParamsForCondition(condition, timestamp);
-      // User overrides only (defaults are now baked into getBaseParamsForCheckpoint)
-      const userOverrides = checkpointOverrides[condition];
-
-      const getBaseForCheckpoint = (checkpoint: TimeCheckpoint) =>
-        getBaseParamsForCheckpoint(condition, checkpoint);
-
-      const interpolatedOverrides = getInterpolatedOverrides(
-        userOverrides,
-        globalTimeOfDay,
-        getBaseForCheckpoint,
-      );
-      const merged = mergeWithOverrides(base, interpolatedOverrides);
-      merged.celestial.timeOfDay = globalTimeOfDay;
-      return merged;
+      return resolveParamsAtTime(condition, globalTimeOfDay);
     },
-    [
-      checkpointOverrides,
-      globalTimeOfDay,
-      getTimestamp,
-      getBaseParamsForCheckpoint,
-    ],
+    [globalTimeOfDay, resolveParamsAtTime],
   );
 
   const getBaseParams = useCallback(
@@ -282,13 +406,173 @@ export function useTuningState() {
     [globalTimeOfDay, getTimestamp],
   );
 
+  const withCheckpointOverrides = useCallback(
+    (
+      updater: (
+        current: Partial<Record<WeatherCondition, CheckpointOverrides>>,
+      ) => Partial<Record<WeatherCondition, CheckpointOverrides>>,
+    ) => {
+      setCurveConfig((prev) => {
+        const currentOverrides = curveConfigToCheckpointOverrides(
+          prev,
+          WEATHER_CONDITIONS,
+        );
+        const nextOverrides = updater(currentOverrides);
+        return checkpointOverridesToConfig(nextOverrides);
+      });
+    },
+    [],
+  );
+
+  const updateCurveKnotValue = useCallback(
+    (
+      condition: WeatherCondition,
+      layer: LayerKey,
+      paramKey: string,
+      checkpoint: TimeCheckpoint,
+      value: number | boolean,
+    ) => {
+      const checkpointTime = TIME_CHECKPOINTS[checkpoint].value;
+      const baseParams = getBaseParamsForCheckpoint(condition, checkpoint);
+      const baseGroup = baseParams[layer] as Record<string, number | boolean>;
+      const baseValue = baseGroup[paramKey];
+      const type = typeof baseValue === "boolean" ? "boolean" : "number";
+      const paramId = `${layer}.${paramKey}`;
+
+      setCurveConfig((prev) => {
+        const conditionConfig = prev.conditions?.[condition] ?? {};
+        const curves = { ...(conditionConfig.curves ?? {}) };
+        const existing = curves[paramId];
+        const mode =
+          type === "number"
+            ? existing?.mode === "absolute"
+              ? "absolute"
+              : "delta"
+            : "absolute";
+        const interpolation =
+          type === "boolean"
+            ? "step"
+            : existing?.interpolation ?? "linear";
+
+        let knots = existing?.knots
+          ? normalizeKnotsToCheckpoints(existing.knots)
+          : [];
+        if (knots.length === 0) {
+          knots = TIME_CHECKPOINT_ORDER.map((cp) => {
+            const baseForCheckpoint = getBaseParamsForCheckpoint(condition, cp);
+            const group = baseForCheckpoint[layer] as Record<
+              string,
+              number | boolean
+            >;
+            const valueAtCheckpoint = group[paramKey];
+            const knotValue =
+              type === "number" && mode === "delta"
+                ? 0
+                : valueAtCheckpoint;
+            return { t: TIME_CHECKPOINTS[cp].value, value: knotValue };
+          });
+        }
+
+        const nextValue =
+          type === "number" && mode === "delta"
+            ? (value as number) - (baseValue as number)
+            : value;
+
+        const idx = knots.findIndex((k) => k.t === checkpointTime);
+        if (idx >= 0) {
+          knots[idx] = { ...knots[idx], value: nextValue };
+        } else {
+          knots.push({ t: checkpointTime, value: nextValue });
+        }
+
+        knots.sort((a, b) => a.t - b.t);
+
+        curves[paramId] = {
+          knots,
+          mode: type === "number" ? mode : "absolute",
+          interpolation,
+        };
+
+        return {
+          ...prev,
+          conditions: {
+            ...prev.conditions,
+            [condition]: {
+              ...conditionConfig,
+              curves,
+            },
+          },
+        };
+      });
+    },
+    [getBaseParamsForCheckpoint],
+  );
+
+  const getCurveForParam = useCallback(
+    (condition: WeatherCondition, layer: LayerKey, paramKey: string) => {
+      const paramId = `${layer}.${paramKey}`;
+      return curveConfig.conditions?.[condition]?.curves?.[paramId];
+    },
+    [curveConfig],
+  );
+
+  const setCurveForParam = useCallback(
+    (
+      condition: WeatherCondition,
+      layer: LayerKey,
+      paramKey: string,
+      curve: Curve | null,
+    ) => {
+      const paramId = `${layer}.${paramKey}`;
+      setCurveConfig((prev) => {
+        const conditionConfig = prev.conditions?.[condition] ?? {};
+        const curves = { ...(conditionConfig.curves ?? {}) };
+
+        if (curve) {
+          curves[paramId] = normalizeCurveToCheckpoints(curve);
+        } else {
+          delete curves[paramId];
+        }
+
+        const hasCurves = Object.keys(curves).length > 0;
+
+        return {
+          ...prev,
+          conditions: {
+            ...prev.conditions,
+            [condition]: {
+              ...conditionConfig,
+              curves: hasCurves ? curves : undefined,
+            },
+          },
+        };
+      });
+    },
+    [],
+  );
+
+  const getBaseValueAtTime = useCallback(
+    (
+      condition: WeatherCondition,
+      timeOfDay: number,
+      layer: LayerKey,
+      paramKey: string,
+    ) => {
+      const timestamp = getTimestamp(timeOfDay);
+      const base = getBaseParamsForCondition(condition, timestamp);
+      const group = base[layer] as Record<string, number | boolean>;
+      return group[paramKey];
+    },
+    [getTimestamp],
+  );
+
   const updateCheckpointOverrides = useCallback(
     (
       condition: WeatherCondition,
       checkpoint: TimeCheckpoint,
       newOverrides: ConditionOverrides,
     ) => {
-      setCheckpointOverrides((prev) => {
+      withCheckpointOverrides((prev) => {
         const existing = prev[condition] ?? createEmptyCheckpointOverrides();
         return {
           ...prev,
@@ -299,7 +583,7 @@ export function useTuningState() {
         };
       });
     },
-    [],
+    [withCheckpointOverrides],
   );
 
   const updateParams = useCallback(
@@ -352,23 +636,26 @@ export function useTuningState() {
     ],
   );
 
-  const resetCondition = useCallback((condition: WeatherCondition) => {
-    setCheckpointOverrides((prev) => {
-      const next = { ...prev };
-      delete next[condition];
-      return next;
-    });
-    setCheckpoints((prev) => {
-      const next = { ...prev };
-      delete next[condition];
-      return next;
-    });
-    setSignedOff((prev) => {
-      const next = new Set(prev);
-      next.delete(condition);
-      return next;
-    });
-  }, []);
+  const resetCondition = useCallback(
+    (condition: WeatherCondition) => {
+      withCheckpointOverrides((prev) => {
+        const next = { ...prev };
+        delete next[condition];
+        return next;
+      });
+      setCheckpoints((prev) => {
+        const next = { ...prev };
+        delete next[condition];
+        return next;
+      });
+      setSignedOff((prev) => {
+        const next = new Set(prev);
+        next.delete(condition);
+        return next;
+      });
+    },
+    [withCheckpointOverrides],
+  );
 
   const copyLayerFromCondition = useCallback(
     (
@@ -376,7 +663,7 @@ export function useTuningState() {
       targetCondition: WeatherCondition,
       layerKey: LayerKey,
     ) => {
-      setCheckpointOverrides((prev) => {
+      withCheckpointOverrides((prev) => {
         const existing =
           prev[targetCondition] ?? createEmptyCheckpointOverrides();
         const updated = { ...existing };
@@ -421,7 +708,7 @@ export function useTuningState() {
         };
       });
     },
-    [getBaseParamsForCheckpoint],
+    [getBaseParamsForCheckpoint, withCheckpointOverrides],
   );
 
   const copyLayerToAllConditions = useCallback(
@@ -497,7 +784,7 @@ export function useTuningState() {
       sourceCheckpoint: TimeCheckpoint,
       targetCheckpoints: TimeCheckpoint[],
     ) => {
-      setCheckpointOverrides((prev) => {
+      withCheckpointOverrides((prev) => {
         const existing = prev[condition] ?? createEmptyCheckpointOverrides();
         const updated = { ...existing };
 
@@ -542,7 +829,7 @@ export function useTuningState() {
         }
       }
     },
-    [getBaseParamsForCheckpoint, markCheckpointReviewed],
+    [getBaseParamsForCheckpoint, markCheckpointReviewed, withCheckpointOverrides],
   );
 
   const updateParameterAtCheckpoint = useCallback(
@@ -553,28 +840,9 @@ export function useTuningState() {
       parameter: string,
       value: number | boolean,
     ) => {
-      setCheckpointOverrides((prev) => {
-        const existing = prev[condition] ?? createEmptyCheckpointOverrides();
-        const checkpointData = existing[checkpoint] ?? {};
-        const layerData =
-          (checkpointData[layer] as Record<string, unknown>) ?? {};
-
-        return {
-          ...prev,
-          [condition]: {
-            ...existing,
-            [checkpoint]: {
-              ...checkpointData,
-              [layer]: {
-                ...layerData,
-                [parameter]: value,
-              },
-            },
-          },
-        };
-      });
+      updateCurveKnotValue(condition, layer, parameter, checkpoint, value);
     },
-    [],
+    [updateCurveKnotValue],
   );
 
   const bulkUpdateParameter = useCallback(
@@ -585,35 +853,13 @@ export function useTuningState() {
       parameter: string,
       value: number | boolean,
     ) => {
-      setCheckpointOverrides((prev) => {
-        const updated = { ...prev };
-
-        for (const condition of conditions) {
-          const existing =
-            updated[condition] ?? createEmptyCheckpointOverrides();
-          const conditionUpdated = { ...existing };
-
-          for (const checkpoint of checkpoints) {
-            const checkpointData = conditionUpdated[checkpoint] ?? {};
-            const layerData =
-              (checkpointData[layer] as Record<string, unknown>) ?? {};
-
-            conditionUpdated[checkpoint] = {
-              ...checkpointData,
-              [layer]: {
-                ...layerData,
-                [parameter]: value,
-              },
-            };
-          }
-
-          updated[condition] = conditionUpdated;
+      for (const condition of conditions) {
+        for (const checkpoint of checkpoints) {
+          updateCurveKnotValue(condition, layer, parameter, checkpoint, value);
         }
-
-        return updated;
-      });
+      }
     },
-    [],
+    [updateCurveKnotValue],
   );
 
   const goToCheckpoint = useCallback(
@@ -628,7 +874,9 @@ export function useTuningState() {
   );
 
   const scrubTime = useCallback((time: number) => {
-    setGlobalTimeOfDay(time);
+    const nearest = getNearestCheckpoint(time);
+    setGlobalTimeOfDay(TIME_CHECKPOINTS[nearest].value);
+    setActiveEditCheckpoint(nearest);
     setIsPreviewing(true);
   }, []);
 
@@ -698,6 +946,7 @@ export function useTuningState() {
     isHydrated,
     glassParams,
     setGlassParams,
+    hasOffCheckpointKeyframes,
 
     getParamsForCondition,
     getBaseParams,
@@ -707,6 +956,10 @@ export function useTuningState() {
     updateParams,
     updateParameterAtCheckpoint,
     bulkUpdateParameter,
+    getCurveForParam,
+    setCurveForParam,
+    updateCurveKnotValue,
+    getBaseValueAtTime,
     resetCondition,
     copyLayerFromCondition,
     copyLayerToAllConditions,

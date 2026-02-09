@@ -74,6 +74,40 @@ interface ForecastDay {
   condition: WeatherCondition;
 }
 
+export interface WeatherOverlayStubData {
+  location: string;
+  temperature: number;
+  tempHigh: number;
+  tempLow: number;
+  humidity: number;
+  windSpeed: number;
+  visibility: number;
+  forecast: ForecastDay[];
+  unit: "celsius" | "fahrenheit";
+}
+
+export function createWeatherOverlayStubData(
+  condition: WeatherCondition,
+): WeatherOverlayStubData {
+  return {
+    location: "San Francisco, CA",
+    temperature: 72,
+    tempHigh: 78,
+    tempLow: 65,
+    humidity: 45,
+    windSpeed: 8,
+    visibility: 10,
+    forecast: [
+      { day: "Today", tempMin: 65, tempMax: 78, condition },
+      { day: "Tue", tempMin: 64, tempMax: 77, condition: "partly-cloudy" },
+      { day: "Wed", tempMin: 62, tempMax: 75, condition: "cloudy" },
+      { day: "Thu", tempMin: 60, tempMax: 73, condition: "rain" },
+      { day: "Fri", tempMin: 63, tempMax: 76, condition: "clear" },
+    ],
+    unit: "fahrenheit",
+  };
+}
+
 interface WeatherDataOverlayProps {
   location: string;
   condition: WeatherCondition;
