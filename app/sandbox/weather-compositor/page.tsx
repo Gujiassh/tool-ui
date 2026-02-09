@@ -29,7 +29,6 @@ import {
   saveToStorage,
   exportToFile,
   importFromFile,
-  checkpointOverridesToConfig,
   type FullCompositorParams,
   type CheckpointOverrides,
   type GlobalSettings,
@@ -885,15 +884,10 @@ export default function WeatherCompositorSandbox() {
     { activeCondition, globalSettings, checkpointOverrides },
     500,
   );
-  const curveConfig = useMemo(
-    () => checkpointOverridesToConfig(checkpointOverrides),
-    [checkpointOverrides],
-  );
-
   useEffect(() => {
     if (!isMounted || isInitializing.current) return;
-    saveToStorage({ version: 3, ...stateToSave, curveConfig });
-  }, [stateToSave, curveConfig, isMounted]);
+    saveToStorage({ version: 4, ...stateToSave });
+  }, [stateToSave, isMounted]);
 
   const handleConditionChange = useCallback(
     (condition: WeatherCondition) => {
