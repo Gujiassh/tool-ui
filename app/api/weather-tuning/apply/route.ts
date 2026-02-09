@@ -50,7 +50,6 @@ async function readCurrentPresetsFromDisk(): Promise<WeatherEffectsTunedPresets>
 
   // The file is generated and should contain a plain object literal.
   // Evaluate it in a fresh Function scope (no external bindings).
-  // eslint-disable-next-line no-new-func
   return Function(`"use strict"; return (${objectLiteral});`)() as WeatherEffectsTunedPresets;
 }
 

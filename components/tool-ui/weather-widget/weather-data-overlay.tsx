@@ -22,6 +22,7 @@ import {
   getTimeOfDay,
   getWeatherTheme,
   useGlassStyles,
+  resolveGlassBackdropFilterStyles,
   type WeatherTheme,
 } from "./effects";
 
@@ -157,9 +158,6 @@ export function WeatherDataOverlay({
     saturation: glassParams?.saturation ?? 1.3,
     enabled: glassEnabled,
   });
-
-  // Check if SVG glass is active (has backdrop-filter set)
-  const svgGlassActive = Boolean(glassStyles.backdropFilter);
 
   // Track forecast card dimensions for glass effect
   const updateCardDimensions = useCallback(() => {
@@ -370,12 +368,10 @@ export function WeatherDataOverlay({
                 style={{
                   backgroundColor: `rgba(255, 255, 255, ${bgOpacity})`,
                   // Apply SVG glass effect when supported, fall back to simple blur
-                  ...(svgGlassActive
-                    ? glassStyles
-                    : {
-                        backdropFilter: `blur(${blurAmount}px)`,
-                        WebkitBackdropFilter: `blur(${blurAmount}px)`,
-                      }),
+                  ...resolveGlassBackdropFilterStyles({
+                    glassStyles,
+                    blurAmount,
+                  }),
                 }}
               />
               {/* Border (kept outside the filter to avoid uneven corners) */}
