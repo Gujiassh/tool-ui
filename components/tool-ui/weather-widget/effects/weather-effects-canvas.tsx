@@ -1865,13 +1865,28 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
 // WEBGL HELPERS
 // =============================================================================
 
-const MAX_CONCURRENT_WEATHER_WEBGL_CANVASES = 8;
+// WebGL contexts are a limited resource and creating too many can cause
+// unpredictable "context lost" behavior or black canvases.
+//
+// We default to a conservative budget and allow sandbox tooling (tuning studio)
+// to raise it temporarily when rendering many previews at once.
+let maxConcurrentWeatherWebglCanvases = 8;
 const allocatedWeatherWebglCanvases = new Set<HTMLCanvasElement>();
+
+export function getMaxConcurrentWeatherWebglCanvases(): number {
+  return maxConcurrentWeatherWebglCanvases;
+}
+
+export function setMaxConcurrentWeatherWebglCanvases(value: number): void {
+  if (!Number.isFinite(value)) return;
+  const next = Math.max(1, Math.min(64, Math.floor(value)));
+  maxConcurrentWeatherWebglCanvases = next;
+}
 
 function tryAcquireWeatherWebglCanvas(canvas: HTMLCanvasElement): boolean {
   if (allocatedWeatherWebglCanvases.has(canvas)) return true;
   if (
-    allocatedWeatherWebglCanvases.size >= MAX_CONCURRENT_WEATHER_WEBGL_CANVASES
+    allocatedWeatherWebglCanvases.size >= maxConcurrentWeatherWebglCanvases
   )
     return false;
   allocatedWeatherWebglCanvases.add(canvas);

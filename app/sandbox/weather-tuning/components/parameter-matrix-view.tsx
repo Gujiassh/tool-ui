@@ -1,8 +1,12 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/ui/cn";
-import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
+import {
+  WeatherEffectsCanvas,
+  getMaxConcurrentWeatherWebglCanvases,
+  setMaxConcurrentWeatherWebglCanvases,
+} from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import {
   WEATHER_CONDITIONS,
@@ -399,6 +403,14 @@ function GroupHeader({ name }: { name: string }) {
 export function ParameterMatrixView({ tuningState }: ParameterMatrixViewProps) {
   const [selectedCheckpoint, setSelectedCheckpoint] =
     useState<TimeCheckpoint>("noon");
+
+  // The Parameter view can render many previews at once; temporarily increase the
+  // WebGL context budget so all tiles can initialize on capable machines.
+  useEffect(() => {
+    const prev = getMaxConcurrentWeatherWebglCanvases();
+    setMaxConcurrentWeatherWebglCanvases(13);
+    return () => setMaxConcurrentWeatherWebglCanvases(prev);
+  }, []);
 
   return (
     <div className="flex h-full">
