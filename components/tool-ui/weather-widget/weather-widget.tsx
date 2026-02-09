@@ -115,9 +115,6 @@ export function WeatherWidget({
           temperature={current.temp}
           tempHigh={current.tempMax}
           tempLow={current.tempMin}
-          humidity={current.humidity}
-          windSpeed={current.windSpeed}
-          visibility={current.visibility}
           forecast={forecast}
           unit={unit}
           updatedAtLabel={updatedAtLabel}
