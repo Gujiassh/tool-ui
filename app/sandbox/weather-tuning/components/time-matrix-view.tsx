@@ -11,6 +11,7 @@ import {
   CloudRain,
   CloudSnow,
   Sparkles,
+  SlidersHorizontal,
   SunDim,
   SunMedium,
 } from "lucide-react";
@@ -37,6 +38,7 @@ const PARAMETER_GROUP_ICONS: Record<string, LucideIcon> = {
   Snow: CloudSnow,
   Lightning: CloudLightning,
   Glass: Sparkles,
+  Post: SlidersHorizontal,
 };
 
 const PARAMETER_GROUP_COLORS: Record<
@@ -50,6 +52,7 @@ const PARAMETER_GROUP_COLORS: Record<
   Snow: { dot: "text-cyan-400/80", text: "text-cyan-400/80" },
   Lightning: { dot: "text-violet-400/80", text: "text-violet-400/80" },
   Glass: { dot: "text-teal-400/80", text: "text-teal-400/80" },
+  Post: { dot: "text-pink-500/80", text: "text-pink-500/80" },
 };
 
 interface TimeMatrixViewProps {
