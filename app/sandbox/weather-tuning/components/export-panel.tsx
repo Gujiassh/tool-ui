@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Check, FileCode } from "lucide-react";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
-import { useCodeGen } from "../hooks/use-code-gen";
 
 interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
@@ -21,20 +20,31 @@ export function ExportPanel({
   >("idle");
   const [applyError, setApplyError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const { generateToolUiTypeScript } = useCodeGen(
-    checkpointOverrides,
-    signedOff,
-  );
 
   const handleApply = async () => {
     setApplyStatus("saving");
     setApplyError(null);
     try {
-      const content = generateToolUiTypeScript();
+      const hasAnyDelta = Object.values(checkpointOverrides).some((byCheckpoint) => {
+        if (!byCheckpoint) return false;
+        return Object.values(byCheckpoint).some((checkpointData) => {
+          return checkpointData && Object.keys(checkpointData).length > 0;
+        });
+      });
+
+      if (!hasAnyDelta) {
+        setApplyStatus("error");
+        setApplyError("No tuning changes to apply yet.");
+        return;
+      }
+
       const response = await fetch("/api/weather-tuning/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({
+          checkpointOverrides,
+          signedOff: Array.from(signedOff),
+        }),
       });
 
       if (!response.ok) {

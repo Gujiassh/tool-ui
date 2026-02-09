@@ -40,27 +40,8 @@ export type LayerKey =
   | "rain"
   | "lightning"
   | "snow"
+  | "glass"
   | "post";
-
-export interface GlassEffectParams {
-  enabled: boolean;
-  depth: number;
-  strength: number;
-  chromaticAberration: number;
-  blur: number;
-  brightness: number;
-  saturation: number;
-}
-
-const DEFAULT_GLASS_PARAMS: GlassEffectParams = {
-  enabled: true,
-  depth: 3,
-  strength: 75,
-  chromaticAberration: 6,
-  blur: 1.5,
-  brightness: 0.8,
-  saturation: 1.3,
-};
 
 interface WorkflowState {
   checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>;
@@ -114,6 +95,8 @@ function mergeConditionOverrides(
     rain: { ...base.rain, ...overrides.rain },
     lightning: { ...base.lightning, ...overrides.lightning },
     snow: { ...base.snow, ...overrides.snow },
+    glass: { ...base.glass, ...overrides.glass },
+    post: { ...base.post, ...overrides.post },
   };
 }
 
@@ -142,9 +125,6 @@ export function useTuningState() {
     () => new Set(),
   );
   const [isHydrated, setIsHydrated] = useState(false);
-  const [glassParams, setGlassParams] =
-    useState<GlassEffectParams>(DEFAULT_GLASS_PARAMS);
-
   useEffect(() => {
     const compositorState = loadFromStorage() as CompositorState | null;
     if (compositorState) {
@@ -683,9 +663,6 @@ export function useTuningState() {
     setSignedOff,
     signedOffCount,
     isHydrated,
-    glassParams,
-    setGlassParams,
-
     getParamsForCondition,
     getBaseParams,
     getBaseParamsForCheckpoint,

@@ -148,4 +148,22 @@ export const PARAMETER_GROUPS: ParameterGroup[] = [
       },
     ],
   },
+  {
+    name: "Glass",
+    layer: "glass",
+    params: [
+      { key: "depth", label: "Depth", min: 2, max: 20, step: 1 },
+      { key: "strength", label: "Strength", min: 10, max: 120, step: 5 },
+      {
+        key: "chromaticAberration",
+        label: "Chromatic",
+        min: 0,
+        max: 20,
+        step: 1,
+      },
+      { key: "blur", label: "Blur", min: 0, max: 6, step: 0.5 },
+      { key: "brightness", label: "Brightness", min: 0.8, max: 1.4, step: 0.05 },
+      { key: "saturation", label: "Saturation", min: 0.5, max: 2.0, step: 0.1 },
+    ],
+  },
 ];

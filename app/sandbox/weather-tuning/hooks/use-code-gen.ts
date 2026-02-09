@@ -179,6 +179,32 @@ function mapConditionOverridesToToolUi(
     }
   }
 
+  if (input.glass) {
+    const {
+      enabled,
+      depth,
+      strength,
+      chromaticAberration,
+      blur,
+      brightness,
+      saturation,
+    } = input.glass;
+
+    const glass: Record<string, unknown> = {
+      ...(enabled !== undefined ? { enabled } : {}),
+      ...(depth !== undefined ? { depth } : {}),
+      ...(strength !== undefined ? { strength } : {}),
+      ...(chromaticAberration !== undefined ? { chromaticAberration } : {}),
+      ...(blur !== undefined ? { blur } : {}),
+      ...(brightness !== undefined ? { brightness } : {}),
+      ...(saturation !== undefined ? { saturation } : {}),
+    };
+
+    if (!isObjectEmpty(glass)) {
+      out.glass = glass as WeatherEffectsOverrides["glass"];
+    }
+  }
+
   if (!isObjectEmpty(interactions)) {
     out.interactions = interactions as WeatherEffectsOverrides["interactions"];
   }
@@ -376,6 +402,7 @@ export function useCodeGen(
         writeGroup("rain");
         writeGroup("lightning");
         writeGroup("snow");
+        writeGroup("glass");
         writeGroup("interactions");
         writeGroup("post");
 

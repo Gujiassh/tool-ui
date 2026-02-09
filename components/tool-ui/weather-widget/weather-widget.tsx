@@ -6,6 +6,8 @@ import {
   getSceneBrightnessFromTimeOfDay,
   getTimeOfDay,
   getWeatherTheme,
+  getNearestCheckpoint,
+  TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
 } from "./effects";
 import type { WeatherWidgetProps } from "./schema";
 import { WeatherDataOverlay } from "./weather-data-overlay";
@@ -67,6 +69,14 @@ export function WeatherWidget({
   const overlayTimeOfDay = customEffectProps?.celestial?.timeOfDay;
   const timeOfDay =
     typeof overlayTimeOfDay === "number" ? overlayTimeOfDay : getTimeOfDay(updatedAt);
+
+  const tunedOverrides =
+    TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[current.condition];
+  const tunedGlass =
+    tunedOverrides?.[getNearestCheckpoint(timeOfDay)]?.glass;
+  const glassParams = customEffectProps?.glass
+    ? { ...tunedGlass, ...customEffectProps.glass }
+    : tunedGlass;
   const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, current.condition);
   const weatherTheme = getWeatherTheme(brightness);
   const isWeatherDark = weatherTheme === "dark";
@@ -113,7 +123,7 @@ export function WeatherWidget({
           updatedAtLabel={updatedAtLabel}
           timeOfDay={overlayTimeOfDay}
           timestamp={updatedAt}
-          glassParams={customEffectProps?.glass}
+          glassParams={glassParams}
         />
       </Card>
     </article>

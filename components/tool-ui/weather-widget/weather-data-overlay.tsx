@@ -363,37 +363,45 @@ export function WeatherDataOverlay({
         {/* Forecast strip - hidden at small container sizes */}
         {forecast.length > 0 && (
           <div ref={cardRef} className="relative hidden @[280px]/weather:block">
-            {/* Edge shine - outside overflow-hidden so it aligns with border */}
-            <div
-              className="pointer-events-none absolute inset-0 z-10 rounded-xl transition-opacity duration-300 ease-out"
-              style={{
-                opacity: glowState.intensity,
-                background: sineEasedGradient(
-                  glowState.x,
-                  glowState.y,
-                  100,
-                  isDark ? 0.6 : 1,
-                ),
-                mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                maskComposite: "exclude",
-                WebkitMaskComposite: "xor",
-                padding: "1px",
-              }}
-            />
-            <div
-              className="relative overflow-hidden rounded-xl border px-3 py-2.5"
-              style={{
-                backgroundColor: `rgba(255, 255, 255, ${bgOpacity})`,
-                borderColor: `rgba(255, 255, 255, ${borderOpacity})`,
-                // Apply SVG glass effect when supported, fall back to simple blur
-                ...(svgGlassActive
-                  ? glassStyles
-                  : {
-                      backdropFilter: `blur(${blurAmount}px)`,
-                      WebkitBackdropFilter: `blur(${blurAmount}px)`,
-                    }),
-              }}
-            >
+            <div className="relative overflow-hidden rounded-xl">
+              {/* Glass background */}
+              <div
+                className="absolute inset-0 rounded-xl"
+                style={{
+                  backgroundColor: `rgba(255, 255, 255, ${bgOpacity})`,
+                  // Apply SVG glass effect when supported, fall back to simple blur
+                  ...(svgGlassActive
+                    ? glassStyles
+                    : {
+                        backdropFilter: `blur(${blurAmount}px)`,
+                        WebkitBackdropFilter: `blur(${blurAmount}px)`,
+                      }),
+                }}
+              />
+              {/* Border (kept outside the filter to avoid uneven corners) */}
+              <div
+                className="pointer-events-none absolute inset-0 rounded-xl"
+                style={{
+                  boxShadow: `inset 0 0 0 0.5px rgba(255, 255, 255, ${borderOpacity})`,
+                }}
+              />
+              {/* Edge shine */}
+              <div
+                className="pointer-events-none absolute inset-0 z-10 rounded-xl transition-opacity duration-300 ease-out"
+                style={{
+                  opacity: glowState.intensity,
+                  background: sineEasedGradient(
+                    glowState.x,
+                    glowState.y,
+                    100,
+                    isDark ? 0.6 : 1,
+                  ),
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "exclude",
+                  WebkitMaskComposite: "xor",
+                  padding: "1px",
+                }}
+              />
               {/* Inner glow */}
               <div
                 className="pointer-events-none absolute inset-0 transition-opacity duration-300 ease-out mix-blend-color-dodge"
@@ -407,55 +415,57 @@ export function WeatherDataOverlay({
                   ),
                 }}
               />
-              <div className="relative flex items-center justify-between">
-                {forecast.slice(0, 5).map((day, index) => {
-                  const DayIcon = conditionIcons[day.condition];
-                  return (
-                    <div
-                      key={day.day}
-                      className={cn(
-                        "flex flex-1 flex-col items-center gap-0.5",
-                        index === 0 ? "opacity-100" : "opacity-60",
-                      )}
-                      style={{
-                        fontFamily: "system-ui, sans-serif",
-                        textShadow: forecastTextShadow,
-                      }}
-                    >
-                      <span
+              <div className="relative px-3 py-2.5">
+                <div className="relative flex items-center justify-between">
+                  {forecast.slice(0, 5).map((day, index) => {
+                    const DayIcon = conditionIcons[day.condition];
+                    return (
+                      <div
+                        key={day.day}
                         className={cn(
-                          "text-[10px] font-medium uppercase tracking-[0.1em]",
-                          textMuted,
+                          "flex flex-1 flex-col items-center gap-0.5",
+                          index === 0 ? "opacity-100" : "opacity-60",
                         )}
+                        style={{
+                          fontFamily: "system-ui, sans-serif",
+                          textShadow: forecastTextShadow,
+                        }}
                       >
-                        {index === 0 ? "Now" : day.day}
-                      </span>
-                      <DayIcon
-                        className={cn("my-0.5 size-5", textSecondary)}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
-                      <div className="flex flex-col items-center leading-tight">
                         <span
                           className={cn(
-                            "text-[14px] font-normal tabular-nums",
-                            textPrimary,
+                            "text-[10px] font-medium uppercase tracking-[0.1em]",
+                            textMuted,
                           )}
                         >
-                          {Math.round(day.tempMax)}°
+                          {index === 0 ? "Now" : day.day}
                         </span>
-                        <span
-                          className={cn(
-                            "text-[12px] font-light tabular-nums",
-                            textSubtle,
-                          )}
-                        >
-                          {Math.round(day.tempMin)}°
-                        </span>
+                        <DayIcon
+                          className={cn("my-0.5 size-5", textSecondary)}
+                          strokeWidth={1.5}
+                          aria-hidden="true"
+                        />
+                        <div className="flex flex-col items-center leading-tight">
+                          <span
+                            className={cn(
+                              "text-[14px] font-normal tabular-nums",
+                              textPrimary,
+                            )}
+                          >
+                            {Math.round(day.tempMax)}°
+                          </span>
+                          <span
+                            className={cn(
+                              "text-[12px] font-light tabular-nums",
+                              textSubtle,
+                            )}
+                          >
+                            {Math.round(day.tempMin)}°
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -463,4 +473,3 @@ export function WeatherDataOverlay({
     </div>
   );
 }
-
