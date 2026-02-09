@@ -225,7 +225,7 @@ function CheckpointPreview({
   );
 
   return (
-    <div className="border-border/50 relative aspect-4/3 w-full overflow-hidden rounded-md border bg-black @container/weather">
+    <div className="border-border/50 relative aspect-4/3 w-full overflow-hidden rounded-md border bg-black @container/weather [container-type:size]">
       <WeatherEffectsCanvas className="absolute inset-0" {...canvasProps} />
       <div className="absolute inset-0 z-10">
         <WeatherDataOverlay

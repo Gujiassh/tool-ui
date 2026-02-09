@@ -334,8 +334,8 @@ export function WeatherDataOverlay({
       {/* Forecast strip - hidden at small container sizes (less inset than header) */}
       {forecast.length > 0 && (
         <div className="px-3 pb-3">
-          {/* Show the strip earlier, but progressively reduce content as width shrinks. */}
-          <div ref={cardRef} className="relative hidden @[245px]/weather:block">
+          {/* Show the strip earlier, but progressively reduce content as height shrinks. */}
+          <div ref={cardRef} className="weather-forecast-strip relative hidden">
             {/* Edge shine - outside overflow-hidden so it aligns with border */}
             <div
               className="pointer-events-none absolute inset-0 z-10 rounded-xl transition-opacity duration-300 ease-out"
@@ -403,9 +403,9 @@ export function WeatherDataOverlay({
                         className={cn(
                           "my-0.5 size-5",
                           textSecondary,
-                          // At narrower widths (but still showing the strip),
+                          // At shorter containers (but still showing the strip),
                           // omit the icon to preserve legibility.
-                          "hidden @[280px]/weather:block",
+                          "weather-forecast-icon hidden",
                         )}
                         strokeWidth={1.5}
                         aria-hidden="true"
@@ -436,6 +436,20 @@ export function WeatherDataOverlay({
           </div>
         </div>
       )}
+
+      {/* Height-based container queries (requires container-type:size on the weather container). */}
+      <style jsx>{`
+        @container weather (min-height: 245px) {
+          .weather-forecast-strip {
+            display: block !important;
+          }
+        }
+        @container weather (min-height: 280px) {
+          .weather-forecast-icon {
+            display: block !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
