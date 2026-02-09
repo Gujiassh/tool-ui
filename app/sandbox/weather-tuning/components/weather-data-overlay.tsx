@@ -242,9 +242,7 @@ export function WeatherDataOverlay({
   const textSubtle = isDark ? "text-white/40" : "text-black/40";
 
   const baseBgOpacity = isDark ? 0.04 : 0.04;
-  const baseBorderOpacity = isDark ? 0.03 : 0.15;
   const bgOpacity = baseBgOpacity * (1 - peakIntensity * 0.7);
-  const borderOpacity = baseBorderOpacity + peakIntensity * 0.02;
   const midnightDistance = Math.min(timeOfDay, 1 - timeOfDay);
   const baseBlur = isDark ? 2 + midnightDistance * 38 : 24;
   const blurAmount = isDark ? baseBlur : baseBlur - peakIntensity * (baseBlur - 8);
@@ -362,7 +360,7 @@ export function WeatherDataOverlay({
                 mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                 maskComposite: "exclude",
                 WebkitMaskComposite: "xor",
-                padding: "1px",
+                padding: "0.5px",
               }}
             />
             <div
@@ -371,11 +369,6 @@ export function WeatherDataOverlay({
                 backgroundColor: isDark
                   ? `rgba(255, 255, 255, ${bgOpacity})`
                   : `rgba(0, 0, 0, ${bgOpacity})`,
-                // Draw a hairline border *inside* the glass container so it sits
-                // above the SVG backdrop-filter, but doesn't get distorted by it.
-                boxShadow: isDark
-                  ? `inset 0 0 0 0.5px rgba(255, 255, 255, ${borderOpacity})`
-                  : `inset 0 0 0 0.5px rgba(0, 0, 0, ${borderOpacity})`,
                 ...resolveGlassBackdropFilterStyles({
                   glassStyles,
                   blurAmount,
