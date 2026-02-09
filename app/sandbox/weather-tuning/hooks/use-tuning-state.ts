@@ -38,7 +38,8 @@ export type LayerKey =
   | "cloud"
   | "rain"
   | "lightning"
-  | "snow";
+  | "snow"
+  | "post";
 
 export interface GlassEffectParams {
   enabled: boolean;
