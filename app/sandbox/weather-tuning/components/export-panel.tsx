@@ -9,7 +9,9 @@ import type { CheckpointOverrides } from "../../weather-compositor/presets";
 interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
   signedOff: Set<WeatherCondition>;
-  onApplied?: () => void;
+  onApplied?: (
+    checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>,
+  ) => void;
   onRecovered?: (checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>) => void;
 }
 
@@ -82,7 +84,10 @@ export function ExportPanel({
         return;
       }
 
-      const payload = (await response.json()) as { path?: string };
+      const payload = (await response.json()) as {
+        path?: string;
+        checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+      };
       const filePath =
         typeof payload?.path === "string"
           ? payload.path
@@ -91,7 +96,11 @@ export function ExportPanel({
       setToast(`Applied tuning → ${filePath}`);
       setApplyStatus("success");
       try {
-        onApplied?.();
+        if (payload?.checkpointOverrides) {
+          onApplied?.(payload.checkpointOverrides);
+        } else {
+          onApplied?.({});
+        }
       } catch (error) {
         console.error("onApplied() failed after apply.", error);
       }

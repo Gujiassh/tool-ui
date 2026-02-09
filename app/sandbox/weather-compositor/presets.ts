@@ -245,7 +245,7 @@ export interface FullCompositorParams {
   post: PostParams;
 }
 
-export function getBaseParamsForCondition(
+function buildBaseParamsForCondition(
   condition: WeatherCondition,
   timestamp?: string,
 ): FullCompositorParams {
@@ -255,9 +255,6 @@ export function getBaseParamsForCondition(
   });
 
   const timeOfDay = timestamp ? getTimeOfDay(timestamp) : 0.5;
-  const nearestCheckpoint = getNearestCheckpoint(timeOfDay);
-  const checkpointDefaults =
-    DEFAULT_CHECKPOINT_OVERRIDES[condition]?.[nearestCheckpoint];
 
   const hasCloud = effectConfig.cloud !== undefined;
   const hasRain = effectConfig.rain !== undefined;
@@ -267,7 +264,7 @@ export function getBaseParamsForCondition(
   const lightningIntervalMin = effectConfig.lightning?.intervalMin ?? 4;
   const lightningIntervalMax = effectConfig.lightning?.intervalMax ?? 12;
 
-  const base: FullCompositorParams = {
+  return {
     layers: {
       celestial: true,
       clouds: hasCloud,
@@ -388,6 +385,25 @@ export function getBaseParamsForCondition(
       godRaySamples: 60,
     },
   };
+}
+
+export function getRawBaseParamsForCondition(
+  condition: WeatherCondition,
+  timestamp?: string,
+): FullCompositorParams {
+  return buildBaseParamsForCondition(condition, timestamp);
+}
+
+export function getBaseParamsForCondition(
+  condition: WeatherCondition,
+  timestamp?: string,
+): FullCompositorParams {
+  const timeOfDay = timestamp ? getTimeOfDay(timestamp) : 0.5;
+  const nearestCheckpoint = getNearestCheckpoint(timeOfDay);
+  const checkpointDefaults =
+    DEFAULT_CHECKPOINT_OVERRIDES[condition]?.[nearestCheckpoint];
+
+  const base = buildBaseParamsForCondition(condition, timestamp);
 
   // Apply tuned defaults for this condition/checkpoint as part of the base
   if (checkpointDefaults) {

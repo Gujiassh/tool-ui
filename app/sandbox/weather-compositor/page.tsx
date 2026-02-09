@@ -959,7 +959,7 @@ export default function WeatherCompositorSandbox() {
 
   const handleExport = useCallback(() => {
     exportToFile({
-      version: 2,
+      version: 4,
       activeCondition,
       globalSettings,
       checkpointOverrides,
