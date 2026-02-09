@@ -265,68 +265,75 @@ export function WeatherDataOverlay({
     <div
       ref={containerRef}
       className={cn(
-        "pointer-events-auto absolute inset-0 z-10 flex select-none flex-col p-6",
+        "pointer-events-auto absolute inset-0 z-10 flex select-none flex-col",
         className,
       )}
     >
-      {/* Current weather */}
-      <div className="flex flex-col items-start">
-        <h2
-          className={cn("text-[17px] font-medium tracking-tight", textSecondary)}
-          style={{
-            fontFamily: '"SF Pro Display", system-ui, sans-serif',
-            textShadow: shadowStyle,
-          }}
-        >
-          {location}
-        </h2>
-
-        <div className="flex items-start gap-1.5">
-          <span
+      {/* Current weather (more inset than forecast strip) */}
+      <div className="px-6 pt-6">
+        <div className="flex flex-col items-start">
+          <h2
             className={cn(
-              "text-[72px] font-[200] leading-none tracking-[-0.04em]",
-              textPrimary,
+              "text-[17px] font-medium tracking-tight",
+              textSecondary,
             )}
             style={{
-              fontFamily: '"SF Pro Display", "Helvetica Neue", system-ui, sans-serif',
-              fontFeatureSettings: '"tnum"',
-              textShadow: isDark
-                ? "0 2px 20px rgba(0,0,0,0.25)"
-                : "0 2px 20px rgba(255,255,255,0.3)",
+              fontFamily: '"SF Pro Display", system-ui, sans-serif',
+              textShadow: shadowStyle,
             }}
-            aria-label={`${Math.round(temperature)} degrees ${unit === "celsius" ? "Celsius" : "Fahrenheit"}`}
           >
-            {Math.round(temperature)}
-          </span>
-          <span
-            className={cn("mt-2 text-[28px] font-[200]", textMuted)}
-            style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
-            aria-hidden="true"
-          >
-            °{unitSymbol}
-          </span>
-        </div>
+            {location}
+          </h2>
 
-        <div
-          className="mt-1 flex items-center gap-4"
-          style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
-        >
-          <span className="text-[15px] font-light tabular-nums">
-            <span className={textSubtle}>H </span>
-            <span className={textPrimary}>{Math.round(tempHigh)}°</span>
-          </span>
-          <span className="text-[15px] font-light tabular-nums">
-            <span className={textSubtle}>L </span>
-            <span className={textPrimary}>{Math.round(tempLow)}°</span>
-          </span>
+          <div className="flex items-start gap-1.5">
+            <span
+              className={cn(
+                "text-[72px] font-[200] leading-none tracking-[-0.04em]",
+                textPrimary,
+              )}
+              style={{
+                fontFamily:
+                  '"SF Pro Display", "Helvetica Neue", system-ui, sans-serif',
+                fontFeatureSettings: '"tnum"',
+                textShadow: isDark
+                  ? "0 2px 20px rgba(0,0,0,0.25)"
+                  : "0 2px 20px rgba(255,255,255,0.3)",
+              }}
+              aria-label={`${Math.round(temperature)} degrees ${unit === "celsius" ? "Celsius" : "Fahrenheit"}`}
+            >
+              {Math.round(temperature)}
+            </span>
+            <span
+              className={cn("mt-2 text-[28px] font-[200]", textMuted)}
+              style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
+              aria-hidden="true"
+            >
+              °{unitSymbol}
+            </span>
+          </div>
+
+          <div
+            className="mt-1 flex items-center gap-4"
+            style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
+          >
+            <span className="text-[15px] font-light tabular-nums">
+              <span className={textSubtle}>H </span>
+              <span className={textPrimary}>{Math.round(tempHigh)}°</span>
+            </span>
+            <span className="text-[15px] font-light tabular-nums">
+              <span className={textSubtle}>L </span>
+              <span className={textPrimary}>{Math.round(tempLow)}°</span>
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Spacer */}
       <div className="flex-1" />
 
-        {/* Forecast strip - hidden at small container sizes */}
-        {forecast.length > 0 && (
+      {/* Forecast strip - hidden at small container sizes (less inset than header) */}
+      {forecast.length > 0 && (
+        <div className="px-3 pb-3">
           <div ref={cardRef} className="relative hidden @[280px]/weather:block">
             {/* Edge shine - outside overflow-hidden so it aligns with border */}
             <div
@@ -420,7 +427,8 @@ export function WeatherDataOverlay({
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
