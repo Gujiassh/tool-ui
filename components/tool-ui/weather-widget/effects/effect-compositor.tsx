@@ -44,7 +44,7 @@ function resolveAutoQuality(): ResolvedEffectQuality {
       : undefined;
   const mem =
     typeof navigator !== "undefined"
-      ? (navigator as any).deviceMemory
+      ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory
       : undefined;
 
   const isSmallScreen = window.innerWidth < 768;

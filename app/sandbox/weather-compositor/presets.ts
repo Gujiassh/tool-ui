@@ -4,6 +4,12 @@ import {
   getTimeOfDay,
   getNearestCheckpoint,
 } from "@/components/tool-ui/weather-widget/effects";
+import {
+  TIME_CHECKPOINTS,
+  TIME_CHECKPOINT_ORDER,
+  type TimeCheckpoint,
+} from "@/components/tool-ui/weather-widget/effects/tuning";
+import type { WeatherTuningConfig } from "./tuning/tuning-schema";
 
 // Weather conditions grouped by category for intuitive navigation
 export interface ConditionGroup {
@@ -199,12 +205,22 @@ export interface CompositorStateV1 {
   overrides: Partial<Record<WeatherCondition, ConditionOverrides>>;
 }
 
-export interface CompositorState {
+export interface CompositorStateV2 {
   version: 2;
   activeCondition: WeatherCondition;
   globalSettings: GlobalSettings;
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
 }
+
+export interface CompositorStateV3 {
+  version: 3;
+  activeCondition: WeatherCondition;
+  globalSettings: GlobalSettings;
+  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+  curveConfig: WeatherTuningConfig;
+}
+
+export type CompositorState = CompositorStateV3;
 
 export interface FullCompositorParams {
   layers: LayerToggles;
@@ -882,7 +898,170 @@ function createEmptyCheckpointOverrides(): CheckpointOverrides {
   };
 }
 
-function migrateV1ToV2(v1: CompositorStateV1): CompositorState {
+export type CheckpointOverridesMap = Partial<
+  Record<WeatherCondition, CheckpointOverrides>
+>;
+
+export function checkpointOverridesToConfig(
+  checkpointOverrides: CheckpointOverridesMap,
+): WeatherTuningConfig {
+  const conditions: WeatherTuningConfig["conditions"] = {};
+
+  for (const [conditionKey, overrides] of Object.entries(checkpointOverrides)) {
+    const condition = conditionKey as WeatherCondition;
+    if (!overrides) continue;
+
+    const baseByCheckpoint = buildBaseByCheckpoint(condition);
+    const paramMap = collectParamOverrides(overrides, baseByCheckpoint);
+
+    const curves: Record<
+      string,
+      {
+        knots: { t: number; value: number | boolean }[];
+        mode?: "absolute" | "delta";
+        interpolation?: "linear" | "ease" | "step";
+      }
+    > = {};
+
+    for (const [paramId, info] of paramMap.entries()) {
+      const knots = TIME_CHECKPOINT_ORDER.map((checkpoint) => {
+        const t = TIME_CHECKPOINTS[checkpoint];
+        const baseValue = getBaseValue(baseByCheckpoint[checkpoint], info);
+        const overrideValue = info.overrides[checkpoint];
+
+        if (info.type === "number") {
+          const delta =
+            typeof overrideValue === "number"
+              ? overrideValue - (baseValue as number)
+              : 0;
+          return { t, value: delta };
+        }
+
+        const value =
+          typeof overrideValue === "boolean"
+            ? overrideValue
+            : (baseValue as boolean);
+        return { t, value };
+      });
+
+      if (info.type === "number") {
+        const hasNonZero = knots.some(
+          (k) => typeof k.value === "number" && k.value !== 0,
+        );
+        if (!hasNonZero) continue;
+
+        curves[paramId] = {
+          knots,
+          mode: "delta",
+        };
+      } else {
+        if (!info.hasOverride) continue;
+
+        curves[paramId] = {
+          knots,
+          interpolation: "step",
+        };
+      }
+    }
+
+    if (Object.keys(curves).length > 0) {
+      conditions[condition] = { curves };
+    }
+  }
+
+  return {
+    version: 1,
+    conditions,
+  };
+}
+
+interface ParamAggregate {
+  group: keyof FullCompositorParams;
+  key: string;
+  type: "number" | "boolean";
+  overrides: Partial<Record<TimeCheckpoint, number | boolean>>;
+  hasOverride: boolean;
+}
+
+function collectParamOverrides(
+  overrides: CheckpointOverrides,
+  baseByCheckpoint: Record<TimeCheckpoint, FullCompositorParams>,
+): Map<string, ParamAggregate> {
+  const paramMap = new Map<string, ParamAggregate>();
+
+  for (const checkpoint of TIME_CHECKPOINT_ORDER) {
+    const override = overrides[checkpoint] ?? {};
+    const groups = Object.keys(override) as (keyof ConditionOverrides)[];
+
+    for (const groupKey of groups) {
+      const groupOverrides = override[groupKey];
+      if (!groupOverrides || typeof groupOverrides !== "object") continue;
+
+      for (const [key, value] of Object.entries(
+        groupOverrides as Record<string, number | boolean>,
+      )) {
+        if (typeof value !== "number" && typeof value !== "boolean") continue;
+
+        const group = groupKey as keyof FullCompositorParams;
+        const paramId = `${group}.${key}`;
+        const baseValue = getBaseValue(baseByCheckpoint[checkpoint], {
+          group,
+          key,
+        });
+
+        const type =
+          typeof baseValue === "boolean" ? ("boolean" as const) : ("number" as const);
+        const entry = paramMap.get(paramId) ?? {
+          group,
+          key,
+          type,
+          overrides: {},
+          hasOverride: false,
+        };
+
+        entry.overrides[checkpoint] = value;
+        entry.hasOverride = true;
+        paramMap.set(paramId, entry);
+      }
+    }
+  }
+
+  return paramMap;
+}
+
+function getBaseValue(
+  base: FullCompositorParams,
+  info: { group: keyof FullCompositorParams; key: string },
+): number | boolean {
+  const group = base[info.group] as Record<string, number | boolean>;
+  return group[info.key];
+}
+
+function buildBaseByCheckpoint(
+  condition: WeatherCondition,
+): Record<TimeCheckpoint, FullCompositorParams> {
+  const baseByCheckpoint = {} as Record<TimeCheckpoint, FullCompositorParams>;
+
+  for (const checkpoint of TIME_CHECKPOINT_ORDER) {
+    const time = TIME_CHECKPOINTS[checkpoint];
+    const timestamp = getTimestamp(time);
+    const base = getBaseParamsForCondition(condition, timestamp);
+    base.celestial.timeOfDay = time;
+    baseByCheckpoint[checkpoint] = base;
+  }
+
+  return baseByCheckpoint;
+}
+
+function getTimestamp(timeOfDay: number): string {
+  const date = new Date();
+  const hours = Math.floor(timeOfDay * 24);
+  const minutes = Math.floor((timeOfDay * 24 - hours) * 60);
+  date.setUTCHours(hours, minutes, 0, 0);
+  return date.toISOString();
+}
+
+function migrateV1ToV2(v1: CompositorStateV1): CompositorStateV2 {
   const checkpointOverrides: Partial<
     Record<WeatherCondition, CheckpointOverrides>
   > = {};
@@ -906,16 +1085,32 @@ function migrateV1ToV2(v1: CompositorStateV1): CompositorState {
   };
 }
 
+function migrateV2ToV3(v2: CompositorStateV2): CompositorStateV3 {
+  return {
+    version: 3,
+    activeCondition: v2.activeCondition,
+    globalSettings: v2.globalSettings,
+    checkpointOverrides: v2.checkpointOverrides,
+    curveConfig: checkpointOverridesToConfig(v2.checkpointOverrides),
+  };
+}
+
 function isV1State(state: unknown): state is CompositorStateV1 {
   if (!state || typeof state !== "object") return false;
   const s = state as Record<string, unknown>;
   return s.version === undefined && "overrides" in s;
 }
 
-function isV2State(state: unknown): state is CompositorState {
+function isV2State(state: unknown): state is CompositorStateV2 {
   if (!state || typeof state !== "object") return false;
   const s = state as Record<string, unknown>;
   return s.version === 2 && "checkpointOverrides" in s;
+}
+
+function isV3State(state: unknown): state is CompositorStateV3 {
+  if (!state || typeof state !== "object") return false;
+  const s = state as Record<string, unknown>;
+  return s.version === 3 && "checkpointOverrides" in s && "curveConfig" in s;
 }
 
 export function loadFromStorage(): CompositorState | null {
@@ -926,14 +1121,21 @@ export function loadFromStorage(): CompositorState | null {
 
     const parsed = JSON.parse(stored);
 
-    if (isV2State(parsed)) {
+    if (isV3State(parsed)) {
       return parsed;
     }
 
-    if (isV1State(parsed)) {
-      const migrated = migrateV1ToV2(parsed);
+    if (isV2State(parsed)) {
+      const migrated = migrateV2ToV3(parsed);
       saveToStorage(migrated);
       return migrated;
+    }
+
+    if (isV1State(parsed)) {
+      const v2 = migrateV1ToV2(parsed);
+      const v3 = migrateV2ToV3(v2);
+      saveToStorage(v3);
+      return v3;
     }
 
     return null;
@@ -979,13 +1181,19 @@ export function importFromFile(file: File): Promise<CompositorState> {
       try {
         const parsed = JSON.parse(e.target?.result as string);
 
-        if (isV2State(parsed)) {
+        if (isV3State(parsed)) {
           resolve(parsed);
           return;
         }
 
+        if (isV2State(parsed)) {
+          resolve(migrateV2ToV3(parsed));
+          return;
+        }
+
         if (isV1State(parsed)) {
-          resolve(migrateV1ToV2(parsed));
+          const v2 = migrateV1ToV2(parsed);
+          resolve(migrateV2ToV3(v2));
           return;
         }
 
