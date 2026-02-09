@@ -2871,6 +2871,14 @@ export function WeatherEffectsCanvas({
 
               if (!visible) {
                 stopRenderLoop();
+                // Release our budget slot while offscreen so other widgets can render.
+                // This is especially important in the tuning studio, where many canvases
+                // exist but only a subset are visible at once.
+                disposeGL();
+                if (hasWebglBudgetSlotRef.current) {
+                  releaseWeatherWebglCanvas(canvas);
+                }
+                hasWebglBudgetSlotRef.current = null;
                 return;
               }
 
