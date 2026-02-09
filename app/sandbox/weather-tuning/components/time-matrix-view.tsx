@@ -250,28 +250,21 @@ function CheckpointPreview({
 export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) {
   return (
     <div className="flex h-full flex-col">
-      <div className="border-border/50 bg-background sticky top-0 z-10 border-b px-4 py-3">
-        <div className="grid grid-cols-[160px_repeat(4,minmax(0,1fr))] items-end gap-3">
-          <div />
+      {/* Keep the widgets always visible while scrolling parameters */}
+      <div className="border-border/30 bg-background/95 shrink-0 border-b px-4 py-4 backdrop-blur">
+        <div className="grid grid-cols-4 gap-3">
           {TIME_CHECKPOINT_ORDER.map((checkpoint) => (
-            <div key={checkpoint} />
+            <CheckpointPreview
+              key={checkpoint}
+              condition={condition}
+              checkpoint={checkpoint}
+              tuningState={tuningState}
+            />
           ))}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-6">
-        <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 py-4 backdrop-blur border-b border-border/30">
-          <div className="grid grid-cols-4 gap-3">
-            {TIME_CHECKPOINT_ORDER.map((checkpoint) => (
-              <CheckpointPreview
-                key={checkpoint}
-                condition={condition}
-                checkpoint={checkpoint}
-                tuningState={tuningState}
-              />
-            ))}
-          </div>
-        </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
         {PARAMETER_GROUPS.map((group) => {
           const Icon = PARAMETER_GROUP_ICONS[group.name];
           const color = PARAMETER_GROUP_COLORS[group.name] ?? {
@@ -280,19 +273,21 @@ export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) 
           };
 
           return (
-            <div key={group.name} className="mt-4">
-              <div className="flex items-center gap-2 text-[10px] font-medium tracking-wider uppercase">
-                {Icon ? (
-                  <div
-                    className={cn(
-                      "flex size-4 items-center justify-center rounded-full border border-border/40 bg-muted/40",
-                      color.dot,
-                    )}
-                  >
-                    <Icon className="size-2.5" />
-                  </div>
-                ) : null}
-                <span className={color.text}>{group.name}</span>
+            <div key={group.name} className="mt-6">
+              <div className="sticky top-0 z-10 -mx-4 border-b border-border/30 bg-background/95 px-4 py-2 backdrop-blur">
+                <div className="flex items-center gap-2 text-[10px] font-medium tracking-wider uppercase">
+                  {Icon ? (
+                    <div
+                      className={cn(
+                        "flex size-4 items-center justify-center rounded-full border border-border/40 bg-muted/40",
+                        color.dot,
+                      )}
+                    >
+                      <Icon className="size-2.5" />
+                    </div>
+                  ) : null}
+                  <span className={color.text}>{group.name}</span>
+                </div>
               </div>
               <div className="mt-2">
                 {group.params.map((param) => (
