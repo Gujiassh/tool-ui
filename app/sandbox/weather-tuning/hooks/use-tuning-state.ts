@@ -274,6 +274,15 @@ export function useTuningState() {
     [],
   );
 
+  const clearStudioDeltas = useCallback(() => {
+    // Clear all pending tuning edits + review workflow state. This is used after
+    // applying an export so subsequent applies only include new changes.
+    setCheckpointOverrides({});
+    setCheckpoints({});
+    setSignedOff(new Set());
+    setIsPreviewing(false);
+  }, []);
+
   const updateCheckpointOverrides = useCallback(
     (
       condition: WeatherCondition,
@@ -641,6 +650,7 @@ export function useTuningState() {
 
   return {
     checkpointOverrides,
+    setCheckpointOverrides,
     globalTimeOfDay,
     setGlobalTimeOfDay,
     activeEditCheckpoint,
@@ -663,6 +673,7 @@ export function useTuningState() {
     setSignedOff,
     signedOffCount,
     isHydrated,
+    clearStudioDeltas,
     getParamsForCondition,
     getBaseParams,
     getBaseParamsForCheckpoint,

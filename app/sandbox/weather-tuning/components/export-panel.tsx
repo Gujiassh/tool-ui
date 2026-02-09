@@ -64,7 +64,11 @@ export function ExportPanel({
 
       setToast(`Applied tuning (and cleared studio deltas) → ${filePath}`);
       setApplyStatus("success");
-      onApplied?.();
+      try {
+        onApplied?.();
+      } catch (error) {
+        console.error("onApplied() failed after apply.", error);
+      }
       setTimeout(() => setApplyStatus("idle"), 2000);
     } catch (error) {
       console.error("Failed to apply export.", error);
