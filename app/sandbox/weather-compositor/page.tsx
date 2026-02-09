@@ -804,6 +804,26 @@ export default function WeatherCompositorSandbox() {
     rain,
     lightning,
     snow,
+    post: {
+      enabled: true,
+      haze: 0,
+      hazeHorizon: 0.5,
+      hazeDesaturation: 0.3,
+      hazeContrast: 0.2,
+      bloomIntensity: 0,
+      bloomThreshold: 0.8,
+      bloomKnee: 0.5,
+      bloomRadius: 8,
+      bloomTapScale: 1,
+      exposureIntensity: 0,
+      exposureDesaturation: 0.3,
+      exposureRecovery: 2,
+      godRayIntensity: 0,
+      godRayDecay: 0.96,
+      godRayDensity: 0.5,
+      godRayWeight: 0.3,
+      godRaySamples: 60,
+    },
   };
 
   const debouncedParams = useDebounce(currentParams, 300);

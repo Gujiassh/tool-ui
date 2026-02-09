@@ -183,6 +183,10 @@ function mapConditionOverridesToToolUi(
     out.interactions = interactions as WeatherEffectsOverrides["interactions"];
   }
 
+  if (input.post) {
+    out.post = input.post as WeatherEffectsOverrides["post"];
+  }
+
   return out;
 }
 
@@ -262,6 +266,14 @@ export function useCodeGen(
     if (conditionOverride.snow) {
       lines.push(`${indent}snow: {`);
       for (const [key, value] of Object.entries(conditionOverride.snow)) {
+        lines.push(`${indent}  ${key}: ${typeof value === "number" ? value.toFixed(4) : JSON.stringify(value)},`);
+      }
+      lines.push(`${indent}},`);
+    }
+
+    if (conditionOverride.post) {
+      lines.push(`${indent}post: {`);
+      for (const [key, value] of Object.entries(conditionOverride.post)) {
         lines.push(`${indent}  ${key}: ${typeof value === "number" ? value.toFixed(4) : JSON.stringify(value)},`);
       }
       lines.push(`${indent}},`);
@@ -365,6 +377,7 @@ export function useCodeGen(
         writeGroup("lightning");
         writeGroup("snow");
         writeGroup("interactions");
+        writeGroup("post");
 
         lines.push("    },");
       }
