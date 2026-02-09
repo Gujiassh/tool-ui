@@ -12,7 +12,6 @@ import {
   Snowflake,
   CloudHail,
   Wind,
-  Droplets,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "./_adapter";
@@ -85,9 +84,6 @@ export interface WeatherDataOverlayProps {
   temperature: number;
   tempHigh: number;
   tempLow: number;
-  humidity?: number;
-  windSpeed?: number;
-  visibility?: number;
   forecast?: ForecastDay[];
   unit?: TemperatureUnit;
   /**
@@ -115,9 +111,6 @@ export function WeatherDataOverlay({
   temperature,
   tempHigh,
   tempLow,
-  humidity,
-  windSpeed,
-  visibility: _visibility,
   forecast = [],
   unit = "fahrenheit",
   updatedAtLabel: _updatedAtLabel,
@@ -268,8 +261,6 @@ export function WeatherDataOverlay({
     ? "0 1px 8px rgba(0,0,0,0.3)"
     : "0 1px 8px rgba(255,255,255,0.3)";
 
-  const hasStats = humidity !== undefined || windSpeed !== undefined;
-
   return (
     <div
       ref={containerRef}
@@ -328,28 +319,6 @@ export function WeatherDataOverlay({
             <span className={textSubtle}>L </span>
             <span className={textPrimary}>{Math.round(tempLow)}°</span>
           </span>
-
-          {hasStats && (
-            <>
-              <div className={cn("h-3 w-px", isDark ? "bg-white/10" : "bg-black/10")} />
-              {humidity !== undefined && (
-                <div className="flex items-center gap-1">
-                  <Droplets className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
-                  <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
-                    {Math.round(humidity)}%
-                  </span>
-                </div>
-              )}
-              {windSpeed !== undefined && (
-                <div className="flex items-center gap-1">
-                  <Wind className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
-                  <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
-                    {Math.round(windSpeed)} mph
-                  </span>
-                </div>
-              )}
-            </>
-          )}
         </div>
       </div>
 

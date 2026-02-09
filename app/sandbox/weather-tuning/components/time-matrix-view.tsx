@@ -235,9 +235,6 @@ function CheckpointPreview({
           temperature={overlayData.temperature}
           tempHigh={overlayData.tempHigh}
           tempLow={overlayData.tempLow}
-          humidity={overlayData.humidity}
-          windSpeed={overlayData.windSpeed}
-          visibility={overlayData.visibility}
           forecast={overlayData.forecast}
           unit={overlayData.unit}
           timeOfDay={params.celestial.timeOfDay}

@@ -21,9 +21,6 @@ export interface WeatherOverlayStubData {
   temperature: number;
   tempHigh: number;
   tempLow: number;
-  humidity: number;
-  windSpeed: number;
-  visibility: number;
   forecast: ForecastDay[];
   unit: TemperatureUnit;
 }
@@ -37,9 +34,6 @@ export function createWeatherOverlayStubData(
     temperature: 72,
     tempHigh: 78,
     tempLow: 65,
-    humidity: 45,
-    windSpeed: 8,
-    visibility: 10,
     forecast: [
       { day: "Today", tempMin: 65, tempMax: 78, condition },
       { day: "Tue", tempMin: 64, tempMax: 77, condition: "partly-cloudy" },
@@ -50,4 +44,3 @@ export function createWeatherOverlayStubData(
     unit: "fahrenheit",
   };
 }
-
