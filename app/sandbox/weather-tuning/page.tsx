@@ -124,6 +124,13 @@ export default function WeatherTuningPage() {
           <ExportPanel
             checkpointOverrides={state.checkpointOverrides}
             signedOff={state.signedOff}
+            onApplied={() => {
+              // After applying to the repo, treat the studio as "clean" so the next
+              // Apply only includes new changes (avoids the feeling of stale deltas).
+              state.setCheckpointOverrides({});
+              state.setCheckpoints({});
+              state.setSignedOff(new Set());
+            }}
           />
         </div>
       </header>
