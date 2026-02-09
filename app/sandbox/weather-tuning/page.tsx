@@ -17,7 +17,7 @@ import type { TimeCheckpoint } from "./types";
 
 export default function WeatherTuningPage() {
   const state = useTuningState();
-  const [viewMode, setViewMode] = useState<ViewMode>("condition");
+  const [viewMode, setViewMode] = useState<ViewMode>("time");
   const {
     selectedCondition,
     setSelectedCondition,
@@ -197,7 +197,6 @@ export default function WeatherTuningPage() {
                   expandedGroups={state.expandedGroups}
                   currentTime={state.globalTimeOfDay}
                   showWidgetOverlay={state.showWidgetOverlay}
-                  glassParams={state.glassParams}
                   onParamsChange={(params) =>
                     state.updateParams(state.selectedCondition!, params)
                   }
@@ -210,7 +209,6 @@ export default function WeatherTuningPage() {
                   onToggleWidgetOverlay={() =>
                     state.setShowWidgetOverlay(!state.showWidgetOverlay)
                   }
-                  onGlassParamsChange={state.setGlassParams}
                   onCopyLayer={(targetCondition, layerKey) =>
                     state.copyLayerFromCondition(
                       state.selectedCondition!,

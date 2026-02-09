@@ -180,7 +180,7 @@ function ConditionPreview({
       <WeatherEffectsCanvas className="absolute inset-0" {...canvasProps} />
       <div className="absolute inset-0 z-10">
         <WeatherDataOverlay
-          glassParams={tuningState.glassParams}
+          glassParams={params.glass}
           location={overlayData.location}
           condition={condition}
           temperature={overlayData.temperature}

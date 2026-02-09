@@ -4,6 +4,16 @@ import { useMemo } from "react";
 import { cn } from "@/lib/ui/cn";
 import { Slider } from "@/components/ui/slider";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
+import type { LucideIcon } from "lucide-react";
+import {
+  Cloud,
+  CloudLightning,
+  CloudRain,
+  CloudSnow,
+  Sparkles,
+  SunDim,
+  SunMedium,
+} from "lucide-react";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import type { TimeCheckpoint } from "../types";
 import type { TuningStateReturn } from "../hooks/use-tuning-state";
@@ -18,6 +28,29 @@ import {
   type ParameterDef,
   type TunableLayerKey,
 } from "./parameter-definitions";
+
+const PARAMETER_GROUP_ICONS: Record<string, LucideIcon> = {
+  Sky: SunDim,
+  "Sun Rays": SunMedium,
+  Clouds: Cloud,
+  Rain: CloudRain,
+  Snow: CloudSnow,
+  Lightning: CloudLightning,
+  Glass: Sparkles,
+};
+
+const PARAMETER_GROUP_COLORS: Record<
+  string,
+  { dot: string; text: string }
+> = {
+  Sky: { dot: "text-sky-500/80", text: "text-sky-500/80" },
+  "Sun Rays": { dot: "text-amber-500/80", text: "text-amber-500/80" },
+  Clouds: { dot: "text-slate-400/80", text: "text-slate-400/80" },
+  Rain: { dot: "text-blue-500/80", text: "text-blue-500/80" },
+  Snow: { dot: "text-cyan-400/80", text: "text-cyan-400/80" },
+  Lightning: { dot: "text-violet-400/80", text: "text-violet-400/80" },
+  Glass: { dot: "text-teal-400/80", text: "text-teal-400/80" },
+};
 
 interface TimeMatrixViewProps {
   tuningState: TuningStateReturn;
@@ -196,7 +229,7 @@ function CheckpointPreview({
       <WeatherEffectsCanvas className="absolute inset-0" {...canvasProps} />
       <div className="absolute inset-0 z-10">
         <WeatherDataOverlay
-          glassParams={tuningState.glassParams}
+          glassParams={params.glass}
           location={overlayData.location}
           condition={condition}
           temperature={overlayData.temperature}
@@ -219,16 +252,9 @@ export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) 
     <div className="flex h-full flex-col">
       <div className="border-border/50 bg-background sticky top-0 z-10 border-b px-4 py-3">
         <div className="grid grid-cols-[160px_repeat(4,minmax(0,1fr))] items-end gap-3">
-          <div>
-            <h2 className="text-sm font-medium">Time Checkpoints</h2>
-            <p className="text-muted-foreground mt-1 text-[10px]">
-              Adjust a single condition across all checkpoints
-            </p>
-          </div>
+          <div />
           {TIME_CHECKPOINT_ORDER.map((checkpoint) => (
-            <div key={checkpoint} className="text-xs font-medium text-muted-foreground">
-              {TIME_CHECKPOINTS[checkpoint].label}
-            </div>
+            <div key={checkpoint} />
           ))}
         </div>
       </div>
@@ -246,24 +272,42 @@ export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) 
             ))}
           </div>
         </div>
-        {PARAMETER_GROUPS.map((group) => (
-          <div key={group.name} className="mt-4">
-            <div className="text-[10px] font-medium tracking-wider text-muted-foreground/60 uppercase">
-              {group.name}
+        {PARAMETER_GROUPS.map((group) => {
+          const Icon = PARAMETER_GROUP_ICONS[group.name];
+          const color = PARAMETER_GROUP_COLORS[group.name] ?? {
+            dot: "text-muted-foreground/60",
+            text: "text-muted-foreground/60",
+          };
+
+          return (
+            <div key={group.name} className="mt-4">
+              <div className="flex items-center gap-2 text-[10px] font-medium tracking-wider uppercase">
+                {Icon ? (
+                  <div
+                    className={cn(
+                      "flex size-4 items-center justify-center rounded-full border border-border/40 bg-muted/40",
+                      color.dot,
+                    )}
+                  >
+                    <Icon className="size-2.5" />
+                  </div>
+                ) : null}
+                <span className={color.text}>{group.name}</span>
+              </div>
+              <div className="mt-2">
+                {group.params.map((param) => (
+                  <ParameterTimeRow
+                    key={`${group.layer}.${param.key}`}
+                    param={param}
+                    layer={group.layer}
+                    tuningState={tuningState}
+                    condition={condition}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="mt-2">
-              {group.params.map((param) => (
-                <ParameterTimeRow
-                  key={`${group.layer}.${param.key}`}
-                  param={param}
-                  layer={group.layer}
-                  tuningState={tuningState}
-                  condition={condition}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

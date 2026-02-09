@@ -804,6 +804,15 @@ export default function WeatherCompositorSandbox() {
     rain,
     lightning,
     snow,
+    glass: {
+      enabled: true,
+      depth: 3,
+      strength: 75,
+      chromaticAberration: 6,
+      blur: 1.5,
+      brightness: 0.8,
+      saturation: 1.3,
+    },
     post: {
       enabled: true,
       haze: 0,

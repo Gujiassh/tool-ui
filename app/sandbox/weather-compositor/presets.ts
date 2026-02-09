@@ -172,6 +172,16 @@ export interface PostParams {
   godRaySamples: number;
 }
 
+export interface GlassParams {
+  enabled: boolean;
+  depth: number;
+  strength: number;
+  chromaticAberration: number;
+  blur: number;
+  brightness: number;
+  saturation: number;
+}
+
 export interface ConditionOverrides {
   layers?: Partial<LayerToggles>;
   celestial?: Partial<CelestialParams>;
@@ -179,6 +189,7 @@ export interface ConditionOverrides {
   rain?: Partial<RainParams>;
   lightning?: Partial<LightningParams>;
   snow?: Partial<SnowParams>;
+  glass?: Partial<GlassParams>;
   post?: Partial<PostParams>;
 }
 
@@ -230,6 +241,7 @@ export interface FullCompositorParams {
   rain: RainParams;
   lightning: LightningParams;
   snow: SnowParams;
+  glass: GlassParams;
   post: PostParams;
 }
 
@@ -346,6 +358,15 @@ export function getBaseParamsForCondition(
       sparkle: 0.2,
       visibility: 1.0,
     },
+    glass: {
+      enabled: true,
+      depth: 3,
+      strength: 75,
+      chromaticAberration: 6,
+      blur: 1.5,
+      brightness: 0.8,
+      saturation: 1.3,
+    },
     post: {
       enabled: true,
       haze: 0,
@@ -388,6 +409,7 @@ export function mergeWithOverrides(
     rain: { ...base.rain, ...overrides.rain },
     lightning: { ...base.lightning, ...overrides.lightning },
     snow: { ...base.snow, ...overrides.snow },
+    glass: { ...base.glass, ...overrides.glass },
     post: { ...base.post, ...overrides.post },
   };
 }
@@ -420,6 +442,9 @@ export function extractOverrides(
 
   const snowDiff = diffObjects(current.snow, base.snow);
   if (Object.keys(snowDiff).length > 0) overrides.snow = snowDiff;
+
+  const glassDiff = diffObjects(current.glass, base.glass);
+  if (Object.keys(glassDiff).length > 0) overrides.glass = glassDiff;
 
   const postDiff = diffObjects(current.post, base.post);
   if (Object.keys(postDiff).length > 0) overrides.post = postDiff;

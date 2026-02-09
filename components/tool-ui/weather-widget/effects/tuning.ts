@@ -34,6 +34,15 @@ export interface WeatherEffectsOverrides {
   rain?: Partial<RainParams>;
   lightning?: Partial<LightningParams>;
   snow?: Partial<SnowParams>;
+  glass?: {
+    enabled?: boolean;
+    depth?: number;
+    strength?: number;
+    chromaticAberration?: number;
+    blur?: number;
+    brightness?: number;
+    saturation?: number;
+  };
   interactions?: Partial<InteractionParams>;
   post?: Partial<PostProcessParams>;
 }

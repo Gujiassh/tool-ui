@@ -42,6 +42,7 @@ type LayerKey =
   | "rain"
   | "lightning"
   | "snow"
+  | "glass"
   | "post";
 
 interface ParameterPanelProps {

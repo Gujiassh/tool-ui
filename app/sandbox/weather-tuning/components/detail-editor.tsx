@@ -7,10 +7,9 @@ import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schem
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects";
 import { WeatherDataOverlay } from "./weather-data-overlay";
 import { GlassControls } from "./glass-controls";
-import type { GlassEffectParams } from "../hooks/use-tuning-state";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import { CONDITION_LABELS } from "../../weather-compositor/presets";
-import type { FullCompositorParams } from "../../weather-compositor/presets";
+import type { FullCompositorParams, GlassParams } from "../../weather-compositor/presets";
 import { ParameterPanel } from "./parameter-panel";
 import { TIME_CHECKPOINT_ORDER, TIME_CHECKPOINTS } from "../lib/constants";
 import type { ConditionCheckpoints, TimeCheckpoint } from "../types";
@@ -29,6 +28,7 @@ type LayerKey =
   | "rain"
   | "lightning"
   | "snow"
+  | "glass"
   | "post";
 
 interface DetailEditorProps {
@@ -42,14 +42,12 @@ interface DetailEditorProps {
   expandedGroups: Set<string>;
   currentTime: number;
   showWidgetOverlay: boolean;
-  glassParams: GlassEffectParams;
   onParamsChange: (params: FullCompositorParams) => void;
   onToggleGroup: (group: string) => void;
   onReset: () => void;
   onSignOff: () => void;
   onCheckpointClick: (checkpoint: TimeCheckpoint) => void;
   onToggleWidgetOverlay: () => void;
-  onGlassParamsChange: (params: GlassEffectParams) => void;
   onCopyLayer?: (targetCondition: WeatherCondition, layerKey: LayerKey) => void;
   onCopyLayerToAll?: (layerKey: LayerKey) => void;
   onCopyCheckpoint?: (targetCheckpoints: TimeCheckpoint[]) => void;
@@ -66,14 +64,12 @@ export function DetailEditor({
   expandedGroups,
   currentTime,
   showWidgetOverlay,
-  glassParams,
   onParamsChange,
   onToggleGroup,
   onReset,
   onSignOff,
   onCheckpointClick,
   onToggleWidgetOverlay,
-  onGlassParamsChange,
   onCopyLayer,
   onCopyLayerToAll,
   onCopyCheckpoint,
@@ -107,7 +103,7 @@ export function DetailEditor({
           {showWidgetOverlay && (
             <div className="absolute inset-0 z-20">
               <WeatherDataOverlay
-                glassParams={glassParams}
+                glassParams={params.glass}
                 location="San Francisco, CA"
                 condition={condition}
                 temperature={72}
@@ -286,7 +282,12 @@ export function DetailEditor({
       </div>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
-        <GlassControls params={glassParams} onChange={onGlassParamsChange} />
+        <GlassControls
+          params={params.glass}
+          onChange={(next: GlassParams) =>
+            onParamsChange({ ...params, glass: next })
+          }
+        />
 
         <div className="border-border/40 bg-card/30 min-h-0 flex-1 overflow-hidden rounded-lg border">
           <div className="scrollbar-subtle h-full overflow-y-auto">
