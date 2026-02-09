@@ -96,7 +96,7 @@ export function DetailEditor({
   return (
     <div className="flex h-full gap-5">
       <div className="flex w-[420px] shrink-0 flex-col gap-3">
-        <div className="group/widget border-border relative aspect-4/3 overflow-hidden rounded-xl border shadow-xl @container/weather">
+        <div className="group/widget border-border relative aspect-4/3 overflow-hidden rounded-xl border shadow-xl @container/weather [container-type:size]">
           <div className="absolute inset-0 bg-black">
             <WeatherEffectsCanvas
               className="absolute inset-0"

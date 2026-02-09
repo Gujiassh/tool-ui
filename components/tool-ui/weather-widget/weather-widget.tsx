@@ -92,7 +92,10 @@ export function WeatherWidget({
     <article
       data-slot="weather-widget"
       data-tool-ui-id={id}
-      className={cn("@container/weather w-full max-w-md", className)}
+      className={cn(
+        "@container/weather [container-type:size] w-full max-w-md",
+        className,
+      )}
     >
       <Card className={cn("relative overflow-clip aspect-[4/3] border-0 p-0 shadow-none", backgroundClass)}>
         {effectsEnabled && (
