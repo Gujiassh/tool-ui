@@ -10,18 +10,44 @@ interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
   signedOff: Set<WeatherCondition>;
   onApplied?: () => void;
+  onRecovered?: (checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>) => void;
 }
 
 export function ExportPanel({
   checkpointOverrides,
   signedOff,
   onApplied,
+  onRecovered,
 }: ExportPanelProps) {
   const [applyStatus, setApplyStatus] = useState<
     "idle" | "saving" | "success" | "error"
   >("idle");
   const [applyError, setApplyError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  const handleRecover = async () => {
+    setApplyError(null);
+    try {
+      const response = await fetch("/api/weather-tuning/recover");
+      if (!response.ok) {
+        const message = await response.text();
+        setApplyError(message || "Failed to recover tuning.");
+        return;
+      }
+      const payload = (await response.json()) as {
+        checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+      };
+      if (!payload?.checkpointOverrides) {
+        setApplyError("No recovered presets returned.");
+        return;
+      }
+      onRecovered?.(payload.checkpointOverrides);
+      setToast("Recovered tuning from repo presets");
+    } catch (error) {
+      console.error("Failed to recover tuning.", error);
+      setApplyError("Failed to recover tuning.");
+    }
+  };
 
   const handleApply = async () => {
     setApplyStatus("saving");
@@ -62,7 +88,7 @@ export function ExportPanel({
           ? payload.path
           : "components/tool-ui/weather-widget/effects/tuned-presets.ts";
 
-      setToast(`Applied tuning (and cleared studio deltas) → ${filePath}`);
+      setToast(`Applied tuning → ${filePath}`);
       setApplyStatus("success");
       try {
         onApplied?.();
@@ -86,21 +112,33 @@ export function ExportPanel({
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2"
-        onClick={handleApply}
-        disabled={applyStatus === "saving"}
-      >
-        <FileCode className="size-4" />
-        {applyStatus === "saving"
-          ? "Applying…"
-          : applyStatus === "success"
-            ? "Applied"
-            : "Apply to repo"}
-        {applyStatus === "success" && <Check className="size-4 text-emerald-400" />}
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={handleRecover}
+          disabled={applyStatus === "saving"}
+        >
+          <FileCode className="size-4" />
+          Recover from repo
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={handleApply}
+          disabled={applyStatus === "saving"}
+        >
+          <FileCode className="size-4" />
+          {applyStatus === "saving"
+            ? "Applying…"
+            : applyStatus === "success"
+              ? "Applied"
+              : "Apply to repo"}
+          {applyStatus === "success" && <Check className="size-4 text-emerald-400" />}
+        </Button>
+      </div>
       {applyError && (
         <span className="ml-2 text-xs text-red-500/80">{applyError}</span>
       )}
