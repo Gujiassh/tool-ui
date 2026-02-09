@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo } from "react";
 import { cn } from "@/lib/ui/cn";
 import { Slider } from "@/components/ui/slider";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
@@ -93,15 +93,11 @@ function ParameterTimeRow({
   layer,
   tuningState,
   condition,
-  onToggleCurve,
-  isCurveOpen,
 }: {
   param: ParameterDef;
   layer: TunableLayerKey;
   tuningState: TuningStateReturn;
   condition: WeatherCondition;
-  onToggleCurve?: () => void;
-  isCurveOpen?: boolean;
 }) {
   const values = useMemo(() => {
     return TIME_CHECKPOINT_ORDER.map((checkpoint) => {
@@ -136,20 +132,6 @@ function ParameterTimeRow({
       <div className="grid grid-cols-[160px_repeat(4,minmax(0,1fr))] items-start gap-3">
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground/70">
           <span>{param.label}</span>
-          {onToggleCurve && (
-            <button
-              type="button"
-              onClick={onToggleCurve}
-              className={cn(
-                "rounded px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider",
-                isCurveOpen
-                  ? "bg-foreground text-background"
-                  : "bg-muted/60 text-muted-foreground/70 hover:bg-muted"
-              )}
-            >
-              Keyframes
-            </button>
-          )}
         </div>
       {values.map(({ checkpoint, value, baseValue }) => {
         if (typeof value !== "number" || typeof baseValue !== "number") {
@@ -186,258 +168,6 @@ function ParameterTimeRow({
   );
 }
 
-type Keyframe = {
-  checkpoint: TimeCheckpoint;
-  t: number;
-  value: number | boolean;
-};
-
-function getNearestCheckpointKey(time: number): TimeCheckpoint {
-  const normalized = ((time % 1) + 1) % 1;
-  let nearest = TIME_CHECKPOINT_ORDER[0];
-  let minDist = Infinity;
-
-  for (const checkpoint of TIME_CHECKPOINT_ORDER) {
-    const value = TIME_CHECKPOINTS[checkpoint].value;
-    let dist = Math.abs(normalized - value);
-    if (dist > 0.5) dist = 1 - dist;
-    if (dist < minDist) {
-      minDist = dist;
-      nearest = checkpoint;
-    }
-  }
-
-  return nearest;
-}
-
-function normalizeKeyframes(
-  knots: Array<{ t: number; value: number | boolean }>,
-): Keyframe[] {
-  const normalized = new Map<TimeCheckpoint, Keyframe>();
-  for (const knot of knots) {
-    const checkpoint = getNearestCheckpointKey(knot.t);
-    normalized.set(checkpoint, {
-      checkpoint,
-      t: TIME_CHECKPOINTS[checkpoint].value,
-      value: knot.value,
-    });
-  }
-
-  return TIME_CHECKPOINT_ORDER.filter((checkpoint) =>
-    normalized.has(checkpoint),
-  ).map((checkpoint) => normalized.get(checkpoint)!);
-}
-
-function CurveEditor({
-  condition,
-  layer,
-  param,
-  tuningState,
-}: {
-  condition: WeatherCondition;
-  layer: TunableLayerKey;
-  param: ParameterDef;
-  tuningState: TuningStateReturn;
-}) {
-  const curve = tuningState.getCurveForParam(condition, layer, param.key);
-  const mode =
-    curve?.mode === "absolute" ? "absolute" : ("delta" as const);
-  const interpolation =
-    curve?.interpolation ?? (param.key === "autoMode" ? "step" : "linear");
-
-  const baseAt = useCallback(
-    (t: number) =>
-      tuningState.getBaseValueAtTime(
-        condition,
-        t,
-        layer,
-        param.key,
-      ) as number | boolean,
-    [condition, layer, param.key, tuningState],
-  );
-
-  const defaultKeyframes = useMemo(() => {
-    return TIME_CHECKPOINT_ORDER.map((checkpoint) => {
-      const t = TIME_CHECKPOINTS[checkpoint].value;
-      const full = tuningState.getFullParamsForCheckpoint(
-        condition,
-        checkpoint,
-      );
-      const group = full[layer] as Record<string, unknown>;
-      const value = group[param.key] as number;
-      return { checkpoint, t, value };
-    });
-  }, [condition, layer, param.key, tuningState]);
-
-  const uiKeyframes = useMemo(() => {
-    if (!curve || !curve.knots || curve.knots.length === 0) {
-      return defaultKeyframes;
-    }
-
-    const mapped = curve.knots.map((knot) => {
-      const value =
-        typeof knot.value === "number" && mode === "delta"
-          ? knot.value + (baseAt(knot.t) as number)
-          : knot.value;
-      return { t: knot.t, value };
-    });
-
-    return normalizeKeyframes(mapped);
-  }, [baseAt, curve, defaultKeyframes, mode]);
-
-  const commitKeyframes = useCallback(
-    (next: Array<Keyframe>) => {
-      const normalized = normalizeKeyframes(
-        next.map(({ t, value }) => ({ t, value })),
-      );
-      const storedKnots = normalized.map((knot) => {
-        const value =
-          mode === "delta"
-            ? knot.value - (baseAt(knot.t) as number)
-            : knot.value;
-        return { t: knot.t, value };
-      });
-
-      tuningState.setCurveForParam(condition, layer, param.key, {
-        knots: storedKnots,
-        mode,
-        interpolation,
-      });
-    },
-    [baseAt, condition, interpolation, layer, mode, param.key, tuningState],
-  );
-
-  const handleKeyframeChange = (
-    index: number,
-    update: Partial<Pick<Keyframe, "checkpoint" | "value">>,
-  ) => {
-    const next = uiKeyframes.map((frame, idx) => {
-      if (idx !== index) return frame;
-      const checkpoint = update.checkpoint ?? frame.checkpoint;
-      return {
-        ...frame,
-        checkpoint,
-        t: TIME_CHECKPOINTS[checkpoint].value,
-        value: update.value ?? frame.value,
-      };
-    });
-    commitKeyframes(next);
-  };
-
-  const handleRemoveKeyframe = (index: number) => {
-    const next = uiKeyframes.filter((_, idx) => idx !== index);
-    if (next.length === 0) {
-      tuningState.setCurveForParam(condition, layer, param.key, null);
-      return;
-    }
-    commitKeyframes(next);
-  };
-
-  const handleAddKeyframe = () => {
-    const used = new Set(uiKeyframes.map((frame) => frame.checkpoint));
-    const available = TIME_CHECKPOINT_ORDER.filter(
-      (checkpoint) => !used.has(checkpoint),
-    );
-    const nextCheckpoint = available[0];
-    if (!nextCheckpoint) return;
-
-    const full = tuningState.getFullParamsForCheckpoint(
-      condition,
-      nextCheckpoint,
-    );
-    const group = full[layer] as Record<string, unknown>;
-    const value = group[param.key] as number;
-
-    const next = [
-      ...uiKeyframes,
-      {
-        checkpoint: nextCheckpoint,
-        t: TIME_CHECKPOINTS[nextCheckpoint].value,
-        value,
-      },
-    ];
-    commitKeyframes(next);
-  };
-
-  // Mode and interpolation are preserved from existing curve config;
-  // the UI no longer exposes them since prod is checkpoint-only.
-
-  const usedCheckpoints = useMemo(
-    () => new Set(uiKeyframes.map((frame) => frame.checkpoint)),
-    [uiKeyframes],
-  );
-  const availableCheckpoints = useMemo(
-    () =>
-      TIME_CHECKPOINT_ORDER.filter(
-        (checkpoint) => !usedCheckpoints.has(checkpoint),
-      ),
-    [usedCheckpoints],
-  );
-
-  return (
-    <div className="mt-3 rounded-lg border border-border/30 bg-muted/20 p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-          Keyframe Editor
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleAddKeyframe}
-            disabled={availableCheckpoints.length === 0}
-            className="rounded border border-border/40 bg-background px-2 py-1 text-[10px] font-medium text-muted-foreground/70 hover:bg-muted"
-          >
-            Add keyframe
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-3 space-y-2">
-        {uiKeyframes.map((frame, index) => (
-          <div key={`${frame.checkpoint}-${index}`} className="grid grid-cols-[110px_1fr_88px] items-center gap-3">
-            <select
-              value={frame.checkpoint}
-              onChange={(e) =>
-                handleKeyframeChange(index, {
-                  checkpoint: e.target.value as TimeCheckpoint,
-                })
-              }
-              className="rounded border border-border/40 bg-background px-2 py-1 text-[10px]"
-            >
-              {TIME_CHECKPOINT_ORDER.map((checkpoint) => {
-                const isUsed =
-                  usedCheckpoints.has(checkpoint) &&
-                  checkpoint !== frame.checkpoint;
-                return (
-                  <option key={checkpoint} value={checkpoint} disabled={isUsed}>
-                    {TIME_CHECKPOINTS[checkpoint].label}
-                  </option>
-                );
-              })}
-            </select>
-            <Slider
-              value={[frame.value]}
-              min={param.min}
-              max={param.max}
-              step={param.step}
-              onValueChange={([next]) =>
-                handleKeyframeChange(index, { value: next })
-              }
-              className="relative w-full [&_[data-slot=slider-track]]:h-0.5 [&_[data-slot=slider-range]]:bg-foreground/20"
-            />
-            <button
-              type="button"
-              onClick={() => handleRemoveKeyframe(index)}
-              className="rounded border border-border/40 bg-background px-2 py-1 text-[10px] text-muted-foreground/60 hover:text-foreground"
-            >
-              Remove keyframe
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function CheckpointPreview({
   condition,
@@ -485,14 +215,12 @@ function CheckpointPreview({
 }
 
 export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) {
-  const [openParamId, setOpenParamId] = useState<string | null>(null);
-
   return (
     <div className="flex h-full flex-col">
       <div className="border-border/50 bg-background sticky top-0 z-10 border-b px-4 py-3">
         <div className="grid grid-cols-[160px_repeat(4,minmax(0,1fr))] items-end gap-3">
           <div>
-            <h2 className="text-sm font-medium">Time Keyframes</h2>
+            <h2 className="text-sm font-medium">Time Checkpoints</h2>
             <p className="text-muted-foreground mt-1 text-[10px]">
               Adjust a single condition across all checkpoints
             </p>
@@ -524,32 +252,15 @@ export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) 
               {group.name}
             </div>
             <div className="mt-2">
-              {group.params.map((param) => {
-                const paramId = `${group.layer}.${param.key}`;
-                const isOpen = openParamId === paramId;
-                return (
-                  <div key={paramId}>
-                    <ParameterTimeRow
-                      param={param}
-                      layer={group.layer}
-                      tuningState={tuningState}
-                      condition={condition}
-                      isCurveOpen={isOpen}
-                      onToggleCurve={() =>
-                        setOpenParamId(isOpen ? null : paramId)
-                      }
-                    />
-                    {isOpen && (
-                      <CurveEditor
-                        condition={condition}
-                        layer={group.layer}
-                        param={param}
-                        tuningState={tuningState}
-                      />
-                    )}
-                  </div>
-                );
-              })}
+              {group.params.map((param) => (
+                <ParameterTimeRow
+                  key={`${group.layer}.${param.key}`}
+                  param={param}
+                  layer={group.layer}
+                  tuningState={tuningState}
+                  condition={condition}
+                />
+              ))}
             </div>
           </div>
         ))}

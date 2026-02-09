@@ -31,122 +31,17 @@ describe("weather tuning resolver", () => {
     expect(result.celestial.skyBrightness).toBe(base.celestial.skyBrightness);
   });
 
-  test("global curves override base values", () => {
+  test("condition curves override base values at checkpoints", () => {
     const base = baseFor("clear");
     const config: WeatherTuningConfig = {
       version: 1,
-      global: {
-        "celestial.skyBrightness": {
-          knots: [
-            { t: 0, value: 0 },
-            { t: 1, value: 1 },
-          ],
-        },
-      },
-      conditions: {},
-    };
-
-    const result = resolveWeatherParams({
-      config,
-      condition: "clear",
-      timeOfDay: 0.5,
-      baseParams: base,
-    });
-
-    expect(result.celestial.skyBrightness).toBeCloseTo(0.5, 5);
-  });
-
-  test("delta curves add to base values", () => {
-    const base = baseFor("clear");
-    const config: WeatherTuningConfig = {
-      version: 1,
-      global: {
-        "celestial.skyBrightness": {
-          knots: [{ t: 0, value: 0.2 }],
-          mode: "delta",
-        },
-      },
-      conditions: {},
-    };
-
-    const result = resolveWeatherParams({
-      config,
-      condition: "clear",
-      timeOfDay: 0.5,
-      baseParams: base,
-    });
-
-    expect(result.celestial.skyBrightness).toBeCloseTo(
-      base.celestial.skyBrightness + 0.2,
-      6,
-    );
-  });
-
-  test("condition inheritance applies parent then child curves", () => {
-    const config: WeatherTuningConfig = {
-      version: 1,
-      global: {
-        "cloud.coverage": {
-          knots: [{ t: 0, value: 0.1 }],
-        },
-      },
       conditions: {
-        drizzle: {
+        clear: {
           curves: {
-            "cloud.coverage": { knots: [{ t: 0, value: 0.25 }] },
-          },
-        },
-        rain: {
-          parent: "drizzle",
-          curves: {
-            "cloud.coverage": { knots: [{ t: 0, value: 0.4 }] },
+            "celestial.skyBrightness": { knots: [{ t: 0.5, value: 1.1 }] },
           },
         },
       },
-    };
-
-    const drizzleBase = baseFor("drizzle");
-    const rainBase = baseFor("rain");
-
-    const drizzle = resolveWeatherParams({
-      config,
-      condition: "drizzle",
-      timeOfDay: 0.5,
-      baseParams: drizzleBase,
-    });
-
-    const rain = resolveWeatherParams({
-      config,
-      condition: "rain",
-      timeOfDay: 0.5,
-      baseParams: rainBase,
-    });
-
-    expect(drizzle.cloud.coverage).toBeCloseTo(0.25, 6);
-    expect(rain.cloud.coverage).toBeCloseTo(0.4, 6);
-  });
-
-  test("special cases override by priority", () => {
-    const base = baseFor("clear");
-    const config: WeatherTuningConfig = {
-      version: 1,
-      conditions: {},
-      specialCases: [
-        {
-          when: { condition: "clear", timeRange: [0.4, 0.6] },
-          curves: {
-            "celestial.skyBrightness": { knots: [{ t: 0, value: 0.2 }] },
-          },
-          priority: 1,
-        },
-        {
-          when: { condition: "clear", timeRange: [0.4, 0.6] },
-          curves: {
-            "celestial.skyBrightness": { knots: [{ t: 0, value: 0.8 }] },
-          },
-          priority: 10,
-        },
-      ],
     };
 
     const result = resolveWeatherParams({
@@ -156,32 +51,30 @@ describe("weather tuning resolver", () => {
       baseParams: base,
     });
 
-    expect(result.celestial.skyBrightness).toBeCloseTo(0.8, 6);
+    expect(result.celestial.skyBrightness).toBeCloseTo(1.1, 6);
   });
 
-  test("curves wrap across midnight", () => {
+  test("missing checkpoint knot leaves base values", () => {
     const base = baseFor("clear");
     const config: WeatherTuningConfig = {
       version: 1,
-      global: {
-        "celestial.skyBrightness": {
-          knots: [
-            { t: 0.75, value: 0.75 },
-            { t: 0.1, value: 0.1 },
-          ],
+      conditions: {
+        clear: {
+          curves: {
+            "celestial.skyBrightness": { knots: [{ t: 0.25, value: 0.2 }] },
+          },
         },
       },
-      conditions: {},
     };
 
     const result = resolveWeatherParams({
       config,
       condition: "clear",
-      timeOfDay: 0.95,
+      timeOfDay: 0.5,
       baseParams: base,
     });
 
-    expect(result.celestial.skyBrightness).toBeCloseTo(0.3786, 3);
+    expect(result.celestial.skyBrightness).toBe(base.celestial.skyBrightness);
   });
 
   test("param catalog builder excludes celestial.timeOfDay", () => {

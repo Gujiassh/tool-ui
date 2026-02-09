@@ -13,19 +13,14 @@ import type {
   CurveMap,
   ParamId,
   WeatherTuningConfig,
-  CurveInterpolation,
 } from "./tuning-schema";
 import { TIME_CHECKPOINTS, TIME_CHECKPOINT_ORDER } from "@/components/tool-ui/weather-widget/effects/tuning";
 
 export type ParamValue = number | boolean;
-export type ParamType = "number" | "boolean";
-
 export interface ParamMeta {
   id: ParamId;
   group: keyof FullCompositorParams;
   key: string;
-  type: ParamType;
-  clamp?: { min?: number; max?: number };
 }
 
 export interface ResolveParamsInput {
@@ -34,7 +29,6 @@ export interface ResolveParamsInput {
   timeOfDay: number;
   baseParams: FullCompositorParams;
   paramCatalog?: ParamMeta[];
-  flags?: string[];
 }
 
 const DEFAULT_EXCLUDES = new Set(["celestial.timeOfDay"]);
@@ -65,7 +59,6 @@ export function buildParamCatalogFromBase(
         id,
         group: groupKey,
         key,
-        type: typeof value,
       });
     }
   });
@@ -79,7 +72,6 @@ export function resolveWeatherParams({
   timeOfDay,
   baseParams,
   paramCatalog,
-  flags = [],
 }: ResolveParamsInput): FullCompositorParams {
   const catalog = paramCatalog ?? buildParamCatalogFromBase(baseParams);
   const metaById = indexParamCatalog(catalog);
@@ -91,22 +83,10 @@ export function resolveWeatherParams({
     values[meta.id] = getBaseValue(baseParams, meta);
   }
 
-  applyCurveMap(values, config.global, timeOfDay, metaById);
-
-  const chain = resolveConditionChain(condition, config.conditions ?? {});
-  for (const cond of chain) {
-    const profile = config.conditions?.[cond];
-    if (profile?.curves) {
-      applyCurveMap(values, profile.curves, timeOfDay, metaById);
-    }
+  const profile = config.conditions?.[condition];
+  if (profile?.curves) {
+    applyCurveMap(values, profile.curves, timeOfDay, metaById);
   }
-
-  applySpecialCases(values, config.specialCases ?? [], {
-    condition,
-    timeOfDay,
-    flags,
-    metaById,
-  });
 
   return materializeFromBase(baseParams, values, catalog);
 }
@@ -189,26 +169,6 @@ function materializeFromBase(
   return next;
 }
 
-function resolveConditionChain(
-  condition: WeatherCondition,
-  profiles: Partial<Record<WeatherCondition, { parent?: WeatherCondition }>>,
-): WeatherCondition[] {
-  const chain: WeatherCondition[] = [];
-  const visited = new Set<WeatherCondition>();
-  let current: WeatherCondition | undefined = condition;
-
-  while (current) {
-    if (visited.has(current)) {
-      throw new Error(`Circular condition parent chain at ${current}`);
-    }
-    visited.add(current);
-    chain.push(current);
-    current = profiles[current]?.parent;
-  }
-
-  return chain.reverse();
-}
-
 function applyCurveMap(
   values: Record<ParamId, ParamValue>,
   curves: CurveMap | undefined,
@@ -221,169 +181,32 @@ function applyCurveMap(
     const meta = metaById.get(paramId);
     if (!meta) continue;
 
-    const sampled = sampleCurve(curve, timeOfDay, meta.type);
-    if (curve.mode === "delta" && meta.type === "number") {
-      const baseValue = values[paramId];
-      const delta = typeof sampled === "number" ? sampled : 0;
-      const base = typeof baseValue === "number" ? baseValue : 0;
-      const next = base + delta;
-      values[paramId] = clampValue(next, curve.clamp ?? meta.clamp);
-    } else {
-      values[paramId] = clampValue(sampled, curve.clamp ?? meta.clamp);
-    }
+    const sampled = sampleCurve(curve, timeOfDay);
+    if (sampled === undefined) continue;
+    values[paramId] = sampled;
   }
-}
-
-function applySpecialCases(
-  values: Record<ParamId, ParamValue>,
-  cases: Array<{
-    when: {
-      condition?: WeatherCondition;
-      timeRange?: [number, number];
-      flags?: string[];
-    };
-    curves: CurveMap;
-    priority: number;
-  }>,
-  context: {
-    condition: WeatherCondition;
-    timeOfDay: number;
-    flags: string[];
-    metaById: Map<ParamId, ParamMeta>;
-  },
-) {
-  const active = cases
-    .filter((entry) => matchesCase(entry.when, context))
-    .sort((a, b) => a.priority - b.priority);
-
-  for (const entry of active) {
-    applyCurveMap(values, entry.curves, context.timeOfDay, context.metaById);
-  }
-}
-
-function matchesCase(
-  when: {
-    condition?: WeatherCondition;
-    timeRange?: [number, number];
-    flags?: string[];
-  },
-  context: { condition: WeatherCondition; timeOfDay: number; flags: string[] },
-): boolean {
-  if (when.condition && when.condition !== context.condition) return false;
-
-  if (when.flags && when.flags.length > 0) {
-    const missing = when.flags.filter((flag) => !context.flags.includes(flag));
-    if (missing.length > 0) return false;
-  }
-
-  if (when.timeRange) {
-    const [start, end] = when.timeRange;
-    const t = normalizeTime(context.timeOfDay);
-
-    if (start <= end) {
-      if (t < start || t > end) return false;
-    } else {
-      if (t < start && t > end) return false;
-    }
-  }
-
-  return true;
 }
 
 export function sampleCurve(
   curve: Curve,
   timeOfDay: number,
-  type: ParamType,
-): ParamValue {
-  const knots = [...curve.knots].sort((a, b) => a.t - b.t);
-  if (knots.length === 1) return knots[0].value as ParamValue;
-
+): ParamValue | undefined {
   const t = normalizeTime(timeOfDay);
+  const EPS = 0.0001;
 
-  let before = knots[0];
-  let after = knots[0];
-  let segmentT = 0;
-
-  const index = knots.findIndex((k) => t < k.t);
-  if (index === -1) {
-    before = knots[knots.length - 1];
-    after = knots[0];
-    segmentT = computeSegmentT(t, before.t, after.t, true);
-  } else if (index === 0) {
-    before = knots[knots.length - 1];
-    after = knots[0];
-    segmentT = computeSegmentT(t, before.t, after.t, true);
-  } else {
-    before = knots[index - 1];
-    after = knots[index];
-    segmentT = computeSegmentT(t, before.t, after.t, false);
+  for (const knot of curve.knots) {
+    const diff = Math.abs(t - knot.t);
+    const dist = Math.min(diff, 1 - diff);
+    if (dist <= EPS) {
+      return knot.value;
+    }
   }
 
-  return interpolateValue(
-    before.value,
-    after.value,
-    segmentT,
-    curve.interpolation,
-    type,
-  );
-}
-
-function computeSegmentT(
-  query: number,
-  start: number,
-  end: number,
-  wraps: boolean,
-): number {
-  let adjustedEnd = end;
-  let adjustedQuery = query;
-
-  if (wraps && adjustedEnd <= start) {
-    adjustedEnd += 1;
-  }
-  if (wraps && adjustedQuery < start) {
-    adjustedQuery += 1;
-  }
-
-  const range = adjustedEnd - start;
-  return range > 0 ? (adjustedQuery - start) / range : 0;
+  return undefined;
 }
 
 function normalizeTime(timeOfDay: number): number {
   return ((timeOfDay % 1) + 1) % 1;
-}
-
-function interpolateValue(
-  fromVal: ParamValue,
-  toVal: ParamValue,
-  t: number,
-  interpolation: CurveInterpolation | undefined,
-  type: ParamType,
-): ParamValue {
-  if (type === "boolean" || interpolation === "step") {
-    return t < 0.5 ? fromVal : toVal;
-  }
-
-  if (typeof fromVal === "number" && typeof toVal === "number") {
-    const easedT = interpolation === "ease" ? smoothstep(t) : t;
-    return fromVal + (toVal - fromVal) * easedT;
-  }
-
-  return t < 0.5 ? fromVal : toVal;
-}
-
-function smoothstep(t: number): number {
-  return t * t * (3 - 2 * t);
-}
-
-function clampValue(
-  value: ParamValue,
-  clamp?: { min?: number; max?: number },
-): ParamValue {
-  if (typeof value !== "number" || !clamp) return value;
-  let next = value;
-  if (typeof clamp.min === "number") next = Math.max(clamp.min, next);
-  if (typeof clamp.max === "number") next = Math.min(clamp.max, next);
-  return next;
 }
 
 function getTimestamp(timeOfDay: number): string {

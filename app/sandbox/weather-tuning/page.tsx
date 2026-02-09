@@ -124,7 +124,6 @@ export default function WeatherTuningPage() {
           <ExportPanel
             checkpointOverrides={state.checkpointOverrides}
             signedOff={state.signedOff}
-            hasOffCheckpointKeyframes={state.hasOffCheckpointKeyframes}
           />
         </div>
       </header>
