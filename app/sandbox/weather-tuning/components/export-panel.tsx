@@ -18,13 +18,11 @@ import { useCodeGen } from "../hooks/use-code-gen";
 interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
   signedOff: Set<WeatherCondition>;
-  hasOffCheckpointKeyframes?: boolean;
 }
 
 export function ExportPanel({
   checkpointOverrides,
   signedOff,
-  hasOffCheckpointKeyframes,
 }: ExportPanelProps) {
   const [copied, setCopied] = useState<string | null>(null);
   const [copyError, setCopyError] = useState<string | null>(null);
@@ -170,14 +168,6 @@ export function ExportPanel({
           <DropdownMenuItem disabled className="opacity-100 text-red-400">
             {copyError}
           </DropdownMenuItem>
-        )}
-        {hasOffCheckpointKeyframes && (
-          <>
-            <DropdownMenuItem disabled className="opacity-100 text-amber-400">
-              Keyframes snap to the nearest checkpoint on export.
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </>
         )}
         <DropdownMenuItem onClick={() => handleCopy("json-overrides")}>
           <FileJson className="mr-2 size-4" />

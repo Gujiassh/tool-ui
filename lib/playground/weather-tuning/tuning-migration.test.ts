@@ -15,7 +15,7 @@ function timestampFor(timeOfDay: number): string {
 }
 
 describe("checkpoint overrides migration", () => {
-  test("numeric overrides become delta curves", () => {
+  test("numeric overrides become checkpoint knots", () => {
     const time = TIME_CHECKPOINTS.dawn.value;
     const base = getBaseParamsForCondition("clear", timestampFor(time));
     base.celestial.timeOfDay = time;
@@ -30,7 +30,7 @@ describe("checkpoint overrides migration", () => {
     const config = checkpointOverridesToConfig({ clear: overrides });
     const curve = config.conditions?.clear?.curves?.["celestial.skyBrightness"];
 
-    expect(curve?.mode).toBe("delta");
+    expect(curve?.knots).toEqual([{ t: time, value: base.celestial.skyBrightness + 0.2 }]);
 
     const resolved = resolveWeatherParams({
       config,
@@ -45,7 +45,7 @@ describe("checkpoint overrides migration", () => {
     );
   });
 
-  test("boolean overrides are absolute step curves", () => {
+  test("boolean overrides are stored at the overridden checkpoint only", () => {
     const noon = TIME_CHECKPOINTS.noon.value;
     const dawn = TIME_CHECKPOINTS.dawn.value;
 
@@ -65,7 +65,7 @@ describe("checkpoint overrides migration", () => {
     const config = checkpointOverridesToConfig({ rain: overrides });
     const curve = config.conditions?.rain?.curves?.["layers.rain"];
 
-    expect(curve?.interpolation).toBe("step");
+    expect(curve?.knots).toEqual([{ t: noon, value: false }]);
 
     const resolvedNoon = resolveWeatherParams({
       config,

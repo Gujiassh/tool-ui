@@ -911,57 +911,27 @@ export function checkpointOverridesToConfig(
     const condition = conditionKey as WeatherCondition;
     if (!overrides) continue;
 
-    const baseByCheckpoint = buildBaseByCheckpoint(condition);
-    const paramMap = collectParamOverrides(overrides, baseByCheckpoint);
+    const paramMap = collectParamOverrides(overrides);
 
     const curves: Record<
       string,
       {
         knots: { t: number; value: number | boolean }[];
-        mode?: "absolute" | "delta";
-        interpolation?: "linear" | "ease" | "step";
       }
     > = {};
 
     for (const [paramId, info] of paramMap.entries()) {
-      const knots = TIME_CHECKPOINT_ORDER.map((checkpoint) => {
-        const t = TIME_CHECKPOINTS[checkpoint];
-        const baseValue = getBaseValue(baseByCheckpoint[checkpoint], info);
+      const knots = TIME_CHECKPOINT_ORDER.flatMap((checkpoint) => {
         const overrideValue = info.overrides[checkpoint];
-
-        if (info.type === "number") {
-          const delta =
-            typeof overrideValue === "number"
-              ? overrideValue - (baseValue as number)
-              : 0;
-          return { t, value: delta };
-        }
-
-        const value =
-          typeof overrideValue === "boolean"
-            ? overrideValue
-            : (baseValue as boolean);
-        return { t, value };
+        if (overrideValue === undefined) return [];
+        return [{ t: TIME_CHECKPOINTS[checkpoint], value: overrideValue }];
       });
 
-      if (info.type === "number") {
-        const hasNonZero = knots.some(
-          (k) => typeof k.value === "number" && k.value !== 0,
-        );
-        if (!hasNonZero) continue;
+      if (knots.length === 0) continue;
 
-        curves[paramId] = {
-          knots,
-          mode: "delta",
-        };
-      } else {
-        if (!info.hasOverride) continue;
-
-        curves[paramId] = {
-          knots,
-          interpolation: "step",
-        };
-      }
+      curves[paramId] = {
+        knots,
+      };
     }
 
     if (Object.keys(curves).length > 0) {
@@ -978,14 +948,12 @@ export function checkpointOverridesToConfig(
 interface ParamAggregate {
   group: keyof FullCompositorParams;
   key: string;
-  type: "number" | "boolean";
   overrides: Partial<Record<TimeCheckpoint, number | boolean>>;
   hasOverride: boolean;
 }
 
 function collectParamOverrides(
   overrides: CheckpointOverrides,
-  baseByCheckpoint: Record<TimeCheckpoint, FullCompositorParams>,
 ): Map<string, ParamAggregate> {
   const paramMap = new Map<string, ParamAggregate>();
 
@@ -1004,17 +972,9 @@ function collectParamOverrides(
 
         const group = groupKey as keyof FullCompositorParams;
         const paramId = `${group}.${key}`;
-        const baseValue = getBaseValue(baseByCheckpoint[checkpoint], {
-          group,
-          key,
-        });
-
-        const type =
-          typeof baseValue === "boolean" ? ("boolean" as const) : ("number" as const);
         const entry = paramMap.get(paramId) ?? {
           group,
           key,
-          type,
           overrides: {},
           hasOverride: false,
         };
@@ -1027,30 +987,6 @@ function collectParamOverrides(
   }
 
   return paramMap;
-}
-
-function getBaseValue(
-  base: FullCompositorParams,
-  info: { group: keyof FullCompositorParams; key: string },
-): number | boolean {
-  const group = base[info.group] as Record<string, number | boolean>;
-  return group[info.key];
-}
-
-function buildBaseByCheckpoint(
-  condition: WeatherCondition,
-): Record<TimeCheckpoint, FullCompositorParams> {
-  const baseByCheckpoint = {} as Record<TimeCheckpoint, FullCompositorParams>;
-
-  for (const checkpoint of TIME_CHECKPOINT_ORDER) {
-    const time = TIME_CHECKPOINTS[checkpoint];
-    const timestamp = getTimestamp(time);
-    const base = getBaseParamsForCondition(condition, timestamp);
-    base.celestial.timeOfDay = time;
-    baseByCheckpoint[checkpoint] = base;
-  }
-
-  return baseByCheckpoint;
 }
 
 function getTimestamp(timeOfDay: number): string {

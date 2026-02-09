@@ -7,10 +7,7 @@ import type {
   FullCompositorParams,
   CheckpointOverrides,
 } from "../../weather-compositor/presets";
-import type {
-  Curve,
-  WeatherTuningConfig,
-} from "../../weather-compositor/tuning/tuning-schema";
+import type { WeatherTuningConfig } from "../../weather-compositor/tuning/tuning-schema";
 import {
   getBaseParamsForCondition,
   mergeWithOverrides,
@@ -85,77 +82,31 @@ function normalizeKnotsToCheckpoints(
   ).map((checkpoint) => map.get(checkpoint)!);
 }
 
-function normalizeCurveToCheckpoints(curve: Curve): Curve {
-  return { ...curve, knots: normalizeKnotsToCheckpoints(curve.knots) };
-}
-
-function normalizeCurveMapToCheckpoints(
-  curves: Record<string, Curve> | undefined,
-): Record<string, Curve> | undefined {
-  if (!curves) return curves;
-  const next: Record<string, Curve> = {};
-  for (const [key, curve] of Object.entries(curves)) {
-    next[key] = normalizeCurveToCheckpoints(curve);
-  }
-  return next;
-}
-
 function normalizeCurveConfigToCheckpoints(
   config: WeatherTuningConfig,
 ): WeatherTuningConfig {
   const nextConditions: WeatherTuningConfig["conditions"] = {};
   for (const [condition, profile] of Object.entries(config.conditions ?? {})) {
-    nextConditions[condition] = {
-      ...profile,
-      curves: normalizeCurveMapToCheckpoints(profile.curves),
+    const curves = profile.curves;
+    if (!curves) continue;
+
+    const normalized: WeatherTuningConfig["conditions"][string] = {
+      curves: Object.fromEntries(
+        Object.entries(curves).map(([key, curve]) => [
+          key,
+          { knots: normalizeKnotsToCheckpoints(curve.knots) },
+        ]),
+      ),
     };
+
+    nextConditions[condition] = normalized;
   }
 
   return {
-    ...config,
-    global: normalizeCurveMapToCheckpoints(config.global),
+    version: config.version,
+    meta: config.meta,
     conditions: nextConditions,
-    specialCases: config.specialCases?.map((specialCase) => ({
-      ...specialCase,
-      curves: normalizeCurveMapToCheckpoints(specialCase.curves) ?? {},
-    })),
   };
-}
-
-function hasOffCheckpointKnots(config: WeatherTuningConfig): boolean {
-  const checkpointValues = new Set(
-    TIME_CHECKPOINT_ORDER.map((checkpoint) => TIME_CHECKPOINTS[checkpoint].value),
-  );
-  const isCheckpointTime = (t: number) => {
-    for (const value of checkpointValues) {
-      if (Math.abs(t - value) < 0.0001) return true;
-    }
-    return false;
-  };
-
-  const hasOffCurve = (curve: Curve) =>
-    curve.knots.some((knot) => !isCheckpointTime(knot.t));
-
-  if (config.global) {
-    for (const curve of Object.values(config.global)) {
-      if (hasOffCurve(curve)) return true;
-    }
-  }
-
-  for (const profile of Object.values(config.conditions ?? {})) {
-    if (!profile.curves) continue;
-    for (const curve of Object.values(profile.curves)) {
-      if (hasOffCurve(curve)) return true;
-    }
-  }
-
-  for (const specialCase of config.specialCases ?? []) {
-    for (const curve of Object.values(specialCase.curves)) {
-      if (hasOffCurve(curve)) return true;
-    }
-  }
-
-  return false;
 }
 
 interface WorkflowState {
@@ -273,11 +224,6 @@ export function useTuningState() {
   }, []);
 
   const tuningConfig = useMemo(() => curveConfig, [curveConfig]);
-
-  const hasOffCheckpointKeyframes = useMemo(
-    () => hasOffCheckpointKnots(tuningConfig as WeatherTuningConfig),
-    [tuningConfig],
-  );
 
   const checkpointOverrides = useMemo(
     () =>
@@ -436,100 +382,33 @@ export function useTuningState() {
       const baseParams = getBaseParamsForCheckpoint(condition, checkpoint);
       const baseGroup = baseParams[layer] as Record<string, number | boolean>;
       const baseValue = baseGroup[paramKey];
-      const type = typeof baseValue === "boolean" ? "boolean" : "number";
       const paramId = `${layer}.${paramKey}`;
 
       setCurveConfig((prev) => {
         const conditionConfig = prev.conditions?.[condition] ?? {};
         const curves = { ...(conditionConfig.curves ?? {}) };
         const existing = curves[paramId];
-        const mode =
-          type === "number"
-            ? existing?.mode === "absolute"
-              ? "absolute"
-              : "delta"
-            : "absolute";
-        const interpolation =
-          type === "boolean"
-            ? "step"
-            : existing?.interpolation ?? "linear";
 
         let knots = existing?.knots
           ? normalizeKnotsToCheckpoints(existing.knots)
           : [];
-        if (knots.length === 0) {
-          knots = TIME_CHECKPOINT_ORDER.map((cp) => {
-            const baseForCheckpoint = getBaseParamsForCheckpoint(condition, cp);
-            const group = baseForCheckpoint[layer] as Record<
-              string,
-              number | boolean
-            >;
-            const valueAtCheckpoint = group[paramKey];
-            const knotValue =
-              type === "number" && mode === "delta"
-                ? 0
-                : valueAtCheckpoint;
-            return { t: TIME_CHECKPOINTS[cp].value, value: knotValue };
-          });
+
+        knots = knots.filter(
+          (knot) => Math.abs(knot.t - checkpointTime) > 0.0001,
+        );
+
+        const isSameValue =
+          typeof baseValue === "number"
+            ? Math.abs((value as number) - (baseValue as number)) < 0.0001
+            : value === baseValue;
+
+        if (!isSameValue) {
+          knots.push({ t: checkpointTime, value });
+          knots.sort((a, b) => a.t - b.t);
         }
 
-        const nextValue =
-          type === "number" && mode === "delta"
-            ? (value as number) - (baseValue as number)
-            : value;
-
-        const idx = knots.findIndex((k) => k.t === checkpointTime);
-        if (idx >= 0) {
-          knots[idx] = { ...knots[idx], value: nextValue };
-        } else {
-          knots.push({ t: checkpointTime, value: nextValue });
-        }
-
-        knots.sort((a, b) => a.t - b.t);
-
-        curves[paramId] = {
-          knots,
-          mode: type === "number" ? mode : "absolute",
-          interpolation,
-        };
-
-        return {
-          ...prev,
-          conditions: {
-            ...prev.conditions,
-            [condition]: {
-              ...conditionConfig,
-              curves,
-            },
-          },
-        };
-      });
-    },
-    [getBaseParamsForCheckpoint],
-  );
-
-  const getCurveForParam = useCallback(
-    (condition: WeatherCondition, layer: LayerKey, paramKey: string) => {
-      const paramId = `${layer}.${paramKey}`;
-      return curveConfig.conditions?.[condition]?.curves?.[paramId];
-    },
-    [curveConfig],
-  );
-
-  const setCurveForParam = useCallback(
-    (
-      condition: WeatherCondition,
-      layer: LayerKey,
-      paramKey: string,
-      curve: Curve | null,
-    ) => {
-      const paramId = `${layer}.${paramKey}`;
-      setCurveConfig((prev) => {
-        const conditionConfig = prev.conditions?.[condition] ?? {};
-        const curves = { ...(conditionConfig.curves ?? {}) };
-
-        if (curve) {
-          curves[paramId] = normalizeCurveToCheckpoints(curve);
+        if (knots.length > 0) {
+          curves[paramId] = { knots };
         } else {
           delete curves[paramId];
         }
@@ -548,22 +427,7 @@ export function useTuningState() {
         };
       });
     },
-    [],
-  );
-
-  const getBaseValueAtTime = useCallback(
-    (
-      condition: WeatherCondition,
-      timeOfDay: number,
-      layer: LayerKey,
-      paramKey: string,
-    ) => {
-      const timestamp = getTimestamp(timeOfDay);
-      const base = getBaseParamsForCondition(condition, timestamp);
-      const group = base[layer] as Record<string, number | boolean>;
-      return group[paramKey];
-    },
-    [getTimestamp],
+    [getBaseParamsForCheckpoint],
   );
 
   const updateCheckpointOverrides = useCallback(
@@ -590,14 +454,8 @@ export function useTuningState() {
     (condition: WeatherCondition, newParams: FullCompositorParams) => {
       let checkpointToEdit = activeEditCheckpoint;
       if (isPreviewing) {
-        // If we're previewing (scrubbed between checkpoints), the UI is showing
-        // an interpolated state. If we diff that directly against a checkpoint base,
-        // we can accidentally "bake" interpolation into the checkpoint overrides.
-        //
-        // To avoid cross-time bleed, we:
-        // - compute the *delta* from the currently displayed preview params
-        // - apply that delta to the snapped checkpoint params
-        // - then extract overrides relative to the checkpoint base
+        // If we're previewing, snap edits back to the nearest checkpoint
+        // so overrides are stored against a single, deterministic checkpoint.
         const previewParams = getParamsForCondition(condition);
 
         checkpointToEdit = getNearestCheckpoint(globalTimeOfDay);
@@ -946,7 +804,6 @@ export function useTuningState() {
     isHydrated,
     glassParams,
     setGlassParams,
-    hasOffCheckpointKeyframes,
 
     getParamsForCondition,
     getBaseParams,
@@ -956,10 +813,7 @@ export function useTuningState() {
     updateParams,
     updateParameterAtCheckpoint,
     bulkUpdateParameter,
-    getCurveForParam,
-    setCurveForParam,
     updateCurveKnotValue,
-    getBaseValueAtTime,
     resetCondition,
     copyLayerFromCondition,
     copyLayerToAllConditions,
