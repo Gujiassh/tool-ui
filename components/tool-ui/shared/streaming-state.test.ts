@@ -15,7 +15,10 @@ import {
 import { linkPreviewPresets } from "@/lib/presets/link-preview";
 import { optionListPresets } from "@/lib/presets/option-list";
 
-import { resolveStreamingToolRenderState } from "./streaming-render";
+import {
+  resolveStreamingToolRenderState,
+  type StreamingToolRenderState,
+} from "./streaming-render";
 import { ToolRenderState } from "./streaming-state";
 
 const RUNNING_STATUS = { type: "running" } as const;
@@ -165,6 +168,24 @@ describe("ToolRenderState", () => {
     expect(partialMarkup).toContain("Streaming update");
     expect(partialMarkup).toContain("data-tool-ui-streaming-state=\"partial\"");
     expect(readyMarkup).toBe("");
+  });
+
+  it("treats error kind as failed even when status is complete", () => {
+    const inconsistentErrorState: StreamingToolRenderState<unknown, unknown> = {
+      kind: "error",
+      args: null,
+      result: null,
+      message: "Tool output unavailable",
+      isCancelled: false,
+      status: { type: "complete" },
+    };
+
+    const errorMarkup = renderToStaticMarkup(
+      createElement(ToolRenderState, { state: inconsistentErrorState }),
+    );
+
+    expect(errorMarkup).toContain("Failed");
+    expect(errorMarkup).not.toContain("Complete");
   });
 });
 

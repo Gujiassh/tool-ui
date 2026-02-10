@@ -15,8 +15,14 @@ export interface ToolRenderStateProps
 }
 
 function statusLabel(state: SharedStreamingState): string {
-  if (state.kind === "error" && state.status.type === "incomplete") {
-    return state.status.reason === "cancelled" ? "Cancelled" : "Failed";
+  if (state.kind === "error") {
+    if (
+      state.isCancelled ||
+      (state.status.type === "incomplete" && state.status.reason === "cancelled")
+    ) {
+      return "Cancelled";
+    }
+    return "Failed";
   }
 
   if (state.kind === "loading") {
