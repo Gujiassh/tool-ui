@@ -6,7 +6,7 @@
     {
       "name": "shared",
       "type": "registry:block",
-      "title": "Tool UI Shared",
+      "title": "Shared",
       "description": "Shared helpers and schemas for Tool UI components.",
       "dependencies": [
         "@assistant-ui/react",
@@ -112,7 +112,7 @@
     {
       "name": "plan",
       "type": "registry:block",
-      "title": "Tool UI Plan",
+      "title": "Plan",
       "description": "Display step-by-step task workflows in AI interfaces.",
       "dependencies": [
         "lucide-react",
@@ -156,7 +156,7 @@
     {
       "name": "progress-tracker",
       "type": "registry:block",
-      "title": "Tool UI Progress Tracker",
+      "title": "Progress Tracker",
       "description": "Show real-time status feedback for multi-step operations in AI interfaces.",
       "dependencies": [
         "lucide-react",
@@ -197,7 +197,7 @@
     {
       "name": "option-list",
       "type": "registry:block",
-      "title": "Tool UI Option List",
+      "title": "Option List",
       "description": "Single or multi-select choices with confirmation actions.",
       "dependencies": [
         "lucide-react",
@@ -239,7 +239,7 @@
     {
       "name": "message-draft",
       "type": "registry:block",
-      "title": "Tool UI Message Draft",
+      "title": "Message Draft",
       "description": "Review and confirm drafted messages before sending.",
       "dependencies": [
         "lucide-react",
@@ -280,7 +280,7 @@
     {
       "name": "data-table",
       "type": "registry:block",
-      "title": "Tool UI Data Table",
+      "title": "Data Table",
       "description": "Sortable, responsive data tables for tool call results.",
       "dependencies": [
         "zod"

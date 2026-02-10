@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "message-draft",
   "type": "registry:block",
-  "title": "Tool UI Message Draft",
+  "title": "Message Draft",
   "description": "Review and confirm drafted messages before sending.",
   "dependencies": [
     "lucide-react",

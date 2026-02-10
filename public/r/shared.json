@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "shared",
   "type": "registry:block",
-  "title": "Tool UI Shared",
+  "title": "Shared",
   "description": "Shared helpers and schemas for Tool UI components.",
   "dependencies": [
     "@assistant-ui/react",

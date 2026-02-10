@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "data-table",
   "type": "registry:block",
-  "title": "Tool UI Data Table",
+  "title": "Data Table",
   "description": "Sortable, responsive data tables for tool call results.",
   "dependencies": [
     "zod"

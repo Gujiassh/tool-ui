@@ -63,7 +63,7 @@ const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
 const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   {
     name: "shared",
-    title: "Tool UI Shared",
+    title: "Shared",
     description: "Shared helpers and schemas for Tool UI components.",
     sourceDir: "components/tool-ui/shared",
     additionalFiles: ["lib/ui/cn.ts"],
@@ -72,7 +72,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   },
   {
     name: "plan",
-    title: "Tool UI Plan",
+    title: "Plan",
     description: "Display step-by-step task workflows in AI interfaces.",
     sourceDir: "components/tool-ui/plan",
     dependencies: ["lucide-react", "zod"],
@@ -80,7 +80,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   },
   {
     name: "progress-tracker",
-    title: "Tool UI Progress Tracker",
+    title: "Progress Tracker",
     description:
       "Show real-time status feedback for multi-step operations in AI interfaces.",
     sourceDir: "components/tool-ui/progress-tracker",
@@ -89,7 +89,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   },
   {
     name: "option-list",
-    title: "Tool UI Option List",
+    title: "Option List",
     description: "Single or multi-select choices with confirmation actions.",
     sourceDir: "components/tool-ui/option-list",
     dependencies: ["lucide-react", "zod"],
@@ -97,7 +97,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   },
   {
     name: "message-draft",
-    title: "Tool UI Message Draft",
+    title: "Message Draft",
     description: "Review and confirm drafted messages before sending.",
     sourceDir: "components/tool-ui/message-draft",
     dependencies: ["lucide-react", "zod"],
@@ -105,7 +105,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   },
   {
     name: "data-table",
-    title: "Tool UI Data Table",
+    title: "Data Table",
     description: "Sortable, responsive data tables for tool call results.",
     sourceDir: "components/tool-ui/data-table",
     dependencies: ["zod"],

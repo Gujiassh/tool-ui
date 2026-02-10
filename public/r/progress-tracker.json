@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "progress-tracker",
   "type": "registry:block",
-  "title": "Tool UI Progress Tracker",
+  "title": "Progress Tracker",
   "description": "Show real-time status feedback for multi-step operations in AI interfaces.",
   "dependencies": [
     "lucide-react",

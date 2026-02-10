@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "plan",
   "type": "registry:block",
-  "title": "Tool UI Plan",
+  "title": "Plan",
   "description": "Display step-by-step task workflows in AI interfaces.",
   "dependencies": [
     "lucide-react",
