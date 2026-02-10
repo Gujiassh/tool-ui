@@ -51,7 +51,7 @@ Create a tool on your server that the LLM can call. The tool returns structured 
 
 - `SerializableLinkPreviewSchema` ensures your tool output matches the LinkPreview component's expected format
 - `id` identifies this rendering in the conversation
-- `parseSerializableLinkPreview` on the frontend validates the result at runtime before rendering
+- `safeParseSerializableLinkPreview` on the frontend validates streamed results before rendering
 - Your tool can fetch real data (APIs, databases) and return it in the component schema format
 
 ```ts
@@ -116,6 +116,7 @@ import {
   LinkPreviewErrorBoundary,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 import {
   useChatRuntime,
   AssistantChatTransport,
@@ -125,24 +126,25 @@ const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
     render: ({ result, status }) => {
-      const preview = safeParseSerializableLinkPreview(result);
+      const state = resolveStreamingToolRenderState({
+        status,
+        result,
+        safeParseResult: safeParseSerializableLinkPreview,
+        loadingMessage: "Loading preview…",
+        unavailableMessage: "Preview unavailable",
+      });
 
-      if (!preview) {
-        const loading =
-          status.type === "running" || result === undefined
-            ? "Loading preview…"
-            : "Preview unavailable";
-
+      if (state.kind === "loading" || state.kind === "error") {
         return (
           <div className="bg-card/60 text-muted-foreground w-full max-w-md rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {loading}
+            {state.message}
           </div>
         );
       }
 
       return (
         <LinkPreviewErrorBoundary>
-          <LinkPreview {...preview} maxWidth="420px" />
+          <LinkPreview {...state.result} maxWidth="420px" />
         </LinkPreviewErrorBoundary>
       );
     },
@@ -251,30 +253,50 @@ When the tool is frontend/interactive, you register the tool **on the client** (
 import { type Toolkit } from "@assistant-ui/react";
 import {
   OptionList,
-  parseSerializableOptionList,
+  safeParseSerializableOptionList,
   SerializableOptionListSchema,
   type SerializableOptionList,
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   selectFormat: {
   description: "Ask the user to choose an output format.",
   parameters: SerializableOptionListSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    // Tool args can be incomplete while streaming; wait until required fields exist.
-    if (!Array.isArray((args as any)?.options)) return null;
-
-    const optionList = parseSerializableOptionList({
-      ...args,
-      // `id` is required and should be stable/meaningful; fall back for DX.
-      id: (args as any)?.id ?? `format-selection-${toolCallId}`,
+  render: ({ args, result, status, addResult, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableOptionList,
+      OptionListSelection
+    >({
+      status,
+      args: {
+        ...args,
+        // `id` is required and should be stable/meaningful; fall back for DX.
+        id: (args as any)?.id ?? `format-selection-${toolCallId}`,
+      },
+      result,
+      safeParseArgs: safeParseSerializableOptionList,
+      loadingMessage: "Loading options…",
+      awaitingActionMessage: "Choose an option",
     });
 
-    // Receipt state
-    if (result !== undefined) {
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return (
+          <div className="text-muted-foreground text-sm">
+            {state.message}
+          </div>
+        );
+      }
+      return null;
+    }
+
+    const optionList = state.args;
+
+    if (state.kind === "partial" || state.kind === "ready") {
       return (
-        <OptionList {...optionList} value={undefined} choice={result} />
+        <OptionList {...optionList} value={undefined} choice={state.result} />
       );
     }
 

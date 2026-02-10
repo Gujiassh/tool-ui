@@ -182,31 +182,47 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   ApprovalCard,
   ApprovalCardErrorBoundary,
-  parseSerializableApprovalCard,
+  safeParseSerializableApprovalCard,
   SerializableApprovalCardSchema,
   type SerializableApprovalCard,
   type ApprovalDecision,
 } from "@/components/tool-ui/approval-card";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   requestApproval: {
   description: "Request user approval before performing an action.",
   parameters: SerializableApprovalCardSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    if (!(args as any)?.title) return null;
-
-    const approvalCard = parseSerializableApprovalCard({
-      ...args,
-      id: (args as any)?.id ?? `approval-${toolCallId}`,
+  render: ({ args, result, status, addResult, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableApprovalCard,
+      ApprovalDecision
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `approval-${toolCallId}`,
+      },
+      result,
+      safeParseArgs: safeParseSerializableApprovalCard,
+      loadingMessage: "Loading approval…",
+      awaitingActionMessage: "Awaiting approval",
     });
+
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+      }
+      return null;
+    }
 
     return (
       <ApprovalCardErrorBoundary>
-        {result !== undefined ? (
-          <ApprovalCard {...approvalCard} choice={result} />
+        {state.kind === "partial" || state.kind === "ready" ? (
+          <ApprovalCard {...state.args} choice={state.result} />
         ) : (
           <ApprovalCard
-            {...approvalCard}
+            {...state.args}
             onConfirm={() => addResult("approved")}
             onCancel={() => addResult("denied")}
           />

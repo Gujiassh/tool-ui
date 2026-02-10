@@ -83,7 +83,7 @@ import { InferUITools } from "ai";
 import type { Tools } from "@/lib/tools";
 import {
   LinkPreview,
-  parseSerializableLinkPreview,
+  safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
 
 type MyUITools = InferUITools<Tools>;
@@ -101,7 +101,8 @@ export default function Chat() {
               part.type === "tool-previewLink" &&
               part.state === "output-available"
             ) {
-              const preview = parseSerializableLinkPreview(part.output);
+              const preview = safeParseSerializableLinkPreview(part.output);
+              if (!preview) return null;
               return <LinkPreview key={i} {...preview} />;
             }
             return null;
@@ -129,7 +130,7 @@ For a single tool, `InferUITool` works the same way as `InferUITools` but for on
 
 ### End-to-end validation
 
-Use the component's `outputSchema` on the server and `parseSerializable{componentName}` on the client to validate at both ends.
+Use the component's `outputSchema` on the server and `safeParseSerializable{componentName}` on the client to validate at both ends.
 
 ### Lifecycle-aware rendering
 

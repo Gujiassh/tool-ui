@@ -109,31 +109,47 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   QuestionFlow,
   QuestionFlowErrorBoundary,
-  parseSerializableQuestionFlow,
+  safeParseSerializableQuestionFlow,
   SerializableQuestionFlowSchema,
   type SerializableQuestionFlow,
 } from "@/components/tool-ui/question-flow";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   configureProject: {
   description: "Guide user through project configuration.",
   parameters: SerializableQuestionFlowSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    if (!args || typeof args !== "object") return null;
-
-    const questionFlow = parseSerializableQuestionFlow({
-      ...args,
-      id: (args as any)?.id ?? `wizard-${toolCallId}`,
+  render: ({ args, result, status, addResult, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableQuestionFlow,
+      Record<string, string[]>
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `wizard-${toolCallId}`,
+      },
+      result,
+      safeParseArgs: safeParseSerializableQuestionFlow,
+      loadingMessage: "Loading questions…",
+      awaitingActionMessage: "Answer questions",
     });
+
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+      }
+      return null;
+    }
 
     return (
       <QuestionFlowErrorBoundary>
-        {result !== undefined ? (
+        {state.kind === "partial" || state.kind === "ready" ? (
           <QuestionFlow
-            id={questionFlow.id}
+            id={state.args.id}
             choice={{
               title: "Project configured",
-              summary: Object.entries(result).map(([key, values]) => ({
+              summary: Object.entries(state.result).map(([key, values]) => ({
                 label: key,
                 value: values.join(", "),
               })),
@@ -141,7 +157,7 @@ export const toolkit: Toolkit = {
           />
         ) : (
           <QuestionFlow
-            {...questionFlow}
+            {...state.args}
             onComplete={(answers) => addResult(answers)}
           />
         )}

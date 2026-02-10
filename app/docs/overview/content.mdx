@@ -145,20 +145,28 @@ import {
   LinkPreview,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
     render: ({ result, status }) => {
-      const preview = safeParseSerializableLinkPreview(result);
-      if (!preview) {
+      const state = resolveStreamingToolRenderState({
+        status,
+        result,
+        safeParseResult: safeParseSerializableLinkPreview,
+        loadingMessage: "Loading preview…",
+        unavailableMessage: "Preview unavailable",
+      });
+
+      if (state.kind === "loading" || state.kind === "error") {
         return (
           <div className="text-muted-foreground rounded-xl border px-4 py-3 text-sm">
-            {status.type === "running" ? "Loading preview…" : "Preview unavailable"}
+            {state.message}
           </div>
         );
       }
-      return <LinkPreview {...preview} maxWidth="420px" />;
+      return <LinkPreview {...state.result} maxWidth="420px" />;
     },
   },
 };

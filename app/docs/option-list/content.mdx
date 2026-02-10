@@ -92,33 +92,47 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   OptionList,
   OptionListErrorBoundary,
-  parseSerializableOptionList,
+  safeParseSerializableOptionList,
   SerializableOptionListSchema,
   type SerializableOptionList,
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   selectFormat: {
   description: "Let the user choose an output format.",
   parameters: SerializableOptionListSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    // Tool args can be incomplete while streaming; wait until required fields exist.
-    if (!Array.isArray((args as any)?.options)) return null;
-
-    // `id` is required and should be stable/meaningful.
-    const optionList = parseSerializableOptionList({
-      ...args,
-      id: (args as any)?.id ?? `format-selection-${toolCallId}`,
+  render: ({ args, result, status, addResult, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableOptionList,
+      OptionListSelection
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `format-selection-${toolCallId}`,
+      },
+      result,
+      safeParseArgs: safeParseSerializableOptionList,
+      loadingMessage: "Loading options…",
+      awaitingActionMessage: "Choose an option",
     });
+
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+      }
+      return null;
+    }
 
     return (
       <OptionListErrorBoundary>
-        {result !== undefined ? (
-          <OptionList {...optionList} value={undefined} choice={result} />
+        {state.kind === "partial" || state.kind === "ready" ? (
+          <OptionList {...state.args} value={undefined} choice={state.result} />
         ) : (
           <OptionList
-            {...optionList}
+            {...state.args}
             // Avoid controlled selection in LLM-driven payloads.
             value={undefined}
             onConfirm={(selection) => addResult(selection)}

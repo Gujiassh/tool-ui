@@ -144,28 +144,31 @@ import {
   ChartErrorBoundary,
   safeParseSerializableChart,
 } from "@/components/tool-ui/chart";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showChart: {
     type: "backend",
     render: ({ result, status }) => {
-      const chart = safeParseSerializableChart(result);
-      if (!chart) {
-        const loading =
-          status.type === "running" || result === undefined
-            ? "Loading chart…"
-            : "Chart unavailable";
+      const state = resolveStreamingToolRenderState({
+        status,
+        result,
+        safeParseResult: safeParseSerializableChart,
+        loadingMessage: "Loading chart…",
+        unavailableMessage: "Chart unavailable",
+      });
 
+      if (state.kind === "loading" || state.kind === "error") {
         return (
           <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {loading}
+            {state.message}
           </div>
         );
       }
 
       return (
         <ChartErrorBoundary>
-          <Chart {...chart} />
+          <Chart {...state.result} />
         </ChartErrorBoundary>
       );
     },

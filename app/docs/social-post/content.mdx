@@ -254,34 +254,31 @@ import {
   XPostErrorBoundary,
   safeParseSerializableXPost,
 } from "@/components/tool-ui/x-post";
-
-function ParsedXPost({ result }: { result: unknown }) {
-  const post = safeParseSerializableXPost(result);
-  if (!post) return null;
-  return <XPost post={post} />;
-}
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showXPost: {
     type: "backend",
     render: ({ result, status }) => {
-      const post = safeParseSerializableXPost(result);
-      if (!post) {
-        const loading =
-          status.type === "running" || result === undefined
-            ? "Loading post…"
-            : "Post unavailable";
+      const state = resolveStreamingToolRenderState({
+        status,
+        result,
+        safeParseResult: safeParseSerializableXPost,
+        loadingMessage: "Loading post…",
+        unavailableMessage: "Post unavailable",
+      });
 
+      if (state.kind === "loading" || state.kind === "error") {
         return (
           <div className="bg-card/60 text-muted-foreground w-full max-w-[540px] rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {loading}
+            {state.message}
           </div>
         );
       }
 
       return (
         <XPostErrorBoundary>
-          <ParsedXPost result={result} />
+          <XPost post={state.result} />
         </XPostErrorBoundary>
       );
     },
@@ -289,7 +286,7 @@ export const toolkit: Toolkit = {
 };
 ```
 
-The same pattern works for `InstagramPost` and `LinkedInPost` by swapping the component and parser (`parseSerializableInstagramPost` / `parseSerializableLinkedInPost`).
+The same pattern works for `InstagramPost` and `LinkedInPost` by swapping the component and safe parser (`safeParseSerializableInstagramPost` / `safeParseSerializableLinkedInPost`).
 
 ## Props
 

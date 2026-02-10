@@ -238,35 +238,50 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   MessageDraft,
   MessageDraftErrorBoundary,
-  parseSerializableMessageDraft,
+  safeParseSerializableMessageDraft,
   SerializableMessageDraftSchema,
   type SerializableMessageDraft,
   type MessageDraftOutcome,
 } from "@/components/tool-ui/message-draft";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   draftMessage: {
   description: "Draft a message for the user to review before sending.",
   parameters: SerializableMessageDraftSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    // Wait for channel to determine which fields are required
-    if (!(args as any)?.channel || !(args as any)?.body) return null;
-
-    const draft = parseSerializableMessageDraft({
-      ...args,
-      id: (args as any)?.id ?? `message-draft-${toolCallId}`,
+  render: ({ args, result, status, addResult, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableMessageDraft,
+      MessageDraftOutcome
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `message-draft-${toolCallId}`,
+      },
+      result,
+      safeParseArgs: safeParseSerializableMessageDraft,
+      loadingMessage: "Loading draft…",
+      awaitingActionMessage: "Review draft",
     });
+
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+      }
+      return null;
+    }
 
     return (
       <MessageDraftErrorBoundary>
-        {result !== undefined ? (
-          <MessageDraft {...draft} outcome={result} />
+        {state.kind === "partial" || state.kind === "ready" ? (
+          <MessageDraft {...state.args} outcome={state.result} />
         ) : (
           <MessageDraft
-            {...draft}
+            {...state.args}
             onSend={async () => {
               // Perform actual send logic here
-              await sendMessage(draft);
+              await sendMessage(state.args);
               addResult("sent");
             }}
             onCancel={() => addResult("cancelled")}

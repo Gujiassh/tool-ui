@@ -107,27 +107,39 @@ import {
   SerializableWeatherWidgetSchema,
   type SerializableWeatherWidget,
 } from "@/components/tool-ui/weather-widget";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   get_weather: {
   description: "Display current weather and forecast for a location",
   parameters: SerializableWeatherWidgetSchema,
   render: ({ args, status, toolCallId }) => {
-    const data = safeParseSerializableWeatherWidget({
-      ...args,
-      id: (args as any)?.id ?? `weather-${toolCallId}`,
+    const state = resolveStreamingToolRenderState<
+      SerializableWeatherWidget,
+      never
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `weather-${toolCallId}`,
+      },
+      safeParseArgs: safeParseSerializableWeatherWidget,
+      loadingMessage: "Loading weather…",
+      unavailableMessage: "Weather unavailable",
     });
-    if (!data) {
+    if (!state.args) {
       return (
         <div className="text-muted-foreground text-sm">
-          {status.type === "running" ? "Loading weather…" : "Weather unavailable"}
+          {state.kind === "loading" || state.kind === "error"
+            ? state.message
+            : "Weather unavailable"}
         </div>
       );
     }
 
     return (
       <WeatherWidgetErrorBoundary>
-        <WeatherWidget {...data} />
+        <WeatherWidget {...state.args} />
       </WeatherWidgetErrorBoundary>
     );
   },

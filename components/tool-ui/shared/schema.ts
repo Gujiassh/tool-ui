@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
  * - Schema: `SerializableXSchema`
  * - Parser: `parseSerializableX(input: unknown)` (throws on invalid)
  * - Safe parser: `safeParseSerializableX(input: unknown)` (returns `null` on invalid — use in streaming render functions)
+ * - Render helper: `resolveStreamingToolRenderState(...)` (normalizes loading/partial/ready/error states)
  * - Actions: `responseActions`, `onResponseAction`, `onBeforeResponseAction`
  * - Root attrs: `data-tool-ui-id` + `data-slot`
  */

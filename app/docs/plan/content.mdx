@@ -105,21 +105,24 @@ import {
   PlanErrorBoundary,
   safeParseSerializablePlan,
 } from "@/components/tool-ui/plan";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showPlan: {
     type: "backend",
     render: ({ result, status }) => {
-      const plan = safeParseSerializablePlan(result);
-      if (!plan) {
-        const loading =
-          status.type === "running" || result === undefined
-            ? "Loading plan…"
-            : "Plan unavailable";
+      const state = resolveStreamingToolRenderState({
+        status,
+        result,
+        safeParseResult: safeParseSerializablePlan,
+        loadingMessage: "Loading plan…",
+        unavailableMessage: "Plan unavailable",
+      });
 
+      if (state.kind === "loading" || state.kind === "error") {
         return (
           <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {loading}
+            {state.message}
           </div>
         );
       }
@@ -127,7 +130,7 @@ export const toolkit: Toolkit = {
       return (
         <PlanErrorBoundary>
           <Plan
-            {...plan}
+            {...state.result}
             responseActions={[
               { id: "approve", label: "Approve Plan" },
               { id: "revise", label: "Request Changes", variant: "secondary" },

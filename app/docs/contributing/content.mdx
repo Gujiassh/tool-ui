@@ -14,7 +14,7 @@ Each component lives in [`components/tool-ui/`](https://github.com/assistant-ui/
 
 ### Core Files
 
-- `schema.ts`: Serializable schema and parser (`serializableXSchema`, `parseSerializableX`)
+- `schema.ts`: Serializable schema + strict/safe parsers (`SerializableXSchema`, `parseSerializableX`, `safeParseSerializableX`)
 - `types.ts`: TypeScript type definitions (serializable props, client props, internal types)
 - `component-name.tsx`: Main component implementation
 - `index.tsx`: Public exports (component, types, parser, error boundary)
@@ -61,7 +61,7 @@ Before coding:
 
 Implementation pattern:
 
-1. `schema.ts`: Define `serializableXSchema` and `parseSerializableX(input: unknown)`
+1. `schema.ts`: Define `SerializableXSchema`, `parseSerializableX(input: unknown)`, and `safeParseSerializableX(input: unknown)`
 2. `types.ts`: Create:
    - Serializable props type (derived from the schema)
    - Client props type (serializable props + callbacks like `onAction`, `onBeforeAction`)
@@ -73,7 +73,7 @@ Implementation pattern:
 5. Sub-components: Extract header/body/footer/actions when the component grows
 6. `context.tsx`: Use React context only when sub-components genuinely need shared state
 7. `error-boundary.tsx`: Wrap the component so bad props don't crash the whole chat
-8. `index.tsx`: Export the public API (component, types, parser, error boundary)
+8. `index.tsx`: Export the public API (component, types, strict/safe parsers, error boundary)
 
 </Step>
 
@@ -87,7 +87,7 @@ Create clear documentation:
 - Include at least one example that shows:
   - Tool definition with `outputSchema`
   - Server-side execution returning serializable props
-  - Client-side `parseSerializableX` + `<Component />` usage
+  - Client-side `safeParseSerializableX` (or `resolveStreamingToolRenderState`) + `<Component />` usage
 - Document action handling and any receipt behavior
 
 </Step>

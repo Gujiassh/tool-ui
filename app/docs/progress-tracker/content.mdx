@@ -262,27 +262,41 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   ProgressTracker,
   ProgressTrackerErrorBoundary,
-  parseSerializableProgressTracker,
+  safeParseSerializableProgressTracker,
   SerializableProgressTrackerSchema,
   type SerializableProgressTracker,
 } from "@/components/tool-ui/progress-tracker";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   trackProgress: {
   description: "Display real-time progress for multi-step operations",
   parameters: SerializableProgressTrackerSchema,
-  render: ({ args, toolCallId }) => {
-    if (!(args as any)?.steps) return null;
-
-    const data = parseSerializableProgressTracker({
-      ...args,
-      id: (args as any)?.id ?? `progress-tracker-${toolCallId}`,
+  render: ({ args, status, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableProgressTracker,
+      never
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `progress-tracker-${toolCallId}`,
+      },
+      safeParseArgs: safeParseSerializableProgressTracker,
+      loadingMessage: "Loading progress…",
     });
+
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+      }
+      return null;
+    }
 
     return (
       <ProgressTrackerErrorBoundary>
         <ProgressTracker
-          {...data}
+          {...state.args}
           onResponseAction={async (actionId) => {
             if (actionId === "cancel") {
               console.log("Cancelled operation");

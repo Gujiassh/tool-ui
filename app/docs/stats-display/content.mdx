@@ -174,26 +174,40 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   StatsDisplay,
   StatsDisplayErrorBoundary,
-  parseSerializableStatsDisplay,
+  safeParseSerializableStatsDisplay,
   SerializableStatsDisplaySchema,
   type SerializableStatsDisplay,
 } from "@/components/tool-ui/stats-display";
+import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showStats: {
   description: "Display key metrics in a grid",
   parameters: SerializableStatsDisplaySchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    if (!args?.stats?.length) return null;
-
-    const data = parseSerializableStatsDisplay({
-      ...args,
-      id: (args as any)?.id ?? `stats-${toolCallId}`,
+  render: ({ args, status, toolCallId }) => {
+    const state = resolveStreamingToolRenderState<
+      SerializableStatsDisplay,
+      never
+    >({
+      status,
+      args: {
+        ...args,
+        id: (args as any)?.id ?? `stats-${toolCallId}`,
+      },
+      safeParseArgs: safeParseSerializableStatsDisplay,
+      loadingMessage: "Loading stats…",
     });
+
+    if (!state.args) {
+      if (state.kind === "loading" || state.kind === "error") {
+        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+      }
+      return null;
+    }
 
     return (
       <StatsDisplayErrorBoundary>
-        <StatsDisplay {...data} />
+        <StatsDisplay {...state.args} />
       </StatsDisplayErrorBoundary>
     );
   },
