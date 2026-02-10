@@ -308,7 +308,7 @@ export default function WeatherWidgetStressPage() {
           units={{ temperature: unit }}
           current={current}
           forecast={forecast}
-          visual={{ localTimeOfDay: timeControls.timeOfDay }}
+          time={{ localTimeOfDay: timeControls.timeOfDay }}
           updatedAt={includeUpdatedAt ? timestamp : undefined}
           effects={globalEffects}
           className={stress.fillCells ? "w-full max-w-none" : undefined}

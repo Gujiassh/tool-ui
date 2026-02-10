@@ -1,20 +1,20 @@
 import { getTimeOfDay } from "./effects";
-import type { WeatherWidgetVisual } from "./schema";
+import type { WeatherWidgetTime } from "./schema";
 
-export interface ResolveWeatherVisualTimeInput {
-  visual?: WeatherWidgetVisual;
+export interface ResolveWeatherTimeInput {
+  time?: WeatherWidgetTime;
   updatedAt?: string;
 }
 
-export type WeatherVisualTimeSource =
+export type WeatherTimeSource =
   | "timeBucket"
   | "localTimeOfDay"
   | "updatedAt"
   | "defaultNoon";
 
-export interface ResolvedWeatherVisualTime {
+export interface ResolvedWeatherTime {
   timeOfDay: number;
-  source: WeatherVisualTimeSource;
+  source: WeatherTimeSource;
 }
 
 function normalizeTimeOfDay(value: number): number {
@@ -27,21 +27,21 @@ export function timeBucketToTimeOfDay(timeBucket: number): number {
   return (normalizedBucket + 0.5) / 12;
 }
 
-export function resolveWeatherVisualTime(
-  input: ResolveWeatherVisualTimeInput,
-): ResolvedWeatherVisualTime {
-  const { visual, updatedAt } = input;
+export function resolveWeatherTime(
+  input: ResolveWeatherTimeInput,
+): ResolvedWeatherTime {
+  const { time, updatedAt } = input;
 
-  if (typeof visual?.timeBucket === "number") {
+  if (typeof time?.timeBucket === "number") {
     return {
-      timeOfDay: timeBucketToTimeOfDay(visual.timeBucket),
+      timeOfDay: timeBucketToTimeOfDay(time.timeBucket),
       source: "timeBucket",
     };
   }
 
-  if (typeof visual?.localTimeOfDay === "number") {
+  if (typeof time?.localTimeOfDay === "number") {
     return {
-      timeOfDay: normalizeTimeOfDay(visual.localTimeOfDay),
+      timeOfDay: normalizeTimeOfDay(time.localTimeOfDay),
       source: "localTimeOfDay",
     };
   }

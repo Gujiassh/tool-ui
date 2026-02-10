@@ -276,7 +276,7 @@ export default function WeatherWidgetSandbox() {
     units: { temperature: activePreset.unit },
     current: activePreset.current,
     forecast: activePreset.forecast,
-    visual: { localTimeOfDay: timeOfDay },
+    time: { localTimeOfDay: timeOfDay },
     updatedAt: timestamp,
   };
 

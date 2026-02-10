@@ -32,7 +32,7 @@ describe("weather-widget forecast label contract", () => {
             tempMax: 55,
           },
         ],
-        visual: {
+        time: {
           timeBucket: 9,
         },
       }),

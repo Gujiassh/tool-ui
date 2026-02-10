@@ -26,43 +26,43 @@ function makeBasePayload(): WeatherWidgetPayload {
         tempMax: 56,
       },
     ],
-    visual: {
+    time: {
       timeBucket: 3,
     },
   };
 }
 
 describe("weather-widget v3.1 schema contract", () => {
-  test("accepts payload with visual.timeBucket only", () => {
+  test("accepts payload with time.timeBucket only", () => {
     const payload = makeBasePayload();
     const result = WeatherWidgetPayloadSchema.safeParse(payload);
     expect(result.success).toBe(true);
   });
 
-  test("accepts payload with visual.localTimeOfDay only", () => {
+  test("accepts payload with time.localTimeOfDay only", () => {
     const payload = makeBasePayload();
-    payload.visual = { localTimeOfDay: 0.375 };
+    payload.time = { localTimeOfDay: 0.375 };
     const result = WeatherWidgetPayloadSchema.safeParse(payload);
     expect(result.success).toBe(true);
   });
 
-  test("rejects payload when visual is empty", () => {
+  test("rejects payload when time is empty", () => {
     const payload = makeBasePayload();
-    payload.visual = {};
+    payload.time = {};
     const result = WeatherWidgetPayloadSchema.safeParse(payload);
     expect(result.success).toBe(false);
   });
 
   test("rejects payload when localTimeOfDay and timeBucket disagree", () => {
     const payload = makeBasePayload();
-    payload.visual = { timeBucket: 11, localTimeOfDay: 0.1 };
+    payload.time = { timeBucket: 11, localTimeOfDay: 0.1 };
     const result = WeatherWidgetPayloadSchema.safeParse(payload);
     expect(result.success).toBe(false);
   });
 
   test("safe parser returns null for invalid payload", () => {
     const payload = makeBasePayload();
-    payload.visual = {};
+    payload.time = {};
     expect(safeParseWeatherWidgetPayload(payload)).toBeNull();
   });
 });

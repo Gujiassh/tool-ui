@@ -36,7 +36,7 @@ describe("weather-widget layout containment", () => {
           { label: "Thu", tempMin: 60, tempMax: 73, conditionCode: "snow" },
           { label: "Fri", tempMin: 63, tempMax: 76, conditionCode: "snow" },
         ],
-        visual: { timeBucket: 4 },
+        time: { timeBucket: 4 },
       }),
     );
 

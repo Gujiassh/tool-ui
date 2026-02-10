@@ -1253,7 +1253,7 @@ export default function WeatherCompositorSandbox() {
                     );
                     return date.toISOString();
                   })()}
-                  visual={{ localTimeOfDay: timeOfDay }}
+                  time={{ localTimeOfDay: timeOfDay }}
                   effects={{ enabled: false }}
                 />
               </div>
@@ -1305,7 +1305,7 @@ export default function WeatherCompositorSandbox() {
                 );
                 return date.toISOString();
               })()}
-              visual={{ localTimeOfDay: timeOfDay }}
+              time={{ localTimeOfDay: timeOfDay }}
               effects={{ enabled: true }}
               customEffectProps={{
                 enabledLayers,

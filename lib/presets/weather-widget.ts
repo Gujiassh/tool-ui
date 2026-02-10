@@ -26,7 +26,7 @@ function generateWeatherWidgetCode(data: WeatherWidgetPayload): string {
     `  forecast={${JSON.stringify(data.forecast, null, 4).replace(/\n/g, "\n  ")}}`,
   );
   props.push(
-    `  visual={${JSON.stringify(data.visual, null, 4).replace(/\n/g, "\n  ")}}`,
+    `  time={${JSON.stringify(data.time, null, 4).replace(/\n/g, "\n  ")}}`,
   );
 
   if (data.updatedAt) {
@@ -60,7 +60,7 @@ export const weatherWidgetPresets: Record<
         { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
         { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
       ],
-      visual: { localTimeOfDay: 22.5 / 24 },
+      time: { localTimeOfDay: 22.5 / 24 },
       updatedAt: "2026-01-28T22:30:00Z",
     },
     generateExampleCode: generateWeatherWidgetCode,
@@ -85,7 +85,7 @@ export const weatherWidgetPresets: Record<
         { label: "Fri", tempMin: -5, tempMax: 10, conditionCode: "partly-cloudy" },
         { label: "Sat", tempMin: 2, tempMax: 18, conditionCode: "clear" },
       ],
-      visual: { localTimeOfDay: 21 / 24 },
+      time: { localTimeOfDay: 21 / 24 },
       updatedAt: "2026-01-28T21:00:00Z",
     },
     generateExampleCode: generateWeatherWidgetCode,
@@ -110,7 +110,7 @@ export const weatherWidgetPresets: Record<
         { label: "Thu", tempMin: 44, tempMax: 51, conditionCode: "rain" },
         { label: "Fri", tempMin: 46, tempMax: 55, conditionCode: "cloudy" },
       ],
-      visual: { localTimeOfDay: 16 / 24 },
+      time: { localTimeOfDay: 16 / 24 },
       updatedAt: "2026-01-28T16:00:00Z",
     },
     generateExampleCode: generateWeatherWidgetCode,
@@ -135,7 +135,7 @@ export const weatherWidgetPresets: Record<
         { label: "Fri", tempMin: 35, tempMax: 56, conditionCode: "partly-cloudy" },
         { label: "Sat", tempMin: 31, tempMax: 51, conditionCode: "cloudy" },
       ],
-      visual: { localTimeOfDay: 17.75 / 24 },
+      time: { localTimeOfDay: 17.75 / 24 },
       updatedAt: "2026-01-28T17:45:00Z",
     },
     generateExampleCode: generateWeatherWidgetCode,
@@ -160,7 +160,7 @@ export const weatherWidgetPresets: Record<
         { label: "Fri", tempMin: 68, tempMax: 80, conditionCode: "clear" },
         { label: "Sat", tempMin: 64, tempMax: 77, conditionCode: "partly-cloudy" },
       ],
-      visual: { localTimeOfDay: 14.5 / 24 },
+      time: { localTimeOfDay: 14.5 / 24 },
       updatedAt: "2026-01-28T14:30:00Z",
     },
     generateExampleCode: generateWeatherWidgetCode,

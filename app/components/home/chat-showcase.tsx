@@ -469,7 +469,7 @@ function createSceneConfigs(reducedMotion: boolean): SceneConfig[] {
             { label: "Fri", tempMin: 53, tempMax: 64, conditionCode: "partly-cloudy" },
             { label: "Sat", tempMin: 55, tempMax: 68, conditionCode: "clear" },
           ]}
-          visual={{ localTimeOfDay: 23 / 24 }}
+          time={{ localTimeOfDay: 23 / 24 }}
           updatedAt="2024-01-15T23:00:00Z"
           className="w-full max-w-[400px]"
           effects={{

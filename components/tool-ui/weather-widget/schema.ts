@@ -71,32 +71,32 @@ export const WeatherWidgetPayloadSchema = z
     // Rendering-time hints only (not weather data):
     // - `timeBucket` selects one of 12 fixed scenes
     // - `localTimeOfDay` gives a continuous 0..1 position in the day cycle
-    visual: z.object({
+    time: z.object({
       timeBucket: TimeBucketSchema.optional(),
       localTimeOfDay: z.number().min(0).max(1).optional(),
     }),
     updatedAt: z.string().datetime().optional(),
   })
   .superRefine((value, ctx) => {
-    const hasBucket = value.visual.timeBucket !== undefined;
-    const hasLocalTime = value.visual.localTimeOfDay !== undefined;
+    const hasBucket = value.time.timeBucket !== undefined;
+    const hasLocalTime = value.time.localTimeOfDay !== undefined;
 
     if (!hasBucket && !hasLocalTime) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: ["visual"],
-        message: "visual must include timeBucket or localTimeOfDay",
+        path: ["time"],
+        message: "time must include timeBucket or localTimeOfDay",
       });
       return;
     }
 
     if (hasBucket && hasLocalTime) {
-      const normalized = ((value.visual.localTimeOfDay ?? 0) % 1 + 1) % 1;
+      const normalized = ((value.time.localTimeOfDay ?? 0) % 1 + 1) % 1;
       const derivedBucket = Math.floor(normalized * 12) % 12;
-      if (derivedBucket !== value.visual.timeBucket) {
+      if (derivedBucket !== value.time.timeBucket) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ["visual"],
+          path: ["time"],
           message: "timeBucket must match localTimeOfDay bucket",
         });
       }
@@ -107,7 +107,7 @@ export type WeatherWidgetPayload = z.infer<typeof WeatherWidgetPayloadSchema>;
 
 export type WeatherWidgetCurrent = WeatherWidgetPayload["current"];
 
-export type WeatherWidgetVisual = WeatherWidgetPayload["visual"];
+export type WeatherWidgetTime = WeatherWidgetPayload["time"];
 
 export type WeatherWidgetLocation = WeatherWidgetPayload["location"];
 

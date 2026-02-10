@@ -9,7 +9,7 @@ import {
   TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
 } from "./effects";
 import type { WeatherWidgetProps } from "./schema";
-import { resolveWeatherVisualTime } from "./time";
+import { resolveWeatherTime } from "./time";
 import { WeatherDataOverlay } from "./weather-data-overlay";
 
 function formatRelativeTime(isoString: string, locale?: string): string {
@@ -51,7 +51,7 @@ export function WeatherWidget({
   units,
   current,
   forecast,
-  visual,
+  time,
   updatedAt,
   className,
   locale: localeProp,
@@ -69,14 +69,14 @@ export function WeatherWidget({
   const effectsEnabled = effects?.enabled !== false && !reducedMotion;
 
   const overlayTimeOfDay = customEffectProps?.celestial?.timeOfDay;
-  const resolvedVisualTime = resolveWeatherVisualTime({
-    visual,
+  const resolvedTime = resolveWeatherTime({
+    time,
     updatedAt,
   });
   const timeOfDay =
     typeof overlayTimeOfDay === "number"
       ? overlayTimeOfDay
-      : resolvedVisualTime.timeOfDay;
+      : resolvedTime.timeOfDay;
 
   const tunedOverrides =
     TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[current.conditionCode];

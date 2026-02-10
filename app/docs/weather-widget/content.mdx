@@ -28,7 +28,7 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget";
           { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
           { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
         ]}
-        visual={{ localTimeOfDay: 22 / 24 }}
+        time={{ localTimeOfDay: 22 / 24 }}
         updatedAt="2026-01-28T22:00:00Z"
       />
     </div>
@@ -57,7 +57,7 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget";
             { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
             { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
           ]}
-          visual={{ localTimeOfDay: 22 / 24 }}
+          time={{ localTimeOfDay: 22 / 24 }}
           updatedAt="2026-01-28T22:00:00Z"
         />
       );
@@ -178,8 +178,8 @@ export const toolkit: Toolkit = {
       type: "ForecastDay[]",
       required: true,
     },
-    visual: {
-      description: "Deterministic visual time source",
+    time: {
+      description: "Deterministic scene time source",
       type: "{ timeBucket?: 0..11; localTimeOfDay?: 0..1 }",
       required: true,
     },
