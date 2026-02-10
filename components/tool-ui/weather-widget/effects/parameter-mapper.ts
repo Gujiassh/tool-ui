@@ -391,6 +391,7 @@ const CONDITION_PRESETS: Record<
   hail: {
     cloud: { coverage: 0.9, speed: 0.6, darkness: 0.5, turbulence: 0.5 },
     rain: { intensity: 0.7, glassDrops: true, fallingRain: true, angle: 5 },
+    snow: { intensity: 0.3, windDrift: 0.4 },
   },
 
   windy: {

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Check, FileCode } from "lucide-react";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
+import { hasAnyTuningDelta } from "../lib/has-any-tuning-delta";
+import { listUpdatedParams } from "../lib/list-updated-params";
 
 interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
@@ -14,6 +16,12 @@ interface ExportPanelProps {
   ) => void;
   onRecovered?: (checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>) => void;
 }
+
+type ToastState = {
+  tone: "success" | "error" | "info";
+  title: string;
+  detail?: string;
+} | null;
 
 export function ExportPanel({
   checkpointOverrides,
@@ -25,7 +33,8 @@ export function ExportPanel({
     "idle" | "saving" | "success" | "error"
   >("idle");
   const [applyError, setApplyError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState>(null);
+  const canApply = hasAnyTuningDelta(checkpointOverrides);
 
   const handleRecover = async () => {
     setApplyError(null);
@@ -44,7 +53,10 @@ export function ExportPanel({
         return;
       }
       onRecovered?.(payload.checkpointOverrides);
-      setToast("Recovered tuning from repo presets");
+      setToast({
+        tone: "info",
+        title: "Recovered tuning from repo presets",
+      });
     } catch (error) {
       console.error("Failed to recover tuning.", error);
       setApplyError("Failed to recover tuning.");
@@ -52,22 +64,11 @@ export function ExportPanel({
   };
 
   const handleApply = async () => {
+    if (!canApply) return;
+
     setApplyStatus("saving");
     setApplyError(null);
     try {
-      const hasAnyDelta = Object.values(checkpointOverrides).some((byCheckpoint) => {
-        if (!byCheckpoint) return false;
-        return Object.values(byCheckpoint).some((checkpointData) => {
-          return checkpointData && Object.keys(checkpointData).length > 0;
-        });
-      });
-
-      if (!hasAnyDelta) {
-        setApplyStatus("error");
-        setApplyError("No tuning changes to apply yet.");
-        return;
-      }
-
       const response = await fetch("/api/weather-tuning/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,7 +94,17 @@ export function ExportPanel({
           ? payload.path
           : "components/tool-ui/weather-widget/effects/tuned-presets.ts";
 
-      setToast(`Applied tuning → ${filePath}`);
+      const updatedParams = listUpdatedParams(checkpointOverrides);
+      const detail =
+        updatedParams.length > 0
+          ? `Updated params (${updatedParams.length}): ${updatedParams.join(", ")}`
+          : "Updated params: none";
+
+      setToast({
+        tone: "success",
+        title: `Applied tuning → ${filePath}`,
+        detail,
+      });
       setApplyStatus("success");
       try {
         if (payload?.checkpointOverrides) {
@@ -109,13 +120,16 @@ export function ExportPanel({
       console.error("Failed to apply export.", error);
       setApplyStatus("error");
       setApplyError("Failed to apply export.");
-      setToast("Failed to apply tuning");
+      setToast({
+        tone: "error",
+        title: "Failed to apply tuning",
+      });
     }
   };
 
   useEffect(() => {
     if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), 2200);
+    const timer = window.setTimeout(() => setToast(null), 7000);
     return () => window.clearTimeout(timer);
   }, [toast]);
 
@@ -137,7 +151,7 @@ export function ExportPanel({
           size="sm"
           className="gap-2"
           onClick={handleApply}
-          disabled={applyStatus === "saving"}
+          disabled={applyStatus === "saving" || !canApply}
         >
           <FileCode className="size-4" />
           {applyStatus === "saving"
@@ -152,8 +166,22 @@ export function ExportPanel({
         <span className="ml-2 text-xs text-red-500/80">{applyError}</span>
       )}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-md border border-border/60 bg-background px-3 py-2 text-xs shadow-lg">
-          {toast}
+        <div
+          style={{ zIndex: 2147483647 }}
+          className={`fixed bottom-6 right-6 z-50 max-h-56 max-w-[44rem] overflow-auto rounded-md border px-3 py-2 text-xs shadow-lg ${
+            toast.tone === "success"
+              ? "border-emerald-500/60 bg-emerald-950/95 text-emerald-50"
+              : toast.tone === "error"
+                ? "border-rose-500/60 bg-rose-950/95 text-rose-50"
+                : "border-slate-500/60 bg-slate-900/95 text-slate-50"
+          }`}
+        >
+          <div className="font-medium">{toast.title}</div>
+          {toast.detail && (
+            <div className="mt-1 whitespace-pre-wrap opacity-95">
+              {toast.detail}
+            </div>
+          )}
         </div>
       )}
     </>

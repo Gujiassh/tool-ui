@@ -239,6 +239,7 @@ export function WeatherDataOverlay({
 
   const isDark = theme === "dark";
   const textPrimary = isDark ? "text-white" : "text-black";
+  const textPrimarySoft = isDark ? "text-white/90" : "text-black/85";
   const textSecondary = isDark ? "text-white/80" : "text-black/80";
   const textMuted = isDark ? "text-white/50" : "text-black/50";
   const textSubtle = isDark ? "text-white/40" : "text-black/40";
@@ -266,6 +267,8 @@ export function WeatherDataOverlay({
   const temperatureFontSize = "clamp(48px, 32cqmin, 72px)";
   const degreeFontSize = "clamp(18px, 12cqmin, 28px)";
   const hiLoFontSize = "clamp(11px, 6.5cqmin, 15px)";
+  const forecastFontFamily =
+    '"SF Pro Text", Inter, "Noto Sans", system-ui, sans-serif';
 
   return (
     <div
@@ -280,29 +283,28 @@ export function WeatherDataOverlay({
         <div className="flex flex-col items-start">
           <h2
             className={cn(
-              "font-medium tracking-tight",
+              "font-medium leading-[1.08] tracking-tight",
               textSecondary,
             )}
             style={{
               fontSize: locationFontSize,
-              fontFamily: '"SF Pro Display", system-ui, sans-serif',
+              fontFamily: forecastFontFamily,
               textShadow: shadowStyle,
             }}
           >
             {location}
           </h2>
 
-          <div className="flex items-start gap-1.5">
+          <div className="-mt-0.5 flex items-start gap-1">
             <span
               className={cn(
-                "font-[200] leading-none tracking-[-0.04em]",
-                textPrimary,
+                "font-[250] leading-[1.02] tracking-[-0.015em] tabular-nums",
+                textPrimarySoft,
               )}
               style={{
                 fontSize: temperatureFontSize,
-                fontFamily:
-                  '"SF Pro Display", "Helvetica Neue", system-ui, sans-serif',
-                fontFeatureSettings: '"tnum"',
+                fontFamily: forecastFontFamily,
+                fontFeatureSettings: '"tnum" 1, "case" 1',
                 textShadow: isDark
                   ? "0 2px 20px rgba(0,0,0,0.25)"
                   : "0 2px 20px rgba(255,255,255,0.3)",
@@ -312,10 +314,11 @@ export function WeatherDataOverlay({
               {Math.round(temperature)}
             </span>
             <span
-              className={cn("mt-2 font-[200]", textMuted)}
+              className={cn("mt-2 font-[250] tabular-nums", textSecondary)}
               style={{
                 fontSize: degreeFontSize,
-                fontFamily: '"SF Pro Display", system-ui, sans-serif',
+                fontFamily: forecastFontFamily,
+                fontFeatureSettings: '"tnum" 1, "case" 1',
               }}
               aria-hidden="true"
             >
@@ -324,14 +327,17 @@ export function WeatherDataOverlay({
           </div>
 
           <div
-            className="mt-1 flex items-center gap-4"
-            style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
+            className="mt-0.5 flex items-center gap-3"
+            style={{
+              fontFamily: forecastFontFamily,
+              fontFeatureSettings: '"tnum" 1, "case" 1',
+            }}
           >
-            <span className="font-light tabular-nums" style={{ fontSize: hiLoFontSize }}>
+            <span className="font-medium tabular-nums" style={{ fontSize: hiLoFontSize }}>
               <span className={textSubtle}>H </span>
               <span className={textPrimary}>{Math.round(tempHigh)}°</span>
             </span>
-            <span className="font-light tabular-nums" style={{ fontSize: hiLoFontSize }}>
+            <span className="font-medium tabular-nums" style={{ fontSize: hiLoFontSize }}>
               <span className={textSubtle}>L </span>
               <span className={textPrimary}>{Math.round(tempLow)}°</span>
             </span>
@@ -393,19 +399,18 @@ export function WeatherDataOverlay({
                   return (
                     <div
                       key={day.day}
-                      className={cn(
-                        "flex flex-1 flex-col items-center gap-0.5",
-                        index === 0 ? "opacity-100" : "opacity-60",
-                      )}
+                      className="flex flex-1 flex-col items-center gap-0.5"
                       style={{
-                        fontFamily: "system-ui, sans-serif",
+                        fontFamily: forecastFontFamily,
+                        fontFeatureSettings: '"tnum" 1, "case" 1',
                         textShadow: forecastTextShadow,
                       }}
                     >
                       <span
                         className={cn(
-                          "text-[10px] font-medium uppercase tracking-[0.1em]",
-                          textMuted,
+                          "text-[10px] uppercase tracking-[0.08em]",
+                          index === 0 ? "font-semibold" : "font-medium",
+                          textPrimary,
                         )}
                       >
                         {index === 0 ? "Now" : day.day}
@@ -413,7 +418,8 @@ export function WeatherDataOverlay({
                       <DayIcon
                         className={cn(
                           "my-0.5 size-5",
-                          textSecondary,
+                          textPrimary,
+                          index === 0 ? "opacity-100" : "opacity-70",
                           // At shorter containers (but still showing the strip),
                           // omit the icon to preserve legibility.
                           "weather-forecast-icon hidden",
@@ -421,10 +427,11 @@ export function WeatherDataOverlay({
                         strokeWidth={1.5}
                         aria-hidden="true"
                       />
-                      <div className="flex flex-col items-center leading-tight">
+                      <div className="flex flex-col items-center gap-0.5">
                         <span
                           className={cn(
-                            "text-[14px] font-normal tabular-nums",
+                            "text-[15px] leading-[1.2] tabular-nums tracking-[-0.01em]",
+                            index === 0 ? "font-semibold" : "font-medium",
                             textPrimary,
                           )}
                         >
@@ -432,8 +439,8 @@ export function WeatherDataOverlay({
                         </span>
                         <span
                           className={cn(
-                            "text-[12px] font-light tabular-nums",
-                            textSubtle,
+                            "text-[12px] leading-[1.3] font-normal tabular-nums",
+                            textPrimary,
                           )}
                         >
                           {Math.round(day.tempMin)}°

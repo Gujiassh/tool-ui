@@ -26,7 +26,11 @@ import {
 import { ParameterRow, ParameterToggleRow } from "./parameter-row";
 import type { TimeCheckpoint } from "../types";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
-import { TIME_CHECKPOINTS } from "../lib/constants";
+import {
+  RAIN_PARAM_LIMITS,
+  SNOW_FALL_SPEED_MAX,
+  TIME_CHECKPOINTS,
+} from "../lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -820,8 +824,8 @@ export function ParameterPanel({
                   label="Glass Intensity"
                   value={params.rain.glassIntensity}
                   baseValue={baseParams.rain.glassIntensity}
-                  min={0}
-                  max={1}
+                  min={RAIN_PARAM_LIMITS.glassIntensity.min}
+                  max={RAIN_PARAM_LIMITS.glassIntensity.max}
                   onChange={(v) => updateRain("glassIntensity", v)}
                   onReset={() =>
                     updateRain("glassIntensity", baseParams.rain.glassIntensity)
@@ -831,8 +835,8 @@ export function ParameterPanel({
                   label="Zoom"
                   value={params.rain.zoom}
                   baseValue={baseParams.rain.zoom}
-                  min={0.5}
-                  max={2}
+                  min={RAIN_PARAM_LIMITS.zoom.min}
+                  max={RAIN_PARAM_LIMITS.zoom.max}
                   onChange={(v) => updateRain("zoom", v)}
                   onReset={() => updateRain("zoom", baseParams.rain.zoom)}
                 />
@@ -840,8 +844,8 @@ export function ParameterPanel({
                   label="Falling Intensity"
                   value={params.rain.fallingIntensity}
                   baseValue={baseParams.rain.fallingIntensity}
-                  min={0}
-                  max={1}
+                  min={RAIN_PARAM_LIMITS.fallingIntensity.min}
+                  max={RAIN_PARAM_LIMITS.fallingIntensity.max}
                   onChange={(v) => updateRain("fallingIntensity", v)}
                   onReset={() =>
                     updateRain(
@@ -854,8 +858,8 @@ export function ParameterPanel({
                   label="Falling Speed"
                   value={params.rain.fallingSpeed}
                   baseValue={baseParams.rain.fallingSpeed}
-                  min={0.1}
-                  max={3}
+                  min={RAIN_PARAM_LIMITS.fallingSpeed.min}
+                  max={RAIN_PARAM_LIMITS.fallingSpeed.max}
                   onChange={(v) => updateRain("fallingSpeed", v)}
                   onReset={() =>
                     updateRain("fallingSpeed", baseParams.rain.fallingSpeed)
@@ -865,8 +869,8 @@ export function ParameterPanel({
                   label="Falling Angle"
                   value={params.rain.fallingAngle}
                   baseValue={baseParams.rain.fallingAngle}
-                  min={-0.5}
-                  max={0.5}
+                  min={RAIN_PARAM_LIMITS.fallingAngle.min}
+                  max={RAIN_PARAM_LIMITS.fallingAngle.max}
                   onChange={(v) => updateRain("fallingAngle", v)}
                   onReset={() =>
                     updateRain("fallingAngle", baseParams.rain.fallingAngle)
@@ -876,8 +880,8 @@ export function ParameterPanel({
                   label="Streak Length"
                   value={params.rain.fallingStreakLength}
                   baseValue={baseParams.rain.fallingStreakLength}
-                  min={0.1}
-                  max={2}
+                  min={RAIN_PARAM_LIMITS.fallingStreakLength.min}
+                  max={RAIN_PARAM_LIMITS.fallingStreakLength.max}
                   onChange={(v) => updateRain("fallingStreakLength", v)}
                   onReset={() =>
                     updateRain(
@@ -890,8 +894,8 @@ export function ParameterPanel({
                   label="Falling Layers"
                   value={params.rain.fallingLayers}
                   baseValue={baseParams.rain.fallingLayers}
-                  min={1}
-                  max={6}
+                  min={RAIN_PARAM_LIMITS.fallingLayers.min}
+                  max={RAIN_PARAM_LIMITS.fallingLayers.max}
                   step={1}
                   onChange={(v) => updateRain("fallingLayers", v)}
                   onReset={() =>
@@ -1074,7 +1078,7 @@ export function ParameterPanel({
                   value={params.snow.fallSpeed}
                   baseValue={baseParams.snow.fallSpeed}
                   min={0.1}
-                  max={2}
+                  max={SNOW_FALL_SPEED_MAX}
                   onChange={(v) => updateSnow("fallSpeed", v)}
                   onReset={() =>
                     updateSnow("fallSpeed", baseParams.snow.fallSpeed)

@@ -118,7 +118,7 @@ function CheckpointSlider({
       </div>
       <span
         className={cn(
-          "font-mono text-[10px] tabular-nums",
+          "font-mono text-xs tabular-nums",
           isChanged
             ? "text-amber-600/80 dark:text-amber-400/80"
             : "text-muted-foreground/50",
@@ -172,13 +172,13 @@ function ParameterTimeRow({
   return (
     <div className="border-b border-border/20 py-2">
       <div className="grid grid-cols-[160px_repeat(4,minmax(0,1fr))] items-start gap-3">
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground/70">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
           <span>{param.label}</span>
         </div>
       {values.map(({ checkpoint, value, baseValue }) => {
         if (typeof value !== "number" || typeof baseValue !== "number") {
           return (
-            <div key={checkpoint} className="text-[10px] text-muted-foreground/40">
+            <div key={checkpoint} className="text-xs text-muted-foreground/40">
               —
             </div>
           );
@@ -291,7 +291,7 @@ export function TimeMatrixView({ tuningState, condition }: TimeMatrixViewProps) 
           return (
             <div key={group.name} className="mt-6">
               <div className="sticky top-0 z-10 -mx-4 border-b border-border/30 bg-background/95 px-4 py-2 backdrop-blur">
-                <div className="flex items-center gap-2 text-[10px] font-medium tracking-wider uppercase">
+                <div className="flex items-center gap-2 text-xs font-medium tracking-wider uppercase">
                   {Icon ? (
                     <div
                       className={cn(

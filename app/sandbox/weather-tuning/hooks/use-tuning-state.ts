@@ -27,13 +27,18 @@ import type {
   TimeCheckpoint,
 } from "../types";
 import {
-  SESSION_KEY,
   DEFAULT_TIME_OF_DAY,
   TIME_CHECKPOINTS,
   TIME_CHECKPOINT_ORDER,
 } from "../lib/constants";
 import { mapToolUiPresetsToCompositor } from "../lib/tool-ui-import";
 import { resolveCompositorParamsAtTime } from "../lib/resolve-params";
+import { recoverRepoCheckpointOverrides } from "../lib/recover-repo-overrides";
+import { createStudioTimestamp } from "../lib/studio-timestamp";
+import {
+  loadWorkflowState,
+  saveWorkflowState,
+} from "../lib/workflow-state";
 
 export type LayerKey =
   | "layers"
@@ -44,38 +49,6 @@ export type LayerKey =
   | "snow"
   | "glass"
   | "post";
-
-interface WorkflowState {
-  checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>;
-  signedOff: WeatherCondition[];
-}
-
-function loadWorkflowState(): WorkflowState | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const stored = localStorage.getItem(SESSION_KEY);
-    if (!stored) return null;
-    return JSON.parse(stored) as WorkflowState;
-  } catch {
-    return null;
-  }
-}
-
-function saveWorkflowState(
-  checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>,
-  signedOff: Set<WeatherCondition>,
-): void {
-  if (typeof window === "undefined") return;
-  try {
-    const state: WorkflowState = {
-      checkpoints,
-      signedOff: Array.from(signedOff),
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(state));
-  } catch {
-    console.warn("Failed to save workflow state to localStorage");
-  }
-}
 
 function createEmptyCheckpointOverrides(): CheckpointOverrides {
   return {
@@ -132,9 +105,29 @@ export function useTuningState() {
     if (workflowState) {
       setCheckpoints(workflowState.checkpoints);
       setSignedOff(new Set(workflowState.signedOff));
+      if (workflowState.repoCheckpointOverrides) {
+        setRepoCheckpointOverrides(workflowState.repoCheckpointOverrides);
+      }
     }
 
     setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+
+    let cancelled = false;
+    const recover = async () => {
+      const recovered = await recoverRepoCheckpointOverrides();
+      if (!cancelled && recovered) {
+        setRepoCheckpointOverrides(recovered);
+      }
+    };
+
+    void recover();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -155,8 +148,12 @@ export function useTuningState() {
 
   useEffect(() => {
     if (!isHydrated) return;
-    saveWorkflowState(checkpoints, signedOff);
-  }, [checkpoints, signedOff, isHydrated]);
+    saveWorkflowState({
+      checkpoints,
+      signedOff: Array.from(signedOff),
+      repoCheckpointOverrides,
+    });
+  }, [checkpoints, signedOff, repoCheckpointOverrides, isHydrated]);
 
   // Auto-expand parameter groups for active layers when condition changes
   useEffect(() => {
@@ -181,11 +178,7 @@ export function useTuningState() {
     // If we generate timestamps in local time and then read them as UTC, the
     // tuning studio silently shifts the day cycle (noon becomes evening, etc).
     // This presents as "bleeding" or wildly inconsistent cross-condition tuning.
-    const date = new Date();
-    const hours = Math.floor(timeOfDay * 24);
-    const minutes = Math.floor((timeOfDay * 24 - hours) * 60);
-    date.setUTCHours(hours, minutes, 0, 0);
-    return date.toISOString();
+    return createStudioTimestamp(timeOfDay);
   }, []);
 
   const getRawBaseParamsForCheckpoint = useCallback(

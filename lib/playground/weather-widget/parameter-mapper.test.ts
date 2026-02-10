@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import {
   configToRainProps,
+  configToSnowProps,
   getSceneBrightness,
   mapWeatherToEffects,
 } from "@/components/tool-ui/weather-widget/effects/parameter-mapper";
@@ -38,5 +39,15 @@ describe("weather-widget parameter-mapper", () => {
     expect(rain).not.toBeNull();
     expect(rain?.fallingAngle).toBeCloseTo(15 * 0.02, 6);
   });
-});
 
+  test("hail condition includes snow layer so mixed precip is visible", () => {
+    const config = mapWeatherToEffects({
+      condition: "hail",
+      timestamp: "2025-01-01T12:00:00Z",
+    });
+
+    const snow = configToSnowProps(config);
+    expect(snow).not.toBeNull();
+    expect((snow?.intensity ?? 0)).toBeGreaterThan(0);
+  });
+});
