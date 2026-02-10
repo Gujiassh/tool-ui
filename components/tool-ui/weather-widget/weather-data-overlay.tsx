@@ -12,7 +12,6 @@ import {
   Snowflake,
   CloudHail,
   Wind,
-  Droplets,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "./_adapter";
@@ -22,6 +21,7 @@ import {
   getTimeOfDay,
   getWeatherTheme,
   useGlassStyles,
+  resolveGlassBackdropFilterStyles,
   type WeatherTheme,
 } from "./effects";
 
@@ -84,9 +84,6 @@ export interface WeatherDataOverlayProps {
   temperature: number;
   tempHigh: number;
   tempLow: number;
-  humidity?: number;
-  windSpeed?: number;
-  visibility?: number;
   forecast?: ForecastDay[];
   unit?: TemperatureUnit;
   /**
@@ -114,9 +111,6 @@ export function WeatherDataOverlay({
   temperature,
   tempHigh,
   tempLow,
-  humidity,
-  windSpeed,
-  visibility: _visibility,
   forecast = [],
   unit = "fahrenheit",
   updatedAtLabel: _updatedAtLabel,
@@ -157,9 +151,6 @@ export function WeatherDataOverlay({
     saturation: glassParams?.saturation ?? 1.3,
     enabled: glassEnabled,
   });
-
-  // Check if SVG glass is active (has backdrop-filter set)
-  const svgGlassActive = Boolean(glassStyles.backdropFilter);
 
   // Track forecast card dimensions for glass effect
   const updateCardDimensions = useCallback(() => {
@@ -254,9 +245,7 @@ export function WeatherDataOverlay({
   const textSubtle = isDark ? "text-white/40" : "text-black/40";
 
   const baseBgOpacity = isDark ? 0.04 : 0.04;
-  const baseBorderOpacity = isDark ? 0.03 : 0.15;
   const bgOpacity = baseBgOpacity * (1 - peakIntensity * 0.7);
-  const borderOpacity = baseBorderOpacity + peakIntensity * 0.02;
   const midnightDistance = Math.min(timeOfDay, 1 - timeOfDay);
   const baseBlur = isDark ? 2 + midnightDistance * 38 : 24;
   const blurAmount = isDark ? baseBlur : baseBlur - peakIntensity * (baseBlur - 8);
@@ -273,7 +262,7 @@ export function WeatherDataOverlay({
     ? "0 1px 8px rgba(0,0,0,0.3)"
     : "0 1px 8px rgba(255,255,255,0.3)";
 
-  const hasStats = humidity !== undefined || windSpeed !== undefined;
+  // Fluid type scales with the widget container size. (Requires container-type:size.)
   const locationFontSize = "clamp(13px, 7.5cqmin, 17px)";
   const temperatureFontSize = "clamp(48px, 32cqmin, 72px)";
   const degreeFontSize = "clamp(18px, 12cqmin, 28px)";
@@ -289,11 +278,14 @@ export function WeatherDataOverlay({
         className,
       )}
     >
-      {/* Current weather */}
+      {/* Current weather (more inset than forecast strip) */}
       <div className="px-6 pt-6">
         <div className="flex flex-col items-start">
           <h2
-            className={cn("font-medium leading-[1.08] tracking-tight", textSecondary)}
+            className={cn(
+              "font-medium leading-[1.08] tracking-tight",
+              textSecondary,
+            )}
             style={{
               fontSize: locationFontSize,
               fontFamily: forecastFontFamily,
@@ -349,28 +341,6 @@ export function WeatherDataOverlay({
               <span className={textSubtle}>L </span>
               <span className={textPrimary}>{Math.round(tempLow)}°</span>
             </span>
-
-            {hasStats && (
-              <>
-                <div className={cn("h-3 w-px", isDark ? "bg-white/10" : "bg-black/10")} />
-                {humidity !== undefined && (
-                  <div className="flex items-center gap-1">
-                    <Droplets className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
-                    <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
-                      {Math.round(humidity)}%
-                    </span>
-                  </div>
-                )}
-                {windSpeed !== undefined && (
-                  <div className="flex items-center gap-1">
-                    <Wind className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
-                    <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
-                      {Math.round(windSpeed)} mph
-                    </span>
-                  </div>
-                )}
-              </>
-            )}
           </div>
         </div>
       </div>
@@ -378,10 +348,11 @@ export function WeatherDataOverlay({
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Forecast strip - hidden at small container sizes */}
+      {/* Forecast strip - hidden at small container sizes (less inset than header) */}
       {forecast.length > 0 && (
         <div className="px-3 pb-3">
-          <div ref={cardRef} className="relative hidden @[280px]/weather:block">
+          {/* Show the strip earlier, but progressively reduce content as height shrinks. */}
+          <div ref={cardRef} className="weather-forecast-strip relative hidden">
             {/* Edge shine - outside overflow-hidden so it aligns with border */}
             <div
               className="pointer-events-none absolute inset-0 z-10 rounded-xl transition-opacity duration-300 ease-out"
@@ -396,21 +367,17 @@ export function WeatherDataOverlay({
                 mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                 maskComposite: "exclude",
                 WebkitMaskComposite: "xor",
-                padding: "1px",
+                padding: "0.5px",
               }}
             />
             <div
-              className="relative overflow-hidden rounded-xl border px-3 py-2.5"
+              className="relative overflow-hidden rounded-xl px-3 py-2.5"
               style={{
                 backgroundColor: `rgba(255, 255, 255, ${bgOpacity})`,
-                borderColor: `rgba(255, 255, 255, ${borderOpacity})`,
-                // Apply SVG glass effect when supported, fall back to simple blur
-                ...(svgGlassActive
-                  ? glassStyles
-                  : {
-                      backdropFilter: `blur(${blurAmount}px)`,
-                      WebkitBackdropFilter: `blur(${blurAmount}px)`,
-                    }),
+                ...resolveGlassBackdropFilterStyles({
+                  glassStyles,
+                  blurAmount,
+                }),
               }}
             >
               {/* Inner glow */}
@@ -453,6 +420,9 @@ export function WeatherDataOverlay({
                           "my-0.5 size-5",
                           textPrimary,
                           index === 0 ? "opacity-100" : "opacity-70",
+                          // At shorter containers (but still showing the strip),
+                          // omit the icon to preserve legibility.
+                          "weather-forecast-icon hidden",
                         )}
                         strokeWidth={1.5}
                         aria-hidden="true"
@@ -484,6 +454,20 @@ export function WeatherDataOverlay({
           </div>
         </div>
       )}
+
+      {/* Height-based container queries (requires container-type:size on the weather container). */}
+      <style jsx>{`
+        @container weather (min-height: 245px) {
+          .weather-forecast-strip {
+            display: block !important;
+          }
+        }
+        @container weather (min-height: 280px) {
+          .weather-forecast-icon {
+            display: block !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

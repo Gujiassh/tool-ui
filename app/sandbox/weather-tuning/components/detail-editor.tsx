@@ -5,12 +5,11 @@ import { RotateCcw, Eye, EyeOff, CheckCircle2, Copy } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects";
-import { WeatherDataOverlay } from "./weather-data-overlay";
+import { WeatherDataOverlay, createWeatherOverlayStubData } from "./weather-data-overlay";
 import { GlassControls } from "./glass-controls";
-import type { GlassEffectParams } from "../hooks/use-tuning-state";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import { CONDITION_LABELS } from "../../weather-compositor/presets";
-import type { FullCompositorParams } from "../../weather-compositor/presets";
+import type { FullCompositorParams, GlassParams } from "../../weather-compositor/presets";
 import { ParameterPanel } from "./parameter-panel";
 import { TIME_CHECKPOINT_ORDER, TIME_CHECKPOINTS } from "../lib/constants";
 import type { ConditionCheckpoints, TimeCheckpoint } from "../types";
@@ -28,7 +27,9 @@ type LayerKey =
   | "cloud"
   | "rain"
   | "lightning"
-  | "snow";
+  | "snow"
+  | "glass"
+  | "post";
 
 interface DetailEditorProps {
   condition: WeatherCondition;
@@ -41,14 +42,12 @@ interface DetailEditorProps {
   expandedGroups: Set<string>;
   currentTime: number;
   showWidgetOverlay: boolean;
-  glassParams: GlassEffectParams;
   onParamsChange: (params: FullCompositorParams) => void;
   onToggleGroup: (group: string) => void;
   onReset: () => void;
   onSignOff: () => void;
   onCheckpointClick: (checkpoint: TimeCheckpoint) => void;
   onToggleWidgetOverlay: () => void;
-  onGlassParamsChange: (params: GlassEffectParams) => void;
   onCopyLayer?: (targetCondition: WeatherCondition, layerKey: LayerKey) => void;
   onCopyLayerToAll?: (layerKey: LayerKey) => void;
   onCopyCheckpoint?: (targetCheckpoints: TimeCheckpoint[]) => void;
@@ -65,14 +64,12 @@ export function DetailEditor({
   expandedGroups,
   currentTime,
   showWidgetOverlay,
-  glassParams,
   onParamsChange,
   onToggleGroup,
   onReset,
   onSignOff,
   onCheckpointClick,
   onToggleWidgetOverlay,
-  onGlassParamsChange,
   onCopyLayer,
   onCopyLayerToAll,
   onCopyCheckpoint,
@@ -80,6 +77,10 @@ export function DetailEditor({
   const canvasProps = useMemo(
     () => mapCompositorParamsToCanvasProps(params),
     [params],
+  );
+  const overlayData = useMemo(
+    () => createWeatherOverlayStubData(condition),
+    [condition],
   );
   const label = CONDITION_LABELS[condition];
 
@@ -95,7 +96,7 @@ export function DetailEditor({
   return (
     <div className="flex h-full gap-5">
       <div className="flex w-[420px] shrink-0 flex-col gap-3">
-        <div className="group/widget border-border relative aspect-4/3 overflow-hidden rounded-xl border shadow-xl">
+        <div className="group/widget border-border relative aspect-4/3 overflow-hidden rounded-xl border shadow-xl @container/weather [container-type:size]">
           <div className="absolute inset-0 bg-black">
             <WeatherEffectsCanvas
               className="absolute inset-0"
@@ -106,34 +107,9 @@ export function DetailEditor({
           {showWidgetOverlay && (
             <div className="absolute inset-0 z-20">
               <WeatherDataOverlay
-                glassParams={glassParams}
-                location="San Francisco, CA"
-                condition={condition}
-                temperature={72}
-                tempHigh={78}
-                tempLow={65}
-                humidity={45}
-                windSpeed={8}
-                visibility={10}
-                forecast={[
-                  {
-                    day: "Today",
-                    tempMin: 65,
-                    tempMax: 78,
-                    condition: condition,
-                  },
-                  {
-                    day: "Tue",
-                    tempMin: 64,
-                    tempMax: 77,
-                    condition: "partly-cloudy",
-                  },
-                  { day: "Wed", tempMin: 62, tempMax: 75, condition: "cloudy" },
-                  { day: "Thu", tempMin: 60, tempMax: 73, condition: "rain" },
-                  { day: "Fri", tempMin: 63, tempMax: 76, condition: "clear" },
-                ]}
-                unit="fahrenheit"
+                glassParams={params.glass}
                 timeOfDay={params.celestial.timeOfDay}
+                {...overlayData}
               />
             </div>
           )}
@@ -285,7 +261,12 @@ export function DetailEditor({
       </div>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
-        <GlassControls params={glassParams} onChange={onGlassParamsChange} />
+        <GlassControls
+          params={params.glass}
+          onChange={(next: GlassParams) =>
+            onParamsChange({ ...params, glass: next })
+          }
+        />
 
         <div className="border-border/40 bg-card/30 min-h-0 flex-1 overflow-hidden rounded-lg border">
           <div className="scrollbar-subtle h-full overflow-y-auto">

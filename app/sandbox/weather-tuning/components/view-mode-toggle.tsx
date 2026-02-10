@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/ui/cn";
-import { LayoutGrid, Sliders } from "lucide-react";
+import { LayoutGrid, Sliders, Clock } from "lucide-react";
 
-export type ViewMode = "condition" | "parameter";
+export type ViewMode = "condition" | "parameter" | "time";
 
 interface ViewModeToggleProps {
   value: ViewMode;
@@ -36,6 +36,18 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
       >
         <LayoutGrid className="size-3.5" />
         <span>Parameter</span>
+      </button>
+      <button
+        onClick={() => onChange("time")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all",
+          value === "time"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        <Clock className="size-3.5" />
+        <span>Time</span>
       </button>
     </div>
   );

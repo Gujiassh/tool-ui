@@ -10,13 +10,14 @@ import { DetailEditor } from "./components/detail-editor";
 import { ExportPanel } from "./components/export-panel";
 import { ViewModeToggle, type ViewMode } from "./components/view-mode-toggle";
 import { ParameterMatrixView } from "./components/parameter-matrix-view";
+import { TimeMatrixView } from "./components/time-matrix-view";
 import { TIME_CHECKPOINT_ORDER } from "./lib/constants";
 import { WEATHER_CONDITIONS } from "../weather-compositor/presets";
 import type { TimeCheckpoint } from "./types";
 
 export default function WeatherTuningPage() {
   const state = useTuningState();
-  const [viewMode, setViewMode] = useState<ViewMode>("condition");
+  const [viewMode, setViewMode] = useState<ViewMode>("time");
   const {
     selectedCondition,
     setSelectedCondition,
@@ -120,12 +121,26 @@ export default function WeatherTuningPage() {
 
         <div className="flex items-center gap-4">
           <ViewModeToggle value={viewMode} onChange={setViewMode} />
-          <ExportPanel checkpointOverrides={state.checkpointOverrides} signedOff={state.signedOff} />
+          <ExportPanel
+            checkpointOverrides={state.checkpointOverrides}
+            signedOff={state.signedOff}
+            onApplied={(checkpointOverrides) => {
+              // Saving means "these values are the new defaults".
+              // Adopt the repo presets as the new baseline and clear user deltas,
+              // keeping the current visual output stable.
+              state.setRepoCheckpointOverrides(checkpointOverrides);
+              state.clearStudioDeltas();
+            }}
+            onRecovered={(checkpointOverrides) => {
+              state.setRepoCheckpointOverrides(checkpointOverrides);
+              state.clearStudioDeltas();
+            }}
+          />
         </div>
       </header>
 
       <div className="relative z-10 flex min-h-0 flex-1">
-        {viewMode === "condition" && (
+        {(viewMode === "condition" || viewMode === "time") && (
           <ConditionSidebar
             selectedCondition={state.selectedCondition}
             signedOff={state.signedOff}
@@ -157,70 +172,88 @@ export default function WeatherTuningPage() {
             <div className="min-h-0 flex-1 overflow-hidden">
               <ParameterMatrixView tuningState={state} />
             </div>
+          ) : viewMode === "time" ? (
+            <div className="min-h-0 flex-1 overflow-hidden">
+              {state.selectedCondition ? (
+                <TimeMatrixView
+                  tuningState={state}
+                  condition={state.selectedCondition}
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <div className="text-center">
+                    <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-border bg-muted">
+                      <Download className="size-7 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Select a condition from the sidebar to begin tuning
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="min-h-0 flex-1 overflow-hidden p-6">
-            {state.selectedCondition && selectedParams && selectedBaseParams ? (
-              <DetailEditor
-                condition={state.selectedCondition}
-                params={selectedParams}
-                baseParams={selectedBaseParams}
-                checkpoints={state.getConditionCheckpoints(
-                  state.selectedCondition
-                )}
-                activeEditCheckpoint={state.activeEditCheckpoint}
-                isPreviewing={state.isPreviewing}
-                isSignedOff={state.signedOff.has(state.selectedCondition)}
-                expandedGroups={state.expandedGroups}
-                currentTime={state.globalTimeOfDay}
-                showWidgetOverlay={state.showWidgetOverlay}
-                glassParams={state.glassParams}
-                onParamsChange={(params) =>
-                  state.updateParams(state.selectedCondition!, params)
-                }
-                onToggleGroup={state.toggleGroup}
-                onReset={() => state.resetCondition(state.selectedCondition!)}
-                onSignOff={() => state.toggleSignOff(state.selectedCondition!)}
-                onCheckpointClick={(checkpoint) =>
-                  state.goToCheckpoint(state.selectedCondition!, checkpoint)
-                }
-                onToggleWidgetOverlay={() =>
-                  state.setShowWidgetOverlay(!state.showWidgetOverlay)
-                }
-                onGlassParamsChange={state.setGlassParams}
-                onCopyLayer={(targetCondition, layerKey) =>
-                  state.copyLayerFromCondition(
-                    state.selectedCondition!,
-                    targetCondition,
-                    layerKey
-                  )
-                }
-                onCopyLayerToAll={(layerKey) =>
-                  state.copyLayerToAllConditions(
-                    state.selectedCondition!,
-                    layerKey
-                  )
-                }
-                onCopyCheckpoint={(targetCheckpoints) =>
-                  state.copyCheckpointToCheckpoints(
-                    state.selectedCondition!,
-                    state.activeEditCheckpoint,
-                    targetCheckpoints
-                  )
-                }
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-border bg-muted">
-                    <Download className="size-7 text-muted-foreground" />
+              {state.selectedCondition && selectedParams && selectedBaseParams ? (
+                <DetailEditor
+                  condition={state.selectedCondition}
+                  params={selectedParams}
+                  baseParams={selectedBaseParams}
+                  checkpoints={state.getConditionCheckpoints(
+                    state.selectedCondition
+                  )}
+                  activeEditCheckpoint={state.activeEditCheckpoint}
+                  isPreviewing={state.isPreviewing}
+                  isSignedOff={state.signedOff.has(state.selectedCondition)}
+                  expandedGroups={state.expandedGroups}
+                  currentTime={state.globalTimeOfDay}
+                  showWidgetOverlay={state.showWidgetOverlay}
+                  onParamsChange={(params) =>
+                    state.updateParams(state.selectedCondition!, params)
+                  }
+                  onToggleGroup={state.toggleGroup}
+                  onReset={() => state.resetCondition(state.selectedCondition!)}
+                  onSignOff={() => state.toggleSignOff(state.selectedCondition!)}
+                  onCheckpointClick={(checkpoint) =>
+                    state.goToCheckpoint(state.selectedCondition!, checkpoint)
+                  }
+                  onToggleWidgetOverlay={() =>
+                    state.setShowWidgetOverlay(!state.showWidgetOverlay)
+                  }
+                  onCopyLayer={(targetCondition, layerKey) =>
+                    state.copyLayerFromCondition(
+                      state.selectedCondition!,
+                      targetCondition,
+                      layerKey
+                    )
+                  }
+                  onCopyLayerToAll={(layerKey) =>
+                    state.copyLayerToAllConditions(
+                      state.selectedCondition!,
+                      layerKey
+                    )
+                  }
+                  onCopyCheckpoint={(targetCheckpoints) =>
+                    state.copyCheckpointToCheckpoints(
+                      state.selectedCondition!,
+                      state.activeEditCheckpoint,
+                      targetCheckpoints
+                    )
+                  }
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <div className="text-center">
+                    <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-border bg-muted">
+                      <Download className="size-7 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Select a condition from the sidebar to begin tuning
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Select a condition from the sidebar to begin tuning
-                  </p>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
           )}
         </main>
       </div>
