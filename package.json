@@ -9,6 +9,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --experimental-build-mode=compile",
     "start": "next start",
+    "registry:build": "tsx scripts/build-tool-ui-registry.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",

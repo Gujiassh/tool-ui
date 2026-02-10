@@ -1,0 +1,321 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "tool-ui",
+  "homepage": "https://tool-ui.com",
+  "items": [
+    {
+      "name": "tool-ui-shared",
+      "type": "registry:block",
+      "title": "Tool UI Shared",
+      "description": "Shared helpers and schemas for Tool UI components.",
+      "dependencies": ["@assistant-ui/react", "lucide-react", "zod"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "components/tool-ui/shared/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/actions-config.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/index.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/index.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/aspect-ratio.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/aspect-ratio.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/format-utils.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/format-utils.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/index.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/index.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/overlay-gradient.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/overlay-gradient.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/sanitize-href.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/sanitize-href.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/streaming-render.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/streaming-render.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/streaming-state.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/streaming-state.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/use-action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/use-action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/utils.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/utils.ts"
+        },
+        {
+          "path": "lib/ui/cn.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/cn.ts"
+        }
+      ]
+    },
+    {
+      "name": "tool-ui-plan",
+      "type": "registry:block",
+      "title": "Tool UI Plan",
+      "description": "Display step-by-step task workflows in AI interfaces.",
+      "dependencies": ["lucide-react", "zod"],
+      "registryDependencies": [
+        "accordion",
+        "button",
+        "card",
+        "collapsible",
+        "https://tool-ui.com/r/tool-ui-shared.json"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/plan/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/plan/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/plan/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/plan/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/plan/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/plan/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/plan/plan.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/plan/plan.tsx"
+        },
+        {
+          "path": "components/tool-ui/plan/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/plan/schema.ts"
+        }
+      ]
+    },
+    {
+      "name": "tool-ui-progress-tracker",
+      "type": "registry:block",
+      "title": "Tool UI Progress Tracker",
+      "description": "Show real-time status feedback for multi-step operations in AI interfaces.",
+      "dependencies": ["lucide-react", "zod"],
+      "registryDependencies": [
+        "button",
+        "https://tool-ui.com/r/tool-ui-shared.json"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/progress-tracker/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/progress-tracker/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/progress-tracker/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/progress-tracker/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/progress-tracker/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/progress-tracker/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/progress-tracker/progress-tracker.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/progress-tracker/progress-tracker.tsx"
+        },
+        {
+          "path": "components/tool-ui/progress-tracker/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/progress-tracker/schema.ts"
+        }
+      ]
+    },
+    {
+      "name": "tool-ui-option-list",
+      "type": "registry:block",
+      "title": "Tool UI Option List",
+      "description": "Single or multi-select choices with confirmation actions.",
+      "dependencies": ["lucide-react", "zod"],
+      "registryDependencies": [
+        "button",
+        "separator",
+        "https://tool-ui.com/r/tool-ui-shared.json"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/option-list/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/option-list/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/option-list/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/option-list/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/option-list/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/option-list/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/option-list/option-list.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/option-list/option-list.tsx"
+        },
+        {
+          "path": "components/tool-ui/option-list/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/option-list/schema.ts"
+        }
+      ]
+    },
+    {
+      "name": "tool-ui-message-draft",
+      "type": "registry:block",
+      "title": "Tool UI Message Draft",
+      "description": "Review and confirm drafted messages before sending.",
+      "dependencies": ["lucide-react", "zod"],
+      "registryDependencies": [
+        "button",
+        "https://tool-ui.com/r/tool-ui-shared.json"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/message-draft/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/message-draft/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/message-draft/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/message-draft/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/message-draft/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/message-draft/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/message-draft/message-draft.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/message-draft/message-draft.tsx"
+        },
+        {
+          "path": "components/tool-ui/message-draft/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/message-draft/schema.ts"
+        }
+      ]
+    },
+    {
+      "name": "tool-ui-data-table",
+      "type": "registry:block",
+      "title": "Tool UI Data Table",
+      "description": "Sortable, responsive data tables for tool call results.",
+      "dependencies": ["zod"],
+      "registryDependencies": [
+        "accordion",
+        "badge",
+        "button",
+        "dropdown-menu",
+        "table",
+        "tooltip",
+        "https://tool-ui.com/r/tool-ui-shared.json"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/data-table/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/data-table/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/data-table/data-table.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/data-table/data-table.tsx"
+        },
+        {
+          "path": "components/tool-ui/data-table/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/data-table/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/data-table/formatters.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/data-table/formatters.tsx"
+        },
+        {
+          "path": "components/tool-ui/data-table/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/data-table/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/data-table/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/data-table/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/data-table/types.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/data-table/types.ts"
+        },
+        {
+          "path": "components/tool-ui/data-table/utilities.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/data-table/utilities.ts"
+        }
+      ]
+    }
+  ]
+}
