@@ -2,22 +2,20 @@
 
 import { useMemo, useState, useEffect } from "react";
 import type { WeatherCondition } from "../schema";
-import type { EffectLayerConfig, EffectSettings } from "./types";
-import {
-  mapWeatherToEffects,
-  configToCloudProps,
-  configToRainProps,
-  configToLightningProps,
-  configToSnowProps,
-  configToCelestialProps,
-} from "./parameter-mapper";
+import type { EffectSettings } from "./types";
 import {
   WeatherEffectsCanvas,
   type LayerToggles,
   type WeatherEffectsCanvasProps,
 } from "./weather-effects-canvas";
 import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
-import { applyWeatherEffectsOverrides, getNearestCheckpoint } from "./tuning";
+import { type WeatherEffectsTunedPresets } from "./tuning";
+import {
+  resolveWeatherEffectsCanvasProps,
+  type WeatherEffectsCheckpointMode,
+} from "./canvas-resolver";
+
+type ResolvedEffectQuality = "low" | "medium" | "high";
 
 function sunAltitudeToLightIntensity(sunAltitude: number): number {
   // Mirrors the solar contribution curve used by getSceneBrightness.
@@ -28,46 +26,52 @@ function sunAltitudeToLightIntensity(sunAltitude: number): number {
   return Math.max(0, Math.min(1, light));
 }
 
-function mapEffectConfigToCanvasProps(
-  config: EffectLayerConfig,
-): WeatherEffectsCanvasProps {
-  const celestial = configToCelestialProps(config) ?? undefined;
-  const rain = configToRainProps(config) ?? undefined;
-  const snow = configToSnowProps(config) ?? undefined;
-  const lightningBase = configToLightningProps(config) ?? undefined;
-  const cloudBase = configToCloudProps(config) ?? undefined;
+function resolveAutoQuality(): ResolvedEffectQuality {
+  if (typeof window === "undefined") return "high";
 
-  const cloud: WeatherEffectsCanvasProps["cloud"] = cloudBase
-    ? {
-        coverage: cloudBase.coverage,
-        density: 0.5 + cloudBase.coverage * 0.5,
-        windSpeed: cloudBase.windSpeed,
-        turbulence: cloudBase.turbulence,
-        ambientDarkness: cloudBase.ambientDarkness,
-        lightIntensity: sunAltitudeToLightIntensity(cloudBase.sunAltitude),
-      }
-    : undefined;
+  const dpr = window.devicePixelRatio || 1;
+  const px = window.innerWidth * window.innerHeight * dpr * dpr;
 
-  const lightning: WeatherEffectsCanvasProps["lightning"] = config.lightning
-    ? {
-        enabled: config.lightning.enabled,
-        autoMode: lightningBase?.autoMode ?? config.lightning.autoTrigger,
-        autoInterval:
-          lightningBase?.autoInterval ??
-          (config.lightning.intervalMin + config.lightning.intervalMax) / 2,
-      }
-    : undefined;
+  // These are best-effort signals; both can be undefined.
+  const cores =
+    typeof navigator !== "undefined"
+      ? navigator.hardwareConcurrency
+      : undefined;
+  const mem =
+    typeof navigator !== "undefined"
+      ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory
+      : undefined;
 
-  const layers: Partial<LayerToggles> = {
-    celestial: Boolean(celestial),
-    clouds: Boolean(cloud),
-    rain: Boolean(config.rain),
-    lightning: Boolean(config.lightning?.enabled),
-    snow: Boolean(config.snow),
-  };
+  const isSmallScreen = window.innerWidth < 768;
 
-  return { layers, celestial, cloud, rain, lightning, snow };
+  // Heuristics tuned for “chat widget” workloads:
+  // - mobile-ish screens + low memory/cores: low
+  // - large pixel budgets (high DPR) on small screens: low/medium
+  // - otherwise: medium/high
+  if (
+    (typeof mem === "number" && mem <= 4) ||
+    (typeof cores === "number" && cores <= 4)
+  ) {
+    return isSmallScreen ? "low" : "medium";
+  }
+
+  // ~2.5M pixels ≈ 1280x720. Beyond that, fragment-heavy passes get expensive.
+  if (px > 2_500_000) return isSmallScreen ? "low" : "medium";
+
+  return isSmallScreen ? "medium" : "high";
 }
+
+function resolveQuality(
+  quality: EffectSettings["quality"],
+): ResolvedEffectQuality {
+  if (quality === "low" || quality === "medium" || quality === "high")
+    return quality;
+  return resolveAutoQuality();
+}
+
+const DEFAULT_CHECKPOINT_MODE: WeatherEffectsCheckpointMode = "nearest";
+const DEFAULT_TUNED_PRESETS: WeatherEffectsTunedPresets =
+  TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES;
 
 function mapCustomEffectPropsToCanvasProps(
   custom: CustomEffectProps,
@@ -93,8 +97,16 @@ function mapCustomEffectPropsToCanvasProps(
     custom.lightning !== undefined,
   );
   const hasSnow = isLayerEnabled("snow", custom.snow !== undefined);
+  const hasPost = custom.post !== undefined;
 
-  if (!hasCelestial && !hasCloud && !hasRain && !hasLightning && !hasSnow) {
+  if (
+    !hasCelestial &&
+    !hasCloud &&
+    !hasRain &&
+    !hasLightning &&
+    !hasSnow &&
+    !hasPost
+  ) {
     return null;
   }
 
@@ -184,6 +196,7 @@ function mapCustomEffectPropsToCanvasProps(
     snow,
     interactions:
       Object.keys(interactions).length > 0 ? interactions : undefined,
+    post: custom.post,
   };
 }
 
@@ -294,6 +307,36 @@ export interface CustomEffectProps {
     brightness?: number;
     saturation?: number;
   };
+
+  /**
+   * Post-processing overrides (applied in the final composite pass).
+   * These are intended for “air + camera” controls like haze, bloom, exposure,
+   * and crepuscular rays.
+   */
+  post?: {
+    enabled?: boolean;
+
+    haze?: number;
+    hazeHorizon?: number;
+    hazeDesaturation?: number;
+    hazeContrast?: number;
+
+    bloomIntensity?: number;
+    bloomThreshold?: number;
+    bloomKnee?: number;
+    bloomRadius?: number;
+    bloomTapScale?: number;
+
+    exposureIntensity?: number;
+    exposureDesaturation?: number;
+    exposureRecovery?: number;
+
+    godRayIntensity?: number;
+    godRayDecay?: number;
+    godRayDensity?: number;
+    godRayWeight?: number;
+    godRaySamples?: number;
+  };
 }
 
 interface EffectCompositorProps {
@@ -329,6 +372,10 @@ export function EffectCompositor({
   const enabled = settings?.enabled !== false;
   const reducedMotion = settings?.reducedMotion ?? false;
   const hasCustomProps = customProps !== undefined;
+  const resolvedQuality = useMemo(
+    () => resolveQuality(settings?.quality ?? "auto"),
+    [settings?.quality],
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -338,46 +385,16 @@ export function EffectCompositor({
     if (typeof window === "undefined") return undefined;
 
     const base = window.devicePixelRatio || 1;
-    const quality = settings?.quality ?? "auto";
-
     // Keep high-density screens from exploding GPU cost by default.
     const cap =
-      quality === "low"
+      resolvedQuality === "low"
         ? 1.0
-        : quality === "medium"
+        : resolvedQuality === "medium"
           ? 1.5
-          : quality === "high"
-            ? 2.0
-            : window.innerWidth < 768
-              ? 1.5
-              : 2.0;
+          : 2.0;
 
     return Math.max(1, Math.min(base, cap));
-  }, [settings?.quality]);
-
-  const effectConfig = useMemo(() => {
-    if (!enabled || hasCustomProps) return null;
-
-    return mapWeatherToEffects({
-      condition,
-      windSpeed,
-      windDirection,
-      precipitation,
-      humidity,
-      visibility,
-      timestamp,
-    });
-  }, [
-    condition,
-    windSpeed,
-    windDirection,
-    precipitation,
-    humidity,
-    visibility,
-    timestamp,
-    enabled,
-    hasCustomProps,
-  ]);
+  }, [resolvedQuality]);
 
   const canvasProps = useMemo<WeatherEffectsCanvasProps | null>(() => {
     if (!enabled || reducedMotion) return null;
@@ -386,23 +403,29 @@ export function EffectCompositor({
       return mapCustomEffectPropsToCanvasProps(customProps);
     }
 
-    if (!effectConfig) return null;
-    const base = mapEffectConfigToCanvasProps(effectConfig);
-
-    const tuned = TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[condition];
-    const timeOfDay = effectConfig.celestial?.timeOfDay;
-    if (!tuned || timeOfDay === undefined) return base;
-
-    const checkpoint = getNearestCheckpoint(timeOfDay);
-    const overrides = tuned[checkpoint];
-    return applyWeatherEffectsOverrides(base, overrides);
+    return resolveWeatherEffectsCanvasProps({
+      condition,
+      windSpeed,
+      windDirection,
+      precipitation,
+      humidity,
+      visibility,
+      timestamp,
+      tunedPresets: DEFAULT_TUNED_PRESETS,
+      checkpointMode: DEFAULT_CHECKPOINT_MODE,
+    });
   }, [
     enabled,
     reducedMotion,
     hasCustomProps,
     customProps,
-    effectConfig,
     condition,
+    windSpeed,
+    windDirection,
+    precipitation,
+    humidity,
+    visibility,
+    timestamp,
   ]);
 
   if (!isMounted || !enabled || reducedMotion || !canvasProps) {

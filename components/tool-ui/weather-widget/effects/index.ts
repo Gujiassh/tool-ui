@@ -37,3 +37,13 @@ export * from "./tuning";
 export { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
 
 export { GlassPanel, GlassPanelCSS, GlassPanelUnderlay, useGlassStyles } from "./glass-panel-svg";
+export { resolveGlassBackdropFilterStyles } from "./glass-style-resolver";
+export {
+  mapWeatherCompositorParamsToCanvasProps,
+  resolveConditionCheckpointOverridesForTime,
+  resolveWeatherEffectsCanvasProps,
+} from "./canvas-resolver";
+export type {
+  WeatherEffectsCheckpointMode,
+  WeatherStudioCompositorParams,
+} from "./canvas-resolver";
