@@ -54,7 +54,10 @@ import { terminalPresets } from "@/lib/presets/terminal";
 import { videoPresets } from "@/lib/presets/video";
 import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
 import { xPostPresets } from "@/lib/presets/x-post";
-import { resolveStreamingToolRenderState, type SafeParser } from "./streaming-render";
+import {
+  resolveStreamingToolRenderState,
+  type SafeParser,
+} from "@/components/tool-ui/shared/streaming-render";
 
 function firstPresetData(presets: Record<string, { data: unknown }>): unknown {
   return Object.values(presets)[0]!.data;
