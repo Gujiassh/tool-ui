@@ -9,7 +9,6 @@
       "title": "Shared",
       "description": "Shared helpers and schemas for Tool UI components.",
       "dependencies": [
-        "@assistant-ui/react",
         "lucide-react",
         "zod"
       ],

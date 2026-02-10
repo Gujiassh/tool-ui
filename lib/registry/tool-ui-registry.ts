@@ -67,7 +67,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
     description: "Shared helpers and schemas for Tool UI components.",
     sourceDir: "components/tool-ui/shared",
     additionalFiles: ["lib/ui/cn.ts"],
-    dependencies: ["@assistant-ui/react", "lucide-react", "zod"],
+    dependencies: ["lucide-react", "zod"],
     registryDependencies: ["button"],
   },
   {
