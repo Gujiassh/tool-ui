@@ -105,7 +105,10 @@ import {
   PlanErrorBoundary,
   safeParseSerializablePlan,
 } from "@/components/tool-ui/plan";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showPlan: {
@@ -120,27 +123,26 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
 
       return (
-        <PlanErrorBoundary>
-          <Plan
-            {...state.result}
-            responseActions={[
-              { id: "approve", label: "Approve Plan" },
-              { id: "revise", label: "Request Changes", variant: "secondary" },
-            ]}
-            onResponseAction={(id) => {
-              if (id === "approve") console.log("Plan approved");
-              // Handle other actions
-            }}
-          />
-        </PlanErrorBoundary>
+        <>
+          <ToolRenderState state={state} />
+          <PlanErrorBoundary>
+            <Plan
+              {...state.result}
+              responseActions={[
+                { id: "approve", label: "Approve Plan" },
+                { id: "revise", label: "Request Changes", variant: "secondary" },
+              ]}
+              onResponseAction={(id) => {
+                if (id === "approve") console.log("Plan approved");
+                // Handle other actions
+              }}
+            />
+          </PlanErrorBoundary>
+        </>
       );
     },
   },

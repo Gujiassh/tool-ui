@@ -145,7 +145,10 @@ import {
   LinkPreview,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 const toolkit: Toolkit = {
   previewLink: {
@@ -160,13 +163,14 @@ const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="text-muted-foreground rounded-xl border px-4 py-3 text-sm">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
-      return <LinkPreview {...state.result} maxWidth="420px" />;
+      return (
+        <>
+          <ToolRenderState state={state} />
+          <LinkPreview {...state.result} maxWidth="420px" />
+        </>
+      );
     },
   },
 };

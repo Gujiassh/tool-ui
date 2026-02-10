@@ -116,7 +116,10 @@ import {
   SerializableParameterSliderSchema,
   type SerializableParameterSlider,
 } from "@/components/tool-ui/parameter-slider";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   adjust_parameters: {
@@ -139,7 +142,7 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+        return <ToolRenderState state={state} />;
       }
       return null;
     }

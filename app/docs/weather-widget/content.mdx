@@ -107,7 +107,10 @@ import {
   SerializableWeatherWidgetSchema,
   type SerializableWeatherWidget,
 } from "@/components/tool-ui/weather-widget";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   get_weather: {
@@ -128,13 +131,7 @@ export const toolkit: Toolkit = {
       unavailableMessage: "Weather unavailable",
     });
     if (!state.args) {
-      return (
-        <div className="text-muted-foreground text-sm">
-          {state.kind === "loading" || state.kind === "error"
-            ? state.message
-            : "Weather unavailable"}
-        </div>
-      );
+      return <ToolRenderState state={state} />;
     }
 
     return (

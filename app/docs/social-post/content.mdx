@@ -254,7 +254,10 @@ import {
   XPostErrorBoundary,
   safeParseSerializableXPost,
 } from "@/components/tool-ui/x-post";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showXPost: {
@@ -269,17 +272,16 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="bg-card/60 text-muted-foreground w-full max-w-[540px] rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
 
       return (
-        <XPostErrorBoundary>
-          <XPost post={state.result} />
-        </XPostErrorBoundary>
+        <>
+          <ToolRenderState state={state} />
+          <XPostErrorBoundary>
+            <XPost post={state.result} />
+          </XPostErrorBoundary>
+        </>
       );
     },
   },

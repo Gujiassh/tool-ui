@@ -144,7 +144,10 @@ import {
   ChartErrorBoundary,
   safeParseSerializableChart,
 } from "@/components/tool-ui/chart";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showChart: {
@@ -159,17 +162,16 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
 
       return (
-        <ChartErrorBoundary>
-          <Chart {...state.result} />
-        </ChartErrorBoundary>
+        <>
+          <ToolRenderState state={state} />
+          <ChartErrorBoundary>
+            <Chart {...state.result} />
+          </ChartErrorBoundary>
+        </>
       );
     },
   },
