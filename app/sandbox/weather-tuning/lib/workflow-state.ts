@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 import type { ConditionCheckpoints } from "../types";
 import { SESSION_KEY as LEGACY_WORKFLOW_STATE_STORAGE_KEY } from "./constants";
@@ -7,10 +7,10 @@ export const WORKFLOW_STATE_STORAGE_KEY = "weather-tuning-studio-session";
 export const STORAGE_KEY = WORKFLOW_STATE_STORAGE_KEY;
 
 export interface WorkflowState {
-  checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>;
-  signedOff: WeatherCondition[];
+  checkpoints: Partial<Record<WeatherConditionCode, ConditionCheckpoints>>;
+  signedOff: WeatherConditionCode[];
   repoCheckpointOverrides?: Partial<
-    Record<WeatherCondition, CheckpointOverrides>
+    Record<WeatherConditionCode, CheckpointOverrides>
   >;
 }
 
@@ -23,20 +23,20 @@ function parseWorkflowState(parsed: unknown): WorkflowState | null {
 
   const checkpoints = isRecord(parsed.checkpoints)
     ? (parsed.checkpoints as Partial<
-        Record<WeatherCondition, ConditionCheckpoints>
+        Record<WeatherConditionCode, ConditionCheckpoints>
       >)
     : {};
 
   const signedOff = Array.isArray(parsed.signedOff)
     ? parsed.signedOff.filter(
-        (condition): condition is WeatherCondition =>
+        (condition): condition is WeatherConditionCode =>
           typeof condition === "string",
       )
     : [];
 
   const repoCheckpointOverrides = isRecord(parsed.repoCheckpointOverrides)
     ? (parsed.repoCheckpointOverrides as Partial<
-        Record<WeatherCondition, CheckpointOverrides>
+        Record<WeatherConditionCode, CheckpointOverrides>
       >)
     : undefined;
 

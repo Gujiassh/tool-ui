@@ -1,16 +1,16 @@
 "use client";
 
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import { WEATHER_CONDITIONS } from "../../weather-compositor/presets";
 import { ConditionCard } from "./condition-card";
 import type { ConditionCheckpoints } from "../types";
 
 interface ConditionMatrixProps {
-  selectedCondition: WeatherCondition | null;
-  signedOff: Set<WeatherCondition>;
-  checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>;
-  getOverrideCount: (condition: WeatherCondition) => number;
-  onSelectCondition: (condition: WeatherCondition) => void;
+  selectedCondition: WeatherConditionCode | null;
+  signedOff: Set<WeatherConditionCode>;
+  checkpoints: Partial<Record<WeatherConditionCode, ConditionCheckpoints>>;
+  getOverrideCount: (condition: WeatherConditionCode) => number;
+  onSelectCondition: (condition: WeatherConditionCode) => void;
 }
 
 export function ConditionMatrix({

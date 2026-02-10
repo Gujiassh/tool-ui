@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 
 type CheckpointKey = keyof CheckpointOverrides;
@@ -6,11 +6,11 @@ type CheckpointKey = keyof CheckpointOverrides;
 const CHECKPOINTS: CheckpointKey[] = ["dawn", "noon", "dusk", "midnight"];
 
 export function listUpdatedParams(
-  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>,
+  checkpointOverrides: Partial<Record<WeatherConditionCode, CheckpointOverrides>>,
 ): string[] {
   const out: string[] = [];
 
-  for (const condition of Object.keys(checkpointOverrides) as WeatherCondition[]) {
+  for (const condition of Object.keys(checkpointOverrides) as WeatherConditionCode[]) {
     const byCheckpoint = checkpointOverrides[condition];
     if (!byCheckpoint) continue;
 

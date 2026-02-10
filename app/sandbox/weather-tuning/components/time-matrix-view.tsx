@@ -15,7 +15,7 @@ import {
   SunDim,
   SunMedium,
 } from "lucide-react";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type { TimeCheckpoint } from "../types";
 import type { TuningStateReturn } from "../hooks/use-tuning-state";
 import { TIME_CHECKPOINT_ORDER } from "../lib/constants";
@@ -57,7 +57,7 @@ const PARAMETER_GROUP_COLORS: Record<
 
 interface TimeMatrixViewProps {
   tuningState: TuningStateReturn;
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
 }
 
 function getNumericValue(
@@ -139,7 +139,7 @@ function ParameterTimeRow({
   param: ParameterDef;
   layer: TunableLayerKey;
   tuningState: TuningStateReturn;
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
 }) {
   const values = useMemo(() => {
     return TIME_CHECKPOINT_ORDER.map((checkpoint) => {
@@ -226,7 +226,7 @@ function CheckpointPreview({
   checkpoint,
   tuningState,
 }: {
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   checkpoint: TimeCheckpoint;
   tuningState: TuningStateReturn;
 }) {
@@ -250,7 +250,7 @@ function CheckpointPreview({
         <WeatherDataOverlay
           glassParams={params.glass}
           location={overlayData.location}
-          condition={condition}
+          conditionCode={condition}
           temperature={overlayData.temperature}
           tempHigh={overlayData.tempHigh}
           tempLow={overlayData.tempLow}

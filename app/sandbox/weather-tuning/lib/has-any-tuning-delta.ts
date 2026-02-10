@@ -1,8 +1,8 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 
 export function hasAnyTuningDelta(
-  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>,
+  checkpointOverrides: Partial<Record<WeatherConditionCode, CheckpointOverrides>>,
 ): boolean {
   return Object.values(checkpointOverrides).some((byCheckpoint) => {
     if (!byCheckpoint) return false;

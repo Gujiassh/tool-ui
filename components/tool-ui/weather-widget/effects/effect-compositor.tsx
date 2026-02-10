@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import type { WeatherCondition } from "../schema";
+import type { WeatherConditionCode } from "../schema";
 import type { EffectSettings } from "./types";
 import {
   WeatherEffectsCanvas,
@@ -340,13 +340,12 @@ export interface CustomEffectProps {
 }
 
 interface EffectCompositorProps {
-  condition: WeatherCondition;
+  conditionCode: WeatherConditionCode;
   windSpeed?: number;
-  windDirection?: number;
-  precipitation?: "none" | "light" | "moderate" | "heavy";
-  humidity?: number;
+  precipitationLevel?: "none" | "light" | "moderate" | "heavy";
   visibility?: number;
   timestamp?: string;
+  timeOfDay?: number;
   settings?: EffectSettings;
   className?: string;
   /**
@@ -357,13 +356,12 @@ interface EffectCompositorProps {
 }
 
 export function EffectCompositor({
-  condition,
+  conditionCode,
   windSpeed,
-  windDirection,
-  precipitation,
-  humidity,
+  precipitationLevel,
   visibility,
   timestamp,
+  timeOfDay,
   settings,
   className,
   customProps,
@@ -404,13 +402,12 @@ export function EffectCompositor({
     }
 
     return resolveWeatherEffectsCanvasProps({
-      condition,
+      conditionCode,
       windSpeed,
-      windDirection,
-      precipitation,
-      humidity,
+      precipitationLevel,
       visibility,
       timestamp,
+      timeOfDay,
       tunedPresets: DEFAULT_TUNED_PRESETS,
       checkpointMode: DEFAULT_CHECKPOINT_MODE,
     });
@@ -419,13 +416,12 @@ export function EffectCompositor({
     reducedMotion,
     hasCustomProps,
     customProps,
-    condition,
+    conditionCode,
     windSpeed,
-    windDirection,
-    precipitation,
-    humidity,
+    precipitationLevel,
     visibility,
     timestamp,
+    timeOfDay,
   ]);
 
   if (!isMounted || !enabled || reducedMotion || !canvasProps) {

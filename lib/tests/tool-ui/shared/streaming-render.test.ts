@@ -26,7 +26,7 @@ import { safeParseSerializableQuestionFlow } from "@/components/tool-ui/question
 import { safeParseSerializableStatsDisplay } from "@/components/tool-ui/stats-display";
 import { safeParseSerializableTerminal } from "@/components/tool-ui/terminal";
 import { safeParseSerializableVideo } from "@/components/tool-ui/video";
-import { safeParseSerializableWeatherWidget } from "@/components/tool-ui/weather-widget";
+import { safeParseWeatherWidgetPayload } from "@/components/tool-ui/weather-widget";
 import { safeParseSerializableXPost } from "@/components/tool-ui/x-post";
 
 import { approvalCardPresets } from "@/lib/presets/approval-card";
@@ -54,7 +54,10 @@ import { terminalPresets } from "@/lib/presets/terminal";
 import { videoPresets } from "@/lib/presets/video";
 import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
 import { xPostPresets } from "@/lib/presets/x-post";
-import { resolveStreamingToolRenderState, type SafeParser } from "./streaming-render";
+import {
+  resolveStreamingToolRenderState,
+  type SafeParser,
+} from "@/components/tool-ui/shared/streaming-render";
 
 function firstPresetData(presets: Record<string, { data: unknown }>): unknown {
   return Object.values(presets)[0]!.data;
@@ -194,7 +197,7 @@ const parserCases: Array<{
   },
   {
     name: "weather-widget",
-    parse: safeParseSerializableWeatherWidget as SafeParser<unknown>,
+    parse: safeParseWeatherWidgetPayload as SafeParser<unknown>,
     valid: weatherWidgetPresets.thunderstorm.data,
   },
   {

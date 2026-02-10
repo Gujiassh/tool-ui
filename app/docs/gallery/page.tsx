@@ -114,10 +114,10 @@ export default function ComponentsGalleryPage() {
             <WeatherWidget
               {...weatherWidgetPresets["sunny-forecast"].data}
               current={{
-                temp: 64,
+                temperature: 64,
                 tempMin: 58,
                 tempMax: 72,
-                condition: "thunderstorm",
+                conditionCode: "thunderstorm",
               }}
               updatedAt="2026-01-29T02:30:00Z"
               effects={{ enabled: true, quality: "low" }}

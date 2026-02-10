@@ -1,6 +1,6 @@
 import { writeFile } from "fs/promises";
 
-import type { WeatherCondition } from "../../../../components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "../../../../components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../../sandbox/weather-compositor/presets";
 import {
   buildCanonicalToolUiPresetsForEditedConditions,
@@ -22,8 +22,8 @@ export async function POST(request: Request) {
   }
 
   type ApplyPayload = {
-    checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
-    signedOff?: WeatherCondition[];
+    checkpointOverrides?: Partial<Record<WeatherConditionCode, CheckpointOverrides>>;
+    signedOff?: WeatherConditionCode[];
   };
 
   let payload: ApplyPayload | null = null;
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     return new Response("Missing 'checkpointOverrides' field.", { status: 400 });
   }
 
-  const signedOff = new Set<WeatherCondition>(payload.signedOff ?? []);
+  const signedOff = new Set<WeatherConditionCode>(payload.signedOff ?? []);
   if (Object.keys(payload.checkpointOverrides).length === 0) {
     return new Response("No tuning changes to apply.", { status: 400 });
   }

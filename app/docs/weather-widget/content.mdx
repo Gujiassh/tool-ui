@@ -11,22 +11,24 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget";
   <Tab>
     <div className="not-prose mx-auto max-w-md">
       <WeatherWidget
+        version="3.1"
         id="weather-widget-example"
-        location="Kansas City, MO"
+        location={{ name: "Kansas City, MO" }}
+        units={{ temperature: "fahrenheit" }}
         current={{
-          temp: 72,
+          temperature: 72,
           tempMin: 65,
           tempMax: 78,
-          condition: "thunderstorm",
+          conditionCode: "thunderstorm",
         }}
         forecast={[
-          { day: "Tue", tempMin: 62, tempMax: 75, condition: "heavy-rain" },
-          { day: "Wed", tempMin: 58, tempMax: 70, condition: "rain" },
-          { day: "Thu", tempMin: 55, tempMax: 68, condition: "cloudy" },
-          { day: "Fri", tempMin: 52, tempMax: 72, condition: "partly-cloudy" },
-          { day: "Sat", tempMin: 58, tempMax: 76, condition: "clear" },
+          { label: "Tue", tempMin: 62, tempMax: 75, conditionCode: "heavy-rain" },
+          { label: "Wed", tempMin: 58, tempMax: 70, conditionCode: "rain" },
+          { label: "Thu", tempMin: 55, tempMax: 68, conditionCode: "cloudy" },
+          { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
+          { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
         ]}
-        unit="fahrenheit"
+        time={{ localTimeOfDay: 22 / 24 }}
         updatedAt="2026-01-28T22:00:00Z"
       />
     </div>
@@ -38,22 +40,24 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget";
     export function Example() {
       return (
         <WeatherWidget
+          version="3.1"
           id="weather-widget-example"
-          location="Kansas City, MO"
+          location={{ name: "Kansas City, MO" }}
+          units={{ temperature: "fahrenheit" }}
           current={{
-            temp: 72,
+            temperature: 72,
             tempMin: 65,
             tempMax: 78,
-            condition: "thunderstorm",
+            conditionCode: "thunderstorm",
           }}
           forecast={[
-            { day: "Tue", tempMin: 62, tempMax: 75, condition: "heavy-rain" },
-            { day: "Wed", tempMin: 58, tempMax: 70, condition: "rain" },
-            { day: "Thu", tempMin: 55, tempMax: 68, condition: "cloudy" },
-            { day: "Fri", tempMin: 52, tempMax: 72, condition: "partly-cloudy" },
-            { day: "Sat", tempMin: 58, tempMax: 76, condition: "clear" },
+            { label: "Tue", tempMin: 62, tempMax: 75, conditionCode: "heavy-rain" },
+            { label: "Wed", tempMin: 58, tempMax: 70, conditionCode: "rain" },
+            { label: "Thu", tempMin: 55, tempMax: 68, conditionCode: "cloudy" },
+            { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
+            { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
           ]}
-          unit="fahrenheit"
+          time={{ localTimeOfDay: 22 / 24 }}
           updatedAt="2026-01-28T22:00:00Z"
         />
       );
@@ -103,9 +107,9 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   WeatherWidget,
   WeatherWidgetErrorBoundary,
-  safeParseSerializableWeatherWidget,
-  SerializableWeatherWidgetSchema,
-  type SerializableWeatherWidget,
+  safeParseWeatherWidgetPayload,
+  WeatherWidgetPayloadSchema,
+  type WeatherWidgetPayload,
 } from "@/components/tool-ui/weather-widget";
 import {
   resolveStreamingToolRenderState,
@@ -115,18 +119,19 @@ import {
 export const toolkit: Toolkit = {
   get_weather: {
   description: "Display current weather and forecast for a location",
-  parameters: SerializableWeatherWidgetSchema,
+  parameters: WeatherWidgetPayloadSchema,
   render: ({ args, status, toolCallId }) => {
     const state = resolveStreamingToolRenderState<
-      SerializableWeatherWidget,
+      WeatherWidgetPayload,
       never
     >({
       status,
       args: {
         ...args,
+        version: (args as any)?.version ?? "3.1",
         id: (args as any)?.id ?? `weather-${toolCallId}`,
       },
-      safeParseArgs: safeParseSerializableWeatherWidget,
+      safeParseArgs: safeParseWeatherWidgetPayload,
       loadingMessage: "Loading weather…",
       unavailableMessage: "Weather unavailable",
     });
@@ -154,8 +159,13 @@ export const toolkit: Toolkit = {
       required: true,
     },
     location: {
-      description: "Location name (e.g., 'San Francisco, CA')",
-      type: "string",
+      description: "Location object",
+      type: "{ name: string }",
+      required: true,
+    },
+    units: {
+      description: "Display units",
+      type: '{ temperature: "celsius" | "fahrenheit" }',
       required: true,
     },
     current: {
@@ -168,10 +178,10 @@ export const toolkit: Toolkit = {
       type: "ForecastDay[]",
       required: true,
     },
-    unit: {
-      description: "Temperature unit",
-      type: '"celsius" | "fahrenheit"',
-      default: '"celsius"',
+    time: {
+      description: "Deterministic scene time source",
+      type: "{ timeBucket?: 0..11; localTimeOfDay?: 0..1 }",
+      required: true,
     },
     updatedAt: {
       description: "Last update timestamp (ISO 8601)",
@@ -188,7 +198,7 @@ export const toolkit: Toolkit = {
 
 <TypeTable
   type={{
-    temp: {
+    temperature: {
       description: "Current temperature",
       type: "number",
       required: true,
@@ -203,9 +213,9 @@ export const toolkit: Toolkit = {
       type: "number",
       required: true,
     },
-    condition: {
+    conditionCode: {
       description: "Weather condition",
-      type: "WeatherCondition",
+      type: "WeatherConditionCode",
       required: true,
     },
   }}
@@ -215,7 +225,7 @@ export const toolkit: Toolkit = {
 
 <TypeTable
   type={{
-    day: {
+    label: {
       description: "Day label (e.g., 'Mon', 'Tuesday')",
       type: "string",
       required: true,
@@ -230,15 +240,15 @@ export const toolkit: Toolkit = {
       type: "number",
       required: true,
     },
-    condition: {
+    conditionCode: {
       description: "Weather condition",
-      type: "WeatherCondition",
+      type: "WeatherConditionCode",
       required: true,
     },
   }}
 />
 
-### WeatherCondition
+### WeatherConditionCode
 
 Available condition values with their corresponding icons:
 

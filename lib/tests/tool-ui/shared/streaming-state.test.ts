@@ -18,8 +18,8 @@ import { optionListPresets } from "@/lib/presets/option-list";
 import {
   resolveStreamingToolRenderState,
   type StreamingToolRenderState,
-} from "./streaming-render";
-import { ToolRenderState } from "./streaming-state";
+} from "@/components/tool-ui/shared/streaming-render";
+import { ToolRenderState } from "@/components/tool-ui/shared/streaming-state";
 
 const RUNNING_STATUS = { type: "running" } as const;
 const REQUIRES_ACTION_STATUS = {

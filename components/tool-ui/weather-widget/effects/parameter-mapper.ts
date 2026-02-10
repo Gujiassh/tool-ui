@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "../schema";
+import type { WeatherConditionCode } from "../schema";
 import type {
   EffectLayerConfig,
   WeatherEffectParams,
@@ -84,7 +84,7 @@ export function isNightTime(sunAltitude: number): boolean {
  * 1.0 = no attenuation (clear), lower = darker scene.
  * Derived from CONDITION_PRESETS cloud.darkness values.
  */
-const CONDITION_BRIGHTNESS: Record<WeatherCondition, number> = {
+const CONDITION_BRIGHTNESS: Record<WeatherConditionCode, number> = {
   clear: 1.0,
   "partly-cloudy": 0.9,
   cloudy: 0.8,
@@ -109,7 +109,7 @@ const CONDITION_BRIGHTNESS: Record<WeatherCondition, number> = {
  */
 export function getSceneBrightness(
   timestamp?: string,
-  condition: WeatherCondition = "clear",
+  conditionCode: WeatherConditionCode = "clear",
 ): number {
   const sunAltitude = getSunAltitude(timestamp);
 
@@ -126,7 +126,7 @@ export function getSceneBrightness(
   }
 
   // Apply condition modifier
-  const conditionModifier = CONDITION_BRIGHTNESS[condition];
+  const conditionModifier = CONDITION_BRIGHTNESS[conditionCode];
 
   // Combine: solar * condition, but condition can't make night bright
   const brightness = solarBrightness * conditionModifier;
@@ -189,7 +189,7 @@ export function timeOfDayToSunAltitude(timeOfDay: number): number {
  */
 export function getSceneBrightnessFromTimeOfDay(
   timeOfDay: number,
-  condition: WeatherCondition = "clear",
+  conditionCode: WeatherConditionCode = "clear",
 ): number {
   const sunAltitude = timeOfDayToSunAltitude(timeOfDay);
 
@@ -200,7 +200,7 @@ export function getSceneBrightnessFromTimeOfDay(
     solarBrightness = 0.15 + sunAltitude * 0.85;
   }
 
-  const conditionModifier = CONDITION_BRIGHTNESS[condition];
+  const conditionModifier = CONDITION_BRIGHTNESS[conditionCode];
   const brightness = solarBrightness * conditionModifier;
 
   return Math.max(0, Math.min(1, brightness));
@@ -307,7 +307,7 @@ const UNIFIED_CELESTIAL: CelestialPreset = {
   moonGlowSize: 0.94,
 };
 
-const CELESTIAL_PRESETS: Record<WeatherCondition, CelestialPreset> = {
+const CELESTIAL_PRESETS: Record<WeatherConditionCode, CelestialPreset> = {
   clear: UNIFIED_CELESTIAL,
   "partly-cloudy": UNIFIED_CELESTIAL,
   cloudy: UNIFIED_CELESTIAL,
@@ -328,7 +328,7 @@ const CELESTIAL_PRESETS: Record<WeatherCondition, CelestialPreset> = {
  * for each weather condition before parameter modifiers are applied.
  */
 const CONDITION_PRESETS: Record<
-  WeatherCondition,
+  WeatherConditionCode,
   Omit<EffectLayerConfig, "atmosphere" | "celestial">
 > = {
   clear: {
@@ -406,15 +406,22 @@ const CONDITION_PRESETS: Record<
 export function mapWeatherToEffects(
   params: WeatherEffectParams,
 ): EffectLayerConfig {
-  const { condition, windSpeed, precipitation, visibility, timestamp } = params;
+  const {
+    conditionCode,
+    windSpeed,
+    precipitationLevel,
+    visibility,
+    timestamp,
+    timeOfDay: explicitTimeOfDay,
+  } = params;
 
   // Get base preset for this condition
-  const preset = CONDITION_PRESETS[condition];
+  const preset = CONDITION_PRESETS[conditionCode];
 
   // Calculate derived values
   const sunAltitude = getSunAltitude(timestamp);
   const windIntensity = mapWindSpeed(windSpeed);
-  const precipIntensity = mapPrecipitation(precipitation);
+  const precipIntensity = mapPrecipitation(precipitationLevel);
   const hazeAmount = mapVisibility(visibility);
   const isNight = isNightTime(sunAltitude);
 
@@ -467,9 +474,9 @@ export function mapWeatherToEffects(
   }
 
   // Celestial layer - always present, calculated from timestamp + condition presets
-  const timeOfDay = getTimeOfDay(timestamp);
+  const timeOfDay = explicitTimeOfDay ?? getTimeOfDay(timestamp);
   const moonPhase = getMoonPhase(timestamp);
-  const celestialPreset = CELESTIAL_PRESETS[condition];
+  const celestialPreset = CELESTIAL_PRESETS[conditionCode];
   config.celestial = {
     timeOfDay,
     moonPhase,
@@ -497,15 +504,15 @@ export function mapWeatherToEffects(
   // Bloom should read as forward scatter: stronger in hazier air and for
   // dramatic conditions, but still subtle by default.
   const bloomConditionBoost =
-    condition === "fog"
+    conditionCode === "fog"
       ? 0.18
-      : condition === "thunderstorm"
+      : conditionCode === "thunderstorm"
         ? 0.12
-        : condition === "heavy-rain"
+        : conditionCode === "heavy-rain"
           ? 0.1
-          : condition === "overcast"
+          : conditionCode === "overcast"
             ? 0.08
-            : condition === "cloudy" || condition === "partly-cloudy"
+            : conditionCode === "cloudy" || conditionCode === "partly-cloudy"
               ? 0.06
               : 0.04;
 

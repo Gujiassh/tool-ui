@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "../schema";
+import type { WeatherConditionCode } from "../schema";
 import type {
   WeatherEffectsCanvasProps,
   LayerToggles,
@@ -55,7 +55,7 @@ export interface WeatherEffectsCheckpointOverrides {
 }
 
 export type WeatherEffectsTunedPresets = Partial<
-  Record<WeatherCondition, WeatherEffectsCheckpointOverrides>
+  Record<WeatherConditionCode, WeatherEffectsCheckpointOverrides>
 >;
 
 export function getNearestCheckpoint(timeOfDay: number): TimeCheckpoint {

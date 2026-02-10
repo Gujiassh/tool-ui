@@ -4,12 +4,12 @@ import { cn, Card } from "./_adapter";
 import {
   EffectCompositor,
   getSceneBrightnessFromTimeOfDay,
-  getTimeOfDay,
   getWeatherTheme,
   getNearestCheckpoint,
   TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
 } from "./effects";
 import type { WeatherWidgetProps } from "./schema";
+import { resolveWeatherTime } from "./time";
 import { WeatherDataOverlay } from "./weather-data-overlay";
 
 function formatRelativeTime(isoString: string, locale?: string): string {
@@ -45,11 +45,13 @@ function formatRelativeTime(isoString: string, locale?: string): string {
 }
 
 export function WeatherWidget({
+  version: _version,
   id,
   location,
+  units,
   current,
   forecast,
-  unit = "celsius",
+  time,
   updatedAt,
   className,
   locale: localeProp,
@@ -67,17 +69,23 @@ export function WeatherWidget({
   const effectsEnabled = effects?.enabled !== false && !reducedMotion;
 
   const overlayTimeOfDay = customEffectProps?.celestial?.timeOfDay;
+  const resolvedTime = resolveWeatherTime({
+    time,
+    updatedAt,
+  });
   const timeOfDay =
-    typeof overlayTimeOfDay === "number" ? overlayTimeOfDay : getTimeOfDay(updatedAt);
+    typeof overlayTimeOfDay === "number"
+      ? overlayTimeOfDay
+      : resolvedTime.timeOfDay;
 
   const tunedOverrides =
-    TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[current.condition];
+    TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[current.conditionCode];
   const tunedGlass =
     tunedOverrides?.[getNearestCheckpoint(timeOfDay)]?.glass;
   const glassParams = customEffectProps?.glass
     ? { ...tunedGlass, ...customEffectProps.glass }
     : tunedGlass;
-  const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, current.condition);
+  const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, current.conditionCode);
   const weatherTheme = getWeatherTheme(brightness);
   const isWeatherDark = weatherTheme === "dark";
   const backgroundClass = isWeatherDark
@@ -102,28 +110,27 @@ export function WeatherWidget({
       >
         {effectsEnabled && (
           <EffectCompositor
-            condition={current.condition}
+            conditionCode={current.conditionCode}
             windSpeed={current.windSpeed}
-            windDirection={current.windDirection}
-            precipitation={current.precipitation}
-            humidity={current.humidity}
+            precipitationLevel={current.precipitationLevel}
             visibility={current.visibility}
             timestamp={updatedAt}
+            timeOfDay={timeOfDay}
             settings={effects}
             customProps={customEffectProps}
           />
         )}
 
         <WeatherDataOverlay
-          location={location}
-          condition={current.condition}
-          temperature={current.temp}
+          location={location.name}
+          conditionCode={current.conditionCode}
+          temperature={current.temperature}
           tempHigh={current.tempMax}
           tempLow={current.tempMin}
           forecast={forecast}
-          unit={unit}
+          unit={units.temperature}
           updatedAtLabel={updatedAtLabel}
-          timeOfDay={overlayTimeOfDay}
+          timeOfDay={timeOfDay}
           timestamp={updatedAt}
           glassParams={glassParams}
         />
