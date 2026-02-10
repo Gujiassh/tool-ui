@@ -1,189 +1,110 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, FileCode } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Download, FileJson, FileCode, Check } from "lucide-react";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
-import { hasAnyTuningDelta } from "../lib/has-any-tuning-delta";
-import { listUpdatedParams } from "../lib/list-updated-params";
+import { useCodeGen } from "../hooks/use-code-gen";
 
 interface ExportPanelProps {
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
   signedOff: Set<WeatherCondition>;
-  onApplied?: (
-    checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>,
-  ) => void;
-  onRecovered?: (checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>) => void;
 }
 
-type ToastState = {
-  tone: "success" | "error" | "info";
-  title: string;
-  detail?: string;
-} | null;
+export function ExportPanel({ checkpointOverrides, signedOff }: ExportPanelProps) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const [copyError, setCopyError] = useState<string | null>(null);
+  const { copyToClipboard, downloadFile } = useCodeGen(checkpointOverrides, signedOff);
 
-export function ExportPanel({
-  checkpointOverrides,
-  signedOff,
-  onApplied,
-  onRecovered,
-}: ExportPanelProps) {
-  const [applyStatus, setApplyStatus] = useState<
-    "idle" | "saving" | "success" | "error"
-  >("idle");
-  const [applyError, setApplyError] = useState<string | null>(null);
-  const [toast, setToast] = useState<ToastState>(null);
-  const canApply = hasAnyTuningDelta(checkpointOverrides);
-
-  const handleRecover = async () => {
-    setApplyError(null);
-    try {
-      const response = await fetch("/api/weather-tuning/recover");
-      if (!response.ok) {
-        const message = await response.text();
-        setApplyError(message || "Failed to recover tuning.");
-        return;
-      }
-      const payload = (await response.json()) as {
-        checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
-      };
-      if (!payload?.checkpointOverrides) {
-        setApplyError("No recovered presets returned.");
-        return;
-      }
-      onRecovered?.(payload.checkpointOverrides);
-      setToast({
-        tone: "info",
-        title: "Recovered tuning from repo presets",
-      });
-    } catch (error) {
-      console.error("Failed to recover tuning.", error);
-      setApplyError("Failed to recover tuning.");
+  const handleCopy = async (
+    format: "json-overrides" | "json-full" | "typescript" | "typescript-tool-ui"
+  ) => {
+    setCopyError(null);
+    const ok = await copyToClipboard({ format, includeMetadata: format === "json-full" });
+    if (!ok) {
+      setCopyError("Copy blocked by the browser. Downloaded instead.");
+      downloadFile({ format, includeMetadata: format === "json-full" });
+      setTimeout(() => setCopyError(null), 4000);
+      return;
     }
+    setCopied(format);
+    setTimeout(() => setCopied(null), 2000);
   };
 
-  const handleApply = async () => {
-    if (!canApply) return;
-
-    setApplyStatus("saving");
-    setApplyError(null);
-    try {
-      const response = await fetch("/api/weather-tuning/apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          checkpointOverrides,
-          signedOff: Array.from(signedOff),
-        }),
-      });
-
-      if (!response.ok) {
-        const message = await response.text();
-        setApplyStatus("error");
-        setApplyError(message || "Failed to apply export.");
-        return;
-      }
-
-      const payload = (await response.json()) as {
-        path?: string;
-        checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
-      };
-      const filePath =
-        typeof payload?.path === "string"
-          ? payload.path
-          : "components/tool-ui/weather-widget/effects/tuned-presets.ts";
-
-      const updatedParams = listUpdatedParams(checkpointOverrides);
-      const detail =
-        updatedParams.length > 0
-          ? `Updated params (${updatedParams.length}): ${updatedParams.join(", ")}`
-          : "Updated params: none";
-
-      setToast({
-        tone: "success",
-        title: `Applied tuning → ${filePath}`,
-        detail,
-      });
-      setApplyStatus("success");
-      try {
-        if (payload?.checkpointOverrides) {
-          onApplied?.(payload.checkpointOverrides);
-        } else {
-          onApplied?.({});
-        }
-      } catch (error) {
-        console.error("onApplied() failed after apply.", error);
-      }
-      setTimeout(() => setApplyStatus("idle"), 2000);
-    } catch (error) {
-      console.error("Failed to apply export.", error);
-      setApplyStatus("error");
-      setApplyError("Failed to apply export.");
-      setToast({
-        tone: "error",
-        title: "Failed to apply tuning",
-      });
-    }
+  const handleDownload = (
+    format: "json-overrides" | "json-full" | "typescript" | "typescript-tool-ui"
+  ) => {
+    downloadFile({ format, includeMetadata: format === "json-full" });
   };
 
-  useEffect(() => {
-    if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), 7000);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
+  const overrideCount = Object.keys(checkpointOverrides).length;
 
   return (
-    <>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2"
-          onClick={handleRecover}
-          disabled={applyStatus === "saving"}
-        >
-          <FileCode className="size-4" />
-          Recover from repo
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2"
-          onClick={handleApply}
-          disabled={applyStatus === "saving" || !canApply}
-        >
-          <FileCode className="size-4" />
-          {applyStatus === "saving"
-            ? "Applying…"
-            : applyStatus === "success"
-              ? "Applied"
-              : "Apply to repo"}
-          {applyStatus === "success" && <Check className="size-4 text-emerald-400" />}
-        </Button>
-      </div>
-      {applyError && (
-        <span className="ml-2 text-xs text-red-500/80">{applyError}</span>
-      )}
-      {toast && (
-        <div
-          style={{ zIndex: 2147483647 }}
-          className={`fixed bottom-6 right-6 z-50 max-h-56 max-w-[44rem] overflow-auto rounded-md border px-3 py-2 text-xs shadow-lg ${
-            toast.tone === "success"
-              ? "border-emerald-500/60 bg-emerald-950/95 text-emerald-50"
-              : toast.tone === "error"
-                ? "border-rose-500/60 bg-rose-950/95 text-rose-50"
-                : "border-slate-500/60 bg-slate-900/95 text-slate-50"
-          }`}
-        >
-          <div className="font-medium">{toast.title}</div>
-          {toast.detail && (
-            <div className="mt-1 whitespace-pre-wrap opacity-95">
-              {toast.detail}
-            </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Download className="size-4" />
+          Export
+          {overrideCount > 0 && (
+            <span className="rounded bg-zinc-700 px-1.5 py-0.5 text-xs">
+              {overrideCount}
+            </span>
           )}
-        </div>
-      )}
-    </>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>Copy to Clipboard</DropdownMenuLabel>
+        {copyError && (
+          <DropdownMenuItem disabled className="opacity-100 text-red-400">
+            {copyError}
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem onClick={() => handleCopy("json-overrides")}>
+          <FileJson className="mr-2 size-4" />
+          <span className="flex-1">JSON (overrides only)</span>
+          {copied === "json-overrides" && <Check className="size-4 text-emerald-400" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleCopy("json-full")}>
+          <FileJson className="mr-2 size-4" />
+          <span className="flex-1">JSON (with metadata)</span>
+          {copied === "json-full" && <Check className="size-4 text-emerald-400" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleCopy("typescript")}>
+          <FileCode className="mr-2 size-4" />
+          <span className="flex-1">TypeScript</span>
+          {copied === "typescript" && <Check className="size-4 text-emerald-400" />}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleCopy("typescript-tool-ui")}>
+          <FileCode className="mr-2 size-4" />
+          <span className="flex-1">TypeScript (Tool UI)</span>
+          {copied === "typescript-tool-ui" && <Check className="size-4 text-emerald-400" />}
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuLabel>Download File</DropdownMenuLabel>
+        <DropdownMenuItem onClick={() => handleDownload("json-overrides")}>
+          <Download className="mr-2 size-4" />
+          weather-tuning-export.json
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleDownload("typescript")}>
+          <Download className="mr-2 size-4" />
+          tuned-overrides.ts
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleDownload("typescript-tool-ui")}>
+          <Download className="mr-2 size-4" />
+          tuned-presets.ts
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

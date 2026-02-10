@@ -1,12 +1,8 @@
 "use client";
 
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { cn } from "@/lib/ui/cn";
-import {
-  WeatherEffectsCanvas,
-  getMaxConcurrentWeatherWebglCanvases,
-  setMaxConcurrentWeatherWebglCanvases,
-} from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
+import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
 import {
   WEATHER_CONDITIONS,
@@ -15,7 +11,7 @@ import {
 import { TIME_CHECKPOINTS, TIME_CHECKPOINT_ORDER } from "../lib/constants";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import type { TimeCheckpoint } from "../types";
-import type { TuningStateReturn } from "../hooks/use-tuning-state";
+import type { TuningStateReturn, LayerKey } from "../hooks/use-tuning-state";
 import { Slider } from "@/components/ui/slider";
 import {
   DropdownMenu,
@@ -32,15 +28,6 @@ import {
   Clock,
   Globe,
 } from "lucide-react";
-import {
-  PARAMETER_GROUPS,
-  type ParameterDef,
-  type TunableLayerKey,
-} from "./parameter-definitions";
-import {
-  WeatherDataOverlay,
-  createWeatherOverlayStubData,
-} from "./weather-data-overlay";
 
 // -----------------------------------------------------------------------------
 // Types
@@ -50,6 +37,160 @@ interface ParameterMatrixViewProps {
   tuningState: TuningStateReturn;
 }
 
+/** Layers that can contain tunable numeric parameters */
+type TunableLayerKey = Exclude<LayerKey, "layers">;
+
+interface ParameterDef {
+  key: string;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+}
+
+interface ParameterGroup {
+  name: string;
+  layer: TunableLayerKey;
+  params: ParameterDef[];
+}
+
+// -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+
+const PARAMETER_GROUPS: ParameterGroup[] = [
+  {
+    name: "Sky",
+    layer: "celestial",
+    params: [
+      {
+        key: "celestialY",
+        label: "Sun/Moon Height",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+      {
+        key: "celestialX",
+        label: "Sun/Moon Position",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+      { key: "skyBrightness", label: "Brightness", min: 0, max: 2, step: 0.01 },
+      { key: "skySaturation", label: "Saturation", min: 0, max: 2, step: 0.01 },
+      { key: "skyContrast", label: "Contrast", min: 0, max: 2, step: 0.01 },
+      { key: "starDensity", label: "Star Density", min: 0, max: 1, step: 0.01 },
+    ],
+  },
+  {
+    name: "Sun Rays",
+    layer: "celestial",
+    params: [
+      {
+        key: "sunRayIntensity",
+        label: "Ray Intensity",
+        min: 0,
+        max: 3,
+        step: 0.01,
+      },
+      {
+        key: "sunRayShimmer",
+        label: "Ray Shimmer",
+        min: 0,
+        max: 5,
+        step: 0.05,
+      },
+      {
+        key: "sunRayShimmerSpeed",
+        label: "Ray Shimmer Speed",
+        min: 0,
+        max: 5,
+        step: 0.05,
+      },
+    ],
+  },
+  {
+    name: "Clouds",
+    layer: "cloud",
+    params: [
+      { key: "coverage", label: "Coverage", min: 0, max: 1, step: 0.01 },
+      { key: "density", label: "Density", min: 0, max: 1, step: 0.01 },
+      { key: "softness", label: "Softness", min: 0, max: 1, step: 0.01 },
+      {
+        key: "lightIntensity",
+        label: "Light Intensity",
+        min: 0,
+        max: 2,
+        step: 0.01,
+      },
+      {
+        key: "ambientDarkness",
+        label: "Ambient Darkness",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+    ],
+  },
+  {
+    name: "Rain",
+    layer: "rain",
+    params: [
+      {
+        key: "fallingIntensity",
+        label: "Falling Intensity",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+      {
+        key: "fallingSpeed",
+        label: "Falling Speed",
+        min: 0.1,
+        max: 3,
+        step: 0.1,
+      },
+      {
+        key: "glassIntensity",
+        label: "Glass Droplets",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+    ],
+  },
+  {
+    name: "Snow",
+    layer: "snow",
+    params: [
+      { key: "intensity", label: "Intensity", min: 0, max: 1, step: 0.01 },
+      { key: "fallSpeed", label: "Fall Speed", min: 0.1, max: 3, step: 0.1 },
+      { key: "windSpeed", label: "Wind", min: 0, max: 2, step: 0.01 },
+      { key: "drift", label: "Drift", min: 0, max: 1, step: 0.01 },
+    ],
+  },
+  {
+    name: "Lightning",
+    layer: "lightning",
+    params: [
+      {
+        key: "glowIntensity",
+        label: "Flash Intensity",
+        min: 0,
+        max: 2,
+        step: 0.01,
+      },
+      {
+        key: "branchDensity",
+        label: "Branch Density",
+        min: 0,
+        max: 1,
+        step: 0.01,
+      },
+    ],
+  },
+];
 
 // -----------------------------------------------------------------------------
 // Hooks
@@ -174,26 +315,14 @@ function ConditionPreview({
     () => mapCompositorParamsToCanvasProps(params),
     [params],
   );
-  const overlayData = useMemo(
-    () => createWeatherOverlayStubData(condition),
-    [condition],
-  );
 
   return (
-    <div className="border-border/50 relative aspect-4/3 w-full overflow-hidden rounded-md border bg-black @container/weather [container-type:size]">
+    <div className="border-border/50 relative aspect-4/3 w-full overflow-hidden rounded-md border bg-black">
       <WeatherEffectsCanvas className="absolute inset-0" {...canvasProps} />
-      <div className="absolute inset-0 z-10">
-        <WeatherDataOverlay
-          glassParams={params.glass}
-          location={overlayData.location}
-          condition={condition}
-          temperature={overlayData.temperature}
-          tempHigh={overlayData.tempHigh}
-          tempLow={overlayData.tempLow}
-          forecast={overlayData.forecast}
-          unit={overlayData.unit}
-          timeOfDay={params.celestial.timeOfDay}
-        />
+      <div className="absolute right-0 bottom-0 left-0 bg-linear-to-t from-black/80 to-transparent p-2">
+        <span className="text-[10px] font-medium text-white/80">
+          {CONDITION_LABELS[condition]}
+        </span>
       </div>
     </div>
   );
@@ -403,14 +532,6 @@ function GroupHeader({ name }: { name: string }) {
 export function ParameterMatrixView({ tuningState }: ParameterMatrixViewProps) {
   const [selectedCheckpoint, setSelectedCheckpoint] =
     useState<TimeCheckpoint>("noon");
-
-  // The Parameter view can render many previews at once; temporarily increase the
-  // WebGL context budget so all tiles can initialize on capable machines.
-  useEffect(() => {
-    const prev = getMaxConcurrentWeatherWebglCanvases();
-    setMaxConcurrentWeatherWebglCanvases(13);
-    return () => setMaxConcurrentWeatherWebglCanvases(prev);
-  }, []);
 
   return (
     <div className="flex h-full">

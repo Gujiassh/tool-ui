@@ -55,7 +55,7 @@ export function ConditionSidebar({
   onSelectCondition,
 }: ConditionSidebarProps) {
   return (
-    <aside className="flex w-44 shrink-0 flex-col border-r border-border/40">
+    <aside className="flex w-52 shrink-0 flex-col border-r border-border/40">
       <div className="border-b border-border/40 px-3 py-2">
         <h2 className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/50">
           Conditions

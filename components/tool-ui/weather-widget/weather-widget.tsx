@@ -6,8 +6,6 @@ import {
   getSceneBrightnessFromTimeOfDay,
   getTimeOfDay,
   getWeatherTheme,
-  getNearestCheckpoint,
-  TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
 } from "./effects";
 import type { WeatherWidgetProps } from "./schema";
 import { WeatherDataOverlay } from "./weather-data-overlay";
@@ -69,14 +67,6 @@ export function WeatherWidget({
   const overlayTimeOfDay = customEffectProps?.celestial?.timeOfDay;
   const timeOfDay =
     typeof overlayTimeOfDay === "number" ? overlayTimeOfDay : getTimeOfDay(updatedAt);
-
-  const tunedOverrides =
-    TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[current.condition];
-  const tunedGlass =
-    tunedOverrides?.[getNearestCheckpoint(timeOfDay)]?.glass;
-  const glassParams = customEffectProps?.glass
-    ? { ...tunedGlass, ...customEffectProps.glass }
-    : tunedGlass;
   const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, current.condition);
   const weatherTheme = getWeatherTheme(brightness);
   const isWeatherDark = weatherTheme === "dark";
@@ -92,10 +82,7 @@ export function WeatherWidget({
     <article
       data-slot="weather-widget"
       data-tool-ui-id={id}
-      className={cn(
-        "@container/weather [container-type:size] w-full max-w-md",
-        className,
-      )}
+      className={cn("@container/weather w-full max-w-md", className)}
     >
       <Card className={cn("relative overflow-clip aspect-[4/3] border-0 p-0 shadow-none", backgroundClass)}>
         {effectsEnabled && (
@@ -118,12 +105,15 @@ export function WeatherWidget({
           temperature={current.temp}
           tempHigh={current.tempMax}
           tempLow={current.tempMin}
+          humidity={current.humidity}
+          windSpeed={current.windSpeed}
+          visibility={current.visibility}
           forecast={forecast}
           unit={unit}
           updatedAtLabel={updatedAtLabel}
           timeOfDay={overlayTimeOfDay}
           timestamp={updatedAt}
-          glassParams={glassParams}
+          glassParams={customEffectProps?.glass}
         />
       </Card>
     </article>

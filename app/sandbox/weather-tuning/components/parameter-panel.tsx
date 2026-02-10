@@ -13,7 +13,6 @@ import {
   CloudRain,
   Zap,
   Snowflake,
-  Sparkles,
   Pencil,
   Copy,
   Eye,
@@ -26,11 +25,7 @@ import {
 import { ParameterRow, ParameterToggleRow } from "./parameter-row";
 import type { TimeCheckpoint } from "../types";
 import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
-import {
-  RAIN_PARAM_LIMITS,
-  SNOW_FALL_SPEED_MAX,
-  TIME_CHECKPOINTS,
-} from "../lib/constants";
+import { TIME_CHECKPOINTS } from "../lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,9 +40,7 @@ type LayerKey =
   | "cloud"
   | "rain"
   | "lightning"
-  | "snow"
-  | "glass"
-  | "post";
+  | "snow";
 
 interface ParameterPanelProps {
   params: FullCompositorParams;
@@ -226,16 +219,6 @@ export function ParameterPanel({
     onParamsChange({
       ...params,
       snow: { ...params.snow, [key]: value },
-    });
-  };
-
-  const updatePost = (
-    key: keyof typeof params.post,
-    value: number | boolean,
-  ) => {
-    onParamsChange({
-      ...params,
-      post: { ...params.post, [key]: value },
     });
   };
 
@@ -824,8 +807,8 @@ export function ParameterPanel({
                   label="Glass Intensity"
                   value={params.rain.glassIntensity}
                   baseValue={baseParams.rain.glassIntensity}
-                  min={RAIN_PARAM_LIMITS.glassIntensity.min}
-                  max={RAIN_PARAM_LIMITS.glassIntensity.max}
+                  min={0}
+                  max={1}
                   onChange={(v) => updateRain("glassIntensity", v)}
                   onReset={() =>
                     updateRain("glassIntensity", baseParams.rain.glassIntensity)
@@ -835,8 +818,8 @@ export function ParameterPanel({
                   label="Zoom"
                   value={params.rain.zoom}
                   baseValue={baseParams.rain.zoom}
-                  min={RAIN_PARAM_LIMITS.zoom.min}
-                  max={RAIN_PARAM_LIMITS.zoom.max}
+                  min={0.5}
+                  max={2}
                   onChange={(v) => updateRain("zoom", v)}
                   onReset={() => updateRain("zoom", baseParams.rain.zoom)}
                 />
@@ -844,8 +827,8 @@ export function ParameterPanel({
                   label="Falling Intensity"
                   value={params.rain.fallingIntensity}
                   baseValue={baseParams.rain.fallingIntensity}
-                  min={RAIN_PARAM_LIMITS.fallingIntensity.min}
-                  max={RAIN_PARAM_LIMITS.fallingIntensity.max}
+                  min={0}
+                  max={1}
                   onChange={(v) => updateRain("fallingIntensity", v)}
                   onReset={() =>
                     updateRain(
@@ -858,8 +841,8 @@ export function ParameterPanel({
                   label="Falling Speed"
                   value={params.rain.fallingSpeed}
                   baseValue={baseParams.rain.fallingSpeed}
-                  min={RAIN_PARAM_LIMITS.fallingSpeed.min}
-                  max={RAIN_PARAM_LIMITS.fallingSpeed.max}
+                  min={0.1}
+                  max={3}
                   onChange={(v) => updateRain("fallingSpeed", v)}
                   onReset={() =>
                     updateRain("fallingSpeed", baseParams.rain.fallingSpeed)
@@ -869,8 +852,8 @@ export function ParameterPanel({
                   label="Falling Angle"
                   value={params.rain.fallingAngle}
                   baseValue={baseParams.rain.fallingAngle}
-                  min={RAIN_PARAM_LIMITS.fallingAngle.min}
-                  max={RAIN_PARAM_LIMITS.fallingAngle.max}
+                  min={-0.5}
+                  max={0.5}
                   onChange={(v) => updateRain("fallingAngle", v)}
                   onReset={() =>
                     updateRain("fallingAngle", baseParams.rain.fallingAngle)
@@ -880,8 +863,8 @@ export function ParameterPanel({
                   label="Streak Length"
                   value={params.rain.fallingStreakLength}
                   baseValue={baseParams.rain.fallingStreakLength}
-                  min={RAIN_PARAM_LIMITS.fallingStreakLength.min}
-                  max={RAIN_PARAM_LIMITS.fallingStreakLength.max}
+                  min={0.1}
+                  max={2}
                   onChange={(v) => updateRain("fallingStreakLength", v)}
                   onReset={() =>
                     updateRain(
@@ -894,8 +877,8 @@ export function ParameterPanel({
                   label="Falling Layers"
                   value={params.rain.fallingLayers}
                   baseValue={baseParams.rain.fallingLayers}
-                  min={RAIN_PARAM_LIMITS.fallingLayers.min}
-                  max={RAIN_PARAM_LIMITS.fallingLayers.max}
+                  min={1}
+                  max={6}
                   step={1}
                   onChange={(v) => updateRain("fallingLayers", v)}
                   onReset={() =>
@@ -1078,7 +1061,7 @@ export function ParameterPanel({
                   value={params.snow.fallSpeed}
                   baseValue={baseParams.snow.fallSpeed}
                   min={0.1}
-                  max={SNOW_FALL_SPEED_MAX}
+                  max={2}
                   onChange={(v) => updateSnow("fallSpeed", v)}
                   onReset={() =>
                     updateSnow("fallSpeed", baseParams.snow.fallSpeed)
@@ -1119,266 +1102,6 @@ export function ParameterPanel({
             </AccordionContent>
           </AccordionItem>
         )}
-
-        <AccordionItem value="post" className="border-border/30">
-          <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
-            <div className="flex flex-1 items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-violet-500 to-fuchsia-500">
-                  <Sparkles className="size-3 text-white" />
-                </div>
-                <span>Atmosphere</span>
-                <DeltaBadge
-                  count={countChanges(params.post, baseParams.post)}
-                />
-              </div>
-              {currentCondition && onCopyLayer && (
-                <CopyToDropdown
-                  layerKey="post"
-                  layerLabel="Atmosphere"
-                  currentCondition={currentCondition}
-                  onCopy={(target) => onCopyLayer(target, "post")}
-                  onCopyToAll={
-                    onCopyLayerToAll
-                      ? () => onCopyLayerToAll("post")
-                      : undefined
-                  }
-                />
-              )}
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-1">
-              <ParameterToggleRow
-                label="Enabled"
-                value={params.post.enabled}
-                baseValue={baseParams.post.enabled}
-                onChange={(v) => updatePost("enabled", v)}
-                onReset={() => updatePost("enabled", baseParams.post.enabled)}
-              />
-
-              <ParameterRow
-                label="Haze"
-                value={params.post.haze}
-                baseValue={baseParams.post.haze}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("haze", v)}
-                onReset={() => updatePost("haze", baseParams.post.haze)}
-              />
-              <ParameterRow
-                label="Haze Horizon"
-                value={params.post.hazeHorizon}
-                baseValue={baseParams.post.hazeHorizon}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("hazeHorizon", v)}
-                onReset={() =>
-                  updatePost("hazeHorizon", baseParams.post.hazeHorizon)
-                }
-              />
-              <ParameterRow
-                label="Haze Desaturation"
-                value={params.post.hazeDesaturation}
-                baseValue={baseParams.post.hazeDesaturation}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("hazeDesaturation", v)}
-                onReset={() =>
-                  updatePost(
-                    "hazeDesaturation",
-                    baseParams.post.hazeDesaturation,
-                  )
-                }
-              />
-              <ParameterRow
-                label="Haze Contrast"
-                value={params.post.hazeContrast}
-                baseValue={baseParams.post.hazeContrast}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("hazeContrast", v)}
-                onReset={() =>
-                  updatePost("hazeContrast", baseParams.post.hazeContrast)
-                }
-              />
-
-              <div className="border-border/30 my-2 border-t" />
-
-              <ParameterRow
-                label="Bloom Intensity"
-                value={params.post.bloomIntensity}
-                baseValue={baseParams.post.bloomIntensity}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("bloomIntensity", v)}
-                onReset={() =>
-                  updatePost("bloomIntensity", baseParams.post.bloomIntensity)
-                }
-              />
-              <ParameterRow
-                label="Bloom Threshold"
-                value={params.post.bloomThreshold}
-                baseValue={baseParams.post.bloomThreshold}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("bloomThreshold", v)}
-                onReset={() =>
-                  updatePost("bloomThreshold", baseParams.post.bloomThreshold)
-                }
-              />
-              <ParameterRow
-                label="Bloom Knee"
-                value={params.post.bloomKnee}
-                baseValue={baseParams.post.bloomKnee}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("bloomKnee", v)}
-                onReset={() =>
-                  updatePost("bloomKnee", baseParams.post.bloomKnee)
-                }
-              />
-              <ParameterRow
-                label="Bloom Radius"
-                value={params.post.bloomRadius}
-                baseValue={baseParams.post.bloomRadius}
-                min={0}
-                max={6}
-                step={0.05}
-                onChange={(v) => updatePost("bloomRadius", v)}
-                onReset={() =>
-                  updatePost("bloomRadius", baseParams.post.bloomRadius)
-                }
-              />
-              <ParameterRow
-                label="Bloom Tap Scale"
-                value={params.post.bloomTapScale}
-                baseValue={baseParams.post.bloomTapScale}
-                min={0.25}
-                max={3}
-                step={0.05}
-                onChange={(v) => updatePost("bloomTapScale", v)}
-                onReset={() =>
-                  updatePost("bloomTapScale", baseParams.post.bloomTapScale)
-                }
-              />
-
-              <div className="border-border/30 my-2 border-t" />
-
-              <p className="text-muted-foreground/40 px-1.5 py-1 text-[10px] italic">
-                Lightning flash response — requires lightning enabled
-              </p>
-              <ParameterRow
-                label="Exposure Intensity"
-                value={params.post.exposureIntensity}
-                baseValue={baseParams.post.exposureIntensity}
-                min={0}
-                max={2}
-                onChange={(v) => updatePost("exposureIntensity", v)}
-                onReset={() =>
-                  updatePost(
-                    "exposureIntensity",
-                    baseParams.post.exposureIntensity,
-                  )
-                }
-              />
-              <ParameterRow
-                label="Exposure Desaturation"
-                value={params.post.exposureDesaturation}
-                baseValue={baseParams.post.exposureDesaturation}
-                min={0}
-                max={1}
-                onChange={(v) => updatePost("exposureDesaturation", v)}
-                onReset={() =>
-                  updatePost(
-                    "exposureDesaturation",
-                    baseParams.post.exposureDesaturation,
-                  )
-                }
-              />
-              <ParameterRow
-                label="Exposure Recovery"
-                value={params.post.exposureRecovery}
-                baseValue={baseParams.post.exposureRecovery}
-                min={0.1}
-                max={3}
-                step={0.05}
-                onChange={(v) => updatePost("exposureRecovery", v)}
-                onReset={() =>
-                  updatePost(
-                    "exposureRecovery",
-                    baseParams.post.exposureRecovery,
-                  )
-                }
-              />
-
-              <div className="border-border/30 my-2 border-t" />
-
-              <p className="text-muted-foreground/40 px-1.5 py-1 text-[10px] italic">
-                Crepuscular rays — only visible at dawn &amp; dusk
-              </p>
-              <ParameterRow
-                label="God Rays Intensity"
-                value={params.post.godRayIntensity}
-                baseValue={baseParams.post.godRayIntensity}
-                min={0}
-                max={2}
-                onChange={(v) => updatePost("godRayIntensity", v)}
-                onReset={() =>
-                  updatePost("godRayIntensity", baseParams.post.godRayIntensity)
-                }
-              />
-              <ParameterRow
-                label="God Rays Decay"
-                value={params.post.godRayDecay}
-                baseValue={baseParams.post.godRayDecay}
-                min={0.9}
-                max={0.999}
-                step={0.001}
-                onChange={(v) => updatePost("godRayDecay", v)}
-                onReset={() =>
-                  updatePost("godRayDecay", baseParams.post.godRayDecay)
-                }
-              />
-              <ParameterRow
-                label="God Rays Density"
-                value={params.post.godRayDensity}
-                baseValue={baseParams.post.godRayDensity}
-                min={0.2}
-                max={1.4}
-                step={0.01}
-                onChange={(v) => updatePost("godRayDensity", v)}
-                onReset={() =>
-                  updatePost("godRayDensity", baseParams.post.godRayDensity)
-                }
-              />
-              <ParameterRow
-                label="God Rays Weight"
-                value={params.post.godRayWeight}
-                baseValue={baseParams.post.godRayWeight}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={(v) => updatePost("godRayWeight", v)}
-                onReset={() =>
-                  updatePost("godRayWeight", baseParams.post.godRayWeight)
-                }
-              />
-              <ParameterRow
-                label="God Rays Samples"
-                value={params.post.godRaySamples}
-                baseValue={baseParams.post.godRaySamples}
-                min={0}
-                max={32}
-                step={1}
-                onChange={(v) => updatePost("godRaySamples", v)}
-                onReset={() =>
-                  updatePost("godRaySamples", baseParams.post.godRaySamples)
-                }
-              />
-            </div>
-          </AccordionContent>
-        </AccordionItem>
       </Accordion>
     </div>
   );

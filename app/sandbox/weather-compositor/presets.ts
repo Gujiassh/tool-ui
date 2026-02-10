@@ -151,37 +151,6 @@ export interface SnowParams {
   visibility: number;
 }
 
-export interface PostParams {
-  enabled: boolean;
-  haze: number;
-  hazeHorizon: number;
-  hazeDesaturation: number;
-  hazeContrast: number;
-  bloomIntensity: number;
-  bloomThreshold: number;
-  bloomKnee: number;
-  bloomRadius: number;
-  bloomTapScale: number;
-  exposureIntensity: number;
-  exposureDesaturation: number;
-  exposureRecovery: number;
-  godRayIntensity: number;
-  godRayDecay: number;
-  godRayDensity: number;
-  godRayWeight: number;
-  godRaySamples: number;
-}
-
-export interface GlassParams {
-  enabled: boolean;
-  depth: number;
-  strength: number;
-  chromaticAberration: number;
-  blur: number;
-  brightness: number;
-  saturation: number;
-}
-
 export interface ConditionOverrides {
   layers?: Partial<LayerToggles>;
   celestial?: Partial<CelestialParams>;
@@ -189,8 +158,6 @@ export interface ConditionOverrides {
   rain?: Partial<RainParams>;
   lightning?: Partial<LightningParams>;
   snow?: Partial<SnowParams>;
-  glass?: Partial<GlassParams>;
-  post?: Partial<PostParams>;
 }
 
 export interface GlobalSettings {
@@ -204,14 +171,18 @@ export interface CheckpointOverrides {
   midnight: ConditionOverrides;
 }
 
-export interface CompositorStateV4 {
-  version: 4;
+export interface CompositorStateV1 {
+  activeCondition: WeatherCondition;
+  globalSettings: GlobalSettings;
+  overrides: Partial<Record<WeatherCondition, ConditionOverrides>>;
+}
+
+export interface CompositorState {
+  version: 2;
   activeCondition: WeatherCondition;
   globalSettings: GlobalSettings;
   checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
 }
-
-export type CompositorState = CompositorStateV4;
 
 export interface FullCompositorParams {
   layers: LayerToggles;
@@ -220,11 +191,9 @@ export interface FullCompositorParams {
   rain: RainParams;
   lightning: LightningParams;
   snow: SnowParams;
-  glass: GlassParams;
-  post: PostParams;
 }
 
-function buildBaseParamsForCondition(
+export function getBaseParamsForCondition(
   condition: WeatherCondition,
   timestamp?: string,
 ): FullCompositorParams {
@@ -234,6 +203,9 @@ function buildBaseParamsForCondition(
   });
 
   const timeOfDay = timestamp ? getTimeOfDay(timestamp) : 0.5;
+  const nearestCheckpoint = getNearestCheckpoint(timeOfDay);
+  const checkpointDefaults =
+    DEFAULT_CHECKPOINT_OVERRIDES[condition]?.[nearestCheckpoint];
 
   const hasCloud = effectConfig.cloud !== undefined;
   const hasRain = effectConfig.rain !== undefined;
@@ -243,7 +215,7 @@ function buildBaseParamsForCondition(
   const lightningIntervalMin = effectConfig.lightning?.intervalMin ?? 4;
   const lightningIntervalMax = effectConfig.lightning?.intervalMax ?? 12;
 
-  return {
+  const base: FullCompositorParams = {
     layers: {
       celestial: true,
       clouds: hasCloud,
@@ -334,55 +306,7 @@ function buildBaseParamsForCondition(
       sparkle: 0.2,
       visibility: 1.0,
     },
-    glass: {
-      enabled: true,
-      depth: 3,
-      strength: 75,
-      chromaticAberration: 6,
-      blur: 1.5,
-      brightness: 0.8,
-      saturation: 1.3,
-    },
-    post: {
-      enabled: true,
-      haze: 0,
-      hazeHorizon: 0.5,
-      hazeDesaturation: 0.3,
-      hazeContrast: 0.2,
-      bloomIntensity: 0,
-      bloomThreshold: 0.8,
-      bloomKnee: 0.5,
-      bloomRadius: 8,
-      bloomTapScale: 1,
-      exposureIntensity: 0,
-      exposureDesaturation: 0.3,
-      exposureRecovery: 2,
-      godRayIntensity: 0,
-      godRayDecay: 0.96,
-      godRayDensity: 0.5,
-      godRayWeight: 0.3,
-      godRaySamples: 60,
-    },
   };
-}
-
-export function getRawBaseParamsForCondition(
-  condition: WeatherCondition,
-  timestamp?: string,
-): FullCompositorParams {
-  return buildBaseParamsForCondition(condition, timestamp);
-}
-
-export function getBaseParamsForCondition(
-  condition: WeatherCondition,
-  timestamp?: string,
-): FullCompositorParams {
-  const timeOfDay = timestamp ? getTimeOfDay(timestamp) : 0.5;
-  const nearestCheckpoint = getNearestCheckpoint(timeOfDay);
-  const checkpointDefaults =
-    DEFAULT_CHECKPOINT_OVERRIDES[condition]?.[nearestCheckpoint];
-
-  const base = buildBaseParamsForCondition(condition, timestamp);
 
   // Apply tuned defaults for this condition/checkpoint as part of the base
   if (checkpointDefaults) {
@@ -404,8 +328,6 @@ export function mergeWithOverrides(
     rain: { ...base.rain, ...overrides.rain },
     lightning: { ...base.lightning, ...overrides.lightning },
     snow: { ...base.snow, ...overrides.snow },
-    glass: { ...base.glass, ...overrides.glass },
-    post: { ...base.post, ...overrides.post },
   };
 }
 
@@ -437,12 +359,6 @@ export function extractOverrides(
 
   const snowDiff = diffObjects(current.snow, base.snow);
   if (Object.keys(snowDiff).length > 0) overrides.snow = snowDiff;
-
-  const glassDiff = diffObjects(current.glass, base.glass);
-  if (Object.keys(glassDiff).length > 0) overrides.glass = glassDiff;
-
-  const postDiff = diffObjects(current.post, base.post);
-  if (Object.keys(postDiff).length > 0) overrides.post = postDiff;
 
   return overrides;
 }
@@ -919,10 +835,40 @@ function createEmptyCheckpointOverrides(): CheckpointOverrides {
   };
 }
 
-function isV4State(state: unknown): state is CompositorStateV4 {
+function migrateV1ToV2(v1: CompositorStateV1): CompositorState {
+  const checkpointOverrides: Partial<
+    Record<WeatherCondition, CheckpointOverrides>
+  > = {};
+
+  for (const [condition, override] of Object.entries(v1.overrides)) {
+    if (override && Object.keys(override).length > 0) {
+      checkpointOverrides[condition as WeatherCondition] = {
+        dawn: structuredClone(override),
+        noon: structuredClone(override),
+        dusk: structuredClone(override),
+        midnight: structuredClone(override),
+      };
+    }
+  }
+
+  return {
+    version: 2,
+    activeCondition: v1.activeCondition,
+    globalSettings: v1.globalSettings,
+    checkpointOverrides,
+  };
+}
+
+function isV1State(state: unknown): state is CompositorStateV1 {
   if (!state || typeof state !== "object") return false;
   const s = state as Record<string, unknown>;
-  return s.version === 4 && "checkpointOverrides" in s;
+  return s.version === undefined && "overrides" in s;
+}
+
+function isV2State(state: unknown): state is CompositorState {
+  if (!state || typeof state !== "object") return false;
+  const s = state as Record<string, unknown>;
+  return s.version === 2 && "checkpointOverrides" in s;
 }
 
 export function loadFromStorage(): CompositorState | null {
@@ -933,8 +879,14 @@ export function loadFromStorage(): CompositorState | null {
 
     const parsed = JSON.parse(stored);
 
-    if (isV4State(parsed)) {
+    if (isV2State(parsed)) {
       return parsed;
+    }
+
+    if (isV1State(parsed)) {
+      const migrated = migrateV1ToV2(parsed);
+      saveToStorage(migrated);
+      return migrated;
     }
 
     return null;
@@ -980,8 +932,13 @@ export function importFromFile(file: File): Promise<CompositorState> {
       try {
         const parsed = JSON.parse(e.target?.result as string);
 
-        if (isV4State(parsed)) {
+        if (isV2State(parsed)) {
           resolve(parsed);
+          return;
+        }
+
+        if (isV1State(parsed)) {
+          resolve(migrateV1ToV2(parsed));
           return;
         }
 

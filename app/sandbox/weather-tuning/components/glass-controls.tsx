@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { ChevronDown, Sparkles } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
-import type { GlassParams } from "../../weather-compositor/presets";
+import type { GlassEffectParams } from "../hooks/use-tuning-state";
 
 interface GlassControlsProps {
-  params: GlassParams;
-  onChange: (params: GlassParams) => void;
+  params: GlassEffectParams;
+  onChange: (params: GlassEffectParams) => void;
 }
 
 interface SliderRowProps {
@@ -52,7 +52,7 @@ function SliderRow({ label, value, min, max, step, onChange, disabled }: SliderR
 export function GlassControls({ params, onChange }: GlassControlsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const updateParam = <K extends keyof GlassParams>(key: K, value: GlassParams[K]) => {
+  const updateParam = <K extends keyof GlassEffectParams>(key: K, value: GlassEffectParams[K]) => {
     onChange({ ...params, [key]: value });
   };
 
