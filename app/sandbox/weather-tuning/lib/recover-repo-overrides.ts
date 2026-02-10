@@ -1,13 +1,13 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 
 type RecoverPayload = {
-  checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+  checkpointOverrides?: Partial<Record<WeatherConditionCode, CheckpointOverrides>>;
 };
 
 export async function recoverRepoCheckpointOverrides(
   fetchImpl: typeof fetch = fetch,
-): Promise<Partial<Record<WeatherCondition, CheckpointOverrides>> | null> {
+): Promise<Partial<Record<WeatherConditionCode, CheckpointOverrides>> | null> {
   try {
     const response = await fetchImpl("/api/weather-tuning/recover", {
       cache: "no-store",

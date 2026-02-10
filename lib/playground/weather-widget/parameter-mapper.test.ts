@@ -10,7 +10,7 @@ import {
 describe("weather-widget parameter-mapper", () => {
   test("haze floors against scaled cloud darkness", () => {
     const config = mapWeatherToEffects({
-      condition: "thunderstorm",
+      conditionCode: "thunderstorm",
       visibility: 10,
       timestamp: "2025-01-01T12:00:00Z",
     });
@@ -31,7 +31,7 @@ describe("weather-widget parameter-mapper", () => {
 
   test("rain angle mapping converts degrees to radians-ish", () => {
     const config = mapWeatherToEffects({
-      condition: "thunderstorm",
+      conditionCode: "thunderstorm",
       timestamp: "2025-01-01T12:00:00Z",
     });
 
@@ -42,7 +42,7 @@ describe("weather-widget parameter-mapper", () => {
 
   test("hail condition includes snow layer so mixed precip is visible", () => {
     const config = mapWeatherToEffects({
-      condition: "hail",
+      conditionCode: "hail",
       timestamp: "2025-01-01T12:00:00Z",
     });
 

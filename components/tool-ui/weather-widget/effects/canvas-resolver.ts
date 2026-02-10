@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "../schema";
+import type { WeatherConditionCode } from "../schema";
 import {
   getTimeOfDay,
   mapWeatherToEffects,
@@ -563,7 +563,7 @@ export function resolveWeatherEffectsCanvasProps(
     base.celestial.timeOfDay = explicitTimeOfDay;
   }
 
-  const conditionCheckpoints = input.tunedPresets?.[input.condition];
+  const conditionCheckpoints = input.tunedPresets?.[input.conditionCode];
   const timeOfDay = explicitTimeOfDay ?? base.celestial?.timeOfDay;
   if (!conditionCheckpoints || timeOfDay === undefined) {
     return base;
@@ -587,13 +587,13 @@ export function resolveWeatherEffectsCanvasProps(
 }
 
 export function resolveConditionCheckpointOverridesForTime(opts: {
-  condition: WeatherCondition;
+  conditionCode: WeatherConditionCode;
   timeOfDay: number;
   tunedPresets: WeatherEffectsTunedPresets;
   checkpointMode?: WeatherEffectsCheckpointMode;
 }): WeatherEffectsOverrides | undefined {
   const checkpointMode = opts.checkpointMode ?? "nearest";
-  const conditionCheckpoints = opts.tunedPresets[opts.condition];
+  const conditionCheckpoints = opts.tunedPresets[opts.conditionCode];
   if (!conditionCheckpoints) return undefined;
 
   if (checkpointMode === "interpolated") {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/components/tool-ui/weather-widget/effects/tuned-presets";
 import {
   resolveWeatherEffectsCanvasProps,
@@ -69,10 +69,10 @@ function createEmptyCheckpointOverrides(): CheckpointOverrides {
 
 export function useTuningState() {
   const [checkpointOverrides, setCheckpointOverrides] = useState<
-    Partial<Record<WeatherCondition, CheckpointOverrides>>
+    Partial<Record<WeatherConditionCode, CheckpointOverrides>>
   >({});
   const [repoCheckpointOverrides, setRepoCheckpointOverrides] = useState<
-    Partial<Record<WeatherCondition, CheckpointOverrides>>
+    Partial<Record<WeatherConditionCode, CheckpointOverrides>>
   >(() =>
     mapToolUiPresetsToCompositor(TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES),
   );
@@ -80,20 +80,20 @@ export function useTuningState() {
   const [activeEditCheckpoint, setActiveEditCheckpoint] =
     useState<TimeCheckpoint>(() => getNearestCheckpoint(DEFAULT_TIME_OF_DAY));
   const [selectedCondition, setSelectedCondition] =
-    useState<WeatherCondition | null>("clear");
+    useState<WeatherConditionCode | null>("clear");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
     () => new Set(),
   );
   const [compareMode, setCompareMode] = useState<CompareMode>("off");
-  const [compareTarget, setCompareTarget] = useState<WeatherCondition | null>(
+  const [compareTarget, setCompareTarget] = useState<WeatherConditionCode | null>(
     null,
   );
   const [showWidgetOverlay, setShowWidgetOverlay] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [checkpoints, setCheckpoints] = useState<
-    Partial<Record<WeatherCondition, ConditionCheckpoints>>
+    Partial<Record<WeatherConditionCode, ConditionCheckpoints>>
   >({});
-  const [signedOff, setSignedOff] = useState<Set<WeatherCondition>>(
+  const [signedOff, setSignedOff] = useState<Set<WeatherConditionCode>>(
     () => new Set(),
   );
   const [isHydrated, setIsHydrated] = useState(false);
@@ -191,7 +191,7 @@ export function useTuningState() {
 
   const getRawBaseParamsForCheckpoint = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       checkpoint: TimeCheckpoint,
     ): FullCompositorParams => {
       const checkpointTime = TIME_CHECKPOINTS[checkpoint].value;
@@ -205,7 +205,7 @@ export function useTuningState() {
 
   const getBaseParamsForCheckpoint = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       checkpoint: TimeCheckpoint,
     ): FullCompositorParams => {
       const base = getRawBaseParamsForCheckpoint(condition, checkpoint);
@@ -216,7 +216,7 @@ export function useTuningState() {
   );
 
   const resolveParamsAtTime = useCallback(
-    (condition: WeatherCondition, timeOfDay: number): FullCompositorParams => {
+    (condition: WeatherConditionCode, timeOfDay: number): FullCompositorParams => {
       const timestamp = getTimestamp(timeOfDay);
       const rawBase = getRawBaseParamsForCondition(condition, timestamp);
       rawBase.celestial.timeOfDay = timeOfDay;
@@ -244,7 +244,7 @@ export function useTuningState() {
   // Get full params including user overrides for a specific checkpoint
   const getFullParamsForCheckpoint = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       checkpoint: TimeCheckpoint,
     ): FullCompositorParams => {
       const checkpointTime = TIME_CHECKPOINTS[checkpoint].value;
@@ -254,14 +254,14 @@ export function useTuningState() {
   );
 
   const getParamsForCondition = useCallback(
-    (condition: WeatherCondition): FullCompositorParams => {
+    (condition: WeatherConditionCode): FullCompositorParams => {
       return resolveParamsAtTime(condition, globalTimeOfDay);
     },
     [globalTimeOfDay, resolveParamsAtTime],
   );
 
   const getBaseParams = useCallback(
-    (condition: WeatherCondition): FullCompositorParams => {
+    (condition: WeatherConditionCode): FullCompositorParams => {
       const timestamp = getTimestamp(globalTimeOfDay);
       const rawBase = getRawBaseParamsForCondition(condition, timestamp);
       rawBase.celestial.timeOfDay = globalTimeOfDay;
@@ -296,13 +296,13 @@ export function useTuningState() {
 
   const getCanvasPropsForCondition = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       timeOfDay: number,
       checkpointMode: WeatherEffectsCheckpointMode = STUDIO_PREVIEW_CHECKPOINT_MODE,
     ): WeatherEffectsCanvasProps => {
       const timestamp = getTimestamp(timeOfDay);
       return resolveWeatherEffectsCanvasProps({
-        condition,
+        conditionCode: condition,
         timestamp,
         timeOfDay,
         tunedPresets: previewTunedPresets,
@@ -315,8 +315,8 @@ export function useTuningState() {
   const withCheckpointOverrides = useCallback(
     (
       updater: (
-        current: Partial<Record<WeatherCondition, CheckpointOverrides>>,
-      ) => Partial<Record<WeatherCondition, CheckpointOverrides>>,
+        current: Partial<Record<WeatherConditionCode, CheckpointOverrides>>,
+      ) => Partial<Record<WeatherConditionCode, CheckpointOverrides>>,
     ) => {
       setCheckpointOverrides((prev) => updater(prev));
     },
@@ -333,7 +333,7 @@ export function useTuningState() {
 
   const updateCheckpointOverrides = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       checkpoint: TimeCheckpoint,
       newOverrides: ConditionOverrides,
     ) => {
@@ -353,7 +353,7 @@ export function useTuningState() {
 
   const updateParameterAtCheckpoint = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       checkpoint: TimeCheckpoint,
       layer: LayerKey,
       parameter: string,
@@ -376,7 +376,7 @@ export function useTuningState() {
   );
 
   const updateParams = useCallback(
-    (condition: WeatherCondition, newParams: FullCompositorParams) => {
+    (condition: WeatherConditionCode, newParams: FullCompositorParams) => {
       let checkpointToEdit = activeEditCheckpoint;
       if (isPreviewing) {
         // If we're previewing, snap edits back to the nearest checkpoint
@@ -420,7 +420,7 @@ export function useTuningState() {
   );
 
   const resetCondition = useCallback(
-    (condition: WeatherCondition) => {
+    (condition: WeatherConditionCode) => {
       withCheckpointOverrides((prev) => {
         const next = { ...prev };
         delete next[condition];
@@ -442,8 +442,8 @@ export function useTuningState() {
 
   const copyLayerFromCondition = useCallback(
     (
-      sourceCondition: WeatherCondition,
-      targetCondition: WeatherCondition,
+      sourceCondition: WeatherConditionCode,
+      targetCondition: WeatherConditionCode,
       layerKey: LayerKey,
     ) => {
       withCheckpointOverrides((prev) => {
@@ -495,7 +495,7 @@ export function useTuningState() {
   );
 
   const copyLayerToAllConditions = useCallback(
-    (sourceCondition: WeatherCondition, layerKey: LayerKey) => {
+    (sourceCondition: WeatherConditionCode, layerKey: LayerKey) => {
       const otherConditions = WEATHER_CONDITIONS.filter(
         (c) => c !== sourceCondition,
       );
@@ -521,7 +521,7 @@ export function useTuningState() {
   const signedOffCount = useMemo(() => signedOff.size, [signedOff]);
 
   const getOverrideCount = useCallback(
-    (condition: WeatherCondition): number => {
+    (condition: WeatherConditionCode): number => {
       const conditionCheckpointOverrides = checkpointOverrides[condition];
       if (!conditionCheckpointOverrides) return 0;
 
@@ -541,7 +541,7 @@ export function useTuningState() {
   );
 
   const markCheckpointReviewed = useCallback(
-    (condition: WeatherCondition, checkpoint: TimeCheckpoint) => {
+    (condition: WeatherConditionCode, checkpoint: TimeCheckpoint) => {
       setCheckpoints((prev) => {
         const current = prev[condition] ?? {
           dawn: "pending",
@@ -563,7 +563,7 @@ export function useTuningState() {
 
   const copyCheckpointToCheckpoints = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       sourceCheckpoint: TimeCheckpoint,
       targetCheckpoints: TimeCheckpoint[],
     ) => {
@@ -603,7 +603,7 @@ export function useTuningState() {
 
   const bulkUpdateParameter = useCallback(
     (
-      conditions: WeatherCondition[],
+      conditions: WeatherConditionCode[],
       checkpoints: TimeCheckpoint[],
       layer: LayerKey,
       parameter: string,
@@ -626,7 +626,7 @@ export function useTuningState() {
 
   const bulkUpdateParameterAcrossCheckpoints = useCallback(
     (
-      condition: WeatherCondition,
+      condition: WeatherConditionCode,
       checkpoints: TimeCheckpoint[],
       layer: LayerKey,
       parameter: string,
@@ -664,7 +664,7 @@ export function useTuningState() {
   );
 
   const goToCheckpoint = useCallback(
-    (condition: WeatherCondition, checkpoint: TimeCheckpoint) => {
+    (condition: WeatherConditionCode, checkpoint: TimeCheckpoint) => {
       const { value } = TIME_CHECKPOINTS[checkpoint];
       setGlobalTimeOfDay(value);
       setActiveEditCheckpoint(checkpoint);
@@ -687,7 +687,7 @@ export function useTuningState() {
     setActiveEditCheckpoint(nearest);
   }, [globalTimeOfDay]);
 
-  const toggleSignOff = useCallback((condition: WeatherCondition) => {
+  const toggleSignOff = useCallback((condition: WeatherConditionCode) => {
     setSignedOff((prev) => {
       const next = new Set(prev);
       if (next.has(condition)) {
@@ -700,7 +700,7 @@ export function useTuningState() {
   }, []);
 
   const getConditionCheckpoints = useCallback(
-    (condition: WeatherCondition): ConditionCheckpoints => {
+    (condition: WeatherConditionCode): ConditionCheckpoints => {
       return (
         checkpoints[condition] ?? {
           dawn: "pending",
@@ -714,7 +714,7 @@ export function useTuningState() {
   );
 
   const allCheckpointsReviewed = useCallback(
-    (condition: WeatherCondition): boolean => {
+    (condition: WeatherConditionCode): boolean => {
       const cp = getConditionCheckpoints(condition);
       return TIME_CHECKPOINT_ORDER.every((key) => cp[key] === "reviewed");
     },

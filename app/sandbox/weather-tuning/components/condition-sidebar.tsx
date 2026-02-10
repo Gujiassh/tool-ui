@@ -2,20 +2,20 @@
 
 import { cn } from "@/lib/ui/cn";
 import { Check, Cloud, CloudRain, CloudSnow, Sun, Wind, Zap, CloudFog, CloudHail, Cloudy, CloudDrizzle, Snowflake } from "lucide-react";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import { CONDITION_GROUPS, CONDITION_LABELS } from "../../weather-compositor/presets";
 import { CheckpointDots } from "./checkpoint-dots";
 import type { ConditionCheckpoints } from "../types";
 
 interface ConditionSidebarProps {
-  selectedCondition: WeatherCondition | null;
-  signedOff: Set<WeatherCondition>;
-  checkpoints: Partial<Record<WeatherCondition, ConditionCheckpoints>>;
-  getOverrideCount: (condition: WeatherCondition) => number;
-  onSelectCondition: (condition: WeatherCondition) => void;
+  selectedCondition: WeatherConditionCode | null;
+  signedOff: Set<WeatherConditionCode>;
+  checkpoints: Partial<Record<WeatherConditionCode, ConditionCheckpoints>>;
+  getOverrideCount: (condition: WeatherConditionCode) => number;
+  onSelectCondition: (condition: WeatherConditionCode) => void;
 }
 
-const CONDITION_ICONS: Record<WeatherCondition, typeof Sun> = {
+const CONDITION_ICONS: Record<WeatherConditionCode, typeof Sun> = {
   clear: Sun,
   "partly-cloudy": Cloudy,
   cloudy: Cloud,
@@ -31,7 +31,7 @@ const CONDITION_ICONS: Record<WeatherCondition, typeof Sun> = {
   windy: Wind,
 };
 
-const CONDITION_COLORS: Record<WeatherCondition, string> = {
+const CONDITION_COLORS: Record<WeatherConditionCode, string> = {
   clear: "from-amber-500 to-orange-500",
   "partly-cloudy": "from-sky-400 to-slate-400",
   cloudy: "from-slate-400 to-slate-500",

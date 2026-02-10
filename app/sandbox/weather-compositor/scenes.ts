@@ -1,10 +1,10 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 
 export interface WeatherScene {
   id: string;
   name: string;
   location: string;
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   timeOfDay: number;
   temp: number;
   tempMin: number;
@@ -15,7 +15,7 @@ export interface WeatherScene {
     day: string;
     tempMin: number;
     tempMax: number;
-    condition: WeatherCondition;
+    condition: WeatherConditionCode;
   }>;
 }
 

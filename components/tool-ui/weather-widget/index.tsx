@@ -2,20 +2,24 @@ export { WeatherWidget } from "./weather-widget";
 export { WeatherWidgetErrorBoundary } from "./error-boundary";
 export { WeatherDataOverlay } from "./weather-data-overlay";
 export type { WeatherDataOverlayProps, GlassEffectParams } from "./weather-data-overlay";
+export { resolveWeatherVisualTime, timeBucketToTimeOfDay } from "./time";
 export {
-  SerializableWeatherWidgetSchema,
-  parseSerializableWeatherWidget,
-  safeParseSerializableWeatherWidget,
-  WeatherConditionSchema,
-  CurrentWeatherSchema,
-  ExtendedCurrentWeatherSchema,
+  WeatherWidgetPayloadSchema,
+  parseWeatherWidgetPayload,
+  safeParseWeatherWidgetPayload,
+  WeatherConditionCodeSchema,
   ForecastDaySchema,
   TemperatureUnitSchema,
-  type SerializableWeatherWidget,
+  TimeBucketSchema,
+  PrecipitationLevelSchema,
+  type WeatherWidgetPayload,
   type WeatherWidgetProps,
-  type WeatherCondition,
-  type CurrentWeather,
-  type ExtendedCurrentWeather,
+  type WeatherWidgetCurrent,
+  type WeatherWidgetVisual,
+  type WeatherWidgetLocation,
+  type WeatherConditionCode,
   type ForecastDay,
   type TemperatureUnit,
+  type WeatherEffectDrivers,
+  type PrecipitationLevel,
 } from "./schema";

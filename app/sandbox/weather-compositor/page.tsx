@@ -18,7 +18,7 @@ import {
 import { WeatherWidget } from "@/components/tool-ui/weather-widget";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
 import type { WeatherEffectLayer } from "@/components/tool-ui/weather-widget/effects";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import {
   WEATHER_CONDITIONS,
   CONDITION_LABELS,
@@ -50,14 +50,14 @@ function formatTimeLabel(timeOfDay: number): string {
 }
 
 interface ConditionPillProps {
-  condition: WeatherCondition;
+  conditionCode: WeatherConditionCode;
   isActive: boolean;
   hasOverrides: boolean;
   onClick: () => void;
 }
 
 function ConditionPill({
-  condition,
+  conditionCode,
   isActive,
   hasOverrides,
   onClick,
@@ -71,7 +71,7 @@ function ConditionPill({
           : "bg-white/10 text-white/60 hover:bg-white/15 hover:text-white/80"
       } `}
     >
-      {CONDITION_LABELS[condition]}
+      {CONDITION_LABELS[conditionCode]}
       {hasOverrides && (
         <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-blue-400" />
       )}
@@ -101,12 +101,12 @@ function createEmptyCheckpointOverrides(): CheckpointOverrides {
 export default function WeatherCompositorSandbox() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeCondition, setActiveCondition] =
-    useState<WeatherCondition>("clear");
+    useState<WeatherConditionCode>("clear");
   const [globalSettings, setGlobalSettings] = useState<GlobalSettings>(
     DEFAULT_GLOBAL_SETTINGS,
   );
   const [checkpointOverrides, setCheckpointOverrides] = useState<
-    Partial<Record<WeatherCondition, CheckpointOverrides>>
+    Partial<Record<WeatherConditionCode, CheckpointOverrides>>
   >({});
   const [previewMode, setPreviewMode] = useState<
     "layers" | "widget" | "unified"
@@ -841,7 +841,7 @@ export default function WeatherCompositorSandbox() {
   useEffect(() => {
     if (isInitializing.current || !isMounted) return;
 
-    // Guard against race condition: only save if the debounced condition
+    // Guard against race conditionCode: only save if the debounced condition
     // matches the current active condition. This prevents params from
     // condition A being saved to condition B when switching quickly.
     if (debouncedCondition !== activeCondition) return;
@@ -899,14 +899,14 @@ export default function WeatherCompositorSandbox() {
   }, [stateToSave, isMounted]);
 
   const handleConditionChange = useCallback(
-    (condition: WeatherCondition) => {
-      setActiveCondition(condition);
-      const newBase = getBaseParamsForCondition(condition);
-      const existingCheckpoints = checkpointOverrides[condition];
+    (conditionCode: WeatherConditionCode) => {
+      setActiveCondition(conditionCode);
+      const newBase = getBaseParamsForCondition(conditionCode);
+      const existingCheckpoints = checkpointOverrides[conditionCode];
       const getBaseForNewCondition = (checkpoint: TimeCheckpoint) => {
         const checkpointTime = TIME_CHECKPOINTS[checkpoint].value;
         return getBaseParamsForCondition(
-          condition,
+          conditionCode,
           new Date(Date.now())
             .toISOString()
             .replace(
@@ -1053,7 +1053,7 @@ export default function WeatherCompositorSandbox() {
           {WEATHER_CONDITIONS.map((condition) => (
             <ConditionPill
               key={condition}
-              condition={condition}
+              conditionCode={condition}
               isActive={condition === activeCondition}
               hasOverrides={checkpointOverrides[condition] !== undefined}
               onClick={() => handleConditionChange(condition)}
@@ -1205,42 +1205,43 @@ export default function WeatherCompositorSandbox() {
               />
               <div className="relative z-10 h-full w-full [&_[data-slot=card]]:h-full [&_[data-slot=card]]:border-0 [&_[data-slot=card]]:bg-transparent [&_[data-slot=card]]:shadow-none [&_[data-slot=weather-widget]]:h-full [&_[data-slot=weather-widget]]:max-w-none [&_article]:h-full">
                 <WeatherWidget
+                  version="3.1"
                   id="unified-preview"
-                  location="San Francisco, CA"
+                  location={{ name: "San Francisco, CA" }}
+                  units={{ temperature: "fahrenheit" }}
                   current={{
-                    temp: 72,
+                    temperature: 72,
                     tempMin: 65,
                     tempMax: 78,
-                    condition: activeCondition,
+                    conditionCode: activeCondition,
                   }}
                   forecast={[
                     {
-                      day: "Today",
+                      label: "Today",
                       tempMin: 65,
                       tempMax: 78,
-                      condition: activeCondition,
+                      conditionCode: activeCondition,
                     },
                     {
-                      day: "Tue",
+                      label: "Tue",
                       tempMin: 64,
                       tempMax: 77,
-                      condition: "partly-cloudy",
+                      conditionCode: "partly-cloudy",
                     },
                     {
-                      day: "Wed",
+                      label: "Wed",
                       tempMin: 61,
                       tempMax: 73,
-                      condition: "cloudy",
+                      conditionCode: "cloudy",
                     },
-                    { day: "Thu", tempMin: 58, tempMax: 68, condition: "rain" },
+                    { label: "Thu", tempMin: 58, tempMax: 68, conditionCode: "rain" },
                     {
-                      day: "Fri",
+                      label: "Fri",
                       tempMin: 55,
                       tempMax: 65,
-                      condition: "drizzle",
+                      conditionCode: "drizzle",
                     },
                   ]}
-                  unit="fahrenheit"
                   updatedAt={(() => {
                     const date = new Date();
                     // Keep this aligned with `getTimeOfDay`, which interprets timestamps in UTC.
@@ -1252,45 +1253,47 @@ export default function WeatherCompositorSandbox() {
                     );
                     return date.toISOString();
                   })()}
+                  visual={{ localTimeOfDay: timeOfDay }}
                   effects={{ enabled: false }}
                 />
               </div>
             </div>
           ) : previewMode === "widget" ? (
             <WeatherWidget
+              version="3.1"
               id="compositor-preview"
-              location="San Francisco, CA"
+              location={{ name: "San Francisco, CA" }}
+              units={{ temperature: "fahrenheit" }}
               current={{
-                temp: 72,
+                temperature: 72,
                 tempMin: 65,
                 tempMax: 78,
-                condition: activeCondition,
+                conditionCode: activeCondition,
               }}
               forecast={[
                 {
-                  day: "Today",
+                  label: "Today",
                   tempMin: 65,
                   tempMax: 78,
-                  condition: activeCondition,
+                  conditionCode: activeCondition,
                 },
                 {
-                  day: "Tue",
+                  label: "Tue",
                   tempMin: 64,
                   tempMax: 77,
-                  condition: "partly-cloudy",
+                  conditionCode: "partly-cloudy",
                 },
-                { day: "Wed", tempMin: 61, tempMax: 73, condition: "cloudy" },
-                { day: "Thu", tempMin: 58, tempMax: 68, condition: "rain" },
-                { day: "Fri", tempMin: 55, tempMax: 65, condition: "drizzle" },
+                { label: "Wed", tempMin: 61, tempMax: 73, conditionCode: "cloudy" },
+                { label: "Thu", tempMin: 58, tempMax: 68, conditionCode: "rain" },
+                { label: "Fri", tempMin: 55, tempMax: 65, conditionCode: "drizzle" },
                 {
-                  day: "Sat",
+                  label: "Sat",
                   tempMin: 60,
                   tempMax: 72,
-                  condition: "partly-cloudy",
+                  conditionCode: "partly-cloudy",
                 },
-                { day: "Sun", tempMin: 63, tempMax: 75, condition: "clear" },
+                { label: "Sun", tempMin: 63, tempMax: 75, conditionCode: "clear" },
               ]}
-              unit="fahrenheit"
               updatedAt={(() => {
                 const date = new Date();
                 // Keep this aligned with `getTimeOfDay`, which interprets timestamps in UTC.
@@ -1302,6 +1305,7 @@ export default function WeatherCompositorSandbox() {
                 );
                 return date.toISOString();
               })()}
+              visual={{ localTimeOfDay: timeOfDay }}
               effects={{ enabled: true }}
               customEffectProps={{
                 enabledLayers,

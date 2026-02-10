@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import {
@@ -14,15 +14,15 @@ import type { FullCompositorParams } from "../../weather-compositor/presets";
 import type { CompareMode } from "../types";
 
 interface ComparisonViewProps {
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   params: FullCompositorParams;
   baseParams: FullCompositorParams;
   compareMode: CompareMode;
-  compareTarget: WeatherCondition | null;
+  compareTarget: WeatherConditionCode | null;
   compareTargetParams: FullCompositorParams | null;
   onClose: () => void;
   onToggleMode: () => void;
-  onSelectCompareTarget: (target: WeatherCondition) => void;
+  onSelectCompareTarget: (target: WeatherConditionCode) => void;
 }
 
 export function ComparisonView({

@@ -452,22 +452,24 @@ function createSceneConfigs(reducedMotion: boolean): SceneConfig[] {
       preamble: "Stormy night ahead. Clears up by Thursday.",
       toolUI: (
         <WeatherWidget
+          version="3.1"
           id="chat-showcase-weather"
-          location="San Francisco, CA"
+          location={{ name: "San Francisco, CA" }}
+          units={{ temperature: "fahrenheit" }}
           current={{
-            temp: 54,
+            temperature: 54,
             tempMin: 51,
             tempMax: 58,
-            condition: "thunderstorm",
+            conditionCode: "thunderstorm",
           }}
           forecast={[
-            { day: "Tue", tempMin: 50, tempMax: 56, condition: "heavy-rain" },
-            { day: "Wed", tempMin: 49, tempMax: 55, condition: "rain" },
-            { day: "Thu", tempMin: 51, tempMax: 60, condition: "cloudy" },
-            { day: "Fri", tempMin: 53, tempMax: 64, condition: "partly-cloudy" },
-            { day: "Sat", tempMin: 55, tempMax: 68, condition: "clear" },
+            { label: "Tue", tempMin: 50, tempMax: 56, conditionCode: "heavy-rain" },
+            { label: "Wed", tempMin: 49, tempMax: 55, conditionCode: "rain" },
+            { label: "Thu", tempMin: 51, tempMax: 60, conditionCode: "cloudy" },
+            { label: "Fri", tempMin: 53, tempMax: 64, conditionCode: "partly-cloudy" },
+            { label: "Sat", tempMin: 55, tempMax: 68, conditionCode: "clear" },
           ]}
-          unit="fahrenheit"
+          visual={{ localTimeOfDay: 23 / 24 }}
           updatedAt="2024-01-15T23:00:00Z"
           className="w-full max-w-[400px]"
           effects={{

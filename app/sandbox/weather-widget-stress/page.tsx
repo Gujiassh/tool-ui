@@ -7,11 +7,11 @@ import type {
   ForecastDay,
   PrecipitationLevel,
   TemperatureUnit,
-  WeatherCondition,
+  WeatherConditionCode,
 } from "@/components/tool-ui/weather-widget/schema";
 import { cn } from "@/lib/ui/cn";
 
-const CONDITIONS: WeatherCondition[] = [
+const CONDITIONS: WeatherConditionCode[] = [
   "clear",
   "partly-cloudy",
   "cloudy",
@@ -31,7 +31,7 @@ const WEBGL_SAFE_WIDGET_COUNT = 8;
 
 // A representative subset that exercises the major effect pathways:
 // - clouds, fog, rain, heavy rain, lightning, snow
-const CONDITION_SPECTRUM: WeatherCondition[] = [
+const CONDITION_SPECTRUM: WeatherConditionCode[] = [
   "clear",
   "partly-cloudy",
   "overcast",
@@ -43,16 +43,16 @@ const CONDITION_SPECTRUM: WeatherCondition[] = [
 ];
 
 const CITIES = [
-  { location: "San Diego, CA", condition: "clear" as const },
-  { location: "Seattle, WA", condition: "rain" as const },
-  { location: "London, UK", condition: "fog" as const },
-  { location: "Minneapolis, MN", condition: "snow" as const },
-  { location: "Kansas City, MO", condition: "thunderstorm" as const },
-  { location: "Chicago, IL", condition: "windy" as const },
-  { location: "Bangkok, Thailand", condition: "heavy-rain" as const },
-  { location: "Reykjavik, Iceland", condition: "sleet" as const },
-  { location: "Denver, CO", condition: "partly-cloudy" as const },
-  { location: "San Francisco, CA", condition: "cloudy" as const },
+  { location: "San Diego, CA", conditionCode: "clear" as const },
+  { location: "Seattle, WA", conditionCode: "rain" as const },
+  { location: "London, UK", conditionCode: "fog" as const },
+  { location: "Minneapolis, MN", conditionCode: "snow" as const },
+  { location: "Kansas City, MO", conditionCode: "thunderstorm" as const },
+  { location: "Chicago, IL", conditionCode: "windy" as const },
+  { location: "Bangkok, Thailand", conditionCode: "heavy-rain" as const },
+  { location: "Reykjavik, Iceland", conditionCode: "sleet" as const },
+  { location: "Denver, CO", conditionCode: "partly-cloudy" as const },
+  { location: "San Francisco, CA", conditionCode: "cloudy" as const },
 ];
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
@@ -87,10 +87,10 @@ function timeToISOString(timeOfDay: number): string {
 }
 
 function baseTempForCondition(
-  condition: WeatherCondition,
+  conditionCode: WeatherConditionCode,
   unit: TemperatureUnit,
 ): number {
-  const f: Record<WeatherCondition, number> = {
+  const f: Record<WeatherConditionCode, number> = {
     clear: 78,
     "partly-cloudy": 70,
     cloudy: 62,
@@ -105,15 +105,15 @@ function baseTempForCondition(
     hail: 38,
     windy: 45,
   };
-  const tempF = f[condition] ?? 65;
+  const tempF = f[conditionCode] ?? 65;
   if (unit === "fahrenheit") return tempF;
   return Math.round(((tempF - 32) * 5) / 9);
 }
 
 function precipitationForCondition(
-  condition: WeatherCondition,
+  conditionCode: WeatherConditionCode,
 ): PrecipitationLevel | undefined {
-  switch (condition) {
+  switch (conditionCode) {
     case "drizzle":
       return "light";
     case "rain":
@@ -132,10 +132,10 @@ function precipitationForCondition(
 
 function buildForecast(
   rand: () => number,
-  condition: WeatherCondition,
+  conditionCode: WeatherConditionCode,
   unit: TemperatureUnit,
 ): ForecastDay[] {
-  const base = baseTempForCondition(condition, unit);
+  const base = baseTempForCondition(conditionCode, unit);
   const start = Math.floor(rand() * WEEKDAYS.length);
 
   return Array.from({ length: 7 })
@@ -144,12 +144,12 @@ function buildForecast(
       const day = WEEKDAYS[(start + i) % WEEKDAYS.length]!;
       const hi = base + Math.round((rand() - 0.4) * 10);
       const lo = hi - (3 + Math.round(rand() * 8));
-      const maybeCondition = i === 0 ? condition : pick(rand, CONDITIONS);
+      const maybeCondition = i === 0 ? conditionCode : pick(rand, CONDITIONS);
       return {
-        day,
+        label: day,
         tempMin: lo,
         tempMax: hi,
-        condition: maybeCondition,
+        conditionCode: maybeCondition,
       };
     });
 }
@@ -279,22 +279,17 @@ export default function WeatherWidgetStressPage() {
       const precipitation = precipitationForCondition(condition);
 
       const current = {
-        temp: currentTemp,
+        temperature: currentTemp,
         tempMin,
         tempMax,
-        condition,
+        conditionCode: condition,
         ...(includeExtras
           ? {
-              humidity:
-                condition === "fog"
-                  ? 95
-                  : Math.round(clamp(30 + rand() * 70, 0, 100)),
               windSpeed:
                 condition === "windy"
                   ? Math.round(15 + rand() * 25)
                   : Math.round(rand() * 20),
-              windDirection: Math.round(rand() * 360),
-              precipitation,
+              precipitationLevel: precipitation,
               visibility:
                 condition === "fog"
                   ? clamp(0.5 + rand() * 2.5, 0.1, 10)
@@ -307,11 +302,13 @@ export default function WeatherWidgetStressPage() {
 
       const widget = (
         <WeatherWidget
+          version="3.1"
           id={`weather-widget-stress-${remountSeed}-${i}`}
-          location={location}
+          location={{ name: location }}
+          units={{ temperature: unit }}
           current={current}
           forecast={forecast}
-          unit={unit}
+          visual={{ localTimeOfDay: timeControls.timeOfDay }}
           updatedAt={includeUpdatedAt ? timestamp : undefined}
           effects={globalEffects}
           className={stress.fillCells ? "w-full max-w-none" : undefined}

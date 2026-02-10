@@ -1,13 +1,12 @@
 import { z } from "zod";
 import {
-  ToolUIIdSchema,
-  ToolUIRoleSchema,
   parseWithSchema,
   safeParseWithSchema,
 } from "../shared";
 import type { CustomEffectProps } from "./effects";
+import type { EffectSettings } from "./effects/types";
 
-export const WeatherConditionSchema = z.enum([
+export const WeatherConditionCodeSchema = z.enum([
   "clear",
   "partly-cloudy",
   "cloudy",
@@ -23,88 +22,111 @@ export const WeatherConditionSchema = z.enum([
   "windy",
 ]);
 
-export type WeatherCondition = z.infer<typeof WeatherConditionSchema>;
+export type WeatherConditionCode = z.infer<typeof WeatherConditionCodeSchema>;
 
-export const CurrentWeatherSchema = z.object({
-  temp: z.number(),
-  tempMin: z.number(),
-  tempMax: z.number(),
-  condition: WeatherConditionSchema,
-});
-
-export type CurrentWeather = z.infer<typeof CurrentWeatherSchema>;
+export const TemperatureUnitSchema = z.enum(["celsius", "fahrenheit"]);
 
 export const ForecastDaySchema = z.object({
-  day: z.string().min(1),
+  label: z.string().min(1),
+  conditionCode: WeatherConditionCodeSchema,
   tempMin: z.number(),
   tempMax: z.number(),
-  condition: WeatherConditionSchema,
 });
 
 export type ForecastDay = z.infer<typeof ForecastDaySchema>;
 
-export const TemperatureUnitSchema = z.enum(["celsius", "fahrenheit"]);
-
 export type TemperatureUnit = z.infer<typeof TemperatureUnitSchema>;
 
-export const PrecipitationLevelSchema = z.enum(["none", "light", "moderate", "heavy"]);
+export const PrecipitationLevelSchema = z.enum([
+  "none",
+  "light",
+  "moderate",
+  "heavy",
+]);
 
 export type PrecipitationLevel = z.infer<typeof PrecipitationLevelSchema>;
 
-export const EffectQualitySchema = z.enum(["low", "medium", "high", "auto"]);
+export const TimeBucketSchema = z.number().int().min(0).max(11);
 
-export type EffectQuality = z.infer<typeof EffectQualitySchema>;
+export const WeatherWidgetPayloadSchema = z
+  .object({
+    version: z.literal("3.1"),
+    id: z.string().min(1),
+    location: z.object({
+      name: z.string().min(1),
+    }),
+    units: z.object({
+      temperature: TemperatureUnitSchema,
+    }),
+    current: z.object({
+      conditionCode: WeatherConditionCodeSchema,
+      temperature: z.number(),
+      tempMin: z.number(),
+      tempMax: z.number(),
+      windSpeed: z.number().optional(),
+      precipitationLevel: PrecipitationLevelSchema.optional(),
+      visibility: z.number().optional(),
+    }),
+    forecast: z.array(ForecastDaySchema).min(1).max(7),
+    visual: z.object({
+      timeBucket: TimeBucketSchema.optional(),
+      localTimeOfDay: z.number().min(0).max(1).optional(),
+    }),
+    updatedAt: z.string().datetime().optional(),
+  })
+  .superRefine((value, ctx) => {
+    const hasBucket = value.visual.timeBucket !== undefined;
+    const hasLocalTime = value.visual.localTimeOfDay !== undefined;
 
-export const EffectSettingsSchema = z.object({
-  enabled: z.boolean().optional(),
-  quality: EffectQualitySchema.optional(),
-  reducedMotion: z.boolean().optional(),
-});
+    if (!hasBucket && !hasLocalTime) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["visual"],
+        message: "visual must include timeBucket or localTimeOfDay",
+      });
+      return;
+    }
 
-export type EffectSettings = z.infer<typeof EffectSettingsSchema>;
+    if (hasBucket && hasLocalTime) {
+      const normalized = ((value.visual.localTimeOfDay ?? 0) % 1 + 1) % 1;
+      const derivedBucket = Math.floor(normalized * 12) % 12;
+      if (derivedBucket !== value.visual.timeBucket) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["visual"],
+          message: "timeBucket must match localTimeOfDay bucket",
+        });
+      }
+    }
+  });
 
-export const ExtendedCurrentWeatherSchema = CurrentWeatherSchema.extend({
+export type WeatherWidgetPayload = z.infer<typeof WeatherWidgetPayloadSchema>;
+
+export type WeatherWidgetCurrent = WeatherWidgetPayload["current"];
+
+export type WeatherWidgetVisual = WeatherWidgetPayload["visual"];
+
+export type WeatherWidgetLocation = WeatherWidgetPayload["location"];
+
+export const WeatherEffectDriversSchema = z.object({
   windSpeed: z.number().optional(),
-  windDirection: z.number().min(0).max(360).optional(),
-  humidity: z.number().min(0).max(100).optional(),
-  precipitation: PrecipitationLevelSchema.optional(),
+  precipitationLevel: PrecipitationLevelSchema.optional(),
   visibility: z.number().optional(),
 });
 
-export type ExtendedCurrentWeather = z.infer<typeof ExtendedCurrentWeatherSchema>;
+export type WeatherEffectDrivers = z.infer<typeof WeatherEffectDriversSchema>;
 
-export const SerializableWeatherWidgetSchema = z.object({
-  id: ToolUIIdSchema,
-  role: ToolUIRoleSchema.optional(),
-  location: z.string().min(1),
-  // Accept an extended payload (backwards-compatible with CurrentWeatherSchema).
-  current: ExtendedCurrentWeatherSchema,
-  forecast: z.array(ForecastDaySchema).min(1).max(7),
-  unit: TemperatureUnitSchema.optional(),
-  updatedAt: z.string().datetime().optional(),
-});
-
-export type SerializableWeatherWidget = z.infer<
-  typeof SerializableWeatherWidgetSchema
->;
-
-export function parseSerializableWeatherWidget(
-  input: unknown,
-): SerializableWeatherWidget {
-  return parseWithSchema(
-    SerializableWeatherWidgetSchema,
-    input,
-    "WeatherWidget",
-  );
+export function parseWeatherWidgetPayload(input: unknown): WeatherWidgetPayload {
+  return parseWithSchema(WeatherWidgetPayloadSchema, input, "WeatherWidget");
 }
 
-export function safeParseSerializableWeatherWidget(
+export function safeParseWeatherWidgetPayload(
   input: unknown,
-): SerializableWeatherWidget | null {
-  return safeParseWithSchema(SerializableWeatherWidgetSchema, input);
+): WeatherWidgetPayload | null {
+  return safeParseWithSchema(WeatherWidgetPayloadSchema, input);
 }
 
-export interface WeatherWidgetProps extends SerializableWeatherWidget {
+export interface WeatherWidgetProps extends WeatherWidgetPayload {
   className?: string;
   locale?: string;
   effects?: EffectSettings;

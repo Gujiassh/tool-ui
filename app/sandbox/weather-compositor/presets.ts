@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import {
   mapWeatherToEffects,
   getTimeOfDay,
@@ -8,7 +8,7 @@ import {
 // Weather conditions grouped by category for intuitive navigation
 export interface ConditionGroup {
   name: string;
-  conditions: WeatherCondition[];
+  conditions: WeatherConditionCode[];
 }
 
 export const CONDITION_GROUPS: ConditionGroup[] = [
@@ -31,11 +31,11 @@ export const CONDITION_GROUPS: ConditionGroup[] = [
 ];
 
 // Flat list for iteration (derived from groups)
-export const WEATHER_CONDITIONS: WeatherCondition[] = CONDITION_GROUPS.flatMap(
+export const WEATHER_CONDITIONS: WeatherConditionCode[] = CONDITION_GROUPS.flatMap(
   (group) => group.conditions,
 );
 
-export const CONDITION_LABELS: Record<WeatherCondition, string> = {
+export const CONDITION_LABELS: Record<WeatherConditionCode, string> = {
   clear: "Clear",
   "partly-cloudy": "Partly Cloudy",
   cloudy: "Cloudy",
@@ -206,9 +206,9 @@ export interface CheckpointOverrides {
 
 export interface CompositorStateV4 {
   version: 4;
-  activeCondition: WeatherCondition;
+  activeCondition: WeatherConditionCode;
   globalSettings: GlobalSettings;
-  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+  checkpointOverrides: Partial<Record<WeatherConditionCode, CheckpointOverrides>>;
 }
 
 export type CompositorState = CompositorStateV4;
@@ -225,11 +225,11 @@ export interface FullCompositorParams {
 }
 
 function buildBaseParamsForCondition(
-  condition: WeatherCondition,
+  condition: WeatherConditionCode,
   timestamp?: string,
 ): FullCompositorParams {
   const effectConfig = mapWeatherToEffects({
-    condition,
+    conditionCode: condition,
     timestamp,
   });
 
@@ -367,14 +367,14 @@ function buildBaseParamsForCondition(
 }
 
 export function getRawBaseParamsForCondition(
-  condition: WeatherCondition,
+  condition: WeatherConditionCode,
   timestamp?: string,
 ): FullCompositorParams {
   return buildBaseParamsForCondition(condition, timestamp);
 }
 
 export function getBaseParamsForCondition(
-  condition: WeatherCondition,
+  condition: WeatherConditionCode,
   timestamp?: string,
 ): FullCompositorParams {
   const timeOfDay = timestamp ? getTimeOfDay(timestamp) : 0.5;
@@ -466,7 +466,7 @@ const STORAGE_KEY = "weather-compositor-state";
 
 // Tuned default overrides for each condition and checkpoint
 export const DEFAULT_CHECKPOINT_OVERRIDES: Partial<
-  Record<WeatherCondition, CheckpointOverrides>
+  Record<WeatherConditionCode, CheckpointOverrides>
 > = {
   clear: {
     dawn: {
@@ -954,7 +954,7 @@ export function saveToStorage(state: CompositorState): void {
 
 export function getCheckpointOverridesForCondition(
   state: CompositorState,
-  condition: WeatherCondition,
+  condition: WeatherConditionCode,
 ): CheckpointOverrides {
   // User overrides only - defaults are now baked into getBaseParamsForCondition
   return (

@@ -25,7 +25,7 @@ import {
 } from "../../weather-compositor/presets";
 import { ParameterRow, ParameterToggleRow } from "./parameter-row";
 import type { TimeCheckpoint } from "../types";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import {
   RAIN_PARAM_LIMITS,
   SNOW_FALL_SPEED_MAX,
@@ -57,8 +57,8 @@ interface ParameterPanelProps {
   onToggleGroup: (group: string) => void;
   activeEditCheckpoint: TimeCheckpoint;
   isPreviewing: boolean;
-  currentCondition?: WeatherCondition;
-  onCopyLayer?: (targetCondition: WeatherCondition, layerKey: LayerKey) => void;
+  currentCondition?: WeatherConditionCode;
+  onCopyLayer?: (targetCondition: WeatherConditionCode, layerKey: LayerKey) => void;
   onCopyLayerToAll?: (layerKey: LayerKey) => void;
 }
 
@@ -113,8 +113,8 @@ function CopyToDropdown({
 }: {
   layerKey: LayerKey;
   layerLabel: string;
-  currentCondition: WeatherCondition;
-  onCopy: (targetCondition: WeatherCondition) => void;
+  currentCondition: WeatherConditionCode;
+  onCopy: (targetCondition: WeatherConditionCode) => void;
   onCopyToAll?: () => void;
 }) {
   const otherConditions = WEATHER_CONDITIONS.filter(

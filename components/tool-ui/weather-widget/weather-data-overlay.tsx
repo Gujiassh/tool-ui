@@ -15,7 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "./_adapter";
-import type { ForecastDay, TemperatureUnit, WeatherCondition } from "./schema";
+import type { ForecastDay, TemperatureUnit, WeatherConditionCode } from "./schema";
 import {
   getSceneBrightnessFromTimeOfDay,
   getTimeOfDay,
@@ -52,7 +52,7 @@ function sineEasedGradient(
   return `radial-gradient(circle ${radius}px at ${x}px ${y}px, ${stops.join(", ")})`;
 }
 
-const conditionIcons: Record<WeatherCondition, LucideIcon> = {
+const conditionIcons: Record<WeatherConditionCode, LucideIcon> = {
   clear: Sun,
   "partly-cloudy": CloudSun,
   cloudy: Cloud,
@@ -80,7 +80,7 @@ export interface GlassEffectParams {
 
 export interface WeatherDataOverlayProps {
   location: string;
-  condition: WeatherCondition;
+  conditionCode: WeatherConditionCode;
   temperature: number;
   tempHigh: number;
   tempLow: number;
@@ -107,7 +107,7 @@ export interface WeatherDataOverlayProps {
 
 export function WeatherDataOverlay({
   location,
-  condition,
+  conditionCode,
   temperature,
   tempHigh,
   tempLow,
@@ -173,12 +173,12 @@ export function WeatherDataOverlay({
   }, [updateCardDimensions]);
 
   useEffect(() => {
-    const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, condition);
+    const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, conditionCode);
     const newTheme = getWeatherTheme(brightness, theme);
     if (newTheme !== theme) {
       setTheme(newTheme);
     }
-  }, [timeOfDay, condition, theme]);
+  }, [timeOfDay, conditionCode, theme]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -395,10 +395,10 @@ export function WeatherDataOverlay({
               />
               <div className="relative flex items-center justify-between">
                 {forecast.slice(0, 5).map((day, index) => {
-                  const DayIcon = conditionIcons[day.condition];
+                  const DayIcon = conditionIcons[day.conditionCode];
                   return (
                     <div
-                      key={day.day}
+                      key={`${day.label}-${index}`}
                       className="flex flex-1 flex-col items-center gap-0.5"
                       style={{
                         fontFamily: forecastFontFamily,
@@ -413,7 +413,7 @@ export function WeatherDataOverlay({
                           textPrimary,
                         )}
                       >
-                        {index === 0 ? "Now" : day.day}
+                        {day.label}
                       </span>
                       <DayIcon
                         className={cn(

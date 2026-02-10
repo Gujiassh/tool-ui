@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { RotateCcw, Eye, EyeOff, CheckCircle2, Copy } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import {
   WeatherEffectsCanvas,
   type WeatherEffectsCanvasProps,
@@ -34,7 +34,7 @@ type LayerKey =
   | "post";
 
 interface DetailEditorProps {
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   params: FullCompositorParams;
   canvasProps: WeatherEffectsCanvasProps;
   baseParams: FullCompositorParams;
@@ -51,7 +51,7 @@ interface DetailEditorProps {
   onSignOff: () => void;
   onCheckpointClick: (checkpoint: TimeCheckpoint) => void;
   onToggleWidgetOverlay: () => void;
-  onCopyLayer?: (targetCondition: WeatherCondition, layerKey: LayerKey) => void;
+  onCopyLayer?: (targetCondition: WeatherConditionCode, layerKey: LayerKey) => void;
   onCopyLayerToAll?: (layerKey: LayerKey) => void;
   onCopyCheckpoint?: (targetCheckpoints: TimeCheckpoint[]) => void;
 }

@@ -3,11 +3,19 @@
 import { useState, useMemo } from "react";
 import { useControls, Leva } from "leva";
 import { WeatherWidget } from "@/components/tool-ui/weather-widget";
-import type { SerializableWeatherWidget } from "@/components/tool-ui/weather-widget/schema";
+import type {
+  TemperatureUnit,
+  WeatherWidgetCurrent,
+  WeatherWidgetPayload,
+} from "@/components/tool-ui/weather-widget/schema";
 
-interface LocationPreset extends Omit<SerializableWeatherWidget, "id"> {
+interface LocationPreset {
   name: string;
   description: string;
+  location: string;
+  current: WeatherWidgetCurrent;
+  forecast: WeatherWidgetPayload["forecast"];
+  unit: TemperatureUnit;
 }
 
 const LOCATION_PRESETS: LocationPreset[] = [
@@ -15,13 +23,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "san-diego",
     description: "Clear & Sunny",
     location: "San Diego, CA",
-    current: { temp: 76, tempMin: 68, tempMax: 79, condition: "clear" },
+    current: { temperature: 76, tempMin: 68, tempMax: 79, conditionCode: "clear" },
     forecast: [
-      { day: "Tue", tempMin: 65, tempMax: 78, condition: "clear" },
-      { day: "Wed", tempMin: 66, tempMax: 81, condition: "clear" },
-      { day: "Thu", tempMin: 67, tempMax: 82, condition: "partly-cloudy" },
-      { day: "Fri", tempMin: 68, tempMax: 80, condition: "clear" },
-      { day: "Sat", tempMin: 64, tempMax: 77, condition: "partly-cloudy" },
+      { label: "Tue", tempMin: 65, tempMax: 78, conditionCode: "clear" },
+      { label: "Wed", tempMin: 66, tempMax: 81, conditionCode: "clear" },
+      { label: "Thu", tempMin: 67, tempMax: 82, conditionCode: "partly-cloudy" },
+      { label: "Fri", tempMin: 68, tempMax: 80, conditionCode: "clear" },
+      { label: "Sat", tempMin: 64, tempMax: 77, conditionCode: "partly-cloudy" },
     ],
     unit: "fahrenheit",
   },
@@ -29,13 +37,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "seattle",
     description: "Rainy Week",
     location: "Seattle, WA",
-    current: { temp: 52, tempMin: 48, tempMax: 55, condition: "rain" },
+    current: { temperature: 52, tempMin: 48, tempMax: 55, conditionCode: "rain" },
     forecast: [
-      { day: "Mon", tempMin: 46, tempMax: 54, condition: "drizzle" },
-      { day: "Tue", tempMin: 47, tempMax: 53, condition: "rain" },
-      { day: "Wed", tempMin: 45, tempMax: 52, condition: "heavy-rain" },
-      { day: "Thu", tempMin: 44, tempMax: 51, condition: "rain" },
-      { day: "Fri", tempMin: 46, tempMax: 55, condition: "cloudy" },
+      { label: "Mon", tempMin: 46, tempMax: 54, conditionCode: "drizzle" },
+      { label: "Tue", tempMin: 47, tempMax: 53, conditionCode: "rain" },
+      { label: "Wed", tempMin: 45, tempMax: 52, conditionCode: "heavy-rain" },
+      { label: "Thu", tempMin: 44, tempMax: 51, conditionCode: "rain" },
+      { label: "Fri", tempMin: 46, tempMax: 55, conditionCode: "cloudy" },
     ],
     unit: "fahrenheit",
   },
@@ -43,13 +51,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "london",
     description: "Overcast & Foggy",
     location: "London, UK",
-    current: { temp: 8, tempMin: 5, tempMax: 10, condition: "fog" },
+    current: { temperature: 8, tempMin: 5, tempMax: 10, conditionCode: "fog" },
     forecast: [
-      { day: "Mon", tempMin: 4, tempMax: 9, condition: "fog" },
-      { day: "Tue", tempMin: 6, tempMax: 11, condition: "overcast" },
-      { day: "Wed", tempMin: 5, tempMax: 10, condition: "cloudy" },
-      { day: "Thu", tempMin: 7, tempMax: 12, condition: "drizzle" },
-      { day: "Fri", tempMin: 4, tempMax: 8, condition: "fog" },
+      { label: "Mon", tempMin: 4, tempMax: 9, conditionCode: "fog" },
+      { label: "Tue", tempMin: 6, tempMax: 11, conditionCode: "overcast" },
+      { label: "Wed", tempMin: 5, tempMax: 10, conditionCode: "cloudy" },
+      { label: "Thu", tempMin: 7, tempMax: 12, conditionCode: "drizzle" },
+      { label: "Fri", tempMin: 4, tempMax: 8, conditionCode: "fog" },
     ],
     unit: "celsius",
   },
@@ -57,13 +65,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "minneapolis",
     description: "Heavy Snow",
     location: "Minneapolis, MN",
-    current: { temp: 18, tempMin: 8, tempMax: 22, condition: "snow" },
+    current: { temperature: 18, tempMin: 8, tempMax: 22, conditionCode: "snow" },
     forecast: [
-      { day: "Tue", tempMin: 5, tempMax: 19, condition: "snow" },
-      { day: "Wed", tempMin: -2, tempMax: 12, condition: "snow" },
-      { day: "Thu", tempMin: -8, tempMax: 6, condition: "cloudy" },
-      { day: "Fri", tempMin: -5, tempMax: 10, condition: "partly-cloudy" },
-      { day: "Sat", tempMin: 2, tempMax: 18, condition: "clear" },
+      { label: "Tue", tempMin: 5, tempMax: 19, conditionCode: "snow" },
+      { label: "Wed", tempMin: -2, tempMax: 12, conditionCode: "snow" },
+      { label: "Thu", tempMin: -8, tempMax: 6, conditionCode: "cloudy" },
+      { label: "Fri", tempMin: -5, tempMax: 10, conditionCode: "partly-cloudy" },
+      { label: "Sat", tempMin: 2, tempMax: 18, conditionCode: "clear" },
     ],
     unit: "fahrenheit",
   },
@@ -71,13 +79,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "kansas-city",
     description: "Thunderstorm",
     location: "Kansas City, MO",
-    current: { temp: 72, tempMin: 65, tempMax: 78, condition: "thunderstorm" },
+    current: { temperature: 72, tempMin: 65, tempMax: 78, conditionCode: "thunderstorm" },
     forecast: [
-      { day: "Tue", tempMin: 62, tempMax: 75, condition: "heavy-rain" },
-      { day: "Wed", tempMin: 58, tempMax: 70, condition: "rain" },
-      { day: "Thu", tempMin: 55, tempMax: 68, condition: "cloudy" },
-      { day: "Fri", tempMin: 52, tempMax: 72, condition: "partly-cloudy" },
-      { day: "Sat", tempMin: 58, tempMax: 76, condition: "clear" },
+      { label: "Tue", tempMin: 62, tempMax: 75, conditionCode: "heavy-rain" },
+      { label: "Wed", tempMin: 58, tempMax: 70, conditionCode: "rain" },
+      { label: "Thu", tempMin: 55, tempMax: 68, conditionCode: "cloudy" },
+      { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
+      { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
     ],
     unit: "fahrenheit",
   },
@@ -85,13 +93,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "chicago",
     description: "Windy City",
     location: "Chicago, IL",
-    current: { temp: 45, tempMin: 38, tempMax: 52, condition: "windy" },
+    current: { temperature: 45, tempMin: 38, tempMax: 52, conditionCode: "windy" },
     forecast: [
-      { day: "Tue", tempMin: 35, tempMax: 48, condition: "windy" },
-      { day: "Wed", tempMin: 32, tempMax: 45, condition: "partly-cloudy" },
-      { day: "Thu", tempMin: 30, tempMax: 42, condition: "cloudy" },
-      { day: "Fri", tempMin: 28, tempMax: 40, condition: "snow" },
-      { day: "Sat", tempMin: 25, tempMax: 38, condition: "clear" },
+      { label: "Tue", tempMin: 35, tempMax: 48, conditionCode: "windy" },
+      { label: "Wed", tempMin: 32, tempMax: 45, conditionCode: "partly-cloudy" },
+      { label: "Thu", tempMin: 30, tempMax: 42, conditionCode: "cloudy" },
+      { label: "Fri", tempMin: 28, tempMax: 40, conditionCode: "snow" },
+      { label: "Sat", tempMin: 25, tempMax: 38, conditionCode: "clear" },
     ],
     unit: "fahrenheit",
   },
@@ -99,13 +107,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "sedona",
     description: "Desert Night",
     location: "Sedona, AZ",
-    current: { temp: 45, tempMin: 38, tempMax: 62, condition: "clear" },
+    current: { temperature: 45, tempMin: 38, tempMax: 62, conditionCode: "clear" },
     forecast: [
-      { day: "Tue", tempMin: 36, tempMax: 64, condition: "clear" },
-      { day: "Wed", tempMin: 38, tempMax: 66, condition: "clear" },
-      { day: "Thu", tempMin: 40, tempMax: 68, condition: "partly-cloudy" },
-      { day: "Fri", tempMin: 42, tempMax: 70, condition: "clear" },
-      { day: "Sat", tempMin: 39, tempMax: 65, condition: "clear" },
+      { label: "Tue", tempMin: 36, tempMax: 64, conditionCode: "clear" },
+      { label: "Wed", tempMin: 38, tempMax: 66, conditionCode: "clear" },
+      { label: "Thu", tempMin: 40, tempMax: 68, conditionCode: "partly-cloudy" },
+      { label: "Fri", tempMin: 42, tempMax: 70, conditionCode: "clear" },
+      { label: "Sat", tempMin: 39, tempMax: 65, conditionCode: "clear" },
     ],
     unit: "fahrenheit",
   },
@@ -113,13 +121,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "reykjavik",
     description: "Sleet & Hail",
     location: "Reykjavik, Iceland",
-    current: { temp: 2, tempMin: -1, tempMax: 4, condition: "sleet" },
+    current: { temperature: 2, tempMin: -1, tempMax: 4, conditionCode: "sleet" },
     forecast: [
-      { day: "Mon", tempMin: -2, tempMax: 3, condition: "sleet" },
-      { day: "Tue", tempMin: -3, tempMax: 2, condition: "hail" },
-      { day: "Wed", tempMin: -1, tempMax: 4, condition: "snow" },
-      { day: "Thu", tempMin: 0, tempMax: 5, condition: "overcast" },
-      { day: "Fri", tempMin: 1, tempMax: 6, condition: "windy" },
+      { label: "Mon", tempMin: -2, tempMax: 3, conditionCode: "sleet" },
+      { label: "Tue", tempMin: -3, tempMax: 2, conditionCode: "hail" },
+      { label: "Wed", tempMin: -1, tempMax: 4, conditionCode: "snow" },
+      { label: "Thu", tempMin: 0, tempMax: 5, conditionCode: "overcast" },
+      { label: "Fri", tempMin: 1, tempMax: 6, conditionCode: "windy" },
     ],
     unit: "celsius",
   },
@@ -127,13 +135,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "bangkok",
     description: "Heavy Rain",
     location: "Bangkok, Thailand",
-    current: { temp: 29, tempMin: 26, tempMax: 32, condition: "heavy-rain" },
+    current: { temperature: 29, tempMin: 26, tempMax: 32, conditionCode: "heavy-rain" },
     forecast: [
-      { day: "Mon", tempMin: 25, tempMax: 31, condition: "heavy-rain" },
-      { day: "Tue", tempMin: 26, tempMax: 33, condition: "thunderstorm" },
-      { day: "Wed", tempMin: 27, tempMax: 34, condition: "rain" },
-      { day: "Thu", tempMin: 26, tempMax: 32, condition: "drizzle" },
-      { day: "Fri", tempMin: 28, tempMax: 35, condition: "partly-cloudy" },
+      { label: "Mon", tempMin: 25, tempMax: 31, conditionCode: "heavy-rain" },
+      { label: "Tue", tempMin: 26, tempMax: 33, conditionCode: "thunderstorm" },
+      { label: "Wed", tempMin: 27, tempMax: 34, conditionCode: "rain" },
+      { label: "Thu", tempMin: 26, tempMax: 32, conditionCode: "drizzle" },
+      { label: "Fri", tempMin: 28, tempMax: 35, conditionCode: "partly-cloudy" },
     ],
     unit: "celsius",
   },
@@ -141,13 +149,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "portland",
     description: "Drizzle",
     location: "Portland, OR",
-    current: { temp: 48, tempMin: 42, tempMax: 52, condition: "drizzle" },
+    current: { temperature: 48, tempMin: 42, tempMax: 52, conditionCode: "drizzle" },
     forecast: [
-      { day: "Mon", tempMin: 40, tempMax: 50, condition: "drizzle" },
-      { day: "Tue", tempMin: 42, tempMax: 52, condition: "cloudy" },
-      { day: "Wed", tempMin: 44, tempMax: 54, condition: "drizzle" },
-      { day: "Thu", tempMin: 43, tempMax: 53, condition: "rain" },
-      { day: "Fri", tempMin: 45, tempMax: 55, condition: "partly-cloudy" },
+      { label: "Mon", tempMin: 40, tempMax: 50, conditionCode: "drizzle" },
+      { label: "Tue", tempMin: 42, tempMax: 52, conditionCode: "cloudy" },
+      { label: "Wed", tempMin: 44, tempMax: 54, conditionCode: "drizzle" },
+      { label: "Thu", tempMin: 43, tempMax: 53, conditionCode: "rain" },
+      { label: "Fri", tempMin: 45, tempMax: 55, conditionCode: "partly-cloudy" },
     ],
     unit: "fahrenheit",
   },
@@ -155,13 +163,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "denver",
     description: "Partly Cloudy",
     location: "Denver, CO",
-    current: { temp: 58, tempMin: 45, tempMax: 65, condition: "partly-cloudy" },
+    current: { temperature: 58, tempMin: 45, tempMax: 65, conditionCode: "partly-cloudy" },
     forecast: [
-      { day: "Mon", tempMin: 42, tempMax: 62, condition: "partly-cloudy" },
-      { day: "Tue", tempMin: 40, tempMax: 60, condition: "clear" },
-      { day: "Wed", tempMin: 38, tempMax: 58, condition: "cloudy" },
-      { day: "Thu", tempMin: 35, tempMax: 55, condition: "snow" },
-      { day: "Fri", tempMin: 30, tempMax: 50, condition: "clear" },
+      { label: "Mon", tempMin: 42, tempMax: 62, conditionCode: "partly-cloudy" },
+      { label: "Tue", tempMin: 40, tempMax: 60, conditionCode: "clear" },
+      { label: "Wed", tempMin: 38, tempMax: 58, conditionCode: "cloudy" },
+      { label: "Thu", tempMin: 35, tempMax: 55, conditionCode: "snow" },
+      { label: "Fri", tempMin: 30, tempMax: 50, conditionCode: "clear" },
     ],
     unit: "fahrenheit",
   },
@@ -169,13 +177,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "pittsburgh",
     description: "Overcast",
     location: "Pittsburgh, PA",
-    current: { temp: 42, tempMin: 36, tempMax: 48, condition: "overcast" },
+    current: { temperature: 42, tempMin: 36, tempMax: 48, conditionCode: "overcast" },
     forecast: [
-      { day: "Mon", tempMin: 34, tempMax: 46, condition: "overcast" },
-      { day: "Tue", tempMin: 32, tempMax: 44, condition: "cloudy" },
-      { day: "Wed", tempMin: 30, tempMax: 42, condition: "rain" },
-      { day: "Thu", tempMin: 28, tempMax: 40, condition: "overcast" },
-      { day: "Fri", tempMin: 32, tempMax: 45, condition: "partly-cloudy" },
+      { label: "Mon", tempMin: 34, tempMax: 46, conditionCode: "overcast" },
+      { label: "Tue", tempMin: 32, tempMax: 44, conditionCode: "cloudy" },
+      { label: "Wed", tempMin: 30, tempMax: 42, conditionCode: "rain" },
+      { label: "Thu", tempMin: 28, tempMax: 40, conditionCode: "overcast" },
+      { label: "Fri", tempMin: 32, tempMax: 45, conditionCode: "partly-cloudy" },
     ],
     unit: "fahrenheit",
   },
@@ -183,13 +191,13 @@ const LOCATION_PRESETS: LocationPreset[] = [
     name: "sf",
     description: "Cloudy",
     location: "San Francisco, CA",
-    current: { temp: 58, tempMin: 52, tempMax: 62, condition: "cloudy" },
+    current: { temperature: 58, tempMin: 52, tempMax: 62, conditionCode: "cloudy" },
     forecast: [
-      { day: "Mon", tempMin: 50, tempMax: 60, condition: "cloudy" },
-      { day: "Tue", tempMin: 52, tempMax: 62, condition: "fog" },
-      { day: "Wed", tempMin: 54, tempMax: 64, condition: "partly-cloudy" },
-      { day: "Thu", tempMin: 55, tempMax: 65, condition: "clear" },
-      { day: "Fri", tempMin: 53, tempMax: 63, condition: "cloudy" },
+      { label: "Mon", tempMin: 50, tempMax: 60, conditionCode: "cloudy" },
+      { label: "Tue", tempMin: 52, tempMax: 62, conditionCode: "fog" },
+      { label: "Wed", tempMin: 54, tempMax: 64, conditionCode: "partly-cloudy" },
+      { label: "Thu", tempMin: 55, tempMax: 65, conditionCode: "clear" },
+      { label: "Fri", tempMin: 53, tempMax: 63, conditionCode: "cloudy" },
     ],
     unit: "fahrenheit",
   },
@@ -261,12 +269,14 @@ export default function WeatherWidgetSandbox() {
 
   const timestamp = useMemo(() => timeToISOString(timeOfDay), [timeOfDay]);
 
-  const widgetData: SerializableWeatherWidget = {
+  const widgetData: WeatherWidgetPayload = {
+    version: "3.1",
     id: `weather-widget-${activePreset.name}`,
-    location: activePreset.location,
+    location: { name: activePreset.location },
+    units: { temperature: activePreset.unit },
     current: activePreset.current,
     forecast: activePreset.forecast,
-    unit: activePreset.unit,
+    visual: { localTimeOfDay: timeOfDay },
     updatedAt: timestamp,
   };
 
@@ -307,7 +317,7 @@ export default function WeatherWidgetSandbox() {
         </div>
 
         <div className="rounded bg-black/50 px-3 py-1.5 text-sm text-white/80 backdrop-blur-sm">
-          {formatTimeLabel(timeOfDay)} · {activePreset.current.condition}
+          {formatTimeLabel(timeOfDay)} · {activePreset.current.conditionCode}
         </div>
       </div>
     </div>

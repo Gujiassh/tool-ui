@@ -2,13 +2,13 @@
 
 import { cn } from "@/lib/ui/cn";
 import { Check } from "lucide-react";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import { CONDITION_LABELS } from "../../weather-compositor/presets";
 import { CheckpointDots } from "./checkpoint-dots";
 import type { ConditionCheckpoints } from "../types";
 
 interface ConditionCardProps {
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   isSelected: boolean;
   isSignedOff: boolean;
   checkpoints?: ConditionCheckpoints;

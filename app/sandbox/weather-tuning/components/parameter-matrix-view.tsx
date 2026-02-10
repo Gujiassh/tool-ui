@@ -7,7 +7,7 @@ import {
   getMaxConcurrentWeatherWebglCanvases,
   setMaxConcurrentWeatherWebglCanvases,
 } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import {
   WEATHER_CONDITIONS,
   CONDITION_LABELS,
@@ -66,7 +66,7 @@ function useParameterAccessor(
   checkpoint: TimeCheckpoint,
 ) {
   const getValue = useCallback(
-    (condition: WeatherCondition): number | undefined => {
+    (condition: WeatherConditionCode): number | undefined => {
       const params = tuningState.getFullParamsForCheckpoint(
         condition,
         checkpoint,
@@ -83,7 +83,7 @@ function useParameterAccessor(
   );
 
   const setValue = useCallback(
-    (condition: WeatherCondition, value: number) => {
+    (condition: WeatherConditionCode, value: number) => {
       tuningState.updateParameterAtCheckpoint(
         condition,
         checkpoint,
@@ -96,7 +96,7 @@ function useParameterAccessor(
   );
 
   const applyToAllConditions = useCallback(
-    (sourceCondition: WeatherCondition) => {
+    (sourceCondition: WeatherConditionCode) => {
       const value = getValue(sourceCondition);
       if (value === undefined) return;
 
@@ -112,7 +112,7 @@ function useParameterAccessor(
   );
 
   const applyToAllCheckpoints = useCallback(
-    (condition: WeatherCondition) => {
+    (condition: WeatherConditionCode) => {
       const value = getValue(condition);
       if (value === undefined) return;
 
@@ -128,7 +128,7 @@ function useParameterAccessor(
   );
 
   const applyEverywhere = useCallback(
-    (sourceCondition: WeatherCondition) => {
+    (sourceCondition: WeatherConditionCode) => {
       const value = getValue(sourceCondition);
       if (value === undefined) return;
 
@@ -162,7 +162,7 @@ function ConditionPreview({
   tuningState,
   checkpoint,
 }: {
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   tuningState: TuningStateReturn;
   checkpoint: TimeCheckpoint;
 }) {
@@ -186,7 +186,7 @@ function ConditionPreview({
         <WeatherDataOverlay
           glassParams={params.glass}
           location={overlayData.location}
-          condition={condition}
+          conditionCode={condition}
           temperature={overlayData.temperature}
           tempHigh={overlayData.tempHigh}
           tempLow={overlayData.tempLow}
@@ -264,7 +264,7 @@ function ConditionSlider({
   tuningState,
   checkpoint,
 }: {
-  condition: WeatherCondition;
+  condition: WeatherConditionCode;
   param: ParameterDef;
   layer: TunableLayerKey;
   tuningState: TuningStateReturn;

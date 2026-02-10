@@ -1,4 +1,4 @@
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type {
   WeatherEffectsCheckpointOverrides,
   WeatherEffectsOverrides,
@@ -108,9 +108,9 @@ export function mapToolUiCheckpointsToCompositor(
 
 export function mapToolUiPresetsToCompositor(
   presets: WeatherEffectsTunedPresets,
-): Partial<Record<WeatherCondition, CheckpointOverrides>> {
-  const out: Partial<Record<WeatherCondition, CheckpointOverrides>> = {};
-  for (const condition of Object.keys(presets) as WeatherCondition[]) {
+): Partial<Record<WeatherConditionCode, CheckpointOverrides>> {
+  const out: Partial<Record<WeatherConditionCode, CheckpointOverrides>> = {};
+  for (const condition of Object.keys(presets) as WeatherConditionCode[]) {
     const byCheckpoint = presets[condition];
     if (!byCheckpoint) continue;
     out[condition] = mapToolUiCheckpointsToCompositor(byCheckpoint);

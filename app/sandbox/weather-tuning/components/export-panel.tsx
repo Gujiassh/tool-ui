@@ -3,18 +3,18 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, FileCode } from "lucide-react";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 import { hasAnyTuningDelta } from "../lib/has-any-tuning-delta";
 import { listUpdatedParams } from "../lib/list-updated-params";
 
 interface ExportPanelProps {
-  checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>;
-  signedOff: Set<WeatherCondition>;
+  checkpointOverrides: Partial<Record<WeatherConditionCode, CheckpointOverrides>>;
+  signedOff: Set<WeatherConditionCode>;
   onApplied?: (
-    checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>,
+    checkpointOverrides: Partial<Record<WeatherConditionCode, CheckpointOverrides>>,
   ) => void;
-  onRecovered?: (checkpointOverrides: Partial<Record<WeatherCondition, CheckpointOverrides>>) => void;
+  onRecovered?: (checkpointOverrides: Partial<Record<WeatherConditionCode, CheckpointOverrides>>) => void;
 }
 
 type ToastState = {
@@ -46,7 +46,7 @@ export function ExportPanel({
         return;
       }
       const payload = (await response.json()) as {
-        checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+        checkpointOverrides?: Partial<Record<WeatherConditionCode, CheckpointOverrides>>;
       };
       if (!payload?.checkpointOverrides) {
         setApplyError("No recovered presets returned.");
@@ -87,7 +87,7 @@ export function ExportPanel({
 
       const payload = (await response.json()) as {
         path?: string;
-        checkpointOverrides?: Partial<Record<WeatherCondition, CheckpointOverrides>>;
+        checkpointOverrides?: Partial<Record<WeatherConditionCode, CheckpointOverrides>>;
       };
       const filePath =
         typeof payload?.path === "string"

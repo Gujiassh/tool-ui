@@ -1,4 +1,4 @@
-import type { SerializableWeatherWidget } from "@/components/tool-ui/weather-widget";
+import type { WeatherWidgetPayload } from "@/components/tool-ui/weather-widget";
 import type { PresetWithCodeGen } from "./types";
 
 export type WeatherWidgetPresetName =
@@ -8,21 +8,26 @@ export type WeatherWidgetPresetName =
   | "cloudy-sunset"
   | "sunny-forecast";
 
-function generateWeatherWidgetCode(data: SerializableWeatherWidget): string {
+function generateWeatherWidgetCode(data: WeatherWidgetPayload): string {
   const props: string[] = [];
 
+  props.push('  version="3.1"');
   props.push(`  id="${data.id}"`);
-  props.push(`  location="${data.location}"`);
+  props.push(
+    `  location={${JSON.stringify(data.location, null, 4).replace(/\n/g, "\n  ")}}`,
+  );
+  props.push(
+    `  units={${JSON.stringify(data.units, null, 4).replace(/\n/g, "\n  ")}}`,
+  );
   props.push(
     `  current={${JSON.stringify(data.current, null, 4).replace(/\n/g, "\n  ")}}`,
   );
   props.push(
     `  forecast={${JSON.stringify(data.forecast, null, 4).replace(/\n/g, "\n  ")}}`,
   );
-
-  if (data.unit && data.unit !== "celsius") {
-    props.push(`  unit="${data.unit}"`);
-  }
+  props.push(
+    `  visual={${JSON.stringify(data.visual, null, 4).replace(/\n/g, "\n  ")}}`,
+  );
 
   if (data.updatedAt) {
     props.push(`  updatedAt="${data.updatedAt}"`);
@@ -33,121 +38,131 @@ function generateWeatherWidgetCode(data: SerializableWeatherWidget): string {
 
 export const weatherWidgetPresets: Record<
   WeatherWidgetPresetName,
-  PresetWithCodeGen<SerializableWeatherWidget>
+  PresetWithCodeGen<WeatherWidgetPayload>
 > = {
   thunderstorm: {
     description: "Dramatic thunderstorm with lightning",
     data: {
+      version: "3.1",
       id: "weather-widget-thunderstorm",
-      location: "Kansas City, MO",
+      location: { name: "Kansas City, MO" },
+      units: { temperature: "fahrenheit" },
       current: {
-        temp: 72,
+        temperature: 72,
         tempMin: 65,
         tempMax: 78,
-        condition: "thunderstorm",
+        conditionCode: "thunderstorm",
       },
       forecast: [
-        { day: "Tue", tempMin: 62, tempMax: 75, condition: "heavy-rain" },
-        { day: "Wed", tempMin: 58, tempMax: 70, condition: "rain" },
-        { day: "Thu", tempMin: 55, tempMax: 68, condition: "cloudy" },
-        { day: "Fri", tempMin: 52, tempMax: 72, condition: "partly-cloudy" },
-        { day: "Sat", tempMin: 58, tempMax: 76, condition: "clear" },
+        { label: "Tue", tempMin: 62, tempMax: 75, conditionCode: "heavy-rain" },
+        { label: "Wed", tempMin: 58, tempMax: 70, conditionCode: "rain" },
+        { label: "Thu", tempMin: 55, tempMax: 68, conditionCode: "cloudy" },
+        { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
+        { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
       ],
-      unit: "fahrenheit",
+      visual: { localTimeOfDay: 22.5 / 24 },
       updatedAt: "2026-01-28T22:30:00Z",
-    } satisfies SerializableWeatherWidget,
+    },
     generateExampleCode: generateWeatherWidgetCode,
   },
   "cold-snap": {
     description: "Winter weather with snow at night",
     data: {
+      version: "3.1",
       id: "weather-widget-cold-snap",
-      location: "Minneapolis, MN",
+      location: { name: "Minneapolis, MN" },
+      units: { temperature: "fahrenheit" },
       current: {
-        temp: 18,
+        temperature: 18,
         tempMin: 8,
         tempMax: 22,
-        condition: "snow",
+        conditionCode: "snow",
       },
       forecast: [
-        { day: "Tue", tempMin: 5, tempMax: 19, condition: "snow" },
-        { day: "Wed", tempMin: -2, tempMax: 12, condition: "snow" },
-        { day: "Thu", tempMin: -8, tempMax: 6, condition: "cloudy" },
-        { day: "Fri", tempMin: -5, tempMax: 10, condition: "partly-cloudy" },
-        { day: "Sat", tempMin: 2, tempMax: 18, condition: "clear" },
+        { label: "Tue", tempMin: 5, tempMax: 19, conditionCode: "snow" },
+        { label: "Wed", tempMin: -2, tempMax: 12, conditionCode: "snow" },
+        { label: "Thu", tempMin: -8, tempMax: 6, conditionCode: "cloudy" },
+        { label: "Fri", tempMin: -5, tempMax: 10, conditionCode: "partly-cloudy" },
+        { label: "Sat", tempMin: 2, tempMax: 18, conditionCode: "clear" },
       ],
-      unit: "fahrenheit",
+      visual: { localTimeOfDay: 21 / 24 },
       updatedAt: "2026-01-28T21:00:00Z",
-    } satisfies SerializableWeatherWidget,
+    },
     generateExampleCode: generateWeatherWidgetCode,
   },
   "rainy-week": {
     description: "Persistent rain throughout the week",
     data: {
+      version: "3.1",
       id: "weather-widget-rainy-week",
-      location: "Seattle, WA",
+      location: { name: "Seattle, WA" },
+      units: { temperature: "fahrenheit" },
       current: {
-        temp: 52,
+        temperature: 52,
         tempMin: 48,
         tempMax: 55,
-        condition: "rain",
+        conditionCode: "rain",
       },
       forecast: [
-        { day: "Mon", tempMin: 46, tempMax: 54, condition: "drizzle" },
-        { day: "Tue", tempMin: 47, tempMax: 53, condition: "rain" },
-        { day: "Wed", tempMin: 45, tempMax: 52, condition: "heavy-rain" },
-        { day: "Thu", tempMin: 44, tempMax: 51, condition: "rain" },
-        { day: "Fri", tempMin: 46, tempMax: 55, condition: "cloudy" },
+        { label: "Mon", tempMin: 46, tempMax: 54, conditionCode: "drizzle" },
+        { label: "Tue", tempMin: 47, tempMax: 53, conditionCode: "rain" },
+        { label: "Wed", tempMin: 45, tempMax: 52, conditionCode: "heavy-rain" },
+        { label: "Thu", tempMin: 44, tempMax: 51, conditionCode: "rain" },
+        { label: "Fri", tempMin: 46, tempMax: 55, conditionCode: "cloudy" },
       ],
-      unit: "fahrenheit",
+      visual: { localTimeOfDay: 16 / 24 },
       updatedAt: "2026-01-28T16:00:00Z",
-    } satisfies SerializableWeatherWidget,
+    },
     generateExampleCode: generateWeatherWidgetCode,
   },
   "cloudy-sunset": {
     description: "Dramatic overcast sunset",
     data: {
+      version: "3.1",
       id: "weather-widget-cloudy-sunset",
-      location: "Santa Fe, NM",
+      location: { name: "Santa Fe, NM" },
+      units: { temperature: "fahrenheit" },
       current: {
-        temp: 48,
+        temperature: 48,
         tempMin: 32,
         tempMax: 52,
-        condition: "overcast",
+        conditionCode: "overcast",
       },
       forecast: [
-        { day: "Tue", tempMin: 28, tempMax: 49, condition: "cloudy" },
-        { day: "Wed", tempMin: 30, tempMax: 54, condition: "partly-cloudy" },
-        { day: "Thu", tempMin: 33, tempMax: 58, condition: "clear" },
-        { day: "Fri", tempMin: 35, tempMax: 56, condition: "partly-cloudy" },
-        { day: "Sat", tempMin: 31, tempMax: 51, condition: "cloudy" },
+        { label: "Tue", tempMin: 28, tempMax: 49, conditionCode: "cloudy" },
+        { label: "Wed", tempMin: 30, tempMax: 54, conditionCode: "partly-cloudy" },
+        { label: "Thu", tempMin: 33, tempMax: 58, conditionCode: "clear" },
+        { label: "Fri", tempMin: 35, tempMax: 56, conditionCode: "partly-cloudy" },
+        { label: "Sat", tempMin: 31, tempMax: 51, conditionCode: "cloudy" },
       ],
-      unit: "fahrenheit",
+      visual: { localTimeOfDay: 17.75 / 24 },
       updatedAt: "2026-01-28T17:45:00Z",
-    } satisfies SerializableWeatherWidget,
+    },
     generateExampleCode: generateWeatherWidgetCode,
   },
   "sunny-forecast": {
     description: "Clear skies and warm temperatures",
     data: {
+      version: "3.1",
       id: "weather-widget-sunny-forecast",
-      location: "San Diego, CA",
+      location: { name: "San Diego, CA" },
+      units: { temperature: "fahrenheit" },
       current: {
-        temp: 76,
+        temperature: 76,
         tempMin: 68,
         tempMax: 79,
-        condition: "clear",
+        conditionCode: "clear",
       },
       forecast: [
-        { day: "Tue", tempMin: 65, tempMax: 78, condition: "clear" },
-        { day: "Wed", tempMin: 66, tempMax: 81, condition: "clear" },
-        { day: "Thu", tempMin: 67, tempMax: 82, condition: "partly-cloudy" },
-        { day: "Fri", tempMin: 68, tempMax: 80, condition: "clear" },
-        { day: "Sat", tempMin: 64, tempMax: 77, condition: "partly-cloudy" },
+        { label: "Tue", tempMin: 65, tempMax: 78, conditionCode: "clear" },
+        { label: "Wed", tempMin: 66, tempMax: 81, conditionCode: "clear" },
+        { label: "Thu", tempMin: 67, tempMax: 82, conditionCode: "partly-cloudy" },
+        { label: "Fri", tempMin: 68, tempMax: 80, conditionCode: "clear" },
+        { label: "Sat", tempMin: 64, tempMax: 77, conditionCode: "partly-cloudy" },
       ],
-      unit: "fahrenheit",
+      visual: { localTimeOfDay: 14.5 / 24 },
       updatedAt: "2026-01-28T14:30:00Z",
-    } satisfies SerializableWeatherWidget,
+    },
     generateExampleCode: generateWeatherWidgetCode,
   },
 };

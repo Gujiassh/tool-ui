@@ -6,7 +6,7 @@ import {
   resolveWeatherEffectsCanvasProps,
   type TimeCheckpoint,
 } from "@/components/tool-ui/weather-widget/effects";
-import type { WeatherCondition } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
 import {
   getRawBaseParamsForCondition,
   mergeWithOverrides,
@@ -22,7 +22,7 @@ const REPO_CHECKPOINT_OVERRIDES = mapToolUiPresetsToCompositor(
 );
 
 function resolveStudioCanvasProps(
-  condition: WeatherCondition,
+  condition: WeatherConditionCode,
   timeOfDay: number,
 ) {
   const timestamp = createStudioTimestamp(timeOfDay, REFERENCE_DATE);
@@ -66,7 +66,7 @@ describe("shared weather canvas resolver parity", () => {
     ({ condition, timeOfDay }) => {
       const timestamp = createStudioTimestamp(timeOfDay, REFERENCE_DATE);
       const shared = resolveWeatherEffectsCanvasProps({
-        condition,
+        conditionCode: condition,
         timestamp,
         timeOfDay,
         tunedPresets: TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
@@ -80,19 +80,19 @@ describe("shared weather canvas resolver parity", () => {
   );
 
   test("checkpoint mode changes output between keyframes", () => {
-    const condition: WeatherCondition = "cloudy";
+    const condition: WeatherConditionCode = "cloudy";
     const timeOfDay = 0.37;
     const timestamp = createStudioTimestamp(timeOfDay, REFERENCE_DATE);
 
     const nearest = resolveWeatherEffectsCanvasProps({
-      condition,
+      conditionCode: condition,
       timestamp,
       tunedPresets: TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
       checkpointMode: "nearest",
     });
 
     const interpolated = resolveWeatherEffectsCanvasProps({
-      condition,
+      conditionCode: condition,
       timestamp,
       tunedPresets: TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
       checkpointMode: "interpolated",

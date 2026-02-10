@@ -19,22 +19,24 @@ describe("weather-widget layout containment", () => {
   test("keeps size containment off the outer wrapper to avoid collapsing height", () => {
     const html = renderToStaticMarkup(
       createElement(WeatherWidget, {
+        version: "3.1",
         id: "weather-1",
-        location: "San Francisco, CA",
+        location: { name: "San Francisco, CA" },
+        units: { temperature: "fahrenheit" },
         current: {
-          temp: 72,
+          temperature: 72,
           tempMin: 65,
           tempMax: 78,
-          condition: "snow",
+          conditionCode: "snow",
         },
         forecast: [
-          { day: "Now", tempMin: 65, tempMax: 78, condition: "snow" },
-          { day: "Tue", tempMin: 64, tempMax: 77, condition: "snow" },
-          { day: "Wed", tempMin: 62, tempMax: 75, condition: "snow" },
-          { day: "Thu", tempMin: 60, tempMax: 73, condition: "snow" },
-          { day: "Fri", tempMin: 63, tempMax: 76, condition: "snow" },
+          { label: "Now", tempMin: 65, tempMax: 78, conditionCode: "snow" },
+          { label: "Tue", tempMin: 64, tempMax: 77, conditionCode: "snow" },
+          { label: "Wed", tempMin: 62, tempMax: 75, conditionCode: "snow" },
+          { label: "Thu", tempMin: 60, tempMax: 73, conditionCode: "snow" },
+          { label: "Fri", tempMin: 63, tempMax: 76, conditionCode: "snow" },
         ],
-        unit: "fahrenheit",
+        visual: { timeBucket: 4 },
       }),
     );
 
