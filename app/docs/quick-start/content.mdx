@@ -116,7 +116,10 @@ import {
   LinkPreviewErrorBoundary,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 import {
   useChatRuntime,
   AssistantChatTransport,
@@ -135,17 +138,16 @@ const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="bg-card/60 text-muted-foreground w-full max-w-md rounded-2xl border px-5 py-4 text-sm shadow-xs">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
 
       return (
-        <LinkPreviewErrorBoundary>
-          <LinkPreview {...state.result} maxWidth="420px" />
-        </LinkPreviewErrorBoundary>
+        <>
+          <ToolRenderState state={state} />
+          <LinkPreviewErrorBoundary>
+            <LinkPreview {...state.result} maxWidth="420px" />
+          </LinkPreviewErrorBoundary>
+        </>
       );
     },
   },
@@ -258,7 +260,10 @@ import {
   type SerializableOptionList,
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   selectFormat: {
@@ -283,11 +288,7 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="text-muted-foreground text-sm">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
       return null;
     }

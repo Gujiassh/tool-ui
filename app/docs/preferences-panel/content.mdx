@@ -170,7 +170,10 @@ import {
   SerializablePreferencesPanelSchema,
   type SerializablePreferencesPanel,
 } from "@/components/tool-ui/preferences-panel";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   show_preferences_panel: {
@@ -193,7 +196,7 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <div className="text-muted-foreground text-sm">{state.message}</div>;
+        return <ToolRenderState state={state} />;
       }
       return null;
     }

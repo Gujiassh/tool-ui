@@ -127,7 +127,10 @@ import {
   ItemCarousel,
   safeParseSerializableItemCarousel,
 } from "@/components/tool-ui/item-carousel";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchItems: {
@@ -142,23 +145,22 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="text-muted-foreground text-sm">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
 
       return (
-        <ItemCarousel
-          {...state.result}
-          onItemClick={(id) => router.push(`/items/${id}`)}
-          onItemAction={(itemId, actionId) => {
-            if (actionId === "select") {
-              selectItem(itemId);
-            }
-          }}
-        />
+        <>
+          <ToolRenderState state={state} />
+          <ItemCarousel
+            {...state.result}
+            onItemClick={(id) => router.push(`/items/${id}`)}
+            onItemAction={(itemId, actionId) => {
+              if (actionId === "select") {
+                selectItem(itemId);
+              }
+            }}
+          />
+        </>
       );
     },
   },

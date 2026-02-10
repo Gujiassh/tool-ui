@@ -132,7 +132,10 @@ import {
   CodeBlockErrorBoundary,
   safeParseSerializableCodeBlock,
 } from "@/components/tool-ui/code-block";
-import { resolveStreamingToolRenderState } from "@/components/tool-ui/shared";
+import {
+  resolveStreamingToolRenderState,
+  ToolRenderState,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showCodeBlock: {
@@ -147,17 +150,16 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return (
-          <div className="text-muted-foreground text-sm">
-            {state.message}
-          </div>
-        );
+        return <ToolRenderState state={state} />;
       }
 
       return (
-        <CodeBlockErrorBoundary>
-          <CodeBlock {...state.result} />
-        </CodeBlockErrorBoundary>
+        <>
+          <ToolRenderState state={state} />
+          <CodeBlockErrorBoundary>
+            <CodeBlock {...state.result} />
+          </CodeBlockErrorBoundary>
+        </>
       );
     },
   },
