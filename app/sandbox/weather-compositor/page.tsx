@@ -804,6 +804,35 @@ export default function WeatherCompositorSandbox() {
     rain,
     lightning,
     snow,
+    glass: {
+      enabled: true,
+      depth: 3,
+      strength: 75,
+      chromaticAberration: 6,
+      blur: 1.5,
+      brightness: 0.8,
+      saturation: 1.3,
+    },
+    post: {
+      enabled: true,
+      haze: 0,
+      hazeHorizon: 0.5,
+      hazeDesaturation: 0.3,
+      hazeContrast: 0.2,
+      bloomIntensity: 0,
+      bloomThreshold: 0.8,
+      bloomKnee: 0.5,
+      bloomRadius: 8,
+      bloomTapScale: 1,
+      exposureIntensity: 0,
+      exposureDesaturation: 0.3,
+      exposureRecovery: 2,
+      godRayIntensity: 0,
+      godRayDecay: 0.96,
+      godRayDensity: 0.5,
+      godRayWeight: 0.3,
+      godRaySamples: 60,
+    },
   };
 
   const debouncedParams = useDebounce(currentParams, 300);
@@ -864,10 +893,9 @@ export default function WeatherCompositorSandbox() {
     { activeCondition, globalSettings, checkpointOverrides },
     500,
   );
-
   useEffect(() => {
     if (!isMounted || isInitializing.current) return;
-    saveToStorage({ version: 2, ...stateToSave });
+    saveToStorage({ version: 4, ...stateToSave });
   }, [stateToSave, isMounted]);
 
   const handleConditionChange = useCallback(
@@ -931,7 +959,7 @@ export default function WeatherCompositorSandbox() {
 
   const handleExport = useCallback(() => {
     exportToFile({
-      version: 2,
+      version: 4,
       activeCondition,
       globalSettings,
       checkpointOverrides,
