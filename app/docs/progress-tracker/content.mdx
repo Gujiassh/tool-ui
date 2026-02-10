@@ -258,7 +258,7 @@ pnpm dlx shadcn@latest add button
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   ProgressTracker,
   ProgressTrackerErrorBoundary,
@@ -267,8 +267,8 @@ import {
   type SerializableProgressTracker,
 } from "@/components/tool-ui/progress-tracker";
 
-export const ProgressTrackerTool = makeAssistantTool<SerializableProgressTracker>({
-  toolName: "trackProgress",
+export const toolkit: Toolkit = {
+  trackProgress: {
   description: "Display real-time progress for multi-step operations",
   parameters: SerializableProgressTrackerSchema,
   render: ({ args, toolCallId }) => {
@@ -292,10 +292,11 @@ export const ProgressTrackerTool = makeAssistantTool<SerializableProgressTracker
       </ProgressTrackerErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
-Mount `<ProgressTrackerTool />` under `<AssistantRuntimeProvider>` to register the tool and its UI.
+Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
 
 ## Props
 

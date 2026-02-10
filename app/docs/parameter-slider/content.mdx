@@ -108,7 +108,7 @@ pnpm dlx shadcn@latest add button separator slider
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   ParameterSlider,
   ParameterSliderErrorBoundary,
@@ -117,8 +117,8 @@ import {
   type SerializableParameterSlider,
 } from "@/components/tool-ui/parameter-slider";
 
-export const ParameterSliderTool = makeAssistantTool<SerializableParameterSlider>({
-  toolName: "adjust_parameters",
+export const toolkit: Toolkit = {
+  adjust_parameters: {
   description: "Adjust numeric parameters with sliders",
   parameters: SerializableParameterSliderSchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -142,7 +142,8 @@ export const ParameterSliderTool = makeAssistantTool<SerializableParameterSlider
       </ParameterSliderErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
 ## Props

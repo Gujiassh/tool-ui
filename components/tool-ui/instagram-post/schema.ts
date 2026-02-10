@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseWithSchema } from "../shared";
+import { parseWithSchema, safeParseWithSchema } from "../shared";
 
 export const InstagramPostAuthorSchema = z.object({
   name: z.string(),
@@ -50,4 +50,10 @@ export function parseSerializableInstagramPost(
     input,
     "InstagramPost",
   );
+}
+
+export function safeParseSerializableInstagramPost(
+  input: unknown,
+): InstagramPostData | null {
+  return safeParseWithSchema(SerializableInstagramPostSchema, input);
 }

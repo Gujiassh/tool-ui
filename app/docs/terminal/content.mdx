@@ -130,33 +130,40 @@ const showTerminal = tool({
 });
 
 // Frontend with assistant-ui
-import { makeAssistantToolUI } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   Terminal,
   TerminalErrorBoundary,
-  parseSerializableTerminal,
+  safeParseSerializableTerminal,
 } from "@/components/tool-ui/terminal";
 
 function ParsedTerminal({ result }: { result: unknown }) {
-  const props = parseSerializableTerminal(result);
+  const props = safeParseSerializableTerminal(result);
+  if (!props) return null;
   return <Terminal {...props} />;
 }
 
-export const ShowTerminalUI = makeAssistantToolUI({
-  toolName: "showTerminal",
-  render: ({ result }) => {
-    // Tool outputs stream in; `result` will be `undefined` until the tool resolves.
-    if (result === undefined) {
-      return <div className="text-muted-foreground text-sm">Loading…</div>;
-    }
+export const toolkit: Toolkit = {
+  showTerminal: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const props = safeParseSerializableTerminal(result);
+      if (!props) {
+        return (
+          <div className="text-muted-foreground text-sm">
+            {status.type === "running" ? "Loading…" : "Terminal output unavailable"}
+          </div>
+        );
+      }
 
-    return (
-      <TerminalErrorBoundary>
-        <ParsedTerminal result={result} />
-      </TerminalErrorBoundary>
-    );
+      return (
+        <TerminalErrorBoundary>
+          <ParsedTerminal result={result} />
+        </TerminalErrorBoundary>
+      );
+    },
   },
-});
+};
 ```
 
 ## Props

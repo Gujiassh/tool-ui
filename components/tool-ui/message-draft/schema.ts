@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
-import { parseWithSchema } from "../shared/parse";
+import { parseWithSchema, safeParseWithSchema } from "../shared/parse";
 
 export const MessageDraftChannelSchema = z.enum(["email", "slack"]);
 
@@ -68,6 +68,12 @@ export function parseSerializableMessageDraft(
     input,
     "MessageDraft",
   );
+}
+
+export function safeParseSerializableMessageDraft(
+  input: unknown,
+): SerializableMessageDraft | null {
+  return safeParseWithSchema(SerializableMessageDraftSchema, input);
 }
 
 export type MessageDraftProps = SerializableMessageDraft & {

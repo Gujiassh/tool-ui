@@ -105,7 +105,7 @@ pnpm dlx shadcn@latest add button separator
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   QuestionFlow,
   QuestionFlowErrorBoundary,
@@ -114,11 +114,8 @@ import {
   type SerializableQuestionFlow,
 } from "@/components/tool-ui/question-flow";
 
-export const ConfigureProjectTool = makeAssistantTool<
-  SerializableQuestionFlow,
-  Record<string, string[]>
->({
-  toolName: "configureProject",
+export const toolkit: Toolkit = {
+  configureProject: {
   description: "Guide user through project configuration.",
   parameters: SerializableQuestionFlowSchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -151,10 +148,11 @@ export const ConfigureProjectTool = makeAssistantTool<
       </QuestionFlowErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
-Mount `<ConfigureProjectTool />` under `<AssistantRuntimeProvider>` to register the tool and its UI.
+Register this toolkit with `Tools({ toolkit })` inside your runtime provider.
 
 ## Progressive Mode Props
 

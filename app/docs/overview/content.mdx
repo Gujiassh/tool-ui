@@ -124,16 +124,18 @@ export async function POST(req: Request) {
 
 **What this demonstrates:**
 
-- `makeAssistantToolUI` connects the tool name to a React component
-- `parseSerializableLinkPreview` validates the tool result at runtime and returns typed props
-- Simply mounting `<PreviewLinkUI />` registers it (no manual plumbing required)
+- `Tools({ toolkit })` registers tool renderers once
+- `safeParseSerializableLinkPreview` validates streamed tool output safely
+- `useAui({ tools: ... })` makes tool UIs available to the runtime
 - assistant-ui manages the runtime, streaming, and tool call lifecycle
 
 ```tsx title="Client: render with assistant-ui"
 "use client";
 import {
   AssistantRuntimeProvider,
-  makeAssistantToolUI,
+  Tools,
+  useAui,
+  type Toolkit,
 } from "@assistant-ui/react";
 import {
   useChatRuntime,
@@ -141,24 +143,34 @@ import {
 } from "@assistant-ui/react-ai-sdk";
 import {
   LinkPreview,
-  parseSerializableLinkPreview,
+  safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
 
-const PreviewLinkUI = makeAssistantToolUI({
-  toolName: "previewLink",
-  render: ({ result }) => {
-    const preview = parseSerializableLinkPreview(result);
-    return <LinkPreview {...preview} maxWidth="420px" />;
+const toolkit: Toolkit = {
+  previewLink: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const preview = safeParseSerializableLinkPreview(result);
+      if (!preview) {
+        return (
+          <div className="text-muted-foreground rounded-xl border px-4 py-3 text-sm">
+            {status.type === "running" ? "Loading preview…" : "Preview unavailable"}
+          </div>
+        );
+      }
+      return <LinkPreview {...preview} maxWidth="420px" />;
+    },
   },
-});
+};
 
 export default function App() {
   const runtime = useChatRuntime({
     transport: new AssistantChatTransport({ api: "/api/chat" }),
   });
+  const aui = useAui({ tools: Tools({ toolkit }) });
+
   return (
-    <AssistantRuntimeProvider runtime={runtime}>
-      <PreviewLinkUI />
+    <AssistantRuntimeProvider runtime={runtime} aui={aui}>
       {/* your <Thread /> component here */}
     </AssistantRuntimeProvider>
   );

@@ -12,4 +12,5 @@ export {
   SerializableItemSchema,
   SerializableItemCarouselSchema,
   parseSerializableItemCarousel,
+  safeParseSerializableItemCarousel,
 } from "./schema";

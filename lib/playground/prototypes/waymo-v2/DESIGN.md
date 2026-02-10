@@ -75,7 +75,7 @@ Assistant: "Home it is! Here's your quote for the 5-minute ride."
 
 ### Implementation: How the Loop Flows
 
-With `makeAssistantTool` and `type: "human"`:
+With Toolkit tool definitions and `type: "human"`:
 
 1. **Assistant calls tool** → Tool UI renders in interactive state
 2. **User interacts** → Component calls `addResult({ ...data, selectedLocation })`

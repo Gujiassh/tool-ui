@@ -7,6 +7,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 const PreferenceItemBaseSchema = z.object({
@@ -98,6 +99,12 @@ export function parseSerializablePreferencesPanel(
   );
 }
 
+export function safeParseSerializablePreferencesPanel(
+  input: unknown,
+): SerializablePreferencesPanel | null {
+  return safeParseWithSchema(SerializablePreferencesPanelSchema, input);
+}
+
 export function parseSerializablePreferencesPanelReceipt(
   input: unknown,
 ): SerializablePreferencesPanelReceipt {
@@ -106,6 +113,12 @@ export function parseSerializablePreferencesPanelReceipt(
     input,
     "PreferencesPanelReceipt",
   );
+}
+
+export function safeParseSerializablePreferencesPanelReceipt(
+  input: unknown,
+): SerializablePreferencesPanelReceipt | null {
+  return safeParseWithSchema(SerializablePreferencesPanelReceiptSchema, input);
 }
 
 export interface PreferencesValue {

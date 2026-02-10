@@ -9,4 +9,5 @@ export {
   SerializableImageGallerySchema,
   ImageGalleryItemSchema,
   parseSerializableImageGallery,
+  safeParseSerializableImageGallery,
 } from "./schema";

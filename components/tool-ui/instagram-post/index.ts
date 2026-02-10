@@ -4,6 +4,7 @@ export { InstagramPostErrorBoundary } from "./error-boundary";
 export {
   SerializableInstagramPostSchema,
   parseSerializableInstagramPost,
+  safeParseSerializableInstagramPost,
 } from "./schema";
 export type {
   InstagramPostData,

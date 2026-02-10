@@ -278,33 +278,40 @@ const searchProducts = tool({
 });
 
 // Frontend with assistant-ui
-import { makeAssistantToolUI } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   DataTable,
   DataTableErrorBoundary,
-  parseSerializableDataTable,
+  safeParseSerializableDataTable,
 } from "@/components/tool-ui/data-table";
 
-export const SearchProductsUI = makeAssistantToolUI({
-  toolName: "searchProducts",
-  render: ({ result }) => {
-    // Tool outputs stream in; `result` will be `undefined` until the tool resolves.
-    if (result === undefined) {
-      return (
-        <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
-          Loading table…
-        </div>
-      );
-    }
+export const toolkit: Toolkit = {
+  searchProducts: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const props = safeParseSerializableDataTable(result);
 
-    const props = parseSerializableDataTable(result);
-    return (
-      <DataTableErrorBoundary>
-        <DataTable rowIdKey="id" {...props} />
-      </DataTableErrorBoundary>
-    );
+      if (!props) {
+        const loading =
+          status.type === "running" || result === undefined
+            ? "Loading table…"
+            : "Table unavailable";
+
+        return (
+          <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
+            {loading}
+          </div>
+        );
+      }
+
+      return (
+        <DataTableErrorBoundary>
+          <DataTable rowIdKey="id" {...props} />
+        </DataTableErrorBoundary>
+      );
+    },
   },
-});
+};
 ```
 
 ## Props

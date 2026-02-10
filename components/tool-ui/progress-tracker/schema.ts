@@ -5,6 +5,7 @@ import {
   SerializableActionSchema,
   SerializableActionsConfigSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 import type { ActionsProp, ToolUIReceipt } from "../shared";
 
@@ -46,6 +47,12 @@ export function parseSerializableProgressTracker(
     input,
     "ProgressTracker",
   );
+}
+
+export function safeParseSerializableProgressTracker(
+  input: unknown,
+): SerializableProgressTracker | null {
+  return safeParseWithSchema(SerializableProgressTrackerSchema, input);
 }
 
 export interface ProgressTrackerProps extends SerializableProgressTracker {

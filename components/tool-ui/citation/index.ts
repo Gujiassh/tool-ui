@@ -8,6 +8,7 @@ export {
   CitationTypeSchema,
   CitationVariantSchema,
   parseSerializableCitation,
+  safeParseSerializableCitation,
 } from "./schema";
 export type {
   SerializableCitation,

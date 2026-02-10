@@ -4,6 +4,7 @@ export { LinkedInPostErrorBoundary } from "./error-boundary";
 export {
   SerializableLinkedInPostSchema,
   parseSerializableLinkedInPost,
+  safeParseSerializableLinkedInPost,
 } from "./schema";
 export type {
   LinkedInPostData,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseWithSchema } from "../shared";
+import { parseWithSchema, safeParseWithSchema } from "../shared";
 
 export const LinkedInPostAuthorSchema = z.object({
   name: z.string(),
@@ -49,4 +49,10 @@ export function parseSerializableLinkedInPost(
   input: unknown,
 ): LinkedInPostData {
   return parseWithSchema(SerializableLinkedInPostSchema, input, "LinkedInPost");
+}
+
+export function safeParseSerializableLinkedInPost(
+  input: unknown,
+): LinkedInPostData | null {
+  return safeParseWithSchema(SerializableLinkedInPostSchema, input);
 }

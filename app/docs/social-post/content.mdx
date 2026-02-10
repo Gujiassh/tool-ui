@@ -248,37 +248,45 @@ const showXPost = tool({
 });
 
 // Frontend with assistant-ui
-import { makeAssistantToolUI } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   XPost,
   XPostErrorBoundary,
-  parseSerializableXPost,
+  safeParseSerializableXPost,
 } from "@/components/tool-ui/x-post";
 
 function ParsedXPost({ result }: { result: unknown }) {
-  const post = parseSerializableXPost(result);
+  const post = safeParseSerializableXPost(result);
+  if (!post) return null;
   return <XPost post={post} />;
 }
 
-export const ShowXPostUI = makeAssistantToolUI({
-  toolName: "showXPost",
-  render: ({ result }) => {
-    // Tool outputs stream in; `result` will be `undefined` until the tool resolves.
-    if (result === undefined) {
-      return (
-        <div className="bg-card/60 text-muted-foreground w-full max-w-[540px] rounded-2xl border px-5 py-4 text-sm shadow-xs">
-          Loading post…
-        </div>
-      );
-    }
+export const toolkit: Toolkit = {
+  showXPost: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const post = safeParseSerializableXPost(result);
+      if (!post) {
+        const loading =
+          status.type === "running" || result === undefined
+            ? "Loading post…"
+            : "Post unavailable";
 
-    return (
-      <XPostErrorBoundary>
-        <ParsedXPost result={result} />
-      </XPostErrorBoundary>
-    );
+        return (
+          <div className="bg-card/60 text-muted-foreground w-full max-w-[540px] rounded-2xl border px-5 py-4 text-sm shadow-xs">
+            {loading}
+          </div>
+        );
+      }
+
+      return (
+        <XPostErrorBoundary>
+          <ParsedXPost result={result} />
+        </XPostErrorBoundary>
+      );
+    },
   },
-});
+};
 ```
 
 The same pattern works for `InstagramPost` and `LinkedInPost` by swapping the component and parser (`parseSerializableInstagramPost` / `parseSerializableLinkedInPost`).

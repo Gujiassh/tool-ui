@@ -29,14 +29,13 @@ export {
 /**
  * The waymo-v2 prototype definition.
  *
- * Note: This prototype uses frontend tools (via makeAssistantTool) rather than
- * backend tools. The tools array is empty because tools are registered by
- * mounting tool components inside AssistantRuntimeProvider.
+ * Note: This prototype uses frontend tools registered via Toolkit/Tools().
+ * The tools array is empty because runtime registration happens in ChatPane.
  */
 export const waymoV2Prototype: Prototype = {
   slug: "waymo-v2",
   title: "Waymo v2 (Minimal Flow)",
   summary: "Three-pattern ride booking: Selection, Confirmation, Progress",
   systemPrompt: WAYMO_V2_SYSTEM_PROMPT,
-  tools: [], // Tools are registered via makeAssistantTool components
+  tools: [], // Tools are registered via Toolkit/Tools()
 };

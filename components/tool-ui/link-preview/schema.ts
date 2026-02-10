@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 import { AspectRatioSchema, MediaFitSchema } from "../shared/media";
 
@@ -27,4 +28,10 @@ export type SerializableLinkPreview = z.infer<typeof SerializableLinkPreviewSche
 
 export function parseSerializableLinkPreview(input: unknown): SerializableLinkPreview {
   return parseWithSchema(SerializableLinkPreviewSchema, input, "LinkPreview");
+}
+
+export function safeParseSerializableLinkPreview(
+  input: unknown,
+): SerializableLinkPreview | null {
+  return safeParseWithSchema(SerializableLinkPreviewSchema, input);
 }

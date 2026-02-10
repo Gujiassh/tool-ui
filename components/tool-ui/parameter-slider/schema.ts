@@ -6,6 +6,7 @@ import {
   SerializableActionSchema,
   SerializableActionsConfigSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const SliderConfigSchema = z.object({
@@ -45,6 +46,12 @@ export function parseSerializableParameterSlider(
     input,
     "ParameterSlider",
   );
+}
+
+export function safeParseSerializableParameterSlider(
+  input: unknown,
+): SerializableParameterSlider | null {
+  return safeParseWithSchema(SerializableParameterSliderSchema, input);
 }
 
 export interface SliderValue {

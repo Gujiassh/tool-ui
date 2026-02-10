@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { ToolUIIdSchema, ToolUIRoleSchema, parseWithSchema } from "../shared";
+import {
+  ToolUIIdSchema,
+  ToolUIRoleSchema,
+  parseWithSchema,
+  safeParseWithSchema,
+} from "../shared";
 
 const TextFormatSchema = z.object({
   kind: z.literal("text"),
@@ -75,6 +80,12 @@ export function parseSerializableStatsDisplay(
   input: unknown,
 ): SerializableStatsDisplay {
   return parseWithSchema(SerializableStatsDisplaySchema, input, "StatsDisplay");
+}
+
+export function safeParseSerializableStatsDisplay(
+  input: unknown,
+): SerializableStatsDisplay | null {
+  return safeParseWithSchema(SerializableStatsDisplaySchema, input);
 }
 
 export interface StatsDisplayProps extends SerializableStatsDisplay {

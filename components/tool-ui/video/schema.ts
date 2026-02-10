@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 import { AspectRatioSchema, MediaFitSchema } from "../shared/media";
 
@@ -38,4 +39,10 @@ export type SerializableVideo = z.infer<typeof SerializableVideoSchema>;
 
 export function parseSerializableVideo(input: unknown): SerializableVideo {
   return parseWithSchema(SerializableVideoSchema, input, "Video");
+}
+
+export function safeParseSerializableVideo(
+  input: unknown,
+): SerializableVideo | null {
+  return safeParseWithSchema(SerializableVideoSchema, input);
 }

@@ -5,6 +5,7 @@ export type { WeatherDataOverlayProps, GlassEffectParams } from "./weather-data-
 export {
   SerializableWeatherWidgetSchema,
   parseSerializableWeatherWidget,
+  safeParseSerializableWeatherWidget,
   WeatherConditionSchema,
   CurrentWeatherSchema,
   ExtendedCurrentWeatherSchema,

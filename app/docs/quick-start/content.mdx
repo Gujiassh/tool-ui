@@ -99,45 +99,64 @@ Connect your backend tool to a frontend component. When the LLM calls the `previ
 
 **What this demonstrates:**
 
-- `makeAssistantToolUI` creates a component that listens for tool calls by name
-- `parseSerializableLinkPreview` validates the result at runtime and returns typed props
-- The `toolName` must exactly match your backend tool name
-- Simply including `<PreviewLinkUI />` in your app registers the UI for that tool
+- `Tools({ toolkit })` registers tool renderers in one place
+- `safeParseSerializableLinkPreview` keeps rendering safe while tool payloads stream
+- The toolkit key (`previewLink`) must match your backend tool name
+- `useAui({ tools: ... })` wires tool rendering into `AssistantRuntimeProvider`
 
 ```tsx
-import { makeAssistantToolUI } from "@assistant-ui/react";
+import {
+  AssistantRuntimeProvider,
+  Tools,
+  useAui,
+  type Toolkit,
+} from "@assistant-ui/react";
 import {
   LinkPreview,
   LinkPreviewErrorBoundary,
-  parseSerializableLinkPreview,
+  safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
+import {
+  useChatRuntime,
+  AssistantChatTransport,
+} from "@assistant-ui/react-ai-sdk";
 
-export const PreviewLinkUI = makeAssistantToolUI({
-  toolName: "previewLink", // Must match backend tool name
-  render: ({ result }) => {
-    // Tool outputs stream in; `result` will be `undefined` until the tool resolves.
-    if (result === undefined) {
+const toolkit: Toolkit = {
+  previewLink: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const preview = safeParseSerializableLinkPreview(result);
+
+      if (!preview) {
+        const loading =
+          status.type === "running" || result === undefined
+            ? "Loading preview…"
+            : "Preview unavailable";
+
+        return (
+          <div className="bg-card/60 text-muted-foreground w-full max-w-md rounded-2xl border px-5 py-4 text-sm shadow-xs">
+            {loading}
+          </div>
+        );
+      }
+
       return (
-        <div className="bg-card/60 text-muted-foreground w-full max-w-md rounded-2xl border px-5 py-4 text-sm shadow-xs">
-          Loading preview…
-        </div>
+        <LinkPreviewErrorBoundary>
+          <LinkPreview {...preview} maxWidth="420px" />
+        </LinkPreviewErrorBoundary>
       );
-    }
-
-    const preview = parseSerializableLinkPreview(result);
-    return (
-      <LinkPreviewErrorBoundary>
-        <LinkPreview {...preview} maxWidth="420px" />
-      </LinkPreviewErrorBoundary>
-    );
+    },
   },
-});
+};
 
-// Register in your app
 function App() {
+  const runtime = useChatRuntime({
+    transport: new AssistantChatTransport({ api: "/api/chat" }),
+  });
+  const aui = useAui({ tools: Tools({ toolkit }) });
+
   return (
-    <AssistantRuntimeProvider runtime={runtime}>
-      <PreviewLinkUI />
+    <AssistantRuntimeProvider runtime={runtime} aui={aui}>
       <Thread />
     </AssistantRuntimeProvider>
   );
@@ -229,7 +248,7 @@ When the tool is frontend/interactive, you register the tool **on the client** (
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   OptionList,
   parseSerializableOptionList,
@@ -238,11 +257,8 @@ import {
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
 
-export const SelectFormatTool = makeAssistantTool<
-  SerializableOptionList,
-  OptionListSelection
->({
-  toolName: "selectFormat",
+export const toolkit: Toolkit = {
+  selectFormat: {
   description: "Ask the user to choose an output format.",
   parameters: SerializableOptionListSchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -271,10 +287,11 @@ export const SelectFormatTool = makeAssistantTool<
       />
     );
   },
-});
+  },
+};
 ```
 
-Mount `<SelectFormatTool />` under `<AssistantRuntimeProvider>` (just like the Tool UI registration step above) to register the tool and UI.
+Register this toolkit with `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so the tool and UI are forwarded by `AssistantChatTransport`.
 
 ### Auto-continue after `addResult(...)` (AI SDK runtime)
 

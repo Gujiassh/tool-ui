@@ -9,7 +9,9 @@ import {
 } from "react";
 import {
   AssistantRuntimeProvider,
+  Tools,
   ThreadPrimitive,
+  useAui,
   useAuiState,
 } from "@assistant-ui/react";
 import {
@@ -21,6 +23,7 @@ import type {
   MessageFormatAdapter,
   MessageFormatItem,
   MessageFormatRepository,
+  Toolkit,
   ThreadHistoryAdapter,
 } from "@assistant-ui/react";
 import {
@@ -40,6 +43,17 @@ import {
 } from "@/lib/playground/prototypes/waymo-v2";
 
 const THREAD_STORAGE_KEY_PREFIX = "playground:thread:";
+
+const WAYMO_BOOKING_TOOLKIT: Toolkit = {
+  select_frequent_location: SelectFrequentLocationTool,
+};
+
+const WAYMO_V2_TOOLKIT: Toolkit = {
+  select_destination: SelectDestinationTool,
+  select_pickup: SelectPickupTool,
+  get_ride_quote: GetRideQuoteTool,
+  get_trip_status: GetTripStatusTool,
+};
 
 const getThreadStorageKey = (slug: string) =>
   `${THREAD_STORAGE_KEY_PREFIX}${slug}`;
@@ -291,6 +305,14 @@ export const ChatPane = forwardRef<ChatPaneRef, ChatPaneProps>(
       adapters: { history: historyAdapter },
       sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     });
+    const toolkit = useMemo<Toolkit>(() => {
+      if (slug === "waymo-booking") return WAYMO_BOOKING_TOOLKIT;
+      if (slug === "waymo-v2") return WAYMO_V2_TOOLKIT;
+      return {};
+    }, [slug]);
+    const aui = useAui({
+      tools: Tools({ toolkit }),
+    });
 
     const resetThread = useCallback(() => {
       if (typeof window === "undefined") {
@@ -313,20 +335,7 @@ export const ChatPane = forwardRef<ChatPaneRef, ChatPaneProps>(
     );
 
     return (
-      <AssistantRuntimeProvider runtime={runtime}>
-        {/* Mount Waymo-specific tools */}
-        {slug === "waymo-booking" && <SelectFrequentLocationTool />}
-
-        {/* Mount Waymo v2 tools */}
-        {slug === "waymo-v2" && (
-          <>
-            <SelectDestinationTool />
-            <SelectPickupTool />
-            <GetRideQuoteTool />
-            <GetTripStatusTool />
-          </>
-        )}
-
+      <AssistantRuntimeProvider runtime={runtime} aui={aui}>
         {/* Auto-persist tool result updates to localStorage */}
         <ToolResultPersistence slug={slug} />
 

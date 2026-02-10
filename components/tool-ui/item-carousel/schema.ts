@@ -51,3 +51,10 @@ export function parseSerializableItemCarousel(
   }
   return res.data;
 }
+
+export function safeParseSerializableItemCarousel(
+  input: unknown,
+): SerializableItemCarousel | null {
+  const res = SerializableItemCarouselSchema.safeParse(input);
+  return res.success ? res.data : null;
+}

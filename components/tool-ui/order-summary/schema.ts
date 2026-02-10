@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
-import { parseWithSchema } from "../shared/parse";
+import { parseWithSchema, safeParseWithSchema } from "../shared/parse";
 
 export const OrderItemSchema = z.object({
   id: z.string(),
@@ -51,6 +51,12 @@ export function parseSerializableOrderSummary(
   input: unknown
 ): SerializableOrderSummary {
   return parseWithSchema(SerializableOrderSummarySchema, input, "OrderSummary");
+}
+
+export function safeParseSerializableOrderSummary(
+  input: unknown,
+): SerializableOrderSummary | null {
+  return safeParseWithSchema(SerializableOrderSummarySchema, input);
 }
 
 export interface OrderSummaryProps extends SerializableOrderSummary {

@@ -162,7 +162,7 @@ pnpm dlx shadcn@latest add button label select separator switch toggle-group
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   PreferencesPanel,
   PreferencesPanelErrorBoundary,
@@ -171,8 +171,8 @@ import {
   type SerializablePreferencesPanel,
 } from "@/components/tool-ui/preferences-panel";
 
-export const PreferencesPanelTool = makeAssistantTool<SerializablePreferencesPanel>({
-  toolName: "show_preferences_panel",
+export const toolkit: Toolkit = {
+  show_preferences_panel: {
   description: "Display user preference settings with staged changes",
   parameters: SerializablePreferencesPanelSchema,
   render: ({ args, addResult, toolCallId }) => {
@@ -197,7 +197,8 @@ export const PreferencesPanelTool = makeAssistantTool<SerializablePreferencesPan
       </PreferencesPanelErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
 ## Receipt Example

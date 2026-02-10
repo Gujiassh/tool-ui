@@ -88,7 +88,7 @@ pnpm dlx shadcn@latest add button separator
 // Frontend tool (recommended for decision surfaces like Option List):
 // - The model calls the tool with SerializableOptionList props as the args
 // - Your UI calls addResult(selection) when the user confirms
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   OptionList,
   OptionListErrorBoundary,
@@ -98,11 +98,8 @@ import {
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
 
-export const SelectFormatTool = makeAssistantTool<
-  SerializableOptionList,
-  OptionListSelection
->({
-  toolName: "selectFormat",
+export const toolkit: Toolkit = {
+  selectFormat: {
   description: "Let the user choose an output format.",
   parameters: SerializableOptionListSchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -130,10 +127,11 @@ export const SelectFormatTool = makeAssistantTool<
       </OptionListErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
-Mount `<SelectFormatTool />` under `<AssistantRuntimeProvider>` to register the tool and its UI. For auto-continue after `addResult(...)`, see the **Frontend tools** section in [Quick Start](/docs/quick-start).
+Register this toolkit with `Tools({ toolkit })` to expose the tool UI. For auto-continue after `addResult(...)`, see the **Frontend tools** section in [Quick Start](/docs/quick-start).
 
 ## Props
 

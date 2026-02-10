@@ -8,7 +8,7 @@ This document outlines the patterns for creating interactive Tool UIs with recei
 
 **Key Principle**: Tool UIs are **stateless** - their mode (interactive vs receipt) is derived from the `result` prop, not component state.
 
-This document focuses on the frontend `makeAssistantTool` pattern and the interactive → receipt transformation used in the Waymo prototype. For repo-wide architecture and collaboration guidelines that apply to this and other prototypes, see `COLLAB_GUIDELINES.md` at the project root.
+This document focuses on the frontend Toolkit/`Tools()` pattern and the interactive → receipt transformation used in the Waymo prototype. For repo-wide architecture and collaboration guidelines that apply to this and other prototypes, see `COLLAB_GUIDELINES.md` at the project root.
 
 ---
 
@@ -16,7 +16,7 @@ This document focuses on the frontend `makeAssistantTool` pattern and the intera
 
 ### Frontend Tool Registration
 
-Tools are defined using `makeAssistantTool` from `@assistant-ui/react` and mounted in the component tree. This differs from backend-only tools.
+Tools are defined as `ToolDefinition` entries and registered via `Tools({ toolkit })`. This differs from backend-only tools.
 
 **File Structure:**
 ```
@@ -47,14 +47,14 @@ Frontend tools are automatically forwarded to the backend via `AssistantChatTran
 
 ## Pattern: Interactive → Receipt Tool UI
 
-### 1. Define the Tool with `makeAssistantTool`
+### 1. Define the Tool Definition
 
 **File**: `lib/playground/prototypes/waymo/select-frequent-location-tool.tsx`
 
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import type { ToolDefinition } from "@assistant-ui/react";
 import { z } from "zod";
 import { FrequentLocationSelector } from "./wip-tool-uis/FrequentLocationSelector";
 
@@ -71,11 +71,10 @@ type SelectFrequentLocationResult = {
   selectedLocation?: FrequentLocation;  // ← Key: optional field for receipt mode
 };
 
-export const SelectFrequentLocationTool = makeAssistantTool<
+export const SelectFrequentLocationTool: ToolDefinition<
   Record<string, never>,  // Input args (empty for this tool)
   SelectFrequentLocationResult  // Result type
->({
-  toolName: "select_frequent_location",
+> = {
   description: "Present user's frequent locations when they request a ride without specifying a destination.",
   parameters: z.object({}),  // Empty params
 
@@ -89,7 +88,7 @@ export const SelectFrequentLocationTool = makeAssistantTool<
   },
 
   render: (props) => <FrequentLocationSelector {...props} />,
-});
+};
 ```
 
 **Key Points:**
@@ -237,16 +236,17 @@ Model automatically continues with selection data
 
 ## Key APIs
 
-### `makeAssistantTool`
+### `ToolDefinition` + toolkit key
 
 ```tsx
-makeAssistantTool<TArgs, TResult>({
-  toolName: string,           // Must match tool name model uses
+const toolkit: Toolkit = {
+  some_tool_name: {
   description: string,        // Shown to model
   parameters: ZodSchema,      // Input validation
   execute: (args, context) => TResult | Promise<TResult>,
   render: (props: ToolCallMessagePartProps) => ReactNode
-})
+  }
+}
 ```
 
 ### `ToolCallMessagePartProps<TArgs, TResult>`
@@ -347,7 +347,7 @@ export const streamPrototypeResponse = (
 For multi-step wizards or when `execute` needs user input:
 
 ```tsx
-export const MultiStepTool = makeAssistantTool({
+export const MultiStepTool: ToolDefinition = {
   execute: async (args, { human }) => {
     // Step 1: Get user selection
     const selection = await human({
@@ -372,7 +372,7 @@ export const MultiStepTool = makeAssistantTool({
     // Receipt mode
     return <Receipt />;
   }
-});
+};
 ```
 
 **When to use `context.human()` instead of `addResult`:**
@@ -609,7 +609,7 @@ const ToolResultPersistence = ({ slug }: { slug: string }) => {
 ## References
 
 - [assistant-ui Tool Guide](https://www.assistant-ui.com/docs/guides/Tools)
-- [makeAssistantTool API](https://www.assistant-ui.com/docs/copilots/make-assistant-tool)
+- [Tools Guide](https://www.assistant-ui.com/docs/guides/tools)
 - [AI SDK Integration](https://www.assistant-ui.com/docs/runtimes/ai-sdk/use-chat)
 - [Human-in-the-Loop](https://www.assistant-ui.com/docs/runtimes/langgraph/tutorial/part-2)
 

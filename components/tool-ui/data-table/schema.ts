@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 import type { Column, DataTableProps, RowData } from "./types";
 
@@ -221,6 +222,24 @@ export function parseSerializableDataTable(
     input,
     "DataTable",
   );
+  return {
+    id,
+    role,
+    receipt,
+    columns: columns as unknown as Column<RowData>[],
+    data: data as RowData[],
+  };
+}
+
+export function safeParseSerializableDataTable(
+  input: unknown,
+): Pick<
+  DataTableProps<RowData>,
+  "id" | "role" | "receipt" | "columns" | "data"
+> | null {
+  const res = safeParseWithSchema(SerializableDataTableSchema, input);
+  if (!res) return null;
+  const { id, role, receipt, columns, data } = res;
   return {
     id,
     role,

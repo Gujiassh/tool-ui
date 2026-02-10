@@ -170,7 +170,7 @@ pnpm dlx shadcn@latest add card
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   StatsDisplay,
   StatsDisplayErrorBoundary,
@@ -179,8 +179,8 @@ import {
   type SerializableStatsDisplay,
 } from "@/components/tool-ui/stats-display";
 
-export const StatsDisplayTool = makeAssistantTool<SerializableStatsDisplay>({
-  toolName: "showStats",
+export const toolkit: Toolkit = {
+  showStats: {
   description: "Display key metrics in a grid",
   parameters: SerializableStatsDisplaySchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -197,7 +197,8 @@ export const StatsDisplayTool = makeAssistantTool<SerializableStatsDisplay>({
       </StatsDisplayErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
 ## Props

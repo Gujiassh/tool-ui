@@ -5,4 +5,5 @@ export {
   CodeBlockPropsSchema,
   SerializableCodeBlockSchema,
   parseSerializableCodeBlock,
+  safeParseSerializableCodeBlock,
 } from "./schema";

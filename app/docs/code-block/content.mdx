@@ -126,33 +126,40 @@ const showCodeBlock = tool({
 });
 
 // Frontend with assistant-ui
-import { makeAssistantToolUI } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   CodeBlock,
   CodeBlockErrorBoundary,
-  parseSerializableCodeBlock,
+  safeParseSerializableCodeBlock,
 } from "@/components/tool-ui/code-block";
 
 function ParsedCodeBlock({ result }: { result: unknown }) {
-  const props = parseSerializableCodeBlock(result);
+  const props = safeParseSerializableCodeBlock(result);
+  if (!props) return null;
   return <CodeBlock {...props} />;
 }
 
-export const ShowCodeBlockUI = makeAssistantToolUI({
-  toolName: "showCodeBlock",
-  render: ({ result }) => {
-    // Tool outputs stream in; `result` will be `undefined` until the tool resolves.
-    if (result === undefined) {
-      return <div className="text-muted-foreground text-sm">Loading…</div>;
-    }
+export const toolkit: Toolkit = {
+  showCodeBlock: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const props = safeParseSerializableCodeBlock(result);
+      if (!props) {
+        return (
+          <div className="text-muted-foreground text-sm">
+            {status.type === "running" ? "Loading…" : "Code block unavailable"}
+          </div>
+        );
+      }
 
-    return (
-      <CodeBlockErrorBoundary>
-        <ParsedCodeBlock result={result} />
-      </CodeBlockErrorBoundary>
-    );
+      return (
+        <CodeBlockErrorBoundary>
+          <ParsedCodeBlock result={result} />
+        </CodeBlockErrorBoundary>
+      );
+    },
   },
-});
+};
 ```
 
 ## Props

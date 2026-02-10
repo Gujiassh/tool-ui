@@ -5,4 +5,5 @@ export {
   TerminalPropsSchema,
   SerializableTerminalSchema,
   parseSerializableTerminal,
+  safeParseSerializableTerminal,
 } from "./schema";

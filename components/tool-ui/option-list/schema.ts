@@ -9,6 +9,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const OptionListOptionSchema = z.object({
@@ -59,7 +60,7 @@ export const OptionListPropsSchema = z.object({
    *
    * @example
    * ```tsx
-   * // In makeAssistantToolUI render:
+   * // In a toolkit render function:
    * if (result) {
    *   return <OptionList {...args} choice={result} />;
    * }
@@ -114,4 +115,10 @@ export function parseSerializableOptionList(
   input: unknown,
 ): SerializableOptionList {
   return parseWithSchema(SerializableOptionListSchema, input, "OptionList");
+}
+
+export function safeParseSerializableOptionList(
+  input: unknown,
+): SerializableOptionList | null {
+  return safeParseWithSchema(SerializableOptionListSchema, input);
 }

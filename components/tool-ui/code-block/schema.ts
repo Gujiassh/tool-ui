@@ -6,6 +6,7 @@ import {
   SerializableActionSchema,
   SerializableActionsConfigSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const CodeBlockPropsSchema = z.object({
@@ -39,4 +40,10 @@ export function parseSerializableCodeBlock(
   input: unknown,
 ): SerializableCodeBlock {
   return parseWithSchema(SerializableCodeBlockSchema, input, "CodeBlock");
+}
+
+export function safeParseSerializableCodeBlock(
+  input: unknown,
+): SerializableCodeBlock | null {
+  return safeParseWithSchema(SerializableCodeBlockSchema, input);
 }

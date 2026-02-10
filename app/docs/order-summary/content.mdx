@@ -251,7 +251,7 @@ pnpm dlx shadcn@latest add button separator skeleton
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   OrderSummary,
   OrderSummaryErrorBoundary,
@@ -261,11 +261,8 @@ import {
   type OrderDecision,
 } from "@/components/tool-ui/order-summary";
 
-export const OrderSummaryTool = makeAssistantTool<
-  SerializableOrderSummary,
-  OrderDecision
->({
-  toolName: "createOrder",
+export const toolkit: Toolkit = {
+  createOrder: {
   description: "Display a purchase order for user confirmation",
   parameters: SerializableOrderSummarySchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -297,10 +294,11 @@ export const OrderSummaryTool = makeAssistantTool<
       </OrderSummaryErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
-Mount `<OrderSummaryTool />` under `<AssistantRuntimeProvider>` to register the tool and its UI.
+Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
 
 ## Props
 

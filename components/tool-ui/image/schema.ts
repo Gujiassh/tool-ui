@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 import { AspectRatioSchema, MediaFitSchema } from "../shared/media";
 
@@ -38,4 +39,10 @@ export type SerializableImage = z.infer<typeof SerializableImageSchema>;
 
 export function parseSerializableImage(input: unknown): SerializableImage {
   return parseWithSchema(SerializableImageSchema, input, "Image");
+}
+
+export function safeParseSerializableImage(
+  input: unknown,
+): SerializableImage | null {
+  return safeParseWithSchema(SerializableImageSchema, input);
 }

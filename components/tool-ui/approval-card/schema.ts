@@ -3,7 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIRoleSchema,
 } from "../shared/schema";
-import { parseWithSchema } from "../shared/parse";
+import { parseWithSchema, safeParseWithSchema } from "../shared/parse";
 
 export const MetadataItemSchema = z.object({
   key: z.string().min(1),
@@ -41,6 +41,12 @@ export function parseSerializableApprovalCard(
   input: unknown,
 ): SerializableApprovalCard {
   return parseWithSchema(SerializableApprovalCardSchema, input, "ApprovalCard");
+}
+
+export function safeParseSerializableApprovalCard(
+  input: unknown,
+): SerializableApprovalCard | null {
+  return safeParseWithSchema(SerializableApprovalCardSchema, input);
 }
 
 export interface ApprovalCardProps extends SerializableApprovalCard {

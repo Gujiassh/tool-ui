@@ -11,4 +11,5 @@ export {
   OptionListPropsSchema,
   SerializableOptionListSchema,
   parseSerializableOptionList,
+  safeParseSerializableOptionList,
 } from "./schema";

@@ -6,6 +6,7 @@ import {
   SerializableActionSchema,
   SerializableActionsConfigSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const TerminalPropsSchema = z.object({
@@ -41,4 +42,10 @@ export function parseSerializableTerminal(
   input: unknown,
 ): SerializableTerminal {
   return parseWithSchema(SerializableTerminalSchema, input, "Terminal");
+}
+
+export function safeParseSerializableTerminal(
+  input: unknown,
+): SerializableTerminal | null {
+  return safeParseWithSchema(SerializableTerminalSchema, input);
 }

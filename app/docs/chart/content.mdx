@@ -138,32 +138,39 @@ const showChart = tool({
 });
 
 // Frontend with assistant-ui
-import { makeAssistantToolUI } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   Chart,
   ChartErrorBoundary,
-  parseSerializableChart,
+  safeParseSerializableChart,
 } from "@/components/tool-ui/chart";
 
-export const ShowChartUI = makeAssistantToolUI({
-  toolName: "showChart",
-  render: ({ result }) => {
-    if (result === undefined) {
-      return (
-        <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
-          Loading chart…
-        </div>
-      );
-    }
+export const toolkit: Toolkit = {
+  showChart: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const chart = safeParseSerializableChart(result);
+      if (!chart) {
+        const loading =
+          status.type === "running" || result === undefined
+            ? "Loading chart…"
+            : "Chart unavailable";
 
-    const chart = parseSerializableChart(result);
-    return (
-      <ChartErrorBoundary>
-        <Chart {...chart} />
-      </ChartErrorBoundary>
-    );
+        return (
+          <div className="bg-card/60 text-muted-foreground w-full max-w-xl rounded-2xl border px-5 py-4 text-sm shadow-xs">
+            {loading}
+          </div>
+        );
+      }
+
+      return (
+        <ChartErrorBoundary>
+          <Chart {...chart} />
+        </ChartErrorBoundary>
+      );
+    },
   },
-});
+};
 ```
 
 ### With Custom Colors

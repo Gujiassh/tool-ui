@@ -1,15 +1,14 @@
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import type { ToolDefinition } from "@assistant-ui/react";
 import { z } from "zod";
 import { TripStatus } from "../components";
 import type { GetTripStatusResult } from "../types";
 
-export const GetTripStatusTool = makeAssistantTool<
+export const GetTripStatusTool: ToolDefinition<
   { tripId: string },
   GetTripStatusResult
->({
-  toolName: "get_trip_status",
+> = {
   description:
     "Show live trip timeline with vehicle info. Use after ride is confirmed. Introduce with something like 'Your Waymo is on the way!' If user cancels (result includes cancelled: true), acknowledge.",
   parameters: z.object({
@@ -17,4 +16,4 @@ export const GetTripStatusTool = makeAssistantTool<
   }),
   type: "human",
   render: (props) => <TripStatus {...props} />,
-});
+};

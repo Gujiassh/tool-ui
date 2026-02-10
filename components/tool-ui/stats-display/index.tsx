@@ -4,6 +4,7 @@ export { Sparkline, type SparklineProps } from "./sparkline";
 export {
   SerializableStatsDisplaySchema,
   parseSerializableStatsDisplay,
+  safeParseSerializableStatsDisplay,
   StatFormatSchema,
   StatDiffSchema,
   StatSparklineSchema,

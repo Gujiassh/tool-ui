@@ -10,4 +10,5 @@ export {
   SliderConfigSchema,
   SerializableParameterSliderSchema,
   parseSerializableParameterSlider,
+  safeParseSerializableParameterSlider,
 } from "./schema";

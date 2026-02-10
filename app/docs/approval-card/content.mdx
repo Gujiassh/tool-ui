@@ -178,7 +178,7 @@ pnpm dlx shadcn@latest add button
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   ApprovalCard,
   ApprovalCardErrorBoundary,
@@ -188,11 +188,8 @@ import {
   type ApprovalDecision,
 } from "@/components/tool-ui/approval-card";
 
-export const ApprovalTool = makeAssistantTool<
-  SerializableApprovalCard,
-  ApprovalDecision
->({
-  toolName: "requestApproval",
+export const toolkit: Toolkit = {
+  requestApproval: {
   description: "Request user approval before performing an action.",
   parameters: SerializableApprovalCardSchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -217,10 +214,11 @@ export const ApprovalTool = makeAssistantTool<
       </ApprovalCardErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
-Mount `<ApprovalTool />` under `<AssistantRuntimeProvider>` to register the tool and its UI.
+Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
 
 ## Props
 

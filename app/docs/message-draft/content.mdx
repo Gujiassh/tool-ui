@@ -234,7 +234,7 @@ pnpm dlx shadcn@latest add button separator
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   MessageDraft,
   MessageDraftErrorBoundary,
@@ -244,11 +244,8 @@ import {
   type MessageDraftOutcome,
 } from "@/components/tool-ui/message-draft";
 
-export const MessageDraftTool = makeAssistantTool<
-  SerializableMessageDraft,
-  MessageDraftOutcome
->({
-  toolName: "draftMessage",
+export const toolkit: Toolkit = {
+  draftMessage: {
   description: "Draft a message for the user to review before sending.",
   parameters: SerializableMessageDraftSchema,
   render: ({ args, result, addResult, toolCallId }) => {
@@ -278,10 +275,11 @@ export const MessageDraftTool = makeAssistantTool<
       </MessageDraftErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
-Mount `<MessageDraftTool />` under `<AssistantRuntimeProvider>` to register the tool and its UI.
+Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
 
 ## Props
 

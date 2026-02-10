@@ -122,23 +122,39 @@ const searchItems = tool({
 });
 
 // Frontend with assistant-ui
-import { makeAssistantToolUI } from "@assistant-ui/react";
-import { ItemCarousel } from "@/components/tool-ui/item-carousel";
+import { type Toolkit } from "@assistant-ui/react";
+import {
+  ItemCarousel,
+  safeParseSerializableItemCarousel,
+} from "@/components/tool-ui/item-carousel";
 
-export const SearchItemsUI = makeAssistantToolUI({
-  toolName: "searchItems",
-  render: ({ result }) => (
-    <ItemCarousel
-      {...result}
-      onItemClick={(id) => router.push(`/items/${id}`)}
-      onItemAction={(itemId, actionId) => {
-        if (actionId === "select") {
-          selectItem(itemId);
-        }
-      }}
-    />
-  ),
-});
+export const toolkit: Toolkit = {
+  searchItems: {
+    type: "backend",
+    render: ({ result, status }) => {
+      const carousel = safeParseSerializableItemCarousel(result);
+      if (!carousel) {
+        return (
+          <div className="text-muted-foreground text-sm">
+            {status.type === "running" ? "Loading items…" : "Items unavailable"}
+          </div>
+        );
+      }
+
+      return (
+        <ItemCarousel
+          {...carousel}
+          onItemClick={(id) => router.push(`/items/${id}`)}
+          onItemAction={(itemId, actionId) => {
+            if (actionId === "select") {
+              selectItem(itemId);
+            }
+          }}
+        />
+      );
+    },
+  },
+};
 ```
 
 ## Props

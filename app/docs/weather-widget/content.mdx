@@ -99,26 +99,31 @@ pnpm dlx shadcn@latest add card
 ```tsx
 "use client";
 
-import { makeAssistantTool } from "@assistant-ui/react";
+import { type Toolkit } from "@assistant-ui/react";
 import {
   WeatherWidget,
   WeatherWidgetErrorBoundary,
-  parseSerializableWeatherWidget,
+  safeParseSerializableWeatherWidget,
   SerializableWeatherWidgetSchema,
   type SerializableWeatherWidget,
 } from "@/components/tool-ui/weather-widget";
 
-export const WeatherWidgetTool = makeAssistantTool<SerializableWeatherWidget>({
-  toolName: "get_weather",
+export const toolkit: Toolkit = {
+  get_weather: {
   description: "Display current weather and forecast for a location",
   parameters: SerializableWeatherWidgetSchema,
-  render: ({ args, toolCallId }) => {
-    if (!args.location || !args.current || !args.forecast) return null;
-
-    const data = parseSerializableWeatherWidget({
+  render: ({ args, status, toolCallId }) => {
+    const data = safeParseSerializableWeatherWidget({
       ...args,
       id: (args as any)?.id ?? `weather-${toolCallId}`,
     });
+    if (!data) {
+      return (
+        <div className="text-muted-foreground text-sm">
+          {status.type === "running" ? "Loading weather…" : "Weather unavailable"}
+        </div>
+      );
+    }
 
     return (
       <WeatherWidgetErrorBoundary>
@@ -126,7 +131,8 @@ export const WeatherWidgetTool = makeAssistantTool<SerializableWeatherWidget>({
       </WeatherWidgetErrorBoundary>
     );
   },
-});
+  },
+};
 ```
 
 ## Props

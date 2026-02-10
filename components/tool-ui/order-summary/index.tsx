@@ -6,6 +6,7 @@ export {
   PricingSchema,
   OrderDecisionSchema,
   parseSerializableOrderSummary,
+  safeParseSerializableOrderSummary,
   type SerializableOrderSummary,
   type OrderSummaryProps,
   type OrderItem,

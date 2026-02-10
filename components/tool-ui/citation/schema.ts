@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const CitationTypeSchema = z.enum([
@@ -40,4 +41,10 @@ export type SerializableCitation = z.infer<typeof SerializableCitationSchema>;
 
 export function parseSerializableCitation(input: unknown): SerializableCitation {
   return parseWithSchema(SerializableCitationSchema, input, "Citation");
+}
+
+export function safeParseSerializableCitation(
+  input: unknown,
+): SerializableCitation | null {
+  return safeParseWithSchema(SerializableCitationSchema, input);
 }

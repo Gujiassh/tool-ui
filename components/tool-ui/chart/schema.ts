@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const ChartSeriesSchema = z.object({
@@ -110,4 +111,10 @@ export type SerializableChart = z.infer<typeof SerializableChartSchema>;
 
 export function parseSerializableChart(input: unknown): SerializableChart {
   return parseWithSchema(SerializableChartSchema, input, "Chart");
+}
+
+export function safeParseSerializableChart(
+  input: unknown,
+): SerializableChart | null {
+  return safeParseWithSchema(SerializableChartSchema, input);
 }

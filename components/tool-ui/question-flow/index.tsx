@@ -10,6 +10,7 @@ export {
   QuestionFlowChoiceSchema,
   QuestionFlowSummaryItemSchema,
   parseSerializableQuestionFlow,
+  safeParseSerializableQuestionFlow,
   type SerializableQuestionFlow,
   type SerializableProgressiveMode,
   type SerializableUpfrontMode,

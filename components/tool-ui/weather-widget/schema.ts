@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { ToolUIIdSchema, ToolUIRoleSchema, parseWithSchema } from "../shared";
+import {
+  ToolUIIdSchema,
+  ToolUIRoleSchema,
+  parseWithSchema,
+  safeParseWithSchema,
+} from "../shared";
 import type { CustomEffectProps } from "./effects";
 
 export const WeatherConditionSchema = z.enum([
@@ -91,6 +96,12 @@ export function parseSerializableWeatherWidget(
     input,
     "WeatherWidget",
   );
+}
+
+export function safeParseSerializableWeatherWidget(
+  input: unknown,
+): SerializableWeatherWidget | null {
+  return safeParseWithSchema(SerializableWeatherWidgetSchema, input);
 }
 
 export interface WeatherWidgetProps extends SerializableWeatherWidget {

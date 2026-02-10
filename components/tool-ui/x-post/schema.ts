@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseWithSchema } from "../shared";
+import { parseWithSchema, safeParseWithSchema } from "../shared";
 
 export const XPostAuthorSchema = z.object({
   name: z.string(),
@@ -58,4 +58,10 @@ export type XPostStats = z.infer<typeof XPostStatsSchema>;
 
 export function parseSerializableXPost(input: unknown): XPostData {
   return parseWithSchema(SerializableXPostSchema, input, "XPost");
+}
+
+export function safeParseSerializableXPost(
+  input: unknown,
+): XPostData | null {
+  return safeParseWithSchema(SerializableXPostSchema, input);
 }

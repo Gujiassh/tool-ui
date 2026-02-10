@@ -4,6 +4,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const ImageGallerySourceSchema = z.object({
@@ -48,4 +49,10 @@ export function parseSerializableImageGallery(
   input: unknown,
 ): SerializableImageGallery {
   return parseWithSchema(SerializableImageGallerySchema, input, "ImageGallery");
+}
+
+export function safeParseSerializableImageGallery(
+  input: unknown,
+): SerializableImageGallery | null {
+  return safeParseWithSchema(SerializableImageGallerySchema, input);
 }

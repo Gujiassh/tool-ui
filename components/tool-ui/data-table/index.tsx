@@ -14,7 +14,10 @@ export {
   StatusBadge,
   ArrayValue,
 } from "./formatters";
-export { parseSerializableDataTable } from "./schema";
+export {
+  parseSerializableDataTable,
+  safeParseSerializableDataTable,
+} from "./schema";
 
 export type {
   Column,

@@ -6,6 +6,7 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const PlanTodoStatusSchema = z.enum([
@@ -50,4 +51,10 @@ export type SerializablePlan = z.infer<typeof SerializablePlanSchema>;
 
 export function parseSerializablePlan(input: unknown): SerializablePlan {
   return parseWithSchema(SerializablePlanSchema, input, "Plan");
+}
+
+export function safeParseSerializablePlan(
+  input: unknown,
+): SerializablePlan | null {
+  return safeParseWithSchema(SerializablePlanSchema, input);
 }

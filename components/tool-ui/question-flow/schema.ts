@@ -4,6 +4,7 @@ import {
   ToolUIIdSchema,
   ToolUIRoleSchema,
   parseWithSchema,
+  safeParseWithSchema,
 } from "../shared";
 
 export const QuestionFlowOptionSchema = z.object({
@@ -87,6 +88,12 @@ export function parseSerializableQuestionFlow(
   input: unknown,
 ): SerializableQuestionFlow {
   return parseWithSchema(SerializableQuestionFlowSchema, input, "QuestionFlow");
+}
+
+export function safeParseSerializableQuestionFlow(
+  input: unknown,
+): SerializableQuestionFlow | null {
+  return safeParseWithSchema(SerializableQuestionFlowSchema, input);
 }
 
 interface BaseRuntimeProps {

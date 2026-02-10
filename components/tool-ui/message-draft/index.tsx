@@ -7,6 +7,7 @@ export {
   MessageDraftChannelSchema,
   MessageDraftOutcomeSchema,
   parseSerializableMessageDraft,
+  safeParseSerializableMessageDraft,
   type SerializableMessageDraft,
   type SerializableEmailDraft,
   type SerializableSlackDraft,

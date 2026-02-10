@@ -3,5 +3,9 @@ export type { VideoProps } from "./video";
 export { VideoErrorBoundary } from "./error-boundary";
 export { VideoProvider, useVideo } from "./context";
 export type { VideoPlaybackState, VideoContextValue } from "./context";
-export { SerializableVideoSchema, parseSerializableVideo } from "./schema";
+export {
+  SerializableVideoSchema,
+  parseSerializableVideo,
+  safeParseSerializableVideo,
+} from "./schema";
 export type { SerializableVideo, Source } from "./schema";

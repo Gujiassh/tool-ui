@@ -5,6 +5,7 @@ export {
   ChartSeriesSchema,
   SerializableChartSchema,
   parseSerializableChart,
+  safeParseSerializableChart,
   type ChartProps,
   type ChartSeries,
   type ChartDataPoint,

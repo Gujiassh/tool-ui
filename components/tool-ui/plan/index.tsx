@@ -8,6 +8,7 @@ export type {
 } from "./schema";
 export {
   parseSerializablePlan,
+  safeParseSerializablePlan,
   PlanPropsSchema,
   PlanTodoSchema,
   PlanTodoStatusSchema,
