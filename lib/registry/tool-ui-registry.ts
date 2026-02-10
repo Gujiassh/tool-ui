@@ -62,7 +62,7 @@ const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
 
 const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
   {
-    name: "tool-ui-shared",
+    name: "shared",
     title: "Tool UI Shared",
     description: "Shared helpers and schemas for Tool UI components.",
     sourceDir: "components/tool-ui/shared",
@@ -71,46 +71,40 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
     registryDependencies: ["button"],
   },
   {
-    name: "tool-ui-plan",
+    name: "plan",
     title: "Tool UI Plan",
     description: "Display step-by-step task workflows in AI interfaces.",
     sourceDir: "components/tool-ui/plan",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: [
-      "accordion",
-      "button",
-      "card",
-      "collapsible",
-      "tool-ui-shared",
-    ],
+    registryDependencies: ["accordion", "button", "card", "collapsible", "shared"],
   },
   {
-    name: "tool-ui-progress-tracker",
+    name: "progress-tracker",
     title: "Tool UI Progress Tracker",
     description:
       "Show real-time status feedback for multi-step operations in AI interfaces.",
     sourceDir: "components/tool-ui/progress-tracker",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "tool-ui-shared"],
+    registryDependencies: ["button", "shared"],
   },
   {
-    name: "tool-ui-option-list",
+    name: "option-list",
     title: "Tool UI Option List",
     description: "Single or multi-select choices with confirmation actions.",
     sourceDir: "components/tool-ui/option-list",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "separator", "tool-ui-shared"],
+    registryDependencies: ["button", "separator", "shared"],
   },
   {
-    name: "tool-ui-message-draft",
+    name: "message-draft",
     title: "Tool UI Message Draft",
     description: "Review and confirm drafted messages before sending.",
     sourceDir: "components/tool-ui/message-draft",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "tool-ui-shared"],
+    registryDependencies: ["button", "shared"],
   },
   {
-    name: "tool-ui-data-table",
+    name: "data-table",
     title: "Tool UI Data Table",
     description: "Sortable, responsive data tables for tool call results.",
     sourceDir: "components/tool-ui/data-table",
@@ -122,7 +116,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
       "dropdown-menu",
       "table",
       "tooltip",
-      "tool-ui-shared",
+      "shared",
     ],
   },
 ];
@@ -188,8 +182,8 @@ async function buildRegistryItem(
 
   const registryDependencies = definition.registryDependencies?.map(
     (dependency) =>
-      dependency === "tool-ui-shared"
-        ? `${registryBaseUrl}/tool-ui-shared.json`
+      dependency === "shared"
+        ? `${registryBaseUrl}/shared.json`
         : dependency,
   );
 
@@ -254,6 +248,18 @@ export async function writeToolUiRegistryArtifacts(
   const artifacts = await buildToolUiRegistryArtifacts(projectRoot, options);
   const outputDir = path.join(projectRoot, "public", "r");
   await fs.mkdir(outputDir, { recursive: true });
+
+  const expectedFiles = new Set([
+    "registry.json",
+    ...artifacts.items.map((item) => `${item.name}.json`),
+  ]);
+  const existingFiles = await fs.readdir(outputDir);
+  await Promise.all(
+    existingFiles
+      .filter((fileName) => fileName.endsWith(".json"))
+      .filter((fileName) => !expectedFiles.has(fileName))
+      .map((fileName) => fs.unlink(path.join(outputDir, fileName))),
+  );
 
   await fs.writeFile(
     path.join(outputDir, "registry.json"),

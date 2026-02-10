@@ -1,14 +1,17 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "tool-ui-option-list",
+  "name": "option-list",
   "type": "registry:block",
   "title": "Tool UI Option List",
   "description": "Single or multi-select choices with confirmation actions.",
-  "dependencies": ["lucide-react", "zod"],
+  "dependencies": [
+    "lucide-react",
+    "zod"
+  ],
   "registryDependencies": [
     "button",
     "separator",
-    "https://tool-ui.com/r/tool-ui-shared.json"
+    "https://tool-ui.com/r/shared.json"
   ],
   "files": [
     {

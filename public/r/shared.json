@@ -1,11 +1,17 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "tool-ui-shared",
+  "name": "shared",
   "type": "registry:block",
   "title": "Tool UI Shared",
   "description": "Shared helpers and schemas for Tool UI components.",
-  "dependencies": ["@assistant-ui/react", "lucide-react", "zod"],
-  "registryDependencies": ["button"],
+  "dependencies": [
+    "@assistant-ui/react",
+    "lucide-react",
+    "zod"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
   "files": [
     {
       "path": "components/tool-ui/shared/_adapter.tsx",

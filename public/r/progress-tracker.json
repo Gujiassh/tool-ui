@@ -1,13 +1,16 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "tool-ui-progress-tracker",
+  "name": "progress-tracker",
   "type": "registry:block",
   "title": "Tool UI Progress Tracker",
   "description": "Show real-time status feedback for multi-step operations in AI interfaces.",
-  "dependencies": ["lucide-react", "zod"],
+  "dependencies": [
+    "lucide-react",
+    "zod"
+  ],
   "registryDependencies": [
     "button",
-    "https://tool-ui.com/r/tool-ui-shared.json"
+    "https://tool-ui.com/r/shared.json"
   ],
   "files": [
     {

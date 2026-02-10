@@ -50,4 +50,4 @@ pnpm registry:build
 This generates:
 
 - `public/r/registry.json`
-- `public/r/tool-ui-*.json`
+- `public/r/<component>.json` (e.g. `public/r/plan.json`)

@@ -1,13 +1,16 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "tool-ui-message-draft",
+  "name": "message-draft",
   "type": "registry:block",
   "title": "Tool UI Message Draft",
   "description": "Review and confirm drafted messages before sending.",
-  "dependencies": ["lucide-react", "zod"],
+  "dependencies": [
+    "lucide-react",
+    "zod"
+  ],
   "registryDependencies": [
     "button",
-    "https://tool-ui.com/r/tool-ui-shared.json"
+    "https://tool-ui.com/r/shared.json"
   ],
   "files": [
     {

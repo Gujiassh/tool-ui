@@ -1,10 +1,12 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "tool-ui-data-table",
+  "name": "data-table",
   "type": "registry:block",
   "title": "Tool UI Data Table",
   "description": "Sortable, responsive data tables for tool call results.",
-  "dependencies": ["zod"],
+  "dependencies": [
+    "zod"
+  ],
   "registryDependencies": [
     "accordion",
     "badge",
@@ -12,7 +14,7 @@
     "dropdown-menu",
     "table",
     "tooltip",
-    "https://tool-ui.com/r/tool-ui-shared.json"
+    "https://tool-ui.com/r/shared.json"
   ],
   "files": [
     {

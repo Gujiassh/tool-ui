@@ -4,12 +4,18 @@
   "homepage": "https://tool-ui.com",
   "items": [
     {
-      "name": "tool-ui-shared",
+      "name": "shared",
       "type": "registry:block",
       "title": "Tool UI Shared",
       "description": "Shared helpers and schemas for Tool UI components.",
-      "dependencies": ["@assistant-ui/react", "lucide-react", "zod"],
-      "registryDependencies": ["button"],
+      "dependencies": [
+        "@assistant-ui/react",
+        "lucide-react",
+        "zod"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/tool-ui/shared/_adapter.tsx",
@@ -104,17 +110,20 @@
       ]
     },
     {
-      "name": "tool-ui-plan",
+      "name": "plan",
       "type": "registry:block",
       "title": "Tool UI Plan",
       "description": "Display step-by-step task workflows in AI interfaces.",
-      "dependencies": ["lucide-react", "zod"],
+      "dependencies": [
+        "lucide-react",
+        "zod"
+      ],
       "registryDependencies": [
         "accordion",
         "button",
         "card",
         "collapsible",
-        "https://tool-ui.com/r/tool-ui-shared.json"
+        "https://tool-ui.com/r/shared.json"
       ],
       "files": [
         {
@@ -145,14 +154,17 @@
       ]
     },
     {
-      "name": "tool-ui-progress-tracker",
+      "name": "progress-tracker",
       "type": "registry:block",
       "title": "Tool UI Progress Tracker",
       "description": "Show real-time status feedback for multi-step operations in AI interfaces.",
-      "dependencies": ["lucide-react", "zod"],
+      "dependencies": [
+        "lucide-react",
+        "zod"
+      ],
       "registryDependencies": [
         "button",
-        "https://tool-ui.com/r/tool-ui-shared.json"
+        "https://tool-ui.com/r/shared.json"
       ],
       "files": [
         {
@@ -183,15 +195,18 @@
       ]
     },
     {
-      "name": "tool-ui-option-list",
+      "name": "option-list",
       "type": "registry:block",
       "title": "Tool UI Option List",
       "description": "Single or multi-select choices with confirmation actions.",
-      "dependencies": ["lucide-react", "zod"],
+      "dependencies": [
+        "lucide-react",
+        "zod"
+      ],
       "registryDependencies": [
         "button",
         "separator",
-        "https://tool-ui.com/r/tool-ui-shared.json"
+        "https://tool-ui.com/r/shared.json"
       ],
       "files": [
         {
@@ -222,14 +237,17 @@
       ]
     },
     {
-      "name": "tool-ui-message-draft",
+      "name": "message-draft",
       "type": "registry:block",
       "title": "Tool UI Message Draft",
       "description": "Review and confirm drafted messages before sending.",
-      "dependencies": ["lucide-react", "zod"],
+      "dependencies": [
+        "lucide-react",
+        "zod"
+      ],
       "registryDependencies": [
         "button",
-        "https://tool-ui.com/r/tool-ui-shared.json"
+        "https://tool-ui.com/r/shared.json"
       ],
       "files": [
         {
@@ -260,11 +278,13 @@
       ]
     },
     {
-      "name": "tool-ui-data-table",
+      "name": "data-table",
       "type": "registry:block",
       "title": "Tool UI Data Table",
       "description": "Sortable, responsive data tables for tool call results.",
-      "dependencies": ["zod"],
+      "dependencies": [
+        "zod"
+      ],
       "registryDependencies": [
         "accordion",
         "badge",
@@ -272,7 +292,7 @@
         "dropdown-menu",
         "table",
         "tooltip",
-        "https://tool-ui.com/r/tool-ui-shared.json"
+        "https://tool-ui.com/r/shared.json"
       ],
       "files": [
         {

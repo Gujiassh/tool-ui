@@ -1,16 +1,19 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
-  "name": "tool-ui-plan",
+  "name": "plan",
   "type": "registry:block",
   "title": "Tool UI Plan",
   "description": "Display step-by-step task workflows in AI interfaces.",
-  "dependencies": ["lucide-react", "zod"],
+  "dependencies": [
+    "lucide-react",
+    "zod"
+  ],
   "registryDependencies": [
     "accordion",
     "button",
     "card",
     "collapsible",
-    "https://tool-ui.com/r/tool-ui-shared.json"
+    "https://tool-ui.com/r/shared.json"
   ],
   "files": [
     {

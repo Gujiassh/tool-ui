@@ -14,12 +14,12 @@ describe("Tool UI registry artifacts", () => {
     const itemNames = artifacts.items.map((item) => item.name);
 
     expect(itemNames).toEqual([
-      "tool-ui-shared",
-      "tool-ui-plan",
-      "tool-ui-progress-tracker",
-      "tool-ui-option-list",
-      "tool-ui-message-draft",
-      "tool-ui-data-table",
+      "shared",
+      "plan",
+      "progress-tracker",
+      "option-list",
+      "message-draft",
+      "data-table",
     ]);
 
     expect(artifacts.index.items).toHaveLength(artifacts.items.length);
@@ -33,14 +33,14 @@ describe("Tool UI registry artifacts", () => {
     }
 
     const planItem = artifacts.items.find(
-      (item) => item.name === "tool-ui-plan",
+      (item) => item.name === "plan",
     );
     expect(planItem).toBeDefined();
     expect(planItem?.files.some((file) => file.path.endsWith("plan.tsx"))).toBe(
       true,
     );
     expect(planItem?.registryDependencies).toContain(
-      "https://tool-ui.com/r/tool-ui-shared.json",
+      "https://tool-ui.com/r/shared.json",
     );
   });
 });
