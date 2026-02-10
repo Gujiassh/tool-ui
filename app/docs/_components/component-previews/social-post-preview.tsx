@@ -25,12 +25,21 @@ import {
 } from "@/components/ui/item";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/ui/cn";
+import {
+  STREAMING_PRESET_DESCRIPTION,
+  STREAMING_PRESET_NAME,
+} from "@/lib/docs/preview-config";
+import {
+  ToolRenderState,
+  type StreamingToolRenderState,
+} from "@/components/tool-ui/shared";
 
 type Platform = "x" | "instagram" | "linkedin";
 type PresetName =
   | XPostPresetName
   | InstagramPostPresetName
-  | LinkedInPostPresetName;
+  | LinkedInPostPresetName
+  | typeof STREAMING_PRESET_NAME;
 
 const VALID_PLATFORMS: readonly Platform[] = ["x", "instagram", "linkedin"];
 
@@ -52,13 +61,41 @@ const platformConfig = {
   },
 } as const;
 
+const STREAMING_LOADING_STATE: StreamingToolRenderState<unknown, unknown> = {
+  kind: "loading",
+  args: null,
+  result: null,
+  message: "Loading tool output…",
+  status: { type: "running" },
+};
+const STREAMING_PARTIAL_STATE: StreamingToolRenderState<unknown, unknown> = {
+  kind: "partial",
+  args: null,
+  result: {},
+  status: { type: "running" },
+};
+const STREAMING_ERROR_STATE: StreamingToolRenderState<unknown, unknown> = {
+  kind: "error",
+  args: null,
+  result: null,
+  message: "Tool output unavailable",
+  isCancelled: false,
+  status: { type: "complete" },
+};
+
+function getPresetNames(platform: Platform): PresetName[] {
+  return [
+    ...platformConfig[platform].presetNames,
+    STREAMING_PRESET_NAME,
+  ] as PresetName[];
+}
+
 function getValidPreset(platform: Platform, preset: string | null): PresetName {
-  const config = platformConfig[platform];
-  const presetNames = config.presetNames as readonly string[];
-  if (preset && presetNames.includes(preset)) {
+  const presetNames = getPresetNames(platform);
+  if (preset && (presetNames as readonly string[]).includes(preset)) {
     return preset as PresetName;
   }
-  return config.presetNames[0];
+  return presetNames[0];
 }
 
 function PlatformSelector({
@@ -107,10 +144,11 @@ function PresetSelector({
     string,
     { description: string; data: unknown }
   >;
+  const presetNames = getPresetNames(platform);
 
   return (
     <ItemGroup className="gap-1">
-      {config.presetNames.map((preset) => (
+      {presetNames.map((preset) => (
         <Item
           key={preset}
           variant="default"
@@ -133,7 +171,9 @@ function PresetSelector({
                   </span>
                 </ItemTitle>
                 <ItemDescription className="text-sm font-light">
-                  {presets[preset].description}
+                  {preset === STREAMING_PRESET_NAME
+                    ? STREAMING_PRESET_DESCRIPTION
+                    : presets[preset].description}
                 </ItemDescription>
               </div>
             </div>
@@ -217,49 +257,71 @@ export function SocialPostPreview() {
     [currentPlatform, updateUrl],
   );
 
+  const isStreamingPreset = currentPreset === STREAMING_PRESET_NAME;
+  const effectivePreset = (
+    isStreamingPreset
+      ? platformConfig[currentPlatform].presetNames[0]
+      : currentPreset
+  ) as XPostPresetName | InstagramPostPresetName | LinkedInPostPresetName;
+
+  const renderedPost =
+    currentPlatform === "x" ? (
+      <XPost
+        post={xPostPresets[effectivePreset as XPostPresetName].data.post}
+        responseActions={
+          xPostPresets[effectivePreset as XPostPresetName].data.responseActions
+        }
+        onAction={(action, post) => console.log("X action:", action, post.id)}
+        onResponseAction={(id) => alert(`Response action: ${id}`)}
+      />
+    ) : currentPlatform === "instagram" ? (
+      <InstagramPost
+        post={
+          instagramPostPresets[effectivePreset as InstagramPostPresetName].data
+            .post
+        }
+        responseActions={
+          instagramPostPresets[effectivePreset as InstagramPostPresetName].data
+            .responseActions
+        }
+        onAction={(action, post) =>
+          console.log("Instagram action:", action, post.id)
+        }
+        onResponseAction={(id) => alert(`Response action: ${id}`)}
+      />
+    ) : (
+      <LinkedInPost
+        post={
+          linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
+            .post
+        }
+        responseActions={
+          linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
+            .responseActions
+        }
+        onAction={(action, post) =>
+          console.log("LinkedIn action:", action, post.id)
+        }
+        onResponseAction={(id) => alert(`Response action: ${id}`)}
+      />
+    );
+
   const previewContent = (
     <div className="mx-auto w-full max-w-[500px]">
-      {currentPlatform === "x" && (
-        <XPost
-          post={xPostPresets[currentPreset as XPostPresetName].data.post}
-          responseActions={
-            xPostPresets[currentPreset as XPostPresetName].data.responseActions
-          }
-          onAction={(action, post) => console.log("X action:", action, post.id)}
-          onResponseAction={(id) => alert(`Response action: ${id}`)}
-        />
-      )}
-      {currentPlatform === "instagram" && (
-        <InstagramPost
-          post={
-            instagramPostPresets[currentPreset as InstagramPostPresetName].data
-              .post
-          }
-          responseActions={
-            instagramPostPresets[currentPreset as InstagramPostPresetName].data
-              .responseActions
-          }
-          onAction={(action, post) =>
-            console.log("Instagram action:", action, post.id)
-          }
-          onResponseAction={(id) => alert(`Response action: ${id}`)}
-        />
-      )}
-      {currentPlatform === "linkedin" && (
-        <LinkedInPost
-          post={
-            linkedInPostPresets[currentPreset as LinkedInPostPresetName].data
-              .post
-          }
-          responseActions={
-            linkedInPostPresets[currentPreset as LinkedInPostPresetName].data
-              .responseActions
-          }
-          onAction={(action, post) =>
-            console.log("LinkedIn action:", action, post.id)
-          }
-          onResponseAction={(id) => alert(`Response action: ${id}`)}
-        />
+      {isStreamingPreset ? (
+        <div className="flex w-full flex-col gap-3">
+          <ToolRenderState state={STREAMING_LOADING_STATE} />
+          <div className="flex w-full flex-col gap-2">
+            <ToolRenderState
+              state={STREAMING_PARTIAL_STATE}
+              partialLabel="Streaming partial output"
+            />
+            {renderedPost}
+          </div>
+          <ToolRenderState state={STREAMING_ERROR_STATE} />
+        </div>
+      ) : (
+        renderedPost
       )}
     </div>
   );
