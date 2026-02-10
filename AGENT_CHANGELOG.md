@@ -1,11 +1,11 @@
 # Agent Changelog
 
 > This file helps coding agents understand project evolution, key decisions, and deprecated patterns.
-> Updated: 2026-01-30
+> Updated: 2026-02-10
 
 ## Current State Summary
 
-Tool UI is a copy/paste component library (shadcn/ui model) with 25 components for AI assistant interfaces. Components use a unified `choice` prop for receipt state, follow flat prop APIs, and rely on Tailwind for layout customization. The project uses pnpm, Next.js with Turbopack, assistant-ui v0.12, and now includes PostHog + Vercel Analytics.
+Tool UI is a copy/paste component library (shadcn/ui model) for AI assistant interfaces. Components follow flat prop APIs, use unified `choice` receipt semantics, and now standardize streaming rendering through shared helpers (`resolveStreamingToolRenderState` + `ToolRenderState`) in toolkit examples/docs. Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
 
 ## Stale Information Detected
 
@@ -13,8 +13,75 @@ Tool UI is a copy/paste component library (shadcn/ui model) with 25 components f
 |----------|--------|---------|-------|
 | README.md | Lists 17 components | Actually 25 components exist | 2026-01 |
 | README.md | Missing MessageDraft, QuestionFlow, StatsDisplay, WeatherWidget, etc. | These components exist | 2026-01 |
+| `plan-sequential-munching-canyon.md` | References `app/sandbox/weather-tuning/hooks/use-code-gen.ts` export workflow | Tuning flow is apply/recover via repo routes; `use-code-gen.ts` removed | 2026-02 |
+| `.claude/plans/plan-sequential-munching-canyon.md` | References `hooks/use-code-gen.ts` TypeScript generation | Tuning flow is apply/recover via repo routes; `use-code-gen.ts` removed | 2026-02 |
 
 ## Timeline
+
+### 2026-02-10 — Streaming Render-State Contract Standardized
+
+**What changed:** Main merged streaming-safety work that hardens toolkit/doc patterns around `resolveStreamingToolRenderState` and `ToolRenderState`, plus consistent error labeling (`Failed` vs `Cancelled`) in shared state UI.
+
+**Why:** Eliminate ad hoc loading/error handling across docs/examples and make streaming rendering behavior consistent across components.
+
+**Agent impact:** For tool render snippets, always pair:
+- schema-safe parsing (`safeParse*`)
+- `resolveStreamingToolRenderState(...)`
+- `<ToolRenderState state={state} />` for loading/partial/error placeholders
+
+Avoid manual `state.message` placeholder branches in docs snippets.
+
+**Files:** `components/tool-ui/shared/streaming-render.tsx`, `components/tool-ui/shared/streaming-state.tsx`, `lib/docs/preview-config.tsx`, `app/docs/**/content.mdx`
+
+---
+
+### 2026-02-10 — Weather Widget V3.1 Clean Break
+
+**What changed:** Weather widget migrated to a strict V3.1 payload contract and removed legacy compatibility layers.
+
+Key contract shifts:
+- Canonical parser: `safeParseWeatherWidgetPayload`
+- Payload shape is widget prop contract (+ UI-only props)
+- Deterministic time input is now `time` (`timeBucket` or `localTimeOfDay`)
+- Field names normalized (`current.conditionCode`, `units.temperature`, `forecast[].label`, etc.)
+
+**Why:** Keep provider normalization in the tool layer, simplify widget rendering inputs, and make day/night/effects deterministic.
+
+**Agent impact:** Emit only V3.1 payloads when rendering WeatherWidget. Do not use legacy serializable weather parser/types or provider-specific fields in widget render payloads.
+
+**Files:** `components/tool-ui/weather-widget/schema.ts`, `components/tool-ui/weather-widget/time.ts`, `components/tool-ui/weather-widget/weather-widget.tsx`, `lib/presets/weather-widget.ts`
+
+---
+
+### 2026-02-10 — Weather Tuning Workflow Simplified (Apply-Only)
+
+**What changed:** Removed client-side weather tuning codegen hook (`app/sandbox/weather-tuning/hooks/use-code-gen.ts`) and standardized on repo-backed apply/recover endpoints.
+
+**Why:** Reduce duplicate export logic and keep one source of truth (`components/tool-ui/weather-widget/effects/tuned-presets.ts`).
+
+**Agent impact:** In tuning flows, treat `Apply to repo` as the path to production. Use:
+- `POST /api/weather-tuning/apply`
+- `GET /api/weather-tuning/recover`
+
+Do not add/restore parallel clipboard/download codegen paths for production tuning updates.
+
+---
+
+### 2026-02-10 — Test Location Policy Enforced
+
+**What changed:** Weather + shared streaming tests were moved under `lib/tests/**` to ensure they run under current Vitest include globs and are not copied with component folders.
+
+**Why:** Components are copy-paste product surface; test fixtures/infra should stay internal to this repo.
+
+**Agent impact:** Place new executable tests in:
+- `lib/tests/**` (preferred)
+- `lib/playground/**` (playground-specific)
+
+Tests under `components/tool-ui/**` are out-of-policy and may not run by default.
+
+**Files:** `vitest.config.ts`, `lib/tests/tool-ui/shared/*`, `lib/tests/tool-ui/weather-widget/*`
+
+---
 
 ### 2026-01-30 — PostHog Analytics Added
 
@@ -183,6 +250,11 @@ const glassStyles = useGlassStyles({
 | Use AI SDK v5 patterns | Use AI SDK v6 patterns | 2026-01-26 |
 | Implement WebGL glass effects | Use `useGlassStyles` or `GlassPanel` from glass-panel-svg | 2026-01-29 |
 | Use `ComponentPreviewShell` without `componentId` | Always pass `componentId` prop for analytics | 2026-01-30 |
+| Use ad hoc loading/error JSX in toolkit doc snippets | Use `resolveStreamingToolRenderState` + `ToolRenderState` | 2026-02-10 |
+| Use weather payload prop `visual` | Use weather payload prop `time` | 2026-02-10 |
+| Use legacy serializable weather parser/types | Use `WeatherWidgetPayloadSchema` + `safeParseWeatherWidgetPayload` | 2026-02-10 |
+| Put executable tests in `components/tool-ui/**` | Put tests in `lib/tests/**` (or `lib/playground/**`) | 2026-02-10 |
+| Use `app/sandbox/weather-tuning/hooks/use-code-gen.ts` export flow | Use apply/recover API routes and `tuned-presets.ts` | 2026-02-10 |
 
 ## Trajectory
 
@@ -194,3 +266,5 @@ Based on recent changes, the project is:
 - **Adding specialized components** — MessageDraft, QuestionFlow, StatsDisplay for specific use cases
 - **Adding visual effects** — SVG-based glass refraction for weather widget, preferring CSS/SVG over WebGL
 - **Adding analytics** — PostHog + Vercel Analytics for usage tracking
+- **Standardizing streaming UX** — Shared render-state helpers and status UI across toolkit docs/examples
+- **Hardening weather contracts** — V3.1 clean-break payloads with deterministic `time` input and apply-only tuning workflow
