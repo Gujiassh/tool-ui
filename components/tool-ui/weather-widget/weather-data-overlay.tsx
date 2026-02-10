@@ -248,6 +248,7 @@ export function WeatherDataOverlay({
 
   const isDark = theme === "dark";
   const textPrimary = isDark ? "text-white" : "text-black";
+  const textPrimarySoft = isDark ? "text-white/90" : "text-black/85";
   const textSecondary = isDark ? "text-white/80" : "text-black/80";
   const textMuted = isDark ? "text-white/50" : "text-black/50";
   const textSubtle = isDark ? "text-white/40" : "text-black/40";
@@ -273,95 +274,113 @@ export function WeatherDataOverlay({
     : "0 1px 8px rgba(255,255,255,0.3)";
 
   const hasStats = humidity !== undefined || windSpeed !== undefined;
+  const locationFontSize = "clamp(13px, 7.5cqmin, 17px)";
+  const temperatureFontSize = "clamp(48px, 32cqmin, 72px)";
+  const degreeFontSize = "clamp(18px, 12cqmin, 28px)";
+  const hiLoFontSize = "clamp(11px, 6.5cqmin, 15px)";
+  const forecastFontFamily =
+    '"SF Pro Text", Inter, "Noto Sans", system-ui, sans-serif';
 
   return (
     <div
       ref={containerRef}
       className={cn(
-        "pointer-events-auto absolute inset-0 z-10 flex select-none flex-col p-6",
+        "pointer-events-auto absolute inset-0 z-10 flex select-none flex-col",
         className,
       )}
     >
       {/* Current weather */}
-      <div className="flex flex-col items-start">
-        <h2
-          className={cn("text-[17px] font-medium tracking-tight", textSecondary)}
-          style={{
-            fontFamily: '"SF Pro Display", system-ui, sans-serif',
-            textShadow: shadowStyle,
-          }}
-        >
-          {location}
-        </h2>
-
-        <div className="flex items-start gap-1.5">
-          <span
-            className={cn(
-              "text-[72px] font-[200] leading-none tracking-[-0.04em]",
-              textPrimary,
-            )}
+      <div className="px-6 pt-6">
+        <div className="flex flex-col items-start">
+          <h2
+            className={cn("font-medium leading-[1.08] tracking-tight", textSecondary)}
             style={{
-              fontFamily: '"SF Pro Display", "Helvetica Neue", system-ui, sans-serif',
-              fontFeatureSettings: '"tnum"',
-              textShadow: isDark
-                ? "0 2px 20px rgba(0,0,0,0.25)"
-                : "0 2px 20px rgba(255,255,255,0.3)",
+              fontSize: locationFontSize,
+              fontFamily: forecastFontFamily,
+              textShadow: shadowStyle,
             }}
-            aria-label={`${Math.round(temperature)} degrees ${unit === "celsius" ? "Celsius" : "Fahrenheit"}`}
           >
-            {Math.round(temperature)}
-          </span>
-          <span
-            className={cn("mt-2 text-[28px] font-[200]", textMuted)}
-            style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
-            aria-hidden="true"
+            {location}
+          </h2>
+
+          <div className="-mt-0.5 flex items-start gap-1">
+            <span
+              className={cn(
+                "font-[250] leading-[1.02] tracking-[-0.015em] tabular-nums",
+                textPrimarySoft,
+              )}
+              style={{
+                fontSize: temperatureFontSize,
+                fontFamily: forecastFontFamily,
+                fontFeatureSettings: '"tnum" 1, "case" 1',
+                textShadow: isDark
+                  ? "0 2px 20px rgba(0,0,0,0.25)"
+                  : "0 2px 20px rgba(255,255,255,0.3)",
+              }}
+              aria-label={`${Math.round(temperature)} degrees ${unit === "celsius" ? "Celsius" : "Fahrenheit"}`}
+            >
+              {Math.round(temperature)}
+            </span>
+            <span
+              className={cn("mt-2 font-[250] tabular-nums", textSecondary)}
+              style={{
+                fontSize: degreeFontSize,
+                fontFamily: forecastFontFamily,
+                fontFeatureSettings: '"tnum" 1, "case" 1',
+              }}
+              aria-hidden="true"
+            >
+              °{unitSymbol}
+            </span>
+          </div>
+
+          <div
+            className="mt-0.5 flex items-center gap-3"
+            style={{
+              fontFamily: forecastFontFamily,
+              fontFeatureSettings: '"tnum" 1, "case" 1',
+            }}
           >
-            °{unitSymbol}
-          </span>
-        </div>
+            <span className="font-medium tabular-nums" style={{ fontSize: hiLoFontSize }}>
+              <span className={textSubtle}>H </span>
+              <span className={textPrimary}>{Math.round(tempHigh)}°</span>
+            </span>
+            <span className="font-medium tabular-nums" style={{ fontSize: hiLoFontSize }}>
+              <span className={textSubtle}>L </span>
+              <span className={textPrimary}>{Math.round(tempLow)}°</span>
+            </span>
 
-        <div
-          className="mt-1 flex items-center gap-4"
-          style={{ fontFamily: '"SF Pro Display", system-ui, sans-serif' }}
-        >
-          <span className="text-[15px] font-light tabular-nums">
-            <span className={textSubtle}>H </span>
-            <span className={textPrimary}>{Math.round(tempHigh)}°</span>
-          </span>
-          <span className="text-[15px] font-light tabular-nums">
-            <span className={textSubtle}>L </span>
-            <span className={textPrimary}>{Math.round(tempLow)}°</span>
-          </span>
-
-          {hasStats && (
-            <>
-              <div className={cn("h-3 w-px", isDark ? "bg-white/10" : "bg-black/10")} />
-              {humidity !== undefined && (
-                <div className="flex items-center gap-1">
-                  <Droplets className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
-                  <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
-                    {Math.round(humidity)}%
-                  </span>
-                </div>
-              )}
-              {windSpeed !== undefined && (
-                <div className="flex items-center gap-1">
-                  <Wind className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
-                  <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
-                    {Math.round(windSpeed)} mph
-                  </span>
-                </div>
-              )}
-            </>
-          )}
+            {hasStats && (
+              <>
+                <div className={cn("h-3 w-px", isDark ? "bg-white/10" : "bg-black/10")} />
+                {humidity !== undefined && (
+                  <div className="flex items-center gap-1">
+                    <Droplets className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
+                    <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
+                      {Math.round(humidity)}%
+                    </span>
+                  </div>
+                )}
+                {windSpeed !== undefined && (
+                  <div className="flex items-center gap-1">
+                    <Wind className={cn("size-3", textSubtle)} strokeWidth={1.5} aria-hidden="true" />
+                    <span className={cn("text-[12px] font-light tabular-nums", textMuted)}>
+                      {Math.round(windSpeed)} mph
+                    </span>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Spacer */}
       <div className="flex-1" />
 
-        {/* Forecast strip - hidden at small container sizes */}
-        {forecast.length > 0 && (
+      {/* Forecast strip - hidden at small container sizes */}
+      {forecast.length > 0 && (
+        <div className="px-3 pb-3">
           <div ref={cardRef} className="relative hidden @[280px]/weather:block">
             {/* Edge shine - outside overflow-hidden so it aligns with border */}
             <div
@@ -413,32 +432,36 @@ export function WeatherDataOverlay({
                   return (
                     <div
                       key={day.day}
-                      className={cn(
-                        "flex flex-1 flex-col items-center gap-0.5",
-                        index === 0 ? "opacity-100" : "opacity-60",
-                      )}
+                      className="flex flex-1 flex-col items-center gap-0.5"
                       style={{
-                        fontFamily: "system-ui, sans-serif",
+                        fontFamily: forecastFontFamily,
+                        fontFeatureSettings: '"tnum" 1, "case" 1',
                         textShadow: forecastTextShadow,
                       }}
                     >
                       <span
                         className={cn(
-                          "text-[10px] font-medium uppercase tracking-[0.1em]",
-                          textMuted,
+                          "text-[10px] uppercase tracking-[0.08em]",
+                          index === 0 ? "font-semibold" : "font-medium",
+                          textPrimary,
                         )}
                       >
                         {index === 0 ? "Now" : day.day}
                       </span>
                       <DayIcon
-                        className={cn("my-0.5 size-5", textSecondary)}
+                        className={cn(
+                          "my-0.5 size-5",
+                          textPrimary,
+                          index === 0 ? "opacity-100" : "opacity-70",
+                        )}
                         strokeWidth={1.5}
                         aria-hidden="true"
                       />
-                      <div className="flex flex-col items-center leading-tight">
+                      <div className="flex flex-col items-center gap-0.5">
                         <span
                           className={cn(
-                            "text-[14px] font-normal tabular-nums",
+                            "text-[15px] leading-[1.2] tabular-nums tracking-[-0.01em]",
+                            index === 0 ? "font-semibold" : "font-medium",
                             textPrimary,
                           )}
                         >
@@ -446,8 +469,8 @@ export function WeatherDataOverlay({
                         </span>
                         <span
                           className={cn(
-                            "text-[12px] font-light tabular-nums",
-                            textSubtle,
+                            "text-[12px] leading-[1.3] font-normal tabular-nums",
+                            textPrimary,
                           )}
                         >
                           {Math.round(day.tempMin)}°
@@ -459,8 +482,8 @@ export function WeatherDataOverlay({
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
-
