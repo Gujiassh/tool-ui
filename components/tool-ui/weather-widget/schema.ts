@@ -68,6 +68,9 @@ export const WeatherWidgetPayloadSchema = z
       visibility: z.number().optional(),
     }),
     forecast: z.array(ForecastDaySchema).min(1).max(7),
+    // Rendering-time hints only (not weather data):
+    // - `timeBucket` selects one of 12 fixed scenes
+    // - `localTimeOfDay` gives a continuous 0..1 position in the day cycle
     visual: z.object({
       timeBucket: TimeBucketSchema.optional(),
       localTimeOfDay: z.number().min(0).max(1).optional(),
