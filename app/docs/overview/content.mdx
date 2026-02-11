@@ -125,7 +125,7 @@ export async function POST(req: Request) {
 **What this demonstrates:**
 
 - `Tools({ toolkit })` registers tool renderers once
-- `safeParseSerializableLinkPreview` validates streamed tool output safely
+- `safeParseSerializableLinkPreview` is the render gate: return `null` until the full payload parses
 - `useAui({ tools: ... })` makes tool UIs available to the runtime
 - assistant-ui manages the runtime, streaming, and tool call lifecycle
 
@@ -152,6 +152,7 @@ const toolkit: Toolkit = {
     render: ({ result }) => {
       const parsedResult = safeParseSerializableLinkPreview(result);
 
+      // Tool UI renderers should mount only when the full payload parses.
       if (!parsedResult) {
         return null;
       }

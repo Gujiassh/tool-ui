@@ -132,11 +132,19 @@ For a single tool, `InferUITool` works the same way as `InferUITools` but for on
 
 Use the component's `outputSchema` on the server and `safeParseSerializable{componentName}` on the client to validate at both ends.
 
-### Lifecycle-aware rendering
+### Lifecycle-aware routing (outside Tool UI renderers)
 
-Use `part.state` to respect the Tool UI lifecycle from UI Guidelines:
+If you consume raw `message.parts`, keep lifecycle handling outside Tool UI components:
 
-- `state === 'invocation'` → show intent / shell
-- `state === 'output-pending'` → show skeleton / loading shell
-- `state === 'output-available'` → render the full component
-- `state === 'errored'` → show an error surface instead of silently failing
+- `state === 'invocation'` / `state === 'output-pending'` / `state === 'errored'`:
+  route to app-level UI (message shell, transport error, telemetry), not the Tool UI component.
+- `state === 'output-available'`:
+  parse `part.output` with `safeParseSerializable{componentName}` and render only when parsing succeeds.
+
+Inside Tool UI toolkit renderers, use a strict gate:
+
+```tsx
+const parsed = safeParseSerializableX(resultOrArgs);
+if (!parsed) return null;
+return <X {...parsed} />;
+```
