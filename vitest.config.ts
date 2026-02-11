@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["lib/playground/**/*.test.ts", "lib/tests/**/*.test.ts"],
+    setupFiles: ["lib/tests/setup/console-guard.ts"],
     passWithNoTests: true,
     globals: true,
     coverage: {
