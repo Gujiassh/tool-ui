@@ -62,6 +62,8 @@ Before coding:
 Implementation pattern:
 
 1. `schema.ts`: Define `SerializableXSchema`, `parseSerializableX(input: unknown)`, and `safeParseSerializableX(input: unknown)`
+   - In toolkit `render` snippets, always gate with `safeParseSerializableX(...)`; if parsing fails, `return null`.
+   - Do not branch on transport/runtime lifecycle state (`status`, `state.kind`, etc.) inside Tool UI renderers.
 2. `types.ts`: Create:
    - Serializable props type (derived from the schema)
    - Client props type (serializable props + callbacks like `onAction`, `onBeforeAction`)

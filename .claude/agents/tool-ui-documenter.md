@@ -174,7 +174,7 @@ import { makeAssistantTool } from "@assistant-ui/react";
 import {
   {Name},
   {Name}ErrorBoundary,
-  parseSerializable{Name},
+  safeParseSerializable{Name},
   Serializable{Name}Schema,
   type Serializable{Name},
 } from "@/components/tool-ui/{name}";
@@ -184,13 +184,13 @@ export const {Name}Tool = makeAssistantTool<Serializable{Name}>({
   description: "{Tool description}",
   parameters: Serializable{Name}Schema,
   render: ({ args, result, addResult, toolCallId }) => {
-    // Wait for required fields during streaming
-    if (!{streaming check}) return null;
-
-    const data = parseSerializable{Name}({
+    const data = safeParseSerializable{Name}({
       ...args,
       id: (args as any)?.id ?? `{name}-${toolCallId}`,
     });
+
+    // Tool UI renderers should mount only when the full payload parses.
+    if (!data) return null;
 
     return (
       <{Name}ErrorBoundary>

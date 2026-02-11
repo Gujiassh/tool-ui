@@ -51,7 +51,7 @@ Create a tool on your server that the LLM can call. The tool returns structured 
 
 - `SerializableLinkPreviewSchema` ensures your tool output matches the LinkPreview component's expected format
 - `id` identifies this rendering in the conversation
-- `safeParseSerializableLinkPreview` on the frontend validates streamed results before rendering
+- `safeParseSerializableLinkPreview` on the frontend gates rendering until the payload is complete
 - Your tool can fetch real data (APIs, databases) and return it in the component schema format
 
 ```ts
@@ -100,7 +100,7 @@ Connect your backend tool to a frontend component. When the LLM calls the `previ
 **What this demonstrates:**
 
 - `Tools({ toolkit })` registers tool renderers in one place
-- `safeParseSerializableLinkPreview` keeps rendering safe while tool payloads stream
+- `safeParseSerializableLinkPreview` is the render gate: no payload, no render (`return null`)
 - The toolkit key (`previewLink`) must match your backend tool name
 - `useAui({ tools: ... })` wires tool rendering into `AssistantRuntimeProvider`
 
@@ -127,6 +127,7 @@ const toolkit: Toolkit = {
     render: ({ result }) => {
       const parsedResult = safeParseSerializableLinkPreview(result);
 
+      // Tool UI renderers should mount only when the full payload parses.
       if (!parsedResult) {
         return null;
       }
@@ -259,6 +260,7 @@ export const toolkit: Toolkit = {
       id: (args as any)?.id ?? `format-selection-${toolCallId}`,
     });
 
+    // Tool UI renderers should mount only when the full payload parses.
     if (!parsedArgs) {
       return null;
     }
