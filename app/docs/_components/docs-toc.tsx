@@ -10,7 +10,8 @@ export function DocsToc() {
   const { scrollContainer, headings, activeId } = useDocsToc();
   const reducedMotion = useReducedMotion();
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const [indicatorTop, setIndicatorTop] = useState(0);
+  const previousIndicatorTopRef = useRef<number | null>(null);
+  const [indicatorTop, setIndicatorTop] = useState<number | null>(null);
 
   const scrollToHeading = useCallback(
     (id: string) => {
@@ -68,16 +69,27 @@ export function DocsToc() {
         if (navRect) {
           const relativeTop = linkRect.top - navRect.top + 8;
           setIndicatorTop(relativeTop);
+          return;
         }
       }
     }
+
+    setIndicatorTop(null);
   }, [activeId, headings]);
+
+  useEffect(() => {
+    previousIndicatorTopRef.current = indicatorTop;
+  }, [indicatorTop]);
 
   if (headings.length === 0) {
     return null;
   }
 
   const activeIndex = headings.findIndex((h) => h.id === activeId);
+  const shouldAnimateIndicator =
+    !reducedMotion &&
+    previousIndicatorTopRef.current !== null &&
+    indicatorTop !== null;
 
   const setLinkRef = (index: number) => (el: HTMLAnchorElement | null) => {
     linkRefs.current[index] = el;
@@ -93,14 +105,14 @@ export function DocsToc() {
       <p className="text-primary/60 mb-4 cursor-default text-xs tracking-widest uppercase select-none">
         On This Page
       </p>
-      {activeIndex >= 0 && (
+      {activeIndex >= 0 && indicatorTop !== null && (
         <span
           aria-hidden="true"
           className="bg-foreground pointer-events-none absolute -left-3 h-3 w-0.5 rounded-full"
           style={{
             top: indicatorTop,
             opacity: 1,
-            transition: reducedMotion ? "none" : "top 150ms ease-out",
+            transition: shouldAnimateIndicator ? "top 150ms ease-out" : "none",
           }}
         />
       )}
