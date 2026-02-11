@@ -2,6 +2,7 @@ import "./styles/globals.css";
 import type { ReactNode } from "react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import { PostHogInit } from "@/app/components/analytics/posthog-init.client";
 import { ThemeProvider } from "@/app/components/theme/theme-provider";
 import { MobileNavSheet } from "@/app/components/layout/mobile-nav-sheet.client";
 
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           {children}
           <MobileNavSheet />
+          <PostHogInit />
         </ThemeProvider>
       </body>
     </html>
