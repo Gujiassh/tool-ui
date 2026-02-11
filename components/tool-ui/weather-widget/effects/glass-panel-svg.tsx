@@ -370,7 +370,7 @@ export function GlassPanel({
  */
 export function GlassPanelCSS() {
   return (
-    <style jsx global>{`
+    <style>{`
       .glass-panel {
         background: rgba(255, 255, 255, 0.15);
         box-shadow:
