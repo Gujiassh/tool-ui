@@ -1,4 +1,4 @@
-import { promises as fs } from "fs";
+import { existsSync, statSync, promises as fs } from "fs";
 import path from "path";
 
 type RegistryItemType =
@@ -43,7 +43,6 @@ interface ToolUiRegistryDefinition {
   title: string;
   description: string;
   sourceDir: string;
-  additionalFiles?: string[];
   dependencies?: string[];
   registryDependencies?: string[];
 }
@@ -53,30 +52,17 @@ export interface ToolUiRegistryArtifacts {
   items: RegistryItem[];
 }
 
-export interface ToolUiRegistryOptions {
-  registryBaseUrl?: string;
-}
-
 const REGISTRY_SCHEMA = "https://ui.shadcn.com/schema/registry.json";
 const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
 
 const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
-  {
-    name: "shared",
-    title: "Shared",
-    description: "Shared helpers and schemas for Tool UI components.",
-    sourceDir: "components/tool-ui/shared",
-    additionalFiles: ["lib/ui/cn.ts"],
-    dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button"],
-  },
   {
     name: "plan",
     title: "Plan",
     description: "Display step-by-step task workflows in AI interfaces.",
     sourceDir: "components/tool-ui/plan",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["accordion", "button", "card", "collapsible", "shared"],
+    registryDependencies: ["accordion", "button", "card", "collapsible"],
   },
   {
     name: "progress-tracker",
@@ -85,7 +71,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
       "Show real-time status feedback for multi-step operations in AI interfaces.",
     sourceDir: "components/tool-ui/progress-tracker",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "shared"],
+    registryDependencies: ["button"],
   },
   {
     name: "option-list",
@@ -93,7 +79,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
     description: "Single or multi-select choices with confirmation actions.",
     sourceDir: "components/tool-ui/option-list",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "separator", "shared"],
+    registryDependencies: ["button", "separator"],
   },
   {
     name: "message-draft",
@@ -101,7 +87,7 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
     description: "Review and confirm drafted messages before sending.",
     sourceDir: "components/tool-ui/message-draft",
     dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "shared"],
+    registryDependencies: ["button"],
   },
   {
     name: "data-table",
@@ -116,10 +102,11 @@ const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
       "dropdown-menu",
       "table",
       "tooltip",
-      "shared",
     ],
   },
 ];
+
+const RELATIVE_IMPORT_RE = /(?:import|export)\s[^"']*from\s+["']([^"']+)["']/g;
 
 function inferRegistryFileType(filePath: string): RegistryItemType {
   if (filePath.endsWith(".tsx")) return "registry:component";
@@ -150,26 +137,114 @@ function toPosixPath(filePath: string): string {
   return filePath.split(path.sep).join(path.posix.sep);
 }
 
+function resolveLocalImport(
+  fromAbsolutePath: string,
+  specifier: string,
+): string | null {
+  const basePath = path.resolve(path.dirname(fromAbsolutePath), specifier);
+  const candidates = [
+    `${basePath}.ts`,
+    `${basePath}.tsx`,
+    path.join(basePath, "index.ts"),
+    path.join(basePath, "index.tsx"),
+    basePath,
+  ];
+
+  for (const candidate of candidates) {
+    if (!existsSync(candidate)) {
+      continue;
+    }
+
+    if (path.extname(candidate) || statSync(candidate).isFile()) {
+      return candidate;
+    }
+
+    const indexTs = path.join(candidate, "index.ts");
+    const indexTsx = path.join(candidate, "index.tsx");
+    if (existsSync(indexTs)) return indexTs;
+    if (existsSync(indexTsx)) return indexTsx;
+  }
+
+  return null;
+}
+
+function extractRelativeImportSpecifiers(content: string): string[] {
+  const imports = new Set<string>();
+  RELATIVE_IMPORT_RE.lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = RELATIVE_IMPORT_RE.exec(content)) !== null) {
+    const specifier = match[1];
+    if (!specifier.startsWith(".")) continue;
+    imports.add(specifier);
+  }
+
+  return Array.from(imports);
+}
+
+function shouldIncludeResolvedPath(
+  relativePath: string,
+  sourceDir: string,
+): boolean {
+  if (relativePath === "lib/ui/cn.ts") return true;
+  if (relativePath.startsWith(`${sourceDir}/`)) return true;
+  return relativePath.startsWith("components/tool-ui/shared/");
+}
+
+async function collectItemFilePaths(
+  projectRoot: string,
+  sourceDir: string,
+): Promise<string[]> {
+  const absoluteSourceDir = path.join(projectRoot, sourceDir);
+  const componentFilePaths = await listFilesRecursively(absoluteSourceDir);
+
+  const included = new Set(componentFilePaths);
+  const queue = [...componentFilePaths];
+  const seen = new Set<string>();
+
+  while (queue.length > 0) {
+    const absolutePath = queue.pop() as string;
+    if (seen.has(absolutePath)) continue;
+    seen.add(absolutePath);
+
+    const content = await fs.readFile(absolutePath, "utf8");
+    const importSpecifiers = extractRelativeImportSpecifiers(content);
+
+    for (const specifier of importSpecifiers) {
+      const resolvedPath = resolveLocalImport(absolutePath, specifier);
+      if (!resolvedPath) continue;
+
+      const relativePath = toPosixPath(
+        path.relative(projectRoot, resolvedPath),
+      );
+      if (!shouldIncludeResolvedPath(relativePath, sourceDir)) continue;
+
+      if (!included.has(resolvedPath)) {
+        included.add(resolvedPath);
+        queue.push(resolvedPath);
+      }
+    }
+  }
+
+  return Array.from(included)
+    .map((absolutePath) =>
+      toPosixPath(path.relative(projectRoot, absolutePath)),
+    )
+    .sort((a, b) => a.localeCompare(b));
+}
+
 async function buildRegistryItem(
   projectRoot: string,
   definition: ToolUiRegistryDefinition,
-  registryBaseUrl: string,
 ): Promise<RegistryItem> {
-  const absoluteSourceDir = path.join(projectRoot, definition.sourceDir);
-  const absoluteFilePaths = await listFilesRecursively(absoluteSourceDir);
-  const absoluteAdditionalFilePaths = (definition.additionalFiles ?? []).map(
-    (filePath) => path.join(projectRoot, filePath),
+  const relativeFilePaths = await collectItemFilePaths(
+    projectRoot,
+    definition.sourceDir,
   );
-  const allAbsoluteFilePaths = [
-    ...absoluteFilePaths,
-    ...absoluteAdditionalFilePaths,
-  ].sort((a, b) => a.localeCompare(b));
 
   const files = await Promise.all(
-    allAbsoluteFilePaths.map(async (absolutePath): Promise<RegistryFile> => {
-      const relativePath = toPosixPath(
-        path.relative(projectRoot, absolutePath),
-      );
+    relativeFilePaths.map(async (relativePath): Promise<RegistryFile> => {
+      const absolutePath = path.join(projectRoot, relativePath);
       const content = await fs.readFile(absolutePath, "utf8");
       return {
         path: relativePath,
@@ -180,13 +255,6 @@ async function buildRegistryItem(
     }),
   );
 
-  const registryDependencies = definition.registryDependencies?.map(
-    (dependency) =>
-      dependency === "shared"
-        ? `${registryBaseUrl}/shared.json`
-        : dependency,
-  );
-
   return {
     $schema: REGISTRY_ITEM_SCHEMA,
     name: definition.name,
@@ -194,7 +262,7 @@ async function buildRegistryItem(
     title: definition.title,
     description: definition.description,
     dependencies: definition.dependencies,
-    registryDependencies,
+    registryDependencies: definition.registryDependencies,
     files,
   };
 }
@@ -217,14 +285,10 @@ function toIndexItem(item: RegistryItem): RegistryIndex["items"][number] {
 
 export async function buildToolUiRegistryArtifacts(
   projectRoot: string,
-  options: ToolUiRegistryOptions = {},
 ): Promise<ToolUiRegistryArtifacts> {
-  const registryBaseUrl =
-    options.registryBaseUrl?.replace(/\/$/, "") ?? "https://tool-ui.com/r";
-
   const items = await Promise.all(
     TOOL_UI_REGISTRY_DEFINITIONS.map((definition) =>
-      buildRegistryItem(projectRoot, definition, registryBaseUrl),
+      buildRegistryItem(projectRoot, definition),
     ),
   );
 
@@ -243,9 +307,8 @@ export async function buildToolUiRegistryArtifacts(
 
 export async function writeToolUiRegistryArtifacts(
   projectRoot: string,
-  options: ToolUiRegistryOptions = {},
 ): Promise<ToolUiRegistryArtifacts> {
-  const artifacts = await buildToolUiRegistryArtifacts(projectRoot, options);
+  const artifacts = await buildToolUiRegistryArtifacts(projectRoot);
   const outputDir = path.join(projectRoot, "public", "r");
   await fs.mkdir(outputDir, { recursive: true });
 

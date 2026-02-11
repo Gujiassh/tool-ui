@@ -4,101 +4,6 @@
   "homepage": "https://tool-ui.com",
   "items": [
     {
-      "name": "shared",
-      "type": "registry:block",
-      "title": "Shared",
-      "description": "Shared helpers and schemas for Tool UI components.",
-      "dependencies": [
-        "lucide-react",
-        "zod"
-      ],
-      "registryDependencies": [
-        "button"
-      ],
-      "files": [
-        {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/error-boundary.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/error-boundary.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/media/aspect-ratio.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/media/aspect-ratio.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/media/format-utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/media/format-utils.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/media/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/media/index.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/media/overlay-gradient.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/media/overlay-gradient.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/media/sanitize-href.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/media/sanitize-href.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/parse.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/parse.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/schema.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
-        },
-        {
-          "path": "lib/ui/cn.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/cn.ts"
-        }
-      ]
-    },
-    {
       "name": "plan",
       "type": "registry:block",
       "title": "Plan",
@@ -111,8 +16,7 @@
         "accordion",
         "button",
         "card",
-        "collapsible",
-        "https://tool-ui.com/r/shared.json"
+        "collapsible"
       ],
       "files": [
         {
@@ -139,6 +43,46 @@
           "path": "components/tool-ui/plan/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/plan/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/actions-config.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/use-action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/use-action-buttons.tsx"
+        },
+        {
+          "path": "lib/ui/cn.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/cn.ts"
         }
       ]
     },
@@ -152,8 +96,7 @@
         "zod"
       ],
       "registryDependencies": [
-        "button",
-        "https://tool-ui.com/r/shared.json"
+        "button"
       ],
       "files": [
         {
@@ -180,6 +123,46 @@
           "path": "components/tool-ui/progress-tracker/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/progress-tracker/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/actions-config.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/use-action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/use-action-buttons.tsx"
+        },
+        {
+          "path": "lib/ui/cn.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/cn.ts"
         }
       ]
     },
@@ -194,8 +177,7 @@
       ],
       "registryDependencies": [
         "button",
-        "separator",
-        "https://tool-ui.com/r/shared.json"
+        "separator"
       ],
       "files": [
         {
@@ -222,6 +204,46 @@
           "path": "components/tool-ui/option-list/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/option-list/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/actions-config.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/use-action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/use-action-buttons.tsx"
+        },
+        {
+          "path": "lib/ui/cn.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/cn.ts"
         }
       ]
     },
@@ -235,8 +257,7 @@
         "zod"
       ],
       "registryDependencies": [
-        "button",
-        "https://tool-ui.com/r/shared.json"
+        "button"
       ],
       "files": [
         {
@@ -263,6 +284,41 @@
           "path": "components/tool-ui/message-draft/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/message-draft/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/use-action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/use-action-buttons.tsx"
+        },
+        {
+          "path": "lib/ui/cn.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/cn.ts"
         }
       ]
     },
@@ -280,8 +336,7 @@
         "button",
         "dropdown-menu",
         "table",
-        "tooltip",
-        "https://tool-ui.com/r/shared.json"
+        "tooltip"
       ],
       "files": [
         {
@@ -323,6 +378,46 @@
           "path": "components/tool-ui/data-table/utilities.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/data-table/utilities.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/actions-config.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/use-action-buttons.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/shared/use-action-buttons.tsx"
+        },
+        {
+          "path": "lib/ui/cn.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/cn.ts"
         }
       ]
     }

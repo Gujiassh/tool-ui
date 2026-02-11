@@ -14,8 +14,9 @@ import type {
   OptionListSelection,
   OptionListOption,
 } from "./schema";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
-import type { Action } from "../shared";
+import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import type { Action } from "../shared/schema";
 import { cn, Button, Separator } from "./_adapter";
 import { Check } from "lucide-react";
 

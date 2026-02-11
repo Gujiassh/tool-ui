@@ -7,8 +7,8 @@ import type {
   SerializableEmailDraft,
   SerializableSlackDraft,
 } from "./schema";
-import { ActionButtons } from "../shared";
-import type { Action } from "../shared";
+import { ActionButtons } from "../shared/action-buttons";
+import type { Action } from "../shared/schema";
 import { Check, ChevronDown } from "lucide-react";
 
 type DraftState = "review" | "sending" | "sent" | "cancelled";
@@ -34,7 +34,7 @@ function RecipientRow({
 
   return (
     <tr className="text-sm">
-      <td className="text-muted-foreground w-0 whitespace-nowrap pr-4 pb-1 align-top text-right font-medium">
+      <td className="text-muted-foreground w-0 pr-4 pb-1 text-right align-top font-medium whitespace-nowrap">
         {label}
       </td>
       <td className={cn("pb-1 align-top", muted && "text-muted-foreground")}>
@@ -55,7 +55,7 @@ interface SingleFieldRowProps {
 function SingleFieldRow({ label, value }: SingleFieldRowProps) {
   return (
     <tr className="text-sm">
-      <td className="text-muted-foreground w-0 whitespace-nowrap pr-4 pb-1 align-top text-right font-medium">
+      <td className="text-muted-foreground w-0 pr-4 pb-1 text-right align-top font-medium whitespace-nowrap">
         {label}
       </td>
       <td className="pb-1 align-top">{value}</td>
@@ -69,8 +69,14 @@ interface ExpandableBodyProps {
   onNeedsExpansionChange?: (needsExpansion: boolean) => void;
 }
 
-function ExpandableBody({ body, isExpanded, onNeedsExpansionChange }: ExpandableBodyProps) {
-  const [needsExpansion, setNeedsExpansion] = React.useState<boolean | null>(null);
+function ExpandableBody({
+  body,
+  isExpanded,
+  onNeedsExpansionChange,
+}: ExpandableBodyProps) {
+  const [needsExpansion, setNeedsExpansion] = React.useState<boolean | null>(
+    null,
+  );
   const contentRef = React.useRef<HTMLDivElement>(null);
 
   React.useLayoutEffect(() => {
@@ -87,7 +93,8 @@ function ExpandableBody({ body, isExpanded, onNeedsExpansionChange }: Expandable
         ref={contentRef}
         className={cn(
           "overflow-hidden text-sm leading-relaxed",
-          needsExpansion !== null && "transition-[max-height] duration-300 ease-in-out",
+          needsExpansion !== null &&
+            "transition-[max-height] duration-300 ease-in-out",
         )}
         style={{
           maxHeight:
@@ -98,7 +105,7 @@ function ExpandableBody({ body, isExpanded, onNeedsExpansionChange }: Expandable
                 : `${COLLAPSED_BODY_HEIGHT}px`,
         }}
       >
-        <p className="whitespace-pre-wrap pt-1">{body}</p>
+        <p className="pt-1 whitespace-pre-wrap">{body}</p>
       </div>
       {needsExpansion && (
         <div
@@ -119,10 +126,15 @@ interface EmailDraftContentProps {
   onNeedsExpansionChange?: (needsExpansion: boolean) => void;
 }
 
-function EmailDraftContent({ draft, titleId, isExpanded, onNeedsExpansionChange }: EmailDraftContentProps) {
+function EmailDraftContent({
+  draft,
+  titleId,
+  isExpanded,
+  onNeedsExpansionChange,
+}: EmailDraftContentProps) {
   return (
     <>
-      <h2 id={titleId} className="pt-2 text-base font-semibold leading-tight">
+      <h2 id={titleId} className="pt-2 text-base leading-tight font-semibold">
         {draft.subject}
       </h2>
 
@@ -141,7 +153,11 @@ function EmailDraftContent({ draft, titleId, isExpanded, onNeedsExpansionChange 
 
       <div className="bg-border -mx-5 h-px" role="separator" />
 
-      <ExpandableBody body={draft.body} isExpanded={isExpanded} onNeedsExpansionChange={onNeedsExpansionChange} />
+      <ExpandableBody
+        body={draft.body}
+        isExpanded={isExpanded}
+        onNeedsExpansionChange={onNeedsExpansionChange}
+      />
     </>
   );
 }
@@ -155,11 +171,7 @@ interface SlackDraftContentProps {
 
 function SlackLogo({ className }: { className?: string }) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
       <path
         fill="#E01E5A"
         d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z"
@@ -180,7 +192,12 @@ function SlackLogo({ className }: { className?: string }) {
   );
 }
 
-function SlackDraftContent({ draft, titleId, isExpanded, onNeedsExpansionChange }: SlackDraftContentProps) {
+function SlackDraftContent({
+  draft,
+  titleId,
+  isExpanded,
+  onNeedsExpansionChange,
+}: SlackDraftContentProps) {
   const { target } = draft;
   const isChannel = target.type === "channel";
   const targetDisplay = isChannel
@@ -190,7 +207,10 @@ function SlackDraftContent({ draft, titleId, isExpanded, onNeedsExpansionChange 
 
   return (
     <>
-      <div id={titleId} className="flex items-center gap-1.5 text-sm font-medium">
+      <div
+        id={titleId}
+        className="flex items-center gap-1.5 text-sm font-medium"
+      >
         <SlackLogo className="size-4" />
         <span>{targetDisplay}</span>
         {memberCount !== undefined && (
@@ -202,7 +222,11 @@ function SlackDraftContent({ draft, titleId, isExpanded, onNeedsExpansionChange 
 
       <div className="bg-border -mx-5 h-px" role="separator" />
 
-      <ExpandableBody body={draft.body} isExpanded={isExpanded} onNeedsExpansionChange={onNeedsExpansionChange} />
+      <ExpandableBody
+        body={draft.body}
+        isExpanded={isExpanded}
+        onNeedsExpansionChange={onNeedsExpansionChange}
+      />
     </>
   );
 }
@@ -382,7 +406,10 @@ export function MessageDraft(props: MessageDraftProps) {
     switch (state) {
       case "sending":
         return (
-          <div className="flex items-center justify-end gap-3" aria-live="polite">
+          <div
+            className="flex items-center justify-end gap-3"
+            aria-live="polite"
+          >
             <span className="text-muted-foreground text-sm">
               Sending in {countdown}s
             </span>
@@ -413,7 +440,7 @@ export function MessageDraft(props: MessageDraftProps) {
   return (
     <article
       className={cn(
-        "flex w-full min-w-64 max-w-lg flex-col gap-3",
+        "flex w-full max-w-lg min-w-64 flex-col gap-3",
         "text-foreground",
         className,
       )}
@@ -443,9 +470,7 @@ export function MessageDraft(props: MessageDraftProps) {
         {expandButton}
       </div>
 
-      <div className="@container/actions">
-        {renderActions()}
-      </div>
+      <div className="@container/actions">{renderActions()}</div>
     </article>
   );
 }

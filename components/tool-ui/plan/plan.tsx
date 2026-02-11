@@ -2,13 +2,7 @@
 
 import * as React from "react";
 import { useMemo, useState, useEffect, useRef } from "react";
-import {
-  Loader2,
-  Check,
-  X,
-  MoreHorizontal,
-  ChevronRight,
-} from "lucide-react";
+import { Loader2, Check, X, MoreHorizontal, ChevronRight } from "lucide-react";
 import type { PlanProps, PlanTodo, PlanTodoStatus } from "./schema";
 import {
   cn,
@@ -26,7 +20,8 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "./_adapter";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
+import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
 import { calculatePlanProgress, shouldCelebrateProgress } from "./progress";
 
 const INITIAL_VISIBLE_TODO_COUNT = 4;
@@ -35,7 +30,7 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
   if (status === "pending") {
     return (
       <span
-        className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card motion-safe:transition-all motion-safe:duration-200"
+        className="border-border bg-card flex size-6 shrink-0 items-center justify-center rounded-full border motion-safe:transition-all motion-safe:duration-200"
         aria-hidden="true"
       />
     );
@@ -44,10 +39,10 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
   if (status === "in_progress") {
     return (
       <span
-        className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
+        className="border-border bg-card flex size-6 shrink-0 items-center justify-center rounded-full border shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
         aria-hidden="true"
       >
-        <Loader2 className="size-5 text-primary motion-safe:animate-[spin_0.7s_linear_infinite]" />
+        <Loader2 className="text-primary size-5 motion-safe:animate-[spin_0.7s_linear_infinite]" />
       </span>
     );
   }
@@ -55,11 +50,11 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
   if (status === "completed") {
     return (
       <span
-        className="flex size-6 shrink-0 items-center justify-center rounded-full border border-primary bg-primary shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]"
+        className="border-primary bg-primary flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]"
         aria-hidden="true"
       >
         <Check
-          className="size-4 text-primary-foreground [&_path]:motion-safe:animate-[check-draw_400ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_backwards]"
+          className="text-primary-foreground size-4 [&_path]:motion-safe:animate-[check-draw_400ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_backwards]"
           strokeWidth={3}
           style={{ ["--check-path-length" as string]: "24" }}
         />
@@ -70,7 +65,7 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
   if (status === "cancelled") {
     return (
       <span
-        className="flex size-6 shrink-0 items-center justify-center rounded-full border border-destructive bg-destructive shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)] dark:border-red-600 dark:bg-red-600"
+        className="border-destructive bg-destructive flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)] dark:border-red-600 dark:bg-red-600"
         aria-hidden="true"
       >
         <X
@@ -92,16 +87,23 @@ interface PlanTodoItemProps {
   showConnector?: boolean;
 }
 
-function PlanTodoItem({ todo, className, style, showConnector }: PlanTodoItemProps) {
+function PlanTodoItem({
+  todo,
+  className,
+  style,
+  showConnector,
+}: PlanTodoItemProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const labelElement = (
     <span
       className={cn(
-        "text-sm font-medium leading-6 break-words",
+        "text-sm leading-6 font-medium break-words",
         todo.status === "pending" && "text-muted-foreground",
-        todo.status === "in_progress" && "motion-safe:shimmer shimmer-invert text-foreground",
-        (todo.status === "completed" || todo.status === "cancelled") && "text-muted-foreground"
+        todo.status === "in_progress" &&
+          "motion-safe:shimmer shimmer-invert text-foreground",
+        (todo.status === "completed" || todo.status === "cancelled") &&
+          "text-muted-foreground",
       )}
     >
       {todo.label}
@@ -110,10 +112,16 @@ function PlanTodoItem({ todo, className, style, showConnector }: PlanTodoItemPro
 
   if (!todo.description) {
     return (
-      <li className={cn("relative -mx-2 flex cursor-default items-start gap-3 rounded-md px-2 py-1.5", className)} style={style}>
+      <li
+        className={cn(
+          "relative -mx-2 flex cursor-default items-start gap-3 rounded-md px-2 py-1.5",
+          className,
+        )}
+        style={style}
+      >
         {showConnector && (
           <div
-            className="absolute left-5 top-6 w-px bg-border"
+            className="bg-border absolute top-6 left-5 w-px"
             style={{
               height: "calc(100% + 0.25rem)",
             }}
@@ -123,18 +131,22 @@ function PlanTodoItem({ todo, className, style, showConnector }: PlanTodoItemPro
         <div className="relative z-10">
           <TodoIcon status={todo.status} />
         </div>
-        <div className="flex-1 min-w-0">
-          {labelElement}
-        </div>
+        <div className="min-w-0 flex-1">{labelElement}</div>
       </li>
     );
   }
 
   return (
-    <li className={cn("relative -mx-2 cursor-default rounded-md min-w-0", className)} style={style}>
+    <li
+      className={cn(
+        "relative -mx-2 min-w-0 cursor-default rounded-md",
+        className,
+      )}
+      style={style}
+    >
       {showConnector && (
         <div
-          className="absolute left-5 top-6 w-px bg-border"
+          className="bg-border absolute top-6 left-5 w-px"
           style={{
             height: "calc(100% + 0.25rem)",
           }}
@@ -143,27 +155,28 @@ function PlanTodoItem({ todo, className, style, showConnector }: PlanTodoItemPro
       )}
       <Collapsible asChild open={isOpen} onOpenChange={setIsOpen}>
         <div
-          className="min-w-0 data-[state=open]:bg-primary/5 rounded-md motion-safe:transition-all motion-safe:duration-200"
+          className="data-[state=open]:bg-primary/5 min-w-0 rounded-md motion-safe:transition-all motion-safe:duration-200"
           style={{
             backdropFilter: isOpen ? "blur(2px)" : undefined,
           }}
         >
-        <CollapsibleTrigger className="group/todo flex w-full cursor-default items-start gap-3 px-2 py-1.5 text-left">
-          <div className="relative z-10">
-            <TodoIcon status={todo.status} />
-          </div>
-          <span className="flex-1 min-w-0">
-            {labelElement}
-          </span>
-          <ChevronRight className="text-muted-foreground/50 group-hover/todo:text-muted-foreground mt-0.5 size-4 shrink-0 rotate-90 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-data-[state=open]/todo:[transform:rotateY(180deg)]" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="group/content" data-slot="collapsible-content">
-          <div className="min-w-0 motion-safe:group-data-[state=open]/content:animate-[fade-in-stagger_120ms_ease-out_30ms_backwards] motion-safe:group-data-[state=closed]/content:animate-[fade-out-stagger_120ms_ease-out]">
-            <p className="text-muted-foreground pr-2 pb-1.5 pl-11 text-sm text-pretty break-words min-w-0">
-              {todo.description}
-            </p>
-          </div>
-        </CollapsibleContent>
+          <CollapsibleTrigger className="group/todo flex w-full cursor-default items-start gap-3 px-2 py-1.5 text-left">
+            <div className="relative z-10">
+              <TodoIcon status={todo.status} />
+            </div>
+            <span className="min-w-0 flex-1">{labelElement}</span>
+            <ChevronRight className="text-muted-foreground/50 group-hover/todo:text-muted-foreground mt-0.5 size-4 shrink-0 rotate-90 group-data-[state=open]/todo:[transform:rotateY(180deg)] motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.34,1.56,0.64,1)]" />
+          </CollapsibleTrigger>
+          <CollapsibleContent
+            className="group/content"
+            data-slot="collapsible-content"
+          >
+            <div className="min-w-0 motion-safe:group-data-[state=closed]/content:animate-[fade-out-stagger_120ms_ease-out] motion-safe:group-data-[state=open]/content:animate-[fade-in-stagger_120ms_ease-out_30ms_backwards]">
+              <p className="text-muted-foreground min-w-0 pr-2 pb-1.5 pl-11 text-sm text-pretty break-words">
+                {todo.description}
+              </p>
+            </div>
+          </CollapsibleContent>
         </div>
       </Collapsible>
     </li>
@@ -187,7 +200,9 @@ function TodoList({ todos, newTodoIds }: TodoListProps) {
             key={todo.id}
             todo={todo}
             showConnector={index < todos.length - 1}
-            className={cn(isNew && "motion-safe:animate-[fade-up_300ms_ease-out]")}
+            className={cn(
+              isNew && "motion-safe:animate-[fade-up_300ms_ease-out]",
+            )}
             style={
               isNew
                 ? {
@@ -210,17 +225,18 @@ interface ProgressBarProps {
 
 function ProgressBar({ progress, isCelebrating }: ProgressBarProps) {
   return (
-    <div className="relative mb-3 h-1.5 overflow-hidden rounded-full bg-muted">
+    <div className="bg-muted relative mb-3 h-1.5 overflow-hidden rounded-full">
       <div
         className={cn(
           "h-full rounded-full transition-all duration-500",
           progress === 100
             ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-400 motion-safe:animate-[progress-pulse_600ms_ease-out]"
-            : "bg-primary"
+            : "bg-primary",
         )}
         style={{
           width: `${progress}%`,
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)",
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.2)",
         }}
       />
       {isCelebrating && (
@@ -320,66 +336,66 @@ function PlanRoot({
       data-tool-ui-id={id}
       data-slot="plan"
     >
-        <CardHeader className="flex flex-row items-start justify-between gap-4">
-          <div className="space-y-1.5">
-            <CardTitle className="leading-5 font-medium text-pretty">
-              {title}
-            </CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
-          </div>
-          {allComplete && (
-            <Check className="mt-0.5 size-5 shrink-0 text-emerald-500" />
-          )}
-        </CardHeader>
-
-        <CardContent className="px-4 min-w-0">
-          <div className="bg-muted/70 rounded-lg px-6 py-4 min-w-0">
-            {showProgress && (
-              <>
-                <div className="text-muted-foreground mb-2 text-sm">
-                  {completedCount} of {todos.length} complete
-                </div>
-
-                <ProgressBar progress={progress} isCelebrating={isCelebrating} />
-              </>
-            )}
-
-            <ul className="mt-4 space-y-1 min-w-0">
-              <TodoList todos={visibleTodos} newTodoIds={newTodoIds} />
-
-              {hiddenTodos.length > 0 && (
-                <li className="mt-1">
-                  <Accordion type="single" collapsible>
-                    <AccordionItem value="more" className="border-0">
-                      <AccordionTrigger className="text-muted-foreground hover:text-primary flex cursor-default items-start justify-start gap-2 py-1 text-sm font-normal [&>svg:last-child]:hidden">
-                        <MoreHorizontal className="text-muted-foreground/70 mt-0.5 size-4 shrink-0" />
-                        <span>{hiddenTodos.length} more</span>
-                      </AccordionTrigger>
-                      <AccordionContent className="pt-2 pb-0">
-                        <ul className="-mx-2 space-y-2 px-2">
-                          <TodoList todos={hiddenTodos} newTodoIds={newTodoIds} />
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </li>
-              )}
-            </ul>
-          </div>
-        </CardContent>
-
-        {resolvedFooterActions && (
-          <CardFooter className="@container/actions">
-            <ActionButtons
-              actions={resolvedFooterActions.items}
-              align={resolvedFooterActions.align}
-              confirmTimeout={resolvedFooterActions.confirmTimeout}
-              onAction={(id) => onResponseAction?.(id)}
-              onBeforeAction={onBeforeResponseAction}
-              className="w-full"
-            />
-          </CardFooter>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div className="space-y-1.5">
+          <CardTitle className="leading-5 font-medium text-pretty">
+            {title}
+          </CardTitle>
+          {description && <CardDescription>{description}</CardDescription>}
+        </div>
+        {allComplete && (
+          <Check className="mt-0.5 size-5 shrink-0 text-emerald-500" />
         )}
+      </CardHeader>
+
+      <CardContent className="min-w-0 px-4">
+        <div className="bg-muted/70 min-w-0 rounded-lg px-6 py-4">
+          {showProgress && (
+            <>
+              <div className="text-muted-foreground mb-2 text-sm">
+                {completedCount} of {todos.length} complete
+              </div>
+
+              <ProgressBar progress={progress} isCelebrating={isCelebrating} />
+            </>
+          )}
+
+          <ul className="mt-4 min-w-0 space-y-1">
+            <TodoList todos={visibleTodos} newTodoIds={newTodoIds} />
+
+            {hiddenTodos.length > 0 && (
+              <li className="mt-1">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="more" className="border-0">
+                    <AccordionTrigger className="text-muted-foreground hover:text-primary flex cursor-default items-start justify-start gap-2 py-1 text-sm font-normal [&>svg:last-child]:hidden">
+                      <MoreHorizontal className="text-muted-foreground/70 mt-0.5 size-4 shrink-0" />
+                      <span>{hiddenTodos.length} more</span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pt-2 pb-0">
+                      <ul className="-mx-2 space-y-2 px-2">
+                        <TodoList todos={hiddenTodos} newTodoIds={newTodoIds} />
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </li>
+            )}
+          </ul>
+        </div>
+      </CardContent>
+
+      {resolvedFooterActions && (
+        <CardFooter className="@container/actions">
+          <ActionButtons
+            actions={resolvedFooterActions.items}
+            align={resolvedFooterActions.align}
+            confirmTimeout={resolvedFooterActions.confirmTimeout}
+            onAction={(id) => onResponseAction?.(id)}
+            onBeforeAction={onBeforeResponseAction}
+            className="w-full"
+          />
+        </CardFooter>
+      )}
     </Card>
   );
 }
@@ -392,4 +408,6 @@ type PlanComponent = typeof PlanRoot & {
   Compact: typeof PlanCompact;
 };
 
-export const Plan = Object.assign(PlanRoot, { Compact: PlanCompact }) as PlanComponent;
+export const Plan = Object.assign(PlanRoot, {
+  Compact: PlanCompact,
+}) as PlanComponent;

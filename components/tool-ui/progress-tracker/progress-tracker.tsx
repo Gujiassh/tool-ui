@@ -3,8 +3,9 @@
 import * as React from "react";
 import { cn } from "./_adapter";
 import type { ProgressTrackerProps } from "./schema";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
-import type { Action } from "../shared";
+import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import type { Action } from "../shared/schema";
 import { Check, X, Loader2, Timer, AlertCircle } from "lucide-react";
 
 function formatElapsedTime(milliseconds: number): string {
@@ -27,7 +28,7 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "pending") {
     return (
       <span
-        className="bg-card flex size-6 shrink-0 items-center justify-center rounded-full border border-border motion-safe:transition-all motion-safe:duration-200"
+        className="bg-card border-border flex size-6 shrink-0 items-center justify-center rounded-full border motion-safe:transition-all motion-safe:duration-200"
         aria-hidden="true"
       />
     );
@@ -36,7 +37,7 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "in-progress") {
     return (
       <span
-        className="bg-card flex size-6 shrink-0 items-center justify-center rounded-full border border-border shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
+        className="bg-card border-border flex size-6 shrink-0 items-center justify-center rounded-full border shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
         aria-hidden="true"
       >
         <Loader2 className="text-primary size-5 motion-safe:animate-[spin_0.7s_linear_infinite]" />
@@ -47,7 +48,7 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "completed") {
     return (
       <span
-        className="bg-primary text-primary-foreground flex size-6 shrink-0 items-center justify-center rounded-full border border-primary shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]"
+        className="bg-primary text-primary-foreground border-primary flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]"
         aria-hidden="true"
       >
         <Check
@@ -64,7 +65,7 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "failed") {
     return (
       <span
-        className="bg-destructive dark:bg-red-600 text-white flex size-6 shrink-0 items-center justify-center rounded-full border border-destructive dark:border-red-600 shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]"
+        className="bg-destructive border-destructive flex size-6 shrink-0 items-center justify-center rounded-full border text-white shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)] dark:border-red-600 dark:bg-red-600"
         aria-hidden="true"
       >
         <X
@@ -148,7 +149,7 @@ export function ProgressTracker({
       {choice ? (
         <div
           className={cn(
-            "flex w-full min-w-80 max-w-md flex-col",
+            "flex w-full max-w-md min-w-80 flex-col",
             "text-foreground select-none",
             "motion-safe:animate-[fade-blur-in_300ms_cubic-bezier(0.16,1,0.3,1)_both]",
             className,
@@ -162,8 +163,8 @@ export function ProgressTracker({
           <div className="bg-card/60 flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
             <div className="flex items-center justify-between">
               {elapsedTime !== undefined && elapsedTime > 0 && (
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                  <Timer className="size-3.5 -mt-px" />
+                <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+                  <Timer className="-mt-px size-3.5" />
                   <span>{formatElapsedTime(elapsedTime)}</span>
                 </div>
               )}
@@ -192,11 +193,11 @@ export function ProgressTracker({
               {steps.map((step, index) => (
                 <li
                   key={step.id}
-                  className="relative flex items-start gap-3 -mx-2 rounded-lg px-2 py-1.5"
+                  className="relative -mx-2 flex items-start gap-3 rounded-lg px-2 py-1.5"
                 >
                   {index < steps.length - 1 && (
                     <div
-                      className="absolute left-5 top-8 w-px bg-border"
+                      className="bg-border absolute top-8 left-5 w-px"
                       style={{
                         height: "calc(100% + 0.5rem)",
                       }}
@@ -207,7 +208,7 @@ export function ProgressTracker({
                     <StepIndicator status={step.status} />
                   </div>
                   <div className="flex flex-1 flex-col gap-0.5">
-                    <span className="text-sm font-medium leading-6">
+                    <span className="text-sm leading-6 font-medium">
                       {step.label}
                     </span>
                     {step.description && (
@@ -224,7 +225,7 @@ export function ProgressTracker({
       ) : (
         <article
           className={cn(
-            "flex w-full min-w-80 max-w-md flex-col gap-3",
+            "flex w-full max-w-md min-w-80 flex-col gap-3",
             "text-foreground select-none",
             className,
           )}
@@ -236,8 +237,8 @@ export function ProgressTracker({
         >
           <div className="bg-card flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
             {elapsedTime !== undefined && elapsedTime > 0 && (
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                <Timer className="size-3.5 -mt-px" />
+              <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+                <Timer className="-mt-px size-3.5" />
                 <span>{formatElapsedTime(elapsedTime)}</span>
               </div>
             )}
@@ -257,7 +258,7 @@ export function ProgressTracker({
                     {index < steps.length - 1 && (
                       <div
                         className={cn(
-                          "absolute left-5 top-6 w-px bg-border",
+                          "bg-border absolute top-6 left-5 w-px",
                           "motion-safe:transition-all motion-safe:duration-300",
                         )}
                         style={{
@@ -282,8 +283,9 @@ export function ProgressTracker({
                       <div className="flex flex-1 flex-col">
                         <span
                           className={cn(
-                            "text-sm font-medium leading-6",
-                            step.status === "pending" && "text-muted-foreground",
+                            "text-sm leading-6 font-medium",
+                            step.status === "pending" &&
+                              "text-muted-foreground",
                             step.status === "in-progress" &&
                               "motion-safe:shimmer shimmer-invert text-foreground",
                           )}
@@ -300,7 +302,7 @@ export function ProgressTracker({
                             )}
                           >
                             <div className="overflow-hidden">
-                              <span className="text-muted-foreground text-sm block pt-0.5">
+                              <span className="text-muted-foreground block pt-0.5 text-sm">
                                 {step.description}
                               </span>
                             </div>
