@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocsBorderedShell } from "./docs-bordered-shell";
 import { DocsContent } from "./docs-content";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
+import { DocsMotionBoundary } from "./docs-motion-boundary";
 
 type DocsTab = "docs" | "examples";
 
@@ -79,11 +80,13 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             value="docs"
             className="scrollbar-subtle h-full min-h-0 flex-1 overflow-y-auto"
           >
-            <div className="z-0 min-h-0 flex-1 p-6 pb-24 sm:p-10 lg:p-12">
-              <DocsContent>
-                <Suspense fallback={<ContentSkeleton />}>{docs}</Suspense>
-              </DocsContent>
-            </div>
+            <DocsMotionBoundary>
+              <div className="z-0 min-h-0 flex-1 p-6 pb-24 sm:p-10 lg:p-12">
+                <DocsContent>
+                  <Suspense fallback={<ContentSkeleton />}>{docs}</Suspense>
+                </DocsContent>
+              </div>
+            </DocsMotionBoundary>
           </TabsContent>
           <TabsContent
             value="examples"

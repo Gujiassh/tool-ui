@@ -383,4 +383,9 @@
       rgba(255, 255, 255, 0) 100%
     );
   }
+
+  .docs-motion-boundary[data-docs-motion-ready="false"] * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
