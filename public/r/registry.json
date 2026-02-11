@@ -2305,11 +2305,6 @@
           "target": "components/tool-ui/weather-widget/_adapter.tsx"
         },
         {
-          "path": "components/tool-ui/weather-widget/.DS_Store",
-          "type": "registry:file",
-          "target": "components/tool-ui/weather-widget/.DS_Store"
-        },
-        {
           "path": "components/tool-ui/weather-widget/assets/moon-texture.jpg",
           "type": "registry:file",
           "target": "components/tool-ui/weather-widget/assets/moon-texture.jpg"

@@ -56,6 +56,7 @@ const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
 const IMPORT_SPECIFIER_RE = /(?:import|export)\s[^"']*from\s+["']([^"']+)["']/g;
 const DYNAMIC_IMPORT_RE = /import\(["']([^"']+)["']\)/g;
 const TOOL_UI_COMPONENTS_DIR = "components/tool-ui";
+const IGNORED_REGISTRY_FILE_NAMES = new Set([".DS_Store", "Thumbs.db"]);
 
 const COMPONENT_DESCRIPTION_OVERRIDES: Partial<Record<string, string>> = {
   "approval-card": "Binary confirmation for agent actions.",
@@ -98,6 +99,10 @@ async function listFilesRecursively(dirPath: string): Promise<string[]> {
   const filePaths: string[] = [];
 
   for (const entry of entries) {
+    if (IGNORED_REGISTRY_FILE_NAMES.has(entry.name)) {
+      continue;
+    }
+
     const entryPath = path.join(dirPath, entry.name);
     if (entry.isDirectory()) {
       filePaths.push(...(await listFilesRecursively(entryPath)));
