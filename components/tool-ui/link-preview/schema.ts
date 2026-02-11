@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 import { AspectRatioSchema, MediaFitSchema } from "../shared/media";
 
@@ -24,14 +23,20 @@ export const SerializableLinkPreviewSchema = z.object({
   locale: z.string().optional(),
 });
 
-export type SerializableLinkPreview = z.infer<typeof SerializableLinkPreviewSchema>;
+export type SerializableLinkPreview = z.infer<
+  typeof SerializableLinkPreviewSchema
+>;
 
-export function parseSerializableLinkPreview(input: unknown): SerializableLinkPreview {
-  return parseWithSchema(SerializableLinkPreviewSchema, input, "LinkPreview");
-}
+const SerializableLinkPreviewSchemaContract = defineToolUiContract(
+  "LinkPreview",
+  SerializableLinkPreviewSchema,
+);
 
-export function safeParseSerializableLinkPreview(
+export const parseSerializableLinkPreview: (
   input: unknown,
-): SerializableLinkPreview | null {
-  return safeParseWithSchema(SerializableLinkPreviewSchema, input);
-}
+) => SerializableLinkPreview = SerializableLinkPreviewSchemaContract.parse;
+
+export const safeParseSerializableLinkPreview: (
+  input: unknown,
+) => SerializableLinkPreview | null =
+  SerializableLinkPreviewSchemaContract.safeParse;

@@ -21,8 +21,9 @@ Thanks for joining the planning meeting today. I've attached the updated timelin
 
 Best,
 Alex`}
-      />
-    </div>
+/>
+</div>
+
   </Tab>
   <Tab>
     ```tsx
@@ -41,12 +42,13 @@ Thanks for joining the planning meeting today. I've attached the updated timelin
 
 Best,
 Alex`}
-          onSend={() => console.log("Sent")}
-          onCancel={() => console.log("Cancelled")}
-        />
-      );
-    }
-    ```
+onSend={() => console.log("Sent")}
+onCancel={() => console.log("Cancelled")}
+/>
+);
+}
+```
+
   </Tab>
 </Tabs>
 
@@ -87,6 +89,7 @@ Shows subject line, To/CC/BCC recipients, and message body.
         body={`Hi team,
 
 I've compiled the department requests. Key changes:
+
 - Engineering: +15% for infrastructure
 - Marketing: Flat (reallocating to digital)
 
@@ -94,8 +97,9 @@ Please review by Friday.
 
 Thanks,
 Dana`}
-      />
-    </div>
+/>
+</div>
+
   </Tab>
   <Tab>
     ```tsx
@@ -129,8 +133,9 @@ Shows channel or DM target with the Slack icon.
 - Improved search latency by 40%
 
 Monitoring dashboards look good.`}
-      />
-    </div>
+/>
+</div>
+
   </Tab>
   <Tab>
     <div className="not-prose mx-auto max-w-sm">
@@ -241,39 +246,33 @@ import {
   safeParseSerializableMessageDraft,
   SerializableMessageDraftSchema,
 } from "@/components/tool-ui/message-draft";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   draftMessage: {
-  description: "Draft a message for the user to review before sending.",
-  parameters: SerializableMessageDraftSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    const parsedArgs = safeParseSerializableMessageDraft({
-      ...args,
-      id: (args as any)?.id ?? `message-draft-${toolCallId}`,
-    });
-
-    if (!parsedArgs) {
-      return null;
-    }
-
-    return (
-      <MessageDraftErrorBoundary>
-        {result ? (
-          <MessageDraft {...parsedArgs} outcome={result} />
-        ) : (
-          <MessageDraft
-            {...parsedArgs}
-            onSend={async () => {
-              // Perform actual send logic here
-              await sendMessage(parsedArgs);
-              addResult("sent");
-            }}
-            onCancel={() => addResult("cancelled")}
-          />
-        )}
-      </MessageDraftErrorBoundary>
-    );
-  },
+    description: "Draft a message for the user to review before sending.",
+    parameters: SerializableMessageDraftSchema,
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableMessageDraft,
+      idPrefix: "message-draft",
+      render: (parsedArgs, { result, addResult }) => (
+        <MessageDraftErrorBoundary>
+          {result ? (
+            <MessageDraft {...parsedArgs} outcome={result} />
+          ) : (
+            <MessageDraft
+              {...parsedArgs}
+              onSend={async () => {
+                // Perform actual send logic here
+                await sendMessage(parsedArgs);
+                await addResult?.("sent");
+              }}
+              onCancel={() => addResult?.("cancelled")}
+            />
+          )}
+        </MessageDraftErrorBoundary>
+      ),
+    }),
   },
 };
 ```

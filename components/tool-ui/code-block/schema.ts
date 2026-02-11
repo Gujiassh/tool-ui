@@ -5,8 +5,7 @@ import {
   ToolUIRoleSchema,
   SerializableActionSchema,
   SerializableActionsConfigSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const CodeBlockPropsSchema = z.object({
@@ -36,14 +35,16 @@ export const SerializableCodeBlockSchema = CodeBlockPropsSchema.omit({
 
 export type SerializableCodeBlock = z.infer<typeof SerializableCodeBlockSchema>;
 
-export function parseSerializableCodeBlock(
-  input: unknown,
-): SerializableCodeBlock {
-  return parseWithSchema(SerializableCodeBlockSchema, input, "CodeBlock");
-}
+const SerializableCodeBlockSchemaContract = defineToolUiContract(
+  "CodeBlock",
+  SerializableCodeBlockSchema,
+);
 
-export function safeParseSerializableCodeBlock(
+export const parseSerializableCodeBlock: (
   input: unknown,
-): SerializableCodeBlock | null {
-  return safeParseWithSchema(SerializableCodeBlockSchema, input);
-}
+) => SerializableCodeBlock = SerializableCodeBlockSchemaContract.parse;
+
+export const safeParseSerializableCodeBlock: (
+  input: unknown,
+) => SerializableCodeBlock | null =
+  SerializableCodeBlockSchemaContract.safeParse;

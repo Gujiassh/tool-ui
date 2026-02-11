@@ -13,4 +13,7 @@ export { OVERLAY_GRADIENT } from "./overlay-gradient";
 export { formatDuration, formatFileSize } from "./format-utils";
 
 export { sanitizeHref } from "./sanitize-href";
-export { resolveSafeNavigationHref } from "./safe-navigation";
+export {
+  resolveSafeNavigationHref,
+  openSafeNavigationHref,
+} from "./safe-navigation";

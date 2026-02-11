@@ -254,25 +254,21 @@ import {
   XPostErrorBoundary,
   safeParseSerializableXPost,
 } from "@/components/tool-ui/x-post";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showXPost: {
     type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableXPost(result);
-
-      if (!parsedResult) {
-        return null;
-      }
-
-      return (
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableXPost,
+      render: (parsedResult) => (
         <>
           <XPostErrorBoundary>
             <XPost post={parsedResult} />
           </XPostErrorBoundary>
         </>
-      );
-    },
+      ),
+    }),
   },
 };
 ```

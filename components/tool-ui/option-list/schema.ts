@@ -8,8 +8,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const OptionListOptionSchema = z.object({
@@ -111,14 +110,16 @@ export type SerializableOptionList = z.infer<
   typeof SerializableOptionListSchema
 >;
 
-export function parseSerializableOptionList(
-  input: unknown,
-): SerializableOptionList {
-  return parseWithSchema(SerializableOptionListSchema, input, "OptionList");
-}
+const SerializableOptionListSchemaContract = defineToolUiContract(
+  "OptionList",
+  SerializableOptionListSchema,
+);
 
-export function safeParseSerializableOptionList(
+export const parseSerializableOptionList: (
   input: unknown,
-): SerializableOptionList | null {
-  return safeParseWithSchema(SerializableOptionListSchema, input);
-}
+) => SerializableOptionList = SerializableOptionListSchemaContract.parse;
+
+export const safeParseSerializableOptionList: (
+  input: unknown,
+) => SerializableOptionList | null =
+  SerializableOptionListSchemaContract.safeParse;

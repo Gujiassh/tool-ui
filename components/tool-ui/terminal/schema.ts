@@ -5,8 +5,7 @@ import {
   ToolUIRoleSchema,
   SerializableActionSchema,
   SerializableActionsConfigSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const TerminalPropsSchema = z.object({
@@ -38,14 +37,15 @@ export const SerializableTerminalSchema = TerminalPropsSchema.omit({
 
 export type SerializableTerminal = z.infer<typeof SerializableTerminalSchema>;
 
-export function parseSerializableTerminal(
-  input: unknown,
-): SerializableTerminal {
-  return parseWithSchema(SerializableTerminalSchema, input, "Terminal");
-}
+const SerializableTerminalSchemaContract = defineToolUiContract(
+  "Terminal",
+  SerializableTerminalSchema,
+);
 
-export function safeParseSerializableTerminal(
+export const parseSerializableTerminal: (
   input: unknown,
-): SerializableTerminal | null {
-  return safeParseWithSchema(SerializableTerminalSchema, input);
-}
+) => SerializableTerminal = SerializableTerminalSchemaContract.parse;
+
+export const safeParseSerializableTerminal: (
+  input: unknown,
+) => SerializableTerminal | null = SerializableTerminalSchemaContract.safeParse;

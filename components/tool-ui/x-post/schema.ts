@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseWithSchema, safeParseWithSchema } from "../shared";
+import { defineToolUiContract } from "../shared";
 
 export const XPostAuthorSchema = z.object({
   name: z.string(),
@@ -56,12 +56,13 @@ export type XPostMedia = z.infer<typeof XPostMediaSchema>;
 export type XPostLinkPreview = z.infer<typeof XPostLinkPreviewSchema>;
 export type XPostStats = z.infer<typeof XPostStatsSchema>;
 
-export function parseSerializableXPost(input: unknown): XPostData {
-  return parseWithSchema(SerializableXPostSchema, input, "XPost");
-}
+const SerializableXPostSchemaContract = defineToolUiContract(
+  "XPost",
+  SerializableXPostSchema,
+);
 
-export function safeParseSerializableXPost(
-  input: unknown,
-): XPostData | null {
-  return safeParseWithSchema(SerializableXPostSchema, input);
-}
+export const parseSerializableXPost: (input: unknown) => XPostData =
+  SerializableXPostSchemaContract.parse;
+
+export const safeParseSerializableXPost: (input: unknown) => XPostData | null =
+  SerializableXPostSchemaContract.safeParse;

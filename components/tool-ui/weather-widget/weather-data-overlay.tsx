@@ -241,7 +241,6 @@ export function WeatherDataOverlay({
   const textPrimary = isDark ? "text-white" : "text-black";
   const textPrimarySoft = isDark ? "text-white/90" : "text-black/85";
   const textSecondary = isDark ? "text-white/80" : "text-black/80";
-  const textMuted = isDark ? "text-white/50" : "text-black/50";
   const textSubtle = isDark ? "text-white/40" : "text-black/40";
 
   const baseBgOpacity = isDark ? 0.04 : 0.04;

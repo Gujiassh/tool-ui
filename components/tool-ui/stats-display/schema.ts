@@ -2,8 +2,7 @@ import { z } from "zod";
 import {
   ToolUIIdSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 const TextFormatSchema = z.object({
@@ -76,18 +75,19 @@ export type SerializableStatsDisplay = z.infer<
   typeof SerializableStatsDisplaySchema
 >;
 
-export function parseSerializableStatsDisplay(
-  input: unknown,
-): SerializableStatsDisplay {
-  return parseWithSchema(SerializableStatsDisplaySchema, input, "StatsDisplay");
-}
+const SerializableStatsDisplaySchemaContract = defineToolUiContract(
+  "StatsDisplay",
+  SerializableStatsDisplaySchema,
+);
 
-export function safeParseSerializableStatsDisplay(
+export const parseSerializableStatsDisplay: (
   input: unknown,
-): SerializableStatsDisplay | null {
-  return safeParseWithSchema(SerializableStatsDisplaySchema, input);
-}
+) => SerializableStatsDisplay = SerializableStatsDisplaySchemaContract.parse;
 
+export const safeParseSerializableStatsDisplay: (
+  input: unknown,
+) => SerializableStatsDisplay | null =
+  SerializableStatsDisplaySchemaContract.safeParse;
 export interface StatsDisplayProps extends SerializableStatsDisplay {
   className?: string;
   locale?: string;

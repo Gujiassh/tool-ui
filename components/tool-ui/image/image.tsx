@@ -3,10 +3,15 @@
 
 import * as React from "react";
 import { cn } from "./_adapter";
-import { ActionButtons, normalizeActionsConfig, type ActionsProp } from "../shared";
+import {
+  ActionButtons,
+  normalizeActionsConfig,
+  type ActionsProp,
+} from "../shared";
 import {
   RATIO_CLASS_MAP,
   getFitClass,
+  openSafeNavigationHref,
   resolveSafeNavigationHref,
   sanitizeHref,
 } from "../shared/media";
@@ -52,9 +57,7 @@ export function Image(props: ImageProps) {
   const imageData: SerializableImage = {
     ...serializable,
     href: sanitizedHref,
-    source: source
-      ? { ...source, url: resolvedSourceUrl }
-      : undefined,
+    source: source ? { ...source, url: resolvedSourceUrl } : undefined,
     locale,
   };
 
@@ -79,8 +82,8 @@ export function Image(props: ImageProps) {
     if (!targetUrl) return;
     if (onNavigate) {
       onNavigate(targetUrl, imageData);
-    } else if (typeof window !== "undefined") {
-      window.open(targetUrl, "_blank", "noopener,noreferrer");
+    } else {
+      openSafeNavigationHref(targetUrl);
     }
   };
 
@@ -88,8 +91,8 @@ export function Image(props: ImageProps) {
     if (!sanitizedHref) return;
     if (onNavigate) {
       onNavigate(sanitizedHref, imageData);
-    } else if (typeof window !== "undefined") {
-      window.open(sanitizedHref, "_blank", "noopener,noreferrer");
+    } else {
+      openSafeNavigationHref(sanitizedHref);
     }
   };
 
@@ -97,7 +100,7 @@ export function Image(props: ImageProps) {
 
   return (
     <article
-      className={cn("relative w-full min-w-80 max-w-md", className)}
+      className={cn("relative w-full max-w-md min-w-80", className)}
       lang={locale}
       data-tool-ui-id={id}
       data-slot="image"
@@ -105,7 +108,7 @@ export function Image(props: ImageProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden rounded-xl",
-          "border border-border bg-card text-sm shadow-xs",
+          "border-border bg-card border text-sm shadow-xs",
         )}
       >
         <>
@@ -134,10 +137,7 @@ export function Image(props: ImageProps) {
               alt={alt}
               loading="lazy"
               decoding="async"
-              className={cn(
-                "absolute inset-0 h-full w-full",
-                getFitClass(fit),
-              )}
+              className={cn("absolute inset-0 h-full w-full", getFitClass(fit))}
             />
           </div>
           {hasMetadata && (
@@ -226,7 +226,7 @@ function SourceAttribution({
       <button
         type="button"
         onClick={onSourceClick}
-        className="flex w-full items-center gap-3 text-left hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className="focus-visible:ring-ring flex w-full items-center gap-3 text-left hover:opacity-80 focus-visible:ring-2 focus-visible:outline-none"
       >
         {content}
       </button>

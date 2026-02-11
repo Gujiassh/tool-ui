@@ -63,6 +63,7 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget";
       );
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -110,28 +111,25 @@ import {
   safeParseWeatherWidgetPayload,
   WeatherWidgetPayloadSchema,
 } from "@/components/tool-ui/weather-widget";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   get_weather: {
-  description: "Display current weather and forecast for a location",
-  parameters: WeatherWidgetPayloadSchema,
-  render: ({ args, toolCallId }) => {
-    const parsedArgs = safeParseWeatherWidgetPayload({
-      ...args,
-      version: (args as any)?.version ?? "3.1",
-      id: (args as any)?.id ?? `weather-${toolCallId}`,
-    });
-
-    if (!parsedArgs) {
-      return null;
-    }
-
-    return (
-      <WeatherWidgetErrorBoundary>
-        <WeatherWidget {...parsedArgs} />
-      </WeatherWidgetErrorBoundary>
-    );
-  },
+    description: "Display current weather and forecast for a location",
+    parameters: WeatherWidgetPayloadSchema,
+    render: createArgsToolRenderer({
+      safeParse: (input) =>
+        safeParseWeatherWidgetPayload({
+          version: "3.1",
+          ...(input as Record<string, unknown>),
+        }),
+      idPrefix: "weather",
+      render: (parsedArgs) => (
+        <WeatherWidgetErrorBoundary>
+          <WeatherWidget {...parsedArgs} />
+        </WeatherWidgetErrorBoundary>
+      ),
+    }),
   },
 };
 ```
@@ -239,21 +237,21 @@ export const toolkit: Toolkit = {
 
 Available condition values with their corresponding icons:
 
-| Condition | Icon | Description |
-|-----------|------|-------------|
-| `clear` | Sun | Clear skies |
-| `partly-cloudy` | CloudSun | Partly cloudy |
-| `cloudy` | Cloud | Cloudy |
-| `overcast` | Cloud | Overcast skies |
-| `fog` | CloudFog | Fog |
-| `drizzle` | CloudDrizzle | Light rain |
-| `rain` | CloudRain | Rain |
-| `heavy-rain` | CloudRain | Heavy rain |
-| `thunderstorm` | CloudLightning | Thunderstorm |
-| `snow` | Snowflake | Snow |
-| `sleet` | CloudHail | Sleet |
-| `hail` | CloudHail | Hail |
-| `windy` | Wind | Windy |
+| Condition       | Icon           | Description    |
+| --------------- | -------------- | -------------- |
+| `clear`         | Sun            | Clear skies    |
+| `partly-cloudy` | CloudSun       | Partly cloudy  |
+| `cloudy`        | Cloud          | Cloudy         |
+| `overcast`      | Cloud          | Overcast skies |
+| `fog`           | CloudFog       | Fog            |
+| `drizzle`       | CloudDrizzle   | Light rain     |
+| `rain`          | CloudRain      | Rain           |
+| `heavy-rain`    | CloudRain      | Heavy rain     |
+| `thunderstorm`  | CloudLightning | Thunderstorm   |
+| `snow`          | Snowflake      | Snow           |
+| `sleet`         | CloudHail      | Sleet          |
+| `hail`          | CloudHail      | Hail           |
+| `windy`         | Wind           | Windy          |
 
 ## Accessibility
 

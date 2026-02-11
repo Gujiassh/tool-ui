@@ -1,8 +1,5 @@
 import { z } from "zod";
-import {
-  parseWithSchema,
-  safeParseWithSchema,
-} from "../shared";
+import { defineToolUiContract } from "../shared";
 import type { CustomEffectProps } from "./effects";
 import type { EffectSettings } from "./effects/types";
 
@@ -91,7 +88,7 @@ export const WeatherWidgetPayloadSchema = z
     }
 
     if (hasBucket && hasLocalTime) {
-      const normalized = ((value.time.localTimeOfDay ?? 0) % 1 + 1) % 1;
+      const normalized = (((value.time.localTimeOfDay ?? 0) % 1) + 1) % 1;
       const derivedBucket = Math.floor(normalized * 12) % 12;
       if (derivedBucket !== value.time.timeBucket) {
         ctx.addIssue({
@@ -119,16 +116,18 @@ export const WeatherEffectDriversSchema = z.object({
 
 export type WeatherEffectDrivers = z.infer<typeof WeatherEffectDriversSchema>;
 
-export function parseWeatherWidgetPayload(input: unknown): WeatherWidgetPayload {
-  return parseWithSchema(WeatherWidgetPayloadSchema, input, "WeatherWidget");
-}
+const WeatherWidgetPayloadSchemaContract = defineToolUiContract(
+  "WeatherWidget",
+  WeatherWidgetPayloadSchema,
+);
 
-export function safeParseWeatherWidgetPayload(
+export const parseWeatherWidgetPayload: (
   input: unknown,
-): WeatherWidgetPayload | null {
-  return safeParseWithSchema(WeatherWidgetPayloadSchema, input);
-}
+) => WeatherWidgetPayload = WeatherWidgetPayloadSchemaContract.parse;
 
+export const safeParseWeatherWidgetPayload: (
+  input: unknown,
+) => WeatherWidgetPayload | null = WeatherWidgetPayloadSchemaContract.safeParse;
 export interface WeatherWidgetProps extends WeatherWidgetPayload {
   className?: string;
   locale?: string;

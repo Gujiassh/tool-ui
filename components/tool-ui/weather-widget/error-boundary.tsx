@@ -1,17 +1,6 @@
 "use client";
 
-import {
-  ToolUIErrorBoundary,
-  type ToolUIErrorBoundaryProps,
-} from "../shared";
+import { createToolUiErrorBoundary } from "../shared";
 
-export function WeatherWidgetErrorBoundary(
-  props: Omit<ToolUIErrorBoundaryProps, "componentName">,
-) {
-  const { children, ...rest } = props;
-  return (
-    <ToolUIErrorBoundary componentName="WeatherWidget" {...rest}>
-      {children}
-    </ToolUIErrorBoundary>
-  );
-}
+export const WeatherWidgetErrorBoundary =
+  createToolUiErrorBoundary("WeatherWidget");

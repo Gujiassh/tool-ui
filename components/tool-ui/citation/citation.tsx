@@ -12,15 +12,18 @@ import {
   File,
   ExternalLink,
 } from "lucide-react";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
 import {
-  cn,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "./_adapter";
-import { ActionButtons, normalizeActionsConfig, type ActionsProp } from "../shared";
-import { sanitizeHref } from "../shared/media";
-import type { SerializableCitation, CitationType, CitationVariant } from "./schema";
+  ActionButtons,
+  normalizeActionsConfig,
+  type ActionsProp,
+} from "../shared";
+import { openSafeNavigationHref, sanitizeHref } from "../shared/media";
+import type {
+  SerializableCitation,
+  CitationType,
+  CitationVariant,
+} from "./schema";
 
 const FALLBACK_LOCALE = "en-US";
 
@@ -132,8 +135,8 @@ export function Citation(props: CitationProps) {
     if (!sanitizedHref) return;
     if (onNavigate) {
       onNavigate(sanitizedHref, citationData);
-    } else if (typeof window !== "undefined") {
-      window.open(sanitizedHref, "_blank", "noopener,noreferrer");
+    } else {
+      openSafeNavigationHref(sanitizedHref);
     }
   };
 
@@ -154,10 +157,7 @@ export function Citation(props: CitationProps) {
       className="bg-muted size-3.5 shrink-0 rounded object-cover"
     />
   ) : (
-    <TypeIcon
-      className="size-3.5 shrink-0 opacity-60"
-      aria-hidden="true"
-    />
+    <TypeIcon className="size-3.5 shrink-0 opacity-60" aria-hidden="true" />
   );
 
   const { open, handleMouseEnter, handleMouseLeave } = useHoverPopover();
@@ -180,7 +180,7 @@ export function Citation(props: CitationProps) {
               "bg-muted/60 text-sm outline-none",
               "transition-colors duration-150",
               "hover:bg-muted",
-              "focus-visible:ring-2 focus-visible:ring-ring",
+              "focus-visible:ring-ring focus-visible:ring-2",
               className,
             )}
           >
@@ -198,14 +198,14 @@ export function Citation(props: CitationProps) {
           onCloseAutoFocus={(e) => e.preventDefault()}
           onClick={handleClick}
         >
-          <div className="flex flex-col gap-2 p-3 transition-colors hover:bg-muted/50">
+          <div className="hover:bg-muted/50 flex flex-col gap-2 p-3 transition-colors">
             <div className="flex items-start gap-2">
               {iconElement}
               <span className="text-muted-foreground text-xs">{domain}</span>
             </div>
-            <p className="text-sm font-medium leading-snug">{title}</p>
+            <p className="text-sm leading-snug font-medium">{title}</p>
             {snippet && (
-              <p className="text-muted-foreground text-xs leading-relaxed line-clamp-2">
+              <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
                 {snippet}
               </p>
             )}
@@ -218,7 +218,7 @@ export function Citation(props: CitationProps) {
   // Default variant: full card
   return (
     <article
-      className={cn("relative w-full min-w-72 max-w-md", className)}
+      className={cn("relative w-full max-w-md min-w-72", className)}
       lang={locale}
       data-tool-ui-id={id}
       data-slot="citation"
@@ -226,12 +226,12 @@ export function Citation(props: CitationProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden rounded-xl",
-          "border border-border bg-card text-sm shadow-xs",
+          "border-border bg-card border text-sm shadow-xs",
           "transition-colors duration-150",
           sanitizedHref && [
             "cursor-pointer",
             "hover:border-foreground/25",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           ],
         )}
         onClick={sanitizedHref ? handleClick : undefined}
@@ -262,14 +262,14 @@ export function Citation(props: CitationProps) {
             )}
           </div>
 
-          <h3 className="text-foreground text-pretty text-[15px] font-medium leading-snug">
-            <span className="line-clamp-2 group-hover:underline group-hover:decoration-foreground/30 group-hover:underline-offset-2">
+          <h3 className="text-foreground text-[15px] leading-snug font-medium text-pretty">
+            <span className="group-hover:decoration-foreground/30 line-clamp-2 group-hover:underline group-hover:underline-offset-2">
               {title}
             </span>
           </h3>
 
           {snippet && (
-            <p className="text-muted-foreground text-pretty text-[13px] leading-relaxed">
+            <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
               <span className="line-clamp-3">{snippet}</span>
             </p>
           )}

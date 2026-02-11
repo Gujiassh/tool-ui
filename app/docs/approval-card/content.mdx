@@ -37,6 +37,7 @@ import { ApprovalCard } from "@/components/tool-ui/approval-card";
       );
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -185,35 +186,29 @@ import {
   safeParseSerializableApprovalCard,
   SerializableApprovalCardSchema,
 } from "@/components/tool-ui/approval-card";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   requestApproval: {
-  description: "Request user approval before performing an action.",
-  parameters: SerializableApprovalCardSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    const parsedArgs = safeParseSerializableApprovalCard({
-      ...args,
-      id: (args as any)?.id ?? `approval-${toolCallId}`,
-    });
-
-    if (!parsedArgs) {
-      return null;
-    }
-
-    return (
-      <ApprovalCardErrorBoundary>
-        {result ? (
-          <ApprovalCard {...parsedArgs} choice={result} />
-        ) : (
-          <ApprovalCard
-            {...parsedArgs}
-            onConfirm={() => addResult("approved")}
-            onCancel={() => addResult("denied")}
-          />
-        )}
-      </ApprovalCardErrorBoundary>
-    );
-  },
+    description: "Request user approval before performing an action.",
+    parameters: SerializableApprovalCardSchema,
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableApprovalCard,
+      idPrefix: "approval",
+      render: (parsedArgs, { result, addResult }) => (
+        <ApprovalCardErrorBoundary>
+          {result ? (
+            <ApprovalCard {...parsedArgs} choice={result} />
+          ) : (
+            <ApprovalCard
+              {...parsedArgs}
+              onConfirm={() => addResult?.("approved")}
+              onCancel={() => addResult?.("denied")}
+            />
+          )}
+        </ApprovalCardErrorBoundary>
+      ),
+    }),
   },
 };
 ```
@@ -239,7 +234,8 @@ Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
       type: "string",
     },
     icon: {
-      description: "Lucide icon name in kebab-case (e.g., \"rocket\", \"trash-2\", \"alert-triangle\")",
+      description:
+        'Lucide icon name in kebab-case (e.g., "rocket", "trash-2", "alert-triangle")',
       type: "string",
     },
     metadata: {

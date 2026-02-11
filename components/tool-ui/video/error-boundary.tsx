@@ -1,17 +1,5 @@
 "use client";
 
-import {
-  ToolUIErrorBoundary,
-  type ToolUIErrorBoundaryProps,
-} from "../shared";
+import { createToolUiErrorBoundary } from "../shared";
 
-export function VideoErrorBoundary(
-  props: Omit<ToolUIErrorBoundaryProps, "componentName">,
-) {
-  const { children, ...rest } = props;
-  return (
-    <ToolUIErrorBoundary componentName="Video" {...rest}>
-      {children}
-    </ToolUIErrorBoundary>
-  );
-}
+export const VideoErrorBoundary = createToolUiErrorBoundary("Video");

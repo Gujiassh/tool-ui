@@ -12,3 +12,12 @@ export function resolveSafeNavigationHref(
 
   return undefined;
 }
+
+export function openSafeNavigationHref(href: string | undefined): boolean {
+  if (!href || typeof window === "undefined") {
+    return false;
+  }
+
+  window.open(href, "_blank", "noopener,noreferrer");
+  return true;
+}

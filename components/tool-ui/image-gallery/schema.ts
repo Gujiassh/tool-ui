@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const ImageGallerySourceSchema = z.object({
@@ -45,14 +44,16 @@ export interface ImageGalleryProps extends SerializableImageGallery {
   onImageClick?: (imageId: string, image: ImageGalleryItem) => void;
 }
 
-export function parseSerializableImageGallery(
-  input: unknown,
-): SerializableImageGallery {
-  return parseWithSchema(SerializableImageGallerySchema, input, "ImageGallery");
-}
+const SerializableImageGallerySchemaContract = defineToolUiContract(
+  "ImageGallery",
+  SerializableImageGallerySchema,
+);
 
-export function safeParseSerializableImageGallery(
+export const parseSerializableImageGallery: (
   input: unknown,
-): SerializableImageGallery | null {
-  return safeParseWithSchema(SerializableImageGallerySchema, input);
-}
+) => SerializableImageGallery = SerializableImageGallerySchemaContract.parse;
+
+export const safeParseSerializableImageGallery: (
+  input: unknown,
+) => SerializableImageGallery | null =
+  SerializableImageGallerySchemaContract.safeParse;

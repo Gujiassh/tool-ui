@@ -78,6 +78,7 @@ import { OrderSummary } from "@/components/tool-ui/order-summary";
       );
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -164,14 +165,15 @@ Use the `discount` and `discountLabel` fields in pricing to show promotional sav
             id: "item-1",
             name: "Standing Desk Frame",
             description: "Electric height adjustable",
-            imageUrl: "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?w=100&h=100&fit=crop",
+            imageUrl:
+              "https://images.unsplash.com/photo-1595515106969-1ce29566ff1c?w=100&h=100&fit=crop",
             quantity: 1,
-            unitPrice: 449.00,
+            unitPrice: 449.0,
           },
         ]}
         pricing={{
-          subtotal: 449.00,
-          discount: 44.90,
+          subtotal: 449.0,
+          discount: 44.9,
           discountLabel: "SAVE10 (10% off)",
           tax: 35.92,
           shipping: 0,
@@ -186,8 +188,8 @@ Use the `discount` and `discountLabel` fields in pricing to show promotional sav
     <OrderSummary
       id="discount-example"
       pricing={{
-        subtotal: 449.00,
-        discount: 44.90,
+        subtotal: 449.0,
+        discount: 44.9,
         discountLabel: "SAVE10 (10% off)",
         tax: 35.92,
         shipping: 0,
@@ -258,42 +260,36 @@ import {
   safeParseSerializableOrderSummary,
   SerializableOrderSummarySchema,
 } from "@/components/tool-ui/order-summary";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   createOrder: {
-  description: "Display a purchase order for user confirmation",
-  parameters: SerializableOrderSummarySchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    const parsedArgs = safeParseSerializableOrderSummary({
-      ...args,
-      id: (args as any)?.id ?? `order-${toolCallId}`,
-    });
-
-    if (!parsedArgs) {
-      return null;
-    }
-
-    return (
-      <OrderSummaryErrorBoundary>
-        {result ? (
-          <OrderSummary {...parsedArgs} choice={result} />
-        ) : (
-          <OrderSummary
-            {...parsedArgs}
-            onResponseAction={(actionId) => {
-              if (actionId === "confirm") {
-                addResult({
-                  action: "confirm",
-                  orderId: `ORD-${Date.now()}`,
-                  confirmedAt: new Date().toISOString(),
-                });
-              }
-            }}
-          />
-        )}
-      </OrderSummaryErrorBoundary>
-    );
-  },
+    description: "Display a purchase order for user confirmation",
+    parameters: SerializableOrderSummarySchema,
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableOrderSummary,
+      idPrefix: "order",
+      render: (parsedArgs, { result, addResult }) => (
+        <OrderSummaryErrorBoundary>
+          {result ? (
+            <OrderSummary {...parsedArgs} choice={result} />
+          ) : (
+            <OrderSummary
+              {...parsedArgs}
+              onResponseAction={(actionId) => {
+                if (actionId === "confirm") {
+                  void addResult?.({
+                    action: "confirm",
+                    orderId: `ORD-${Date.now()}`,
+                    confirmedAt: new Date().toISOString(),
+                  });
+                }
+              }}
+            />
+          )}
+        </OrderSummaryErrorBoundary>
+      ),
+    }),
   },
 };
 ```
@@ -392,12 +388,12 @@ Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
       type: "number",
     },
     taxLabel: {
-      description: "Custom tax label (e.g., \"VAT (19%)\")",
+      description: 'Custom tax label (e.g., "VAT (19%)")',
       type: "string",
       default: '"Tax"',
     },
     shipping: {
-      description: "Shipping cost (shows \"Free\" when 0)",
+      description: 'Shipping cost (shows "Free" when 0)',
       type: "number",
     },
     discount: {
@@ -405,7 +401,7 @@ Register this toolkit with `Tools({ toolkit })` to expose the tool UI.
       type: "number",
     },
     discountLabel: {
-      description: "Discount label (e.g., \"SAVE10 (10% off)\")",
+      description: 'Discount label (e.g., "SAVE10 (10% off)")',
       type: "string",
       default: '"Discount"',
     },

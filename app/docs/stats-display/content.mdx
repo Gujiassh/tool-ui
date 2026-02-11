@@ -99,6 +99,7 @@ import { StatsDisplay } from "@/components/tool-ui/stats-display";
       );
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -177,27 +178,21 @@ import {
   safeParseSerializableStatsDisplay,
   SerializableStatsDisplaySchema,
 } from "@/components/tool-ui/stats-display";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showStats: {
-  description: "Display key metrics in a grid",
-  parameters: SerializableStatsDisplaySchema,
-  render: ({ args, toolCallId }) => {
-    const parsedArgs = safeParseSerializableStatsDisplay({
-      ...args,
-      id: (args as any)?.id ?? `stats-${toolCallId}`,
-    });
-
-    if (!parsedArgs) {
-      return null;
-    }
-
-    return (
-      <StatsDisplayErrorBoundary>
-        <StatsDisplay {...parsedArgs} />
-      </StatsDisplayErrorBoundary>
-    );
-  },
+    description: "Display key metrics in a grid",
+    parameters: SerializableStatsDisplaySchema,
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableStatsDisplay,
+      idPrefix: "stats",
+      render: (parsedArgs) => (
+        <StatsDisplayErrorBoundary>
+          <StatsDisplay {...parsedArgs} />
+        </StatsDisplayErrorBoundary>
+      ),
+    }),
   },
 };
 ```
@@ -234,7 +229,6 @@ export const toolkit: Toolkit = {
     },
   }}
 />
-
 
 ## StatItem Schema
 
@@ -279,7 +273,8 @@ export const toolkit: Toolkit = {
       type: "{ kind: 'text' }",
     },
     number: {
-      description: "Format as number with optional decimals and compact notation",
+      description:
+        "Format as number with optional decimals and compact notation",
       type: "{ kind: 'number', decimals?: number, compact?: boolean }",
     },
     currency: {

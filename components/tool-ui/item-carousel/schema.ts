@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   ActionSchema,
+  defineToolUiContract,
   SerializableActionSchema,
   ToolUIIdSchema,
 } from "../shared";
@@ -42,19 +43,16 @@ export type SerializableItemCarousel = z.infer<
   typeof SerializableItemCarouselSchema
 >;
 
-export function parseSerializableItemCarousel(
-  input: unknown,
-): SerializableItemCarousel {
-  const res = SerializableItemCarouselSchema.safeParse(input);
-  if (!res.success) {
-    throw new Error(`Invalid ItemCarousel payload: ${res.error.message}`);
-  }
-  return res.data;
-}
+const SerializableItemCarouselSchemaContract = defineToolUiContract(
+  "ItemCarousel",
+  SerializableItemCarouselSchema,
+);
 
-export function safeParseSerializableItemCarousel(
+export const parseSerializableItemCarousel: (
   input: unknown,
-): SerializableItemCarousel | null {
-  const res = SerializableItemCarouselSchema.safeParse(input);
-  return res.success ? res.data : null;
-}
+) => SerializableItemCarousel = SerializableItemCarouselSchemaContract.parse;
+
+export const safeParseSerializableItemCarousel: (
+  input: unknown,
+) => SerializableItemCarousel | null =
+  SerializableItemCarouselSchemaContract.safeParse;

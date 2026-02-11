@@ -5,12 +5,17 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
-  useState,
   useRef,
+  useState,
 } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
+import {
+  ActionButtons,
+  normalizeActionsConfig,
+  useControllableState,
+  useSignatureReset,
+} from "../shared";
 import { cn } from "./_adapter";
 import {
   createSliderSignature,
@@ -646,26 +651,30 @@ export function ParameterSlider({
   fillClassName,
   handleClassName,
 }: ParameterSliderProps) {
-  const slidersSignature = useMemo(() => createSliderSignature(sliders), [sliders]);
+  const slidersSignature = useMemo(
+    () => createSliderSignature(sliders),
+    [sliders],
+  );
   const sliderSnapshot = useMemo(
     () => createSliderValueSnapshot(sliders),
-    [slidersSignature],
+    [sliders],
   );
+  const {
+    value: currentValues,
+    isControlled,
+    setValue,
+    setUncontrolledValue,
+  } = useControllableState<SliderValue[]>({
+    value: controlledValues,
+    defaultValue: sliderSnapshot,
+    onChange,
+  });
 
-  const initialValuesRef = useRef<SliderValue[]>(sliderSnapshot);
-
-  const [uncontrolledValues, setUncontrolledValues] = useState<SliderValue[]>(
-    () => sliderSnapshot,
-  );
-
-  useEffect(() => {
-    initialValuesRef.current = sliderSnapshot;
-    if (controlledValues === undefined) {
-      setUncontrolledValues(sliderSnapshot);
+  useSignatureReset(slidersSignature, () => {
+    if (!isControlled) {
+      setUncontrolledValue(sliderSnapshot);
     }
-  }, [sliderSnapshot, controlledValues]);
-
-  const currentValues = controlledValues ?? uncontrolledValues;
+  });
 
   const valueMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -677,24 +686,16 @@ export function ParameterSlider({
 
   const updateValue = useCallback(
     (sliderId: string, newValue: number) => {
-      const next = currentValues.map((v) =>
-        v.id === sliderId ? { ...v, value: newValue } : v,
+      setValue((prev) =>
+        prev.map((v) => (v.id === sliderId ? { ...v, value: newValue } : v)),
       );
-      if (controlledValues === undefined) {
-        setUncontrolledValues(next);
-      }
-      onChange?.(next);
     },
-    [currentValues, controlledValues, onChange],
+    [setValue],
   );
 
   const handleReset = useCallback(() => {
-    const initial = initialValuesRef.current;
-    if (controlledValues === undefined) {
-      setUncontrolledValues(initial);
-    }
-    onChange?.(initial);
-  }, [controlledValues, onChange]);
+    setValue(sliderSnapshot);
+  }, [setValue, sliderSnapshot]);
 
   const handleAction = useCallback(
     async (actionId: string) => {

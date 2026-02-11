@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import type {
   PreferencesPanelProps,
   PreferencesPanelReceiptProps,
@@ -8,7 +8,12 @@ import type {
   PreferenceItem,
   PreferenceSection,
 } from "./schema";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
+import {
+  ActionButtons,
+  normalizeActionsConfig,
+  useControllableState,
+  useSignatureReset,
+} from "../shared";
 import type { Action } from "../shared";
 import {
   cn,
@@ -37,7 +42,10 @@ function getInitialValue(item: PreferenceItem): string | boolean {
   }
 }
 
-function formatDisplayValue(item: PreferenceItem, value: string | boolean): string {
+function formatDisplayValue(
+  item: PreferenceItem,
+  value: string | boolean,
+): string {
   if (item.type === "switch") {
     return typeof value === "boolean" && value ? "On" : "Off";
   }
@@ -65,7 +73,13 @@ interface PreferenceControlProps {
   disabled?: boolean;
 }
 
-function SwitchControl({ id, checked, onChange, disabled, label }: {
+function SwitchControl({
+  id,
+  checked,
+  onChange,
+  disabled,
+  label,
+}: {
   id: string;
   checked: boolean;
   onChange: (value: boolean) => void;
@@ -83,7 +97,13 @@ function SwitchControl({ id, checked, onChange, disabled, label }: {
   );
 }
 
-function ToggleControl({ value, options, onChange, disabled, label }: {
+function ToggleControl({
+  value,
+  options,
+  onChange,
+  disabled,
+  label,
+}: {
   value: string;
   options: Array<{ value: string; label: string }>;
   onChange: (value: string) => void;
@@ -113,7 +133,14 @@ function ToggleControl({ value, options, onChange, disabled, label }: {
   );
 }
 
-function SelectControl({ id, value, options, onChange, disabled, label }: {
+function SelectControl({
+  id,
+  value,
+  options,
+  onChange,
+  disabled,
+  label,
+}: {
   id: string;
   value: string;
   options: Array<{ value: string; label: string }>;
@@ -122,16 +149,8 @@ function SelectControl({ id, value, options, onChange, disabled, label }: {
   label: string;
 }) {
   return (
-    <Select
-      value={value}
-      onValueChange={onChange}
-      disabled={disabled}
-    >
-      <SelectTrigger
-        id={id}
-        className="w-[180px]"
-        aria-label={label}
-      >
+    <Select value={value} onValueChange={onChange} disabled={disabled}>
+      <SelectTrigger id={id} className="w-[180px]" aria-label={label}>
         <SelectValue placeholder="Select..." />
       </SelectTrigger>
       <SelectContent>
@@ -145,7 +164,12 @@ function SelectControl({ id, value, options, onChange, disabled, label }: {
   );
 }
 
-function PreferenceControl({ item, value, onChange, disabled }: PreferenceControlProps) {
+function PreferenceControl({
+  item,
+  value,
+  onChange,
+  disabled,
+}: PreferenceControlProps) {
   const id = `preference-${item.id}`;
 
   if (item.type === "switch") {
@@ -201,7 +225,11 @@ interface PreferenceItemRowProps {
   isFirstInSectionWithoutHeading?: boolean;
 }
 
-function ItemLabel({ item, error, isReceipt }: {
+function ItemLabel({
+  item,
+  error,
+  isReceipt,
+}: {
   item: PreferenceItem;
   error?: string;
   isReceipt: boolean;
@@ -211,7 +239,9 @@ function ItemLabel({ item, error, isReceipt }: {
   if (isReceipt) {
     return (
       <>
-        <span className="text-sm font-medium leading-6 text-pretty">{item.label}</span>
+        <span className="text-sm leading-6 font-medium text-pretty">
+          {item.label}
+        </span>
         {error ? (
           <span className="text-destructive text-sm font-normal text-pretty">
             {error}
@@ -227,7 +257,7 @@ function ItemLabel({ item, error, isReceipt }: {
 
   return (
     <>
-      <Label htmlFor={htmlFor} className="font-medium leading-6 text-pretty">
+      <Label htmlFor={htmlFor} className="leading-6 font-medium text-pretty">
         {item.label}
       </Label>
       {item.description && (
@@ -239,7 +269,12 @@ function ItemLabel({ item, error, isReceipt }: {
   );
 }
 
-function ItemValue({ item, value, error, showSuccessIndicators }: {
+function ItemValue({
+  item,
+  value,
+  error,
+  showSuccessIndicators,
+}: {
   item: PreferenceItem;
   value: string | boolean;
   error?: string;
@@ -255,7 +290,7 @@ function ItemValue({ item, value, error, showSuccessIndicators }: {
       {error ? (
         <AlertCircle className="text-destructive size-3.5" />
       ) : showSuccessIndicators ? (
-        <Check className="text-emerald-600 dark:text-emerald-500 size-3.5" />
+        <Check className="size-3.5 text-emerald-600 dark:text-emerald-500" />
       ) : null}
     </div>
   );
@@ -278,7 +313,8 @@ function PreferenceItemRow({
       className={cn(
         "flex items-start justify-between gap-4",
         isFirstInSectionWithoutHeading ? "pt-0 pb-3" : "py-3",
-        shouldStack && "flex-col gap-3 @sm/preferences-panel:flex-row @sm/preferences-panel:gap-4"
+        shouldStack &&
+          "flex-col gap-3 @sm/preferences-panel:flex-row @sm/preferences-panel:gap-4",
       )}
     >
       <div className="flex flex-col gap-1">
@@ -351,7 +387,9 @@ function ItemList({
               isReceipt={isReceipt}
               error={errors?.[item.id]}
               showSuccessIndicators={showSuccessIndicators}
-              isFirstInSectionWithoutHeading={isFirst && shouldRemoveFirstPadding}
+              isFirstInSectionWithoutHeading={
+                isFirst && shouldRemoveFirstPadding
+              }
             />
           </div>
         );
@@ -398,7 +436,7 @@ function PreferencesSection({
   if (section.heading) {
     return (
       <fieldset className="flex flex-col">
-        <legend className="text-muted-foreground text-xs tracking-widest uppercase pb-1">
+        <legend className="text-muted-foreground pb-1 text-xs tracking-widest uppercase">
           {section.heading}
         </legend>
         {content}
@@ -418,14 +456,14 @@ function ReceiptHeader({ title, hasErrors }: ReceiptHeaderProps) {
   return (
     <>
       <div className="flex items-center justify-between gap-3 px-5 py-4">
-        <h2 className="text-base font-semibold leading-none">{title}</h2>
+        <h2 className="text-base leading-none font-semibold">{title}</h2>
         {hasErrors === true ? (
           <span className="text-destructive flex items-center gap-1.5 text-xs font-medium">
             <AlertCircle className="size-3.5" />
             Error
           </span>
         ) : (
-          <span className="text-emerald-600 dark:text-emerald-500 flex items-center gap-1.5 text-xs font-medium">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-500">
             <Check className="size-3.5" />
             Saved
           </span>
@@ -452,12 +490,19 @@ export function PreferencesPanelReceipt({
       data-tool-ui-id={id}
       data-receipt="true"
       role="status"
-      aria-label={hasErrors ? "Preferences with errors" : "Confirmed preferences"}
-      className={cn("@container/preferences-panel flex w-full max-w-md min-w-80 flex-col", className)}
+      aria-label={
+        hasErrors ? "Preferences with errors" : "Confirmed preferences"
+      }
+      className={cn(
+        "@container/preferences-panel flex w-full max-w-md min-w-80 flex-col",
+        className,
+      )}
     >
-      <div className="bg-card/60 flex w-full flex-col rounded-2xl border opacity-95 shadow-xs overflow-hidden">
+      <div className="bg-card/60 flex w-full flex-col overflow-hidden rounded-2xl border opacity-95 shadow-xs">
         {title && <ReceiptHeader title={title} hasErrors={!!hasErrors} />}
-        <div className={cn("px-5 flex flex-col gap-4", title ? "py-6" : "py-2")}>
+        <div
+          className={cn("flex flex-col gap-4 px-5", title ? "py-6" : "py-2")}
+        >
           {sections.map((section, index) => (
             <div key={index}>
               <PreferencesSection
@@ -488,37 +533,36 @@ function PreferencesPanelRoot({
   onBeforeResponseAction,
   className,
 }: PreferencesPanelProps) {
-  const initialValues = useMemo(() => computeInitialValues(sections), [sections]);
+  const initialValues = useMemo(
+    () => computeInitialValues(sections),
+    [sections],
+  );
   const sectionsSignature = useMemo(
     () => createPreferencesSectionSignature(sections),
     [sections],
   );
-  const previousSectionsSignature = useRef(sectionsSignature);
+  const {
+    value: currentValue,
+    isControlled,
+    setValue,
+    setUncontrolledValue,
+  } = useControllableState<PreferencesValue>({
+    value: controlledValue,
+    defaultValue: initialValues,
+    onChange,
+  });
 
-  const [uncontrolledValue, setUncontrolledValue] = useState<PreferencesValue>(initialValues);
-
-  useEffect(() => {
-    if (previousSectionsSignature.current === sectionsSignature) {
-      return;
-    }
-
-    previousSectionsSignature.current = sectionsSignature;
-    if (controlledValue === undefined) {
+  useSignatureReset(sectionsSignature, () => {
+    if (!isControlled) {
       setUncontrolledValue(initialValues);
     }
-  }, [sectionsSignature, controlledValue, initialValues]);
-
-  const currentValue = controlledValue ?? uncontrolledValue;
+  });
 
   const updateValue = useCallback(
     (itemId: string, newValue: string | boolean) => {
-      const nextValue = { ...currentValue, [itemId]: newValue };
-      if (controlledValue === undefined) {
-        setUncontrolledValue(nextValue);
-      }
-      onChange?.(nextValue);
+      setValue((prev) => ({ ...prev, [itemId]: newValue }));
     },
-    [currentValue, controlledValue, onChange],
+    [setValue],
   );
 
   const isDirty = useMemo(() => {
@@ -532,12 +576,9 @@ function PreferencesPanelRoot({
   }, [onSave, currentValue]);
 
   const handleCancel = useCallback(() => {
-    if (controlledValue === undefined) {
-      setUncontrolledValue(initialValues);
-    }
-    onChange?.(initialValues);
+    setValue(initialValues);
     onCancel?.();
-  }, [controlledValue, initialValues, onChange, onCancel]);
+  }, [setValue, initialValues, onCancel]);
 
   const handleAction = useCallback(
     async (actionId: string) => {
@@ -589,18 +630,23 @@ function PreferencesPanelRoot({
       data-slot="preferences-panel"
       data-tool-ui-id={id}
       role="form"
-      className={cn("@container/preferences-panel flex w-full max-w-md min-w-80 flex-col gap-3 text-foreground", className)}
+      className={cn(
+        "text-foreground @container/preferences-panel flex w-full max-w-md min-w-80 flex-col gap-3",
+        className,
+      )}
     >
-      <div className="bg-card flex w-full flex-col rounded-2xl border shadow-xs overflow-hidden">
+      <div className="bg-card flex w-full flex-col overflow-hidden rounded-2xl border shadow-xs">
         {title && (
           <>
             <div className="px-5 py-4">
-              <h2 className="text-base font-semibold leading-none">{title}</h2>
+              <h2 className="text-base leading-none font-semibold">{title}</h2>
             </div>
             <Separator />
           </>
         )}
-        <div className={cn("px-5 flex flex-col gap-4", title ? "py-6" : "py-2")}>
+        <div
+          className={cn("flex flex-col gap-4 px-5", title ? "py-6" : "py-2")}
+        >
           {sections.map((section, sectionIndex) => (
             <div key={sectionIndex}>
               <PreferencesSection

@@ -127,18 +127,14 @@ import {
   ItemCarousel,
   safeParseSerializableItemCarousel,
 } from "@/components/tool-ui/item-carousel";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchItems: {
     type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableItemCarousel(result);
-
-      if (!parsedResult) {
-        return null;
-      }
-
-      return (
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableItemCarousel,
+      render: (parsedResult) => (
         <>
           <ItemCarousel
             {...parsedResult}
@@ -150,8 +146,8 @@ export const toolkit: Toolkit = {
             }}
           />
         </>
-      );
-    },
+      ),
+    }),
   },
 };
 ```

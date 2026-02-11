@@ -1,16 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { ToolUIErrorBoundary } from "../shared";
+import { createToolUiErrorBoundary } from "../shared";
 
-export function OrderSummaryErrorBoundary({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <ToolUIErrorBoundary componentName="OrderSummary">
-      {children}
-    </ToolUIErrorBoundary>
-  );
-}
+export const OrderSummaryErrorBoundary =
+  createToolUiErrorBoundary("OrderSummary");
