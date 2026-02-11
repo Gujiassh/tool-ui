@@ -42,7 +42,7 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
         className="border-border bg-card flex size-6 shrink-0 items-center justify-center rounded-full border shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
         aria-hidden="true"
       >
-        <Loader2 className="text-primary size-5 motion-safe:animate-[spin_0.7s_linear_infinite]" />
+        <Loader2 className="text-primary size-5 motion-safe:animate-spin" />
       </span>
     );
   }
@@ -50,13 +50,12 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
   if (status === "completed") {
     return (
       <span
-        className="border-primary bg-primary flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]"
+        className="border-primary bg-primary flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out"
         aria-hidden="true"
       >
         <Check
-          className="text-primary-foreground size-4 [&_path]:motion-safe:animate-[check-draw_400ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_backwards]"
+          className="text-primary-foreground size-4 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:delay-75 motion-safe:duration-200 motion-safe:fill-mode-both"
           strokeWidth={3}
-          style={{ ["--check-path-length" as string]: "24" }}
         />
       </span>
     );
@@ -65,13 +64,12 @@ function TodoIcon({ status }: { status: PlanTodoStatus }) {
   if (status === "cancelled") {
     return (
       <span
-        className="border-destructive bg-destructive flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)] dark:border-red-600 dark:bg-red-600"
+        className="border-destructive bg-destructive flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out dark:border-red-600 dark:bg-red-600"
         aria-hidden="true"
       >
         <X
-          className="size-4 text-white [&_path]:motion-safe:animate-[check-draw_400ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_backwards]"
+          className="size-4 text-white motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:delay-75 motion-safe:duration-200 motion-safe:fill-mode-both"
           strokeWidth={3}
-          style={{ ["--check-path-length" as string]: "16" }}
         />
       </span>
     );
@@ -171,7 +169,7 @@ function PlanTodoItem({
             className="group/content"
             data-slot="collapsible-content"
           >
-            <div className="min-w-0 motion-safe:group-data-[state=closed]/content:animate-[fade-out-stagger_120ms_ease-out] motion-safe:group-data-[state=open]/content:animate-[fade-in-stagger_120ms_ease-out_30ms_backwards]">
+            <div className="min-w-0 motion-safe:group-data-[state=closed]/content:animate-out motion-safe:group-data-[state=closed]/content:fade-out motion-safe:group-data-[state=closed]/content:slide-out-to-top-1 motion-safe:group-data-[state=closed]/content:duration-150 motion-safe:group-data-[state=open]/content:animate-in motion-safe:group-data-[state=open]/content:fade-in motion-safe:group-data-[state=open]/content:slide-in-from-top-1 motion-safe:group-data-[state=open]/content:delay-75 motion-safe:group-data-[state=open]/content:duration-150 motion-safe:group-data-[state=open]/content:fill-mode-both">
               <p className="text-muted-foreground min-w-0 pr-2 pb-1.5 pl-11 text-sm text-pretty break-words">
                 {todo.description}
               </p>
@@ -201,7 +199,8 @@ function TodoList({ todos, newTodoIds }: TodoListProps) {
             todo={todo}
             showConnector={index < todos.length - 1}
             className={cn(
-              isNew && "motion-safe:animate-[fade-up_300ms_ease-out]",
+              isNew &&
+                "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300 motion-safe:ease-out",
             )}
             style={
               isNew
@@ -230,7 +229,7 @@ function ProgressBar({ progress, isCelebrating }: ProgressBarProps) {
         className={cn(
           "h-full rounded-full transition-all duration-500",
           progress === 100
-            ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-400 motion-safe:animate-[progress-pulse_600ms_ease-out]"
+            ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-400 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 motion-safe:ease-out"
             : "bg-primary",
         )}
         style={{
@@ -241,7 +240,7 @@ function ProgressBar({ progress, isCelebrating }: ProgressBarProps) {
       />
       {isCelebrating && (
         <div
-          className="pointer-events-none absolute inset-0 rounded-full motion-safe:animate-[glow-pulse_600ms_ease-out]"
+          className="pointer-events-none absolute inset-0 rounded-full motion-safe:animate-pulse"
           style={{
             boxShadow: "0 0 20px rgba(16, 185, 129, 0.6)",
           }}
