@@ -1,6 +1,4 @@
-"use client";
-
-import { createToolUiErrorBoundary } from "../shared";
+"use client";import { createToolUiErrorBoundary } from "../shared/error-boundary";
 
 export const OrderSummaryErrorBoundary =
   createToolUiErrorBoundary("OrderSummary");

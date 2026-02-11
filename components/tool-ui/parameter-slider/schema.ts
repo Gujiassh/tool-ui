@@ -1,12 +1,6 @@
-import { z } from "zod";
-import type { ActionsProp } from "../shared";
-import {
-  ToolUIIdSchema,
-  ToolUIRoleSchema,
-  SerializableActionSchema,
-  SerializableActionsConfigSchema,
-  defineToolUiContract,
-} from "../shared";
+import { z } from "zod";import { type ActionsProp } from "../shared/actions-config";
+import { defineToolUiContract } from "../shared/contract";
+import { SerializableActionSchema, SerializableActionsConfigSchema, ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
 
 export const SliderConfigSchema = z.object({
   id: z.string().min(1),

@@ -1,9 +1,5 @@
-import { z } from "zod";
-import {
-  ToolUIIdSchema,
-  ToolUIRoleSchema,
-  defineToolUiContract,
-} from "../shared";
+import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
+import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
 
 const TextFormatSchema = z.object({
   kind: z.literal("text"),

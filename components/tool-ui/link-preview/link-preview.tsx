@@ -3,12 +3,9 @@
 
 import * as React from "react";
 import { Globe } from "lucide-react";
-import { cn } from "./_adapter";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  type ActionsProp,
-} from "../shared";
+import { cn } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+
 import {
   RATIO_CLASS_MAP,
   getFitClass,

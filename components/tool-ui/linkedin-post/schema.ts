@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { defineToolUiContract } from "../shared";
+import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
 
 export const LinkedInPostAuthorSchema = z.object({
   name: z.string(),

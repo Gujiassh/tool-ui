@@ -1,13 +1,6 @@
-import { z } from "zod";
-import type { ActionsProp } from "../shared";
-import {
-  SerializableActionSchema,
-  SerializableActionsConfigSchema,
-  ToolUIIdSchema,
-  ToolUIReceiptSchema,
-  ToolUIRoleSchema,
-  defineToolUiContract,
-} from "../shared";
+import { z } from "zod";import { type ActionsProp } from "../shared/actions-config";
+import { defineToolUiContract } from "../shared/contract";
+import { SerializableActionSchema, SerializableActionsConfigSchema, ToolUIIdSchema, ToolUIReceiptSchema, ToolUIRoleSchema } from "../shared/schema";
 
 const PreferenceItemBaseSchema = z.object({
   id: z.string().min(1),
