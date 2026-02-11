@@ -40,6 +40,11 @@
           "target": "components/tool-ui/plan/plan.tsx"
         },
         {
+          "path": "components/tool-ui/plan/progress.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/plan/progress.ts"
+        },
+        {
           "path": "components/tool-ui/plan/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/plan/schema.ts"
@@ -58,6 +63,11 @@
           "path": "components/tool-ui/shared/actions-config.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
         },
         {
           "path": "components/tool-ui/shared/error-boundary.tsx",
@@ -138,6 +148,11 @@
           "path": "components/tool-ui/shared/actions-config.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/actions-config.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
         },
         {
           "path": "components/tool-ui/shared/error-boundary.tsx",
@@ -221,6 +236,11 @@
           "target": "components/tool-ui/shared/actions-config.ts"
         },
         {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
+        },
+        {
           "path": "components/tool-ui/shared/error-boundary.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/error-boundary.tsx"
@@ -294,6 +314,11 @@
           "path": "components/tool-ui/shared/action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/action-buttons.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
         },
         {
           "path": "components/tool-ui/shared/error-boundary.tsx",
@@ -395,9 +420,44 @@
           "target": "components/tool-ui/shared/actions-config.ts"
         },
         {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
+        },
+        {
           "path": "components/tool-ui/shared/error-boundary.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/error-boundary.tsx"
+        },
+        {
+          "path": "components/tool-ui/shared/media/aspect-ratio.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/aspect-ratio.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/format-utils.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/format-utils.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/index.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/index.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/overlay-gradient.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/overlay-gradient.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/safe-navigation.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/safe-navigation.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/media/sanitize-href.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/media/sanitize-href.ts"
         },
         {
           "path": "components/tool-ui/shared/parse.ts",
