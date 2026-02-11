@@ -14,7 +14,9 @@ import type { Image } from "@/components/tool-ui/image";
 import type { ImageGallery } from "@/components/tool-ui/image-gallery";
 import type { Video } from "@/components/tool-ui/video";
 import type { Audio } from "@/components/tool-ui/audio";
+import type { InstagramPost } from "@/components/tool-ui/instagram-post";
 import type { LinkPreview } from "@/components/tool-ui/link-preview";
+import type { LinkedInPost } from "@/components/tool-ui/linkedin-post";
 import type { MessageDraft } from "@/components/tool-ui/message-draft";
 import type { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import type { OptionList } from "@/components/tool-ui/option-list";
@@ -30,6 +32,7 @@ import type { StatsDisplay } from "@/components/tool-ui/stats-display";
 import type { Terminal } from "@/components/tool-ui/terminal";
 import type { QuestionFlow } from "@/components/tool-ui/question-flow";
 import type { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
+import type { XPost } from "@/components/tool-ui/x-post";
 
 import {
   approvalCardPresets,
@@ -57,9 +60,17 @@ import {
 import { videoPresets, type VideoPresetName } from "@/lib/presets/video";
 import { audioPresets, type AudioPresetName } from "@/lib/presets/audio";
 import {
+  instagramPostPresets,
+  type InstagramPostPresetName,
+} from "@/lib/presets/instagram-post";
+import {
   linkPreviewPresets,
   type LinkPreviewPresetName,
 } from "@/lib/presets/link-preview";
+import {
+  linkedInPostPresets,
+  type LinkedInPostPresetName,
+} from "@/lib/presets/linkedin-post";
 import {
   messageDraftPresets,
   type MessageDraftPresetName,
@@ -105,84 +116,102 @@ import {
   weatherWidgetPresets,
   type WeatherWidgetPresetName,
 } from "@/lib/presets/weather-widget";
+import { xPostPresets, type XPostPresetName } from "@/lib/presets/x-post";
 import type { SerializableUpfrontMode } from "@/components/tool-ui/question-flow";
 
 const DynamicApprovalCard = dynamic(() =>
-  import("@/components/tool-ui/approval-card").then((m) => m.ApprovalCard)
+  import("@/components/tool-ui/approval-card").then((m) => m.ApprovalCard),
 );
 const DynamicChart = dynamic(() =>
-  import("@/components/tool-ui/chart").then((m) => m.Chart)
+  import("@/components/tool-ui/chart").then((m) => m.Chart),
 );
 const DynamicCitation = dynamic(() =>
-  import("@/components/tool-ui/citation").then((m) => m.Citation)
+  import("@/components/tool-ui/citation").then((m) => m.Citation),
 );
 const DynamicCitationList = dynamic(() =>
-  import("@/components/tool-ui/citation").then((m) => m.CitationList)
+  import("@/components/tool-ui/citation").then((m) => m.CitationList),
 );
 const DynamicCodeBlock = dynamic(() =>
-  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock)
+  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock),
 );
 const DynamicDataTable = dynamic(() =>
-  import("@/components/tool-ui/data-table").then((m) => m.DataTable)
+  import("@/components/tool-ui/data-table").then((m) => m.DataTable),
 );
 const DynamicImage = dynamic(() =>
-  import("@/components/tool-ui/image").then((m) => m.Image)
+  import("@/components/tool-ui/image").then((m) => m.Image),
 );
 const DynamicImageGallery = dynamic(() =>
-  import("@/components/tool-ui/image-gallery").then((m) => m.ImageGallery)
+  import("@/components/tool-ui/image-gallery").then((m) => m.ImageGallery),
 );
 const DynamicVideo = dynamic(() =>
-  import("@/components/tool-ui/video").then((m) => m.Video)
+  import("@/components/tool-ui/video").then((m) => m.Video),
 );
 const DynamicAudio = dynamic(() =>
-  import("@/components/tool-ui/audio").then((m) => m.Audio)
+  import("@/components/tool-ui/audio").then((m) => m.Audio),
+);
+const DynamicInstagramPost = dynamic(() =>
+  import("@/components/tool-ui/instagram-post").then((m) => m.InstagramPost),
 );
 const DynamicLinkPreview = dynamic(() =>
-  import("@/components/tool-ui/link-preview").then((m) => m.LinkPreview)
+  import("@/components/tool-ui/link-preview").then((m) => m.LinkPreview),
+);
+const DynamicLinkedInPost = dynamic(() =>
+  import("@/components/tool-ui/linkedin-post").then((m) => m.LinkedInPost),
 );
 const DynamicMessageDraft = dynamic(() =>
-  import("@/components/tool-ui/message-draft").then((m) => m.MessageDraft)
+  import("@/components/tool-ui/message-draft").then((m) => m.MessageDraft),
 );
 const DynamicItemCarousel = dynamic(() =>
-  import("@/components/tool-ui/item-carousel").then((m) => m.ItemCarousel)
+  import("@/components/tool-ui/item-carousel").then((m) => m.ItemCarousel),
 );
 const DynamicOptionList = dynamic(() =>
-  import("@/components/tool-ui/option-list").then((m) => m.OptionList)
+  import("@/components/tool-ui/option-list").then((m) => m.OptionList),
 );
 const DynamicOrderSummary = dynamic(() =>
-  import("@/components/tool-ui/order-summary").then((m) => m.OrderSummary)
+  import("@/components/tool-ui/order-summary").then((m) => m.OrderSummary),
 );
 const DynamicParameterSlider = dynamic(() =>
-  import("@/components/tool-ui/parameter-slider").then((m) => m.ParameterSlider)
+  import("@/components/tool-ui/parameter-slider").then(
+    (m) => m.ParameterSlider,
+  ),
 );
 const DynamicPlan = dynamic(() =>
-  import("@/components/tool-ui/plan").then((m) => m.Plan)
+  import("@/components/tool-ui/plan").then((m) => m.Plan),
 );
 const DynamicPlanCompact = dynamic(() =>
-  import("@/components/tool-ui/plan").then((m) => m.PlanCompact)
+  import("@/components/tool-ui/plan").then((m) => m.PlanCompact),
 );
 const DynamicPreferencesPanel = dynamic(() =>
-  import("@/components/tool-ui/preferences-panel").then((m) => m.PreferencesPanel)
+  import("@/components/tool-ui/preferences-panel").then(
+    (m) => m.PreferencesPanel,
+  ),
 );
 const DynamicPreferencesPanelReceipt = dynamic(() =>
   import("@/components/tool-ui/preferences-panel").then(
     (m) => m.PreferencesPanelReceipt,
-  )
+  ),
 );
 const DynamicProgressTracker = dynamic(() =>
-  import("@/components/tool-ui/progress-tracker").then((m) => m.ProgressTracker)
+  import("@/components/tool-ui/progress-tracker").then(
+    (m) => m.ProgressTracker,
+  ),
 );
 const DynamicStatsDisplay = dynamic(() =>
-  import("@/components/tool-ui/stats-display").then((m) => m.StatsDisplay)
+  import("@/components/tool-ui/stats-display").then((m) => m.StatsDisplay),
 );
 const DynamicTerminal = dynamic(() =>
-  import("@/components/tool-ui/terminal").then((m) => m.Terminal)
+  import("@/components/tool-ui/terminal").then((m) => m.Terminal),
 );
 const DynamicQuestionFlow = dynamic(() =>
-  import("@/components/tool-ui/question-flow").then((m) => m.QuestionFlow)
+  import("@/components/tool-ui/question-flow").then((m) => m.QuestionFlow),
 );
 const DynamicWeatherWidget = dynamic(() =>
-  import("@/components/tool-ui/weather-widget/runtime").then((m) => m.WeatherWidget)
+  import("@/components/tool-ui/weather-widget/runtime").then(
+    (m) => m.WeatherWidget,
+  ),
+);
+const DynamicXPost = dynamic(() =>
+  import("@/components/tool-ui/x-post").then((m) => m.XPost),
 );
 
 function QuestionFlowUpfrontWithReceipt({
@@ -243,7 +272,9 @@ export type ComponentId =
   | "image-gallery"
   | "video"
   | "audio"
+  | "instagram-post"
   | "link-preview"
+  | "linkedin-post"
   | "message-draft"
   | "item-carousel"
   | "option-list"
@@ -255,7 +286,8 @@ export type ComponentId =
   | "stats-display"
   | "terminal"
   | "question-flow"
-  | "weather-widget";
+  | "weather-widget"
+  | "x-post";
 
 export interface ChatContext {
   userMessage: string;
@@ -341,18 +373,12 @@ export const previewConfigs: Record<
       preamble: "According to the source:",
     },
     renderComponent: ({ data, presetName }) => {
-      const {
-        citations,
-        variant,
-        maxVisible,
-        responseActions,
-      } =
-        data as {
-          citations: Parameters<typeof Citation>[0][];
-          variant?: Parameters<typeof Citation>[0]["variant"];
-          maxVisible?: number;
-          responseActions?: unknown[];
-        };
+      const { citations, variant, maxVisible, responseActions } = data as {
+        citations: Parameters<typeof Citation>[0][];
+        variant?: Parameters<typeof Citation>[0]["variant"];
+        maxVisible?: number;
+        responseActions?: unknown[];
+      };
 
       const wrapperClass =
         variant === "inline" ? "mx-auto max-w-xl" : "mx-auto max-w-lg";
@@ -520,6 +546,27 @@ export const previewConfigs: Record<
       );
     },
   },
+  "instagram-post": {
+    presets: instagramPostPresets as Record<string, PresetWithCodeGen<unknown>>,
+    defaultPreset: "basic" satisfies InstagramPostPresetName,
+    wrapper: MaxWidthSmWrapper,
+    chatContext: {
+      userMessage: "Draft an Instagram post for this launch",
+      preamble: "Here's the post preview:",
+    },
+    renderComponent: ({ data }) => {
+      const instagramData = data as {
+        post: Parameters<typeof InstagramPost>[0]["post"];
+        responseActions?: Parameters<typeof InstagramPost>[0]["responseActions"];
+      };
+      return (
+        <DynamicInstagramPost
+          post={instagramData.post}
+          responseActions={instagramData.responseActions}
+        />
+      );
+    },
+  },
   "link-preview": {
     presets: linkPreviewPresets as Record<string, PresetWithCodeGen<unknown>>,
     defaultPreset: "with-image" satisfies LinkPreviewPresetName,
@@ -544,6 +591,27 @@ export const previewConfigs: Record<
           onResponseAction={(actionId) =>
             console.log("Response action:", actionId)
           }
+        />
+      );
+    },
+  },
+  "linkedin-post": {
+    presets: linkedInPostPresets as Record<string, PresetWithCodeGen<unknown>>,
+    defaultPreset: "basic" satisfies LinkedInPostPresetName,
+    wrapper: MaxWidthSmWrapper,
+    chatContext: {
+      userMessage: "Create a LinkedIn update about the release",
+      preamble: "Here's the LinkedIn post preview:",
+    },
+    renderComponent: ({ data }) => {
+      const linkedInData = data as {
+        post: Parameters<typeof LinkedInPost>[0]["post"];
+        responseActions?: Parameters<typeof LinkedInPost>[0]["responseActions"];
+      };
+      return (
+        <DynamicLinkedInPost
+          post={linkedInData.post}
+          responseActions={linkedInData.responseActions}
         />
       );
     },
@@ -663,7 +731,7 @@ export const previewConfigs: Record<
     },
     renderComponent: ({ data, presetName }) => {
       const planData = data as SerializablePlan;
-      if (presetName === "simple") {
+      if (presetName === "compact") {
         return <DynamicPlanCompact {...planData} />;
       }
       return <DynamicPlan {...planData} />;
@@ -813,15 +881,38 @@ export const previewConfigs: Record<
   },
   "weather-widget": {
     presets: weatherWidgetPresets as Record<string, PresetWithCodeGen<unknown>>,
-    defaultPreset: "sunny-forecast" satisfies WeatherWidgetPresetName,
+    defaultPreset: "thunderstorm" satisfies WeatherWidgetPresetName,
     wrapper: MaxWidthSmStartWrapper,
     chatContext: {
       userMessage: "What's the weather like in San Diego?",
       preamble: "Here's the current weather:",
     },
     renderComponent: ({ data }) => (
-      <DynamicWeatherWidget {...(data as Parameters<typeof WeatherWidget>[0])} />
+      <DynamicWeatherWidget
+        {...(data as Parameters<typeof WeatherWidget>[0])}
+      />
     ),
+  },
+  "x-post": {
+    presets: xPostPresets as Record<string, PresetWithCodeGen<unknown>>,
+    defaultPreset: "basic" satisfies XPostPresetName,
+    wrapper: MaxWidthSmWrapper,
+    chatContext: {
+      userMessage: "Write a post for X about today's launch",
+      preamble: "Here's the X post preview:",
+    },
+    renderComponent: ({ data }) => {
+      const xPostData = data as {
+        post: Parameters<typeof XPost>[0]["post"];
+        responseActions?: Parameters<typeof XPost>[0]["responseActions"];
+      };
+      return (
+        <DynamicXPost
+          post={xPostData.post}
+          responseActions={xPostData.responseActions}
+        />
+      );
+    },
   },
 };
 

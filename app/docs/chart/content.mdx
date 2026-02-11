@@ -6,52 +6,25 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/chart/content.mdx"
 />
 
-<ChartPresetExample preset="revenue" />
+## Getting Started
 
-## Source and Install
+<Steps>
 
-Source code: [components/tool-ui/chart](https://github.com/assistant-ui/tool-ui/tree/main/components/tool-ui/chart)
+<Step title="Install the component">
 
-Install this component directly from the Tool UI shadcn registry:
+Run this once from your project root.
 
 ```bash
 npx shadcn@latest add https://tool-ui.com/r/chart.json
 ```
 
-This command installs `components/tool-ui/chart`, `components/tool-ui/shared` into your project.
+</Step>
 
-## Key Features
+<Step title="Use it in your application">
 
-<FeatureGrid>
-  <Feature icon="BarChart3" title="Bar and line charts">
-    Choose the right visualization for your data
-  </Feature>
-  <Feature icon="Layers" title="Multiple series">
-    Compare datasets side-by-side with automatic coloring
-  </Feature>
-  <Feature icon="MousePointerClick" title="Interactive tooltips">
-    Click handlers and hover tooltips for deeper exploration
-  </Feature>
-  <Feature icon="Settings2" title="Configurable display">
-    Toggle legends, grid lines, and custom color palettes
-  </Feature>
-</FeatureGrid>
+Render `Chart` in your UI with tool-compatible props.
 
-## Variants
-
-### Line Charts
-
-Switch to line charts for time-series or continuous data.
-
-<ChartPresetExample preset="performance" />
-
-### Minimal Configuration
-
-Charts work with just `data`, `xKey`, and `series`. Title, description, legend, and grid are optional.
-
-<ChartPresetExample preset="minimal" />
-
-## Usage
+<div className="[&_pre]:max-h-[30rem] [&_pre]:overflow-y-auto">
 
 ```tsx
 import { Chart } from "@/components/tool-ui/chart";
@@ -76,76 +49,13 @@ import { Chart } from "@/components/tool-ui/chart";
 />;
 ```
 
-### With assistant-ui (tool output)
+</div>
 
-Define a tool that returns chart data, then render the component with runtime validation.
+</Step>
 
-```tsx
-// Backend tool
-import { tool, jsonSchema } from "ai";
+<Step title="Register it in your runtime provider">
 
-const showChart = tool({
-  description: "Display data as a chart",
-  inputSchema: jsonSchema<{ metric: string }>({
-    type: "object",
-    properties: { metric: { type: "string" } },
-    required: ["metric"],
-    additionalProperties: false,
-  }),
-  async execute({ metric }) {
-    const data = await fetchMetricData(metric);
-    return {
-      id: `chart-${metric}`,
-      type: "line",
-      title: `${metric} Over Time`,
-      data,
-      xKey: "date",
-      series: [{ key: "value", label: metric }],
-      showGrid: true,
-    };
-  },
-});
-
-// Frontend with assistant-ui
-import { type Toolkit } from "@assistant-ui/react";
-import {
-  Chart,
-  safeParseSerializableChart,
-} from "@/components/tool-ui/chart";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
-
-export const toolkit: Toolkit = {
-  showChart: {
-    type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableChart,
-      render: (parsedResult) => (
-        <>
-            <Chart {...parsedResult} />
-        </>
-      ),
-    }),
-  },
-};
-```
-
-### With Custom Colors
-
-```tsx
-<Chart
-  id="custom-colors"
-  type="bar"
-  data={data}
-  xKey="month"
-  series={[
-    { key: "revenue", label: "Revenue" },
-    { key: "expenses", label: "Expenses" },
-  ]}
-  colors={["#22c55e", "#ef4444"]}
-/>
-```
-
-### With Click Handler
+Register this renderer so tool results display as `Chart`.
 
 ```tsx
 <Chart
@@ -159,6 +69,39 @@ export const toolkit: Toolkit = {
   }}
 />
 ```
+
+</Step>
+
+</Steps>
+
+These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wiring, but the Chart component itself is framework-agnostic at the UI layer: you can use it in any React codebase with any LLM SDK or tool-calling interface that can provide compatible props.
+
+## Key Features
+
+<FeatureGrid>
+  <Feature icon="BarChart3" title="Bar and line charts">
+    Choose the right visualization for your data
+  </Feature>
+  <Feature icon="Layers" title="Multiple series">
+    Compare datasets side-by-side with automatic coloring
+  </Feature>
+  <Feature icon="MousePointerClick" title="Interactive tooltips">
+    Click handlers and hover tooltips for deeper exploration
+  </Feature>
+  <Feature icon="Settings2" title="Configurable display">
+    Toggle legends, grid lines, and custom color palettes
+  </Feature>
+</FeatureGrid>
+
+## Variants
+
+### Line Charts
+
+Switch to line charts for time-series or continuous data.
+
+### Minimal Configuration
+
+Charts work with just `data`, `xKey`, and `series`. Title, description, legend, and grid are optional.
 
 ## Props
 
