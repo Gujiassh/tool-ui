@@ -18,10 +18,16 @@
       "content": "/**\n * UI and utility re-exports for copy-standalone portability.\n *\n * This file centralizes dependencies so the component can be easily\n * copied to another project by updating these imports to match the target\n * project's paths.\n */\nimport type { ClassValue } from \"clsx\";\nimport { clsx } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n\nexport { Button } from \"../../ui/button\";\nexport { Card } from \"../../ui/card\";\nexport { ChevronLeft, ChevronRight } from \"lucide-react\";\n"
     },
     {
+      "path": "components/tool-ui/item-carousel/error-boundary.tsx",
+      "type": "registry:component",
+      "target": "components/tool-ui/item-carousel/error-boundary.tsx",
+      "content": "\"use client\";\n\nimport { createToolUiErrorBoundary } from \"../shared\";\n\nexport const ItemCarouselErrorBoundary =\n  createToolUiErrorBoundary(\"ItemCarousel\");\n"
+    },
+    {
       "path": "components/tool-ui/item-carousel/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/item-carousel/index.tsx",
-      "content": "export { ItemCarousel } from \"./item-carousel\";\nexport { ItemCard } from \"./item-card\";\nexport type {\n  Item,\n  ItemCarouselProps,\n  SerializableItem,\n  SerializableItemCarousel,\n} from \"./schema\";\nexport {\n  ItemSchema,\n  ItemCarouselPropsSchema,\n  SerializableItemSchema,\n  SerializableItemCarouselSchema,\n  parseSerializableItemCarousel,\n  safeParseSerializableItemCarousel,\n} from \"./schema\";\n"
+      "content": "export { ItemCarousel } from \"./item-carousel\";\nexport { ItemCard } from \"./item-card\";\nexport { ItemCarouselErrorBoundary } from \"./error-boundary\";\nexport type {\n  Item,\n  ItemCarouselProps,\n  SerializableItem,\n  SerializableItemCarousel,\n} from \"./schema\";\nexport {\n  ItemSchema,\n  ItemCarouselPropsSchema,\n  SerializableItemSchema,\n  SerializableItemCarouselSchema,\n  parseSerializableItemCarousel,\n  safeParseSerializableItemCarousel,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/item-carousel/item-card.tsx",

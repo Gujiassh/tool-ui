@@ -1236,6 +1236,11 @@
           "target": "components/tool-ui/item-carousel/_adapter.tsx"
         },
         {
+          "path": "components/tool-ui/item-carousel/error-boundary.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/item-carousel/error-boundary.tsx"
+        },
+        {
           "path": "components/tool-ui/item-carousel/index.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/item-carousel/index.tsx"
