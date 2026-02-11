@@ -3,203 +3,26 @@
 import { useMemo, useState, useEffect } from "react";
 import type { WeatherConditionCode } from "../schema";
 import type { EffectSettings } from "./types";
-import type { CustomEffectProps, WeatherEffectLayer } from "./custom-effect-props";
+import type { CustomEffectProps } from "./custom-effect-props";
 import { WeatherEffectsCanvas } from "./weather-effects-canvas";
-import type {
-  LayerToggles,
-  WeatherEffectsCanvasProps,
-} from "./weather-effects-types";
+import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
 import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
 import { type WeatherEffectsTunedPresets } from "./tuning";
 import {
   resolveWeatherEffectsCanvasProps,
   type WeatherEffectsCheckpointMode,
 } from "./canvas-resolver";
-
-type ResolvedEffectQuality = "low" | "medium" | "high";
-
-function sunAltitudeToLightIntensity(sunAltitude: number): number {
-  // Mirrors the solar contribution curve used by getSceneBrightness.
-  const light =
-    sunAltitude < 0
-      ? 0.05 + (1 + sunAltitude) * 0.1
-      : 0.15 + sunAltitude * 0.85;
-  return Math.max(0, Math.min(1, light));
-}
-
-function resolveAutoQuality(): ResolvedEffectQuality {
-  if (typeof window === "undefined") return "high";
-
-  const dpr = window.devicePixelRatio || 1;
-  const px = window.innerWidth * window.innerHeight * dpr * dpr;
-
-  // These are best-effort signals; both can be undefined.
-  const cores =
-    typeof navigator !== "undefined"
-      ? navigator.hardwareConcurrency
-      : undefined;
-  const mem =
-    typeof navigator !== "undefined"
-      ? (navigator as Navigator & { deviceMemory?: number }).deviceMemory
-      : undefined;
-
-  const isSmallScreen = window.innerWidth < 768;
-
-  // Heuristics tuned for “chat widget” workloads:
-  // - mobile-ish screens + low memory/cores: low
-  // - large pixel budgets (high DPR) on small screens: low/medium
-  // - otherwise: medium/high
-  if (
-    (typeof mem === "number" && mem <= 4) ||
-    (typeof cores === "number" && cores <= 4)
-  ) {
-    return isSmallScreen ? "low" : "medium";
-  }
-
-  // ~2.5M pixels ≈ 1280x720. Beyond that, fragment-heavy passes get expensive.
-  if (px > 2_500_000) return isSmallScreen ? "low" : "medium";
-
-  return isSmallScreen ? "medium" : "high";
-}
-
-function resolveQuality(
-  quality: EffectSettings["quality"],
-): ResolvedEffectQuality {
-  if (quality === "low" || quality === "medium" || quality === "high")
-    return quality;
-  return resolveAutoQuality();
-}
+import {
+  mapCustomEffectPropsToCanvasProps,
+} from "./effect-compositor-custom-props";
+import {
+  resolveEffectCanvasDpr,
+  resolveEffectQuality,
+} from "./effect-compositor-quality";
 
 const DEFAULT_CHECKPOINT_MODE: WeatherEffectsCheckpointMode = "nearest";
 const DEFAULT_TUNED_PRESETS: WeatherEffectsTunedPresets =
   TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES;
-
-function mapCustomEffectPropsToCanvasProps(
-  custom: CustomEffectProps,
-): WeatherEffectsCanvasProps | null {
-  const enabledLayers = custom.enabledLayers;
-  const isLayerEnabled = (
-    layer: WeatherEffectLayer,
-    hasConfig: boolean,
-  ) => {
-    if (!hasConfig) return false;
-    if (!enabledLayers) return true;
-    return enabledLayers.includes(layer);
-  };
-
-  const hasCelestial = isLayerEnabled(
-    "celestial",
-    custom.celestial !== undefined,
-  );
-  const hasCloud = isLayerEnabled("clouds", custom.cloud !== undefined);
-  const hasRain = isLayerEnabled("rain", custom.rain !== undefined);
-  const hasLightning = isLayerEnabled(
-    "lightning",
-    custom.lightning !== undefined,
-  );
-  const hasSnow = isLayerEnabled("snow", custom.snow !== undefined);
-  const hasPost = custom.post !== undefined;
-
-  if (
-    !hasCelestial &&
-    !hasCloud &&
-    !hasRain &&
-    !hasLightning &&
-    !hasSnow &&
-    !hasPost
-  ) {
-    return null;
-  }
-
-  const layers: Partial<LayerToggles> = {
-    celestial: hasCelestial,
-    clouds: hasCloud,
-    rain: hasRain,
-    lightning: hasLightning,
-    snow: hasSnow,
-  };
-
-  const celestial: WeatherEffectsCanvasProps["celestial"] = hasCelestial
-    ? custom.celestial
-    : undefined;
-
-  const cloud: WeatherEffectsCanvasProps["cloud"] =
-    hasCloud && custom.cloud
-      ? {
-          coverage: custom.cloud.coverage,
-          density: custom.cloud.density,
-          softness: custom.cloud.softness,
-          cloudScale: custom.cloud.cloudScale,
-          windSpeed: custom.cloud.windSpeed,
-          windAngle: custom.cloud.windAngle,
-          turbulence: custom.cloud.turbulence,
-          lightIntensity:
-            custom.cloud.lightIntensity ??
-            sunAltitudeToLightIntensity(custom.cloud.sunAltitude),
-          ambientDarkness: custom.cloud.ambientDarkness,
-          numLayers: custom.cloud.numLayers,
-        }
-      : undefined;
-
-  const rain: WeatherEffectsCanvasProps["rain"] =
-    hasRain && custom.rain
-      ? {
-          glassIntensity: custom.rain.glassIntensity,
-          glassZoom: custom.rain.zoom,
-          fallingIntensity: custom.rain.fallingIntensity,
-          fallingSpeed: custom.rain.fallingSpeed,
-          fallingAngle: custom.rain.fallingAngle,
-          fallingStreakLength: custom.rain.fallingStreakLength,
-          fallingLayers: custom.rain.fallingLayers,
-        }
-      : undefined;
-
-  const lightning: WeatherEffectsCanvasProps["lightning"] =
-    hasLightning && custom.lightning
-      ? {
-          enabled: true,
-          autoMode: custom.lightning.autoMode,
-          autoInterval: custom.lightning.autoInterval,
-          flashIntensity: custom.lightning.glowIntensity,
-          branchDensity: custom.lightning.branchDensity,
-        }
-      : undefined;
-
-  const snow: WeatherEffectsCanvasProps["snow"] =
-    hasSnow && custom.snow
-      ? {
-          intensity: custom.snow.intensity,
-          layers: custom.snow.layers,
-          fallSpeed: custom.snow.fallSpeed,
-          windSpeed: custom.snow.windSpeed,
-          drift: custom.snow.drift,
-          flakeSize: custom.snow.flakeSize,
-        }
-      : undefined;
-
-  const interactions: Partial<
-    NonNullable<WeatherEffectsCanvasProps["interactions"]>
-  > = {};
-  if (custom.rain?.fallingRefraction !== undefined) {
-    interactions.rainRefractionStrength = custom.rain.fallingRefraction;
-  }
-  if (custom.lightning?.sceneIllumination !== undefined) {
-    interactions.lightningSceneIllumination =
-      custom.lightning.sceneIllumination;
-  }
-
-  return {
-    layers,
-    celestial,
-    cloud,
-    rain,
-    lightning,
-    snow,
-    interactions:
-      Object.keys(interactions).length > 0 ? interactions : undefined,
-    post: custom.post,
-  };
-}
 
 interface EffectCompositorProps {
   conditionCode: WeatherConditionCode;
@@ -233,7 +56,7 @@ export function EffectCompositor({
   const reducedMotion = settings?.reducedMotion ?? false;
   const hasCustomProps = customProps !== undefined;
   const resolvedQuality = useMemo(
-    () => resolveQuality(settings?.quality ?? "auto"),
+    () => resolveEffectQuality(settings?.quality ?? "auto"),
     [settings?.quality],
   );
 
@@ -242,18 +65,7 @@ export function EffectCompositor({
   }, []);
 
   const dpr = useMemo(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const base = window.devicePixelRatio || 1;
-    // Keep high-density screens from exploding GPU cost by default.
-    const cap =
-      resolvedQuality === "low"
-        ? 1.0
-        : resolvedQuality === "medium"
-          ? 1.5
-          : 2.0;
-
-    return Math.max(1, Math.min(base, cap));
+    return resolveEffectCanvasDpr(resolvedQuality);
   }, [resolvedQuality]);
 
   const canvasProps = useMemo<WeatherEffectsCanvasProps | null>(() => {

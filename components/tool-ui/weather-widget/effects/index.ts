@@ -30,7 +30,7 @@ export type {
   SnowParams,
   InteractionParams,
   LayerToggles,
-} from "./weather-effects-canvas";
+} from "./weather-effects-types";
 
 export * from "./tuning";
 export { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";

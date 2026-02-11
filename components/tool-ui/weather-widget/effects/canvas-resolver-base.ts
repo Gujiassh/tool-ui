@@ -4,86 +4,14 @@ import {
 } from "./parameter-mapper";
 import type { WeatherEffectParams } from "./types";
 import type {
-  LayerToggles,
-  PostProcessParams,
-  SnowParams,
   WeatherEffectsCanvasProps,
 } from "./weather-effects-types";
+import type {
+  WeatherCompositorParams,
+  WeatherStudioCompositorParams,
+} from "./weather-compositor-types";
 
-interface WeatherCompositorCelestialParams {
-  timeOfDay: number;
-  moonPhase: number;
-  starDensity: number;
-  celestialX: number;
-  celestialY: number;
-  sunSize: number;
-  moonSize: number;
-  sunGlowIntensity: number;
-  sunGlowSize: number;
-  sunRayCount: number;
-  sunRayLength: number;
-  sunRayIntensity: number;
-  sunRayShimmer: number;
-  sunRayShimmerSpeed: number;
-  moonGlowIntensity: number;
-  moonGlowSize: number;
-  skyBrightness: number;
-  skySaturation: number;
-  skyContrast: number;
-}
-
-interface WeatherCompositorCloudParams {
-  cloudScale: number;
-  coverage: number;
-  density: number;
-  softness: number;
-  windSpeed: number;
-  windAngle: number;
-  turbulence: number;
-  lightIntensity: number;
-  ambientDarkness: number;
-  backlightIntensity: number;
-  numLayers: number;
-}
-
-interface WeatherCompositorRainParams {
-  glassIntensity: number;
-  zoom: number;
-  fallingIntensity: number;
-  fallingSpeed: number;
-  fallingAngle: number;
-  fallingStreakLength: number;
-  fallingLayers: number;
-  fallingRefraction: number;
-}
-
-interface WeatherCompositorLightningParams {
-  autoMode: boolean;
-  autoInterval: number;
-  glowIntensity: number;
-  branchDensity: number;
-  sceneIllumination: number;
-}
-
-interface WeatherCompositorParams {
-  layers: LayerToggles;
-  celestial: WeatherCompositorCelestialParams;
-  cloud: WeatherCompositorCloudParams;
-  rain: WeatherCompositorRainParams;
-  lightning: WeatherCompositorLightningParams;
-  snow: SnowParams;
-  post: PostProcessParams;
-}
-
-export interface WeatherStudioCompositorParams {
-  layers: LayerToggles;
-  celestial: WeatherCompositorCelestialParams;
-  cloud: WeatherCompositorCloudParams;
-  rain: WeatherCompositorRainParams;
-  lightning: WeatherCompositorLightningParams;
-  snow: SnowParams;
-  post: PostProcessParams;
-}
+export type { WeatherStudioCompositorParams } from "./weather-compositor-types";
 
 export function createStudioTimestamp(
   timeOfDay: number,
