@@ -8,7 +8,7 @@ import type {
   PostProcessParams,
   SnowParams,
   WeatherEffectsCanvasProps,
-} from "./weather-effects-canvas";
+} from "./weather-effects-types";
 
 interface WeatherCompositorCelestialParams {
   timeOfDay: number;

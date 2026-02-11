@@ -4,11 +4,11 @@ import { useMemo, useState, useEffect } from "react";
 import type { WeatherConditionCode } from "../schema";
 import type { EffectSettings } from "./types";
 import type { CustomEffectProps, WeatherEffectLayer } from "./custom-effect-props";
-import {
-  WeatherEffectsCanvas,
-  type LayerToggles,
-  type WeatherEffectsCanvasProps,
-} from "./weather-effects-canvas";
+import { WeatherEffectsCanvas } from "./weather-effects-canvas";
+import type {
+  LayerToggles,
+  WeatherEffectsCanvasProps,
+} from "./weather-effects-types";
 import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
 import { type WeatherEffectsTunedPresets } from "./tuning";
 import {

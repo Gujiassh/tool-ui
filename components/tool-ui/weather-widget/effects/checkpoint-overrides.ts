@@ -8,7 +8,7 @@ import {
   type WeatherEffectsOverrides,
   type WeatherEffectsTunedPresets,
 } from "./tuning";
-import type { WeatherEffectsCanvasProps } from "./weather-effects-canvas";
+import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
 
 interface SurroundingCheckpoints {
   before: TimeCheckpoint;

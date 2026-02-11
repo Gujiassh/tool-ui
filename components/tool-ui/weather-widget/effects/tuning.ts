@@ -9,7 +9,7 @@ import type {
   SnowParams,
   InteractionParams,
   PostProcessParams,
-} from "./weather-effects-canvas";
+} from "./weather-effects-types";
 
 export type TimeCheckpoint = "dawn" | "noon" | "dusk" | "midnight";
 

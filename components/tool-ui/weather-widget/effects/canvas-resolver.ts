@@ -22,7 +22,7 @@ import type {
   PostProcessParams,
   RainParams,
   WeatherEffectsCanvasProps,
-} from "./weather-effects-canvas";
+} from "./weather-effects-types";
 
 export { mapWeatherCompositorParamsToCanvasProps } from "./canvas-resolver-base";
 export type { WeatherStudioCompositorParams } from "./canvas-resolver-base";
