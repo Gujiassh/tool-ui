@@ -68,6 +68,28 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  {
+    files: ["components/tool-ui/**/*.ts", "components/tool-ui/**/*.tsx"],
+    ignores: [
+      "components/tool-ui/**/_adapter.tsx",
+      "components/tool-ui/shared/**/*.ts",
+      "components/tool-ui/shared/**/*.tsx",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/components/ui/*", "@/lib/ui/cn"],
+              message:
+                "Import UI primitives and cn from './_adapter' to keep tool-ui components portable.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
