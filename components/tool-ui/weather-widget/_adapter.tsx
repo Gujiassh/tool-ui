@@ -8,5 +8,5 @@
  *   Card → shadcn/ui Card
  */
 
-export { cn } from "../../../lib/ui/cn";
-export { Card } from "../../ui/card";
+export { cn } from "@/lib/ui/cn";
+export { Card } from "@/components/ui/card";

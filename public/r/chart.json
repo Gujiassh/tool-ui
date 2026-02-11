@@ -19,7 +19,7 @@
       "path": "components/tool-ui/chart/_adapter.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/chart/_adapter.tsx",
-      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn    → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Chart → shadcn/ui Chart (recharts wrapper)\n *   Card  → shadcn/ui Card\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport {\n  ChartContainer,\n  ChartTooltip,\n  ChartTooltipContent,\n  ChartLegend,\n  ChartLegendContent,\n  type ChartConfig,\n} from \"../../ui/chart\";\nexport { Card, CardHeader, CardTitle, CardDescription, CardContent } from \"../../ui/card\";\n"
+      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn    → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Chart → shadcn/ui Chart (recharts wrapper)\n *   Card  → shadcn/ui Card\n */\n\nexport { cn } from \"@/lib/ui/cn\";\nexport {\n  ChartContainer,\n  ChartTooltip,\n  ChartTooltipContent,\n  ChartLegend,\n  ChartLegendContent,\n  type ChartConfig,\n} from \"@/components/ui/chart\";\nexport { Card, CardHeader, CardTitle, CardDescription, CardContent } from \"@/components/ui/card\";\n"
     },
     {
       "path": "components/tool-ui/chart/chart.tsx",

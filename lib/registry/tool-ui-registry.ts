@@ -121,10 +121,17 @@ function toPosixPath(filePath: string): string {
 }
 
 function resolveLocalImport(
+  projectRoot: string,
   fromAbsolutePath: string,
   specifier: string,
 ): string | null {
-  const basePath = path.resolve(path.dirname(fromAbsolutePath), specifier);
+  if (!specifier.startsWith(".") && !specifier.startsWith("@/")) {
+    return null;
+  }
+
+  const basePath = specifier.startsWith("@/")
+    ? path.join(projectRoot, specifier.slice(2))
+    : path.resolve(path.dirname(fromAbsolutePath), specifier);
   const candidates = [
     `${basePath}.ts`,
     `${basePath}.tsx`,
@@ -170,9 +177,9 @@ function extractImportSpecifiers(content: string): string[] {
   return Array.from(imports);
 }
 
-function extractRelativeImportSpecifiers(content: string): string[] {
+function extractLocalImportSpecifiers(content: string): string[] {
   return extractImportSpecifiers(content).filter((specifier) =>
-    specifier.startsWith("."),
+    specifier.startsWith(".") || specifier.startsWith("@/"),
   );
 }
 
@@ -271,10 +278,14 @@ async function collectItemFilePaths(
     seen.add(absolutePath);
 
     const content = await fs.readFile(absolutePath, "utf8");
-    const importSpecifiers = extractRelativeImportSpecifiers(content);
+    const importSpecifiers = extractLocalImportSpecifiers(content);
 
     for (const specifier of importSpecifiers) {
-      const resolvedPath = resolveLocalImport(absolutePath, specifier);
+      const resolvedPath = resolveLocalImport(
+        projectRoot,
+        absolutePath,
+        specifier,
+      );
       if (!resolvedPath) continue;
 
       const relativePath = toPosixPath(
@@ -320,8 +331,15 @@ async function buildRegistryItem(
         }
 
         let registryDependency = toRegistryDependency(specifier);
-        if (!registryDependency && specifier.startsWith(".")) {
-          const resolvedPath = resolveLocalImport(absolutePath, specifier);
+        if (
+          !registryDependency &&
+          (specifier.startsWith(".") || specifier.startsWith("@/"))
+        ) {
+          const resolvedPath = resolveLocalImport(
+            projectRoot,
+            absolutePath,
+            specifier,
+          );
           if (resolvedPath) {
             const resolvedRelativePath = toPosixPath(
               path.relative(projectRoot, resolvedPath),

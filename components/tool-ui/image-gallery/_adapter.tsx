@@ -8,6 +8,6 @@
  *   Button → shadcn/ui Button
  */
 
-export { cn } from "../../../lib/ui/cn";
-export { Button } from "../../ui/button";
+export { cn } from "@/lib/ui/cn";
+export { Button } from "@/components/ui/button";
 export { ChevronLeft, ChevronRight, X, ImageOff } from "lucide-react";

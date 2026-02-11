@@ -20,7 +20,7 @@
       "path": "components/tool-ui/order-summary/_adapter.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/order-summary/_adapter.tsx",
-      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn        → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button    → shadcn/ui Button\n *   Separator → shadcn/ui Separator\n *   Skeleton  → shadcn/ui Skeleton\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport { Button } from \"../../ui/button\";\nexport { Separator } from \"../../ui/separator\";\nexport { Skeleton } from \"../../ui/skeleton\";\n"
+      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn        → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button    → shadcn/ui Button\n *   Separator → shadcn/ui Separator\n *   Skeleton  → shadcn/ui Skeleton\n */\n\nexport { cn } from \"@/lib/ui/cn\";\nexport { Button } from \"@/components/ui/button\";\nexport { Separator } from \"@/components/ui/separator\";\nexport { Skeleton } from \"@/components/ui/skeleton\";\n"
     },
     {
       "path": "components/tool-ui/order-summary/index.tsx",
@@ -50,7 +50,7 @@
       "path": "components/tool-ui/shared/_adapter.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/shared/_adapter.tsx",
-      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn     → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button → shadcn/ui Button\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport { Button } from \"../../ui/button\";\n"
+      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn     → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button → shadcn/ui Button\n */\n\nexport { cn } from \"@/lib/ui/cn\";\nexport { Button } from \"@/components/ui/button\";\n"
     },
     {
       "path": "components/tool-ui/shared/action-buttons.tsx",

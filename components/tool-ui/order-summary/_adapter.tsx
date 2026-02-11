@@ -10,7 +10,7 @@
  *   Skeleton  → shadcn/ui Skeleton
  */
 
-export { cn } from "../../../lib/ui/cn";
-export { Button } from "../../ui/button";
-export { Separator } from "../../ui/separator";
-export { Skeleton } from "../../ui/skeleton";
+export { cn } from "@/lib/ui/cn";
+export { Button } from "@/components/ui/button";
+export { Separator } from "@/components/ui/separator";
+export { Skeleton } from "@/components/ui/skeleton";

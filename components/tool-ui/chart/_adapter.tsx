@@ -9,7 +9,7 @@
  *   Card  → shadcn/ui Card
  */
 
-export { cn } from "../../../lib/ui/cn";
+export { cn } from "@/lib/ui/cn";
 export {
   ChartContainer,
   ChartTooltip,
@@ -17,5 +17,5 @@ export {
   ChartLegend,
   ChartLegendContent,
   type ChartConfig,
-} from "../../ui/chart";
-export { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../../ui/card";
+} from "@/components/ui/chart";
+export { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";

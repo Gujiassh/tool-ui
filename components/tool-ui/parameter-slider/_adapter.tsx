@@ -10,7 +10,7 @@
  *   Slider    → shadcn/ui Slider
  */
 
-export { cn } from "../../../lib/ui/cn";
-export { Button } from "../../ui/button";
-export { Separator } from "../../ui/separator";
-export { Slider } from "../../ui/slider";
+export { cn } from "@/lib/ui/cn";
+export { Button } from "@/components/ui/button";
+export { Separator } from "@/components/ui/separator";
+export { Slider } from "@/components/ui/slider";
