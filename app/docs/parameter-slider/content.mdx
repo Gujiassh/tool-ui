@@ -40,6 +40,7 @@ import { ParameterSlider } from "@/components/tool-ui/parameter-slider";
       );
     }
     ```
+
   </Tab>
 </Tabs>
 
@@ -115,34 +116,28 @@ import {
   safeParseSerializableParameterSlider,
   SerializableParameterSliderSchema,
 } from "@/components/tool-ui/parameter-slider";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   adjust_parameters: {
-  description: "Adjust numeric parameters with sliders",
-  parameters: SerializableParameterSliderSchema,
-  render: ({ args, addResult, toolCallId }) => {
-    const parsedArgs = safeParseSerializableParameterSlider({
-      ...args,
-      id: (args as any)?.id ?? `parameter-slider-${toolCallId}`,
-    });
-
-    if (!parsedArgs) {
-      return null;
-    }
-
-    return (
-      <ParameterSliderErrorBoundary>
-        <ParameterSlider
-          {...parsedArgs}
-          onResponseAction={(actionId, values) => {
-            if (actionId === "apply") {
-              addResult({ values });
-            }
-          }}
-        />
-      </ParameterSliderErrorBoundary>
-    );
-  },
+    description: "Adjust numeric parameters with sliders",
+    parameters: SerializableParameterSliderSchema,
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableParameterSlider,
+      idPrefix: "parameter-slider",
+      render: (parsedArgs, { addResult }) => (
+        <ParameterSliderErrorBoundary>
+          <ParameterSlider
+            {...parsedArgs}
+            onResponseAction={(actionId, values) => {
+              if (actionId === "apply") {
+                void addResult?.({ values });
+              }
+            }}
+          />
+        </ParameterSliderErrorBoundary>
+      ),
+    }),
   },
 };
 ```

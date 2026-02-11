@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 import { AspectRatioSchema, MediaFitSchema } from "../shared/media";
 
@@ -37,12 +36,14 @@ export const SerializableImageSchema = z.object({
 
 export type SerializableImage = z.infer<typeof SerializableImageSchema>;
 
-export function parseSerializableImage(input: unknown): SerializableImage {
-  return parseWithSchema(SerializableImageSchema, input, "Image");
-}
+const SerializableImageSchemaContract = defineToolUiContract(
+  "Image",
+  SerializableImageSchema,
+);
 
-export function safeParseSerializableImage(
+export const parseSerializableImage: (input: unknown) => SerializableImage =
+  SerializableImageSchemaContract.parse;
+
+export const safeParseSerializableImage: (
   input: unknown,
-): SerializableImage | null {
-  return safeParseWithSchema(SerializableImageSchema, input);
-}
+) => SerializableImage | null = SerializableImageSchemaContract.safeParse;

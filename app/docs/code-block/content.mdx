@@ -132,25 +132,21 @@ import {
   CodeBlockErrorBoundary,
   safeParseSerializableCodeBlock,
 } from "@/components/tool-ui/code-block";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showCodeBlock: {
     type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableCodeBlock(result);
-
-      if (!parsedResult) {
-        return null;
-      }
-
-      return (
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableCodeBlock,
+      render: (parsedResult) => (
         <>
           <CodeBlockErrorBoundary>
             <CodeBlock {...parsedResult} />
           </CodeBlockErrorBoundary>
         </>
-      );
-    },
+      ),
+    }),
   },
 };
 ```

@@ -35,6 +35,21 @@ const eslintConfig = defineConfig([
       "react-hooks/static-components": "off",
     },
   },
+  {
+    files: ["components/tool-ui/**/*.ts", "components/tool-ui/**/*.tsx"],
+    ignores: ["components/tool-ui/shared/media/safe-navigation.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "CallExpression[callee.object.name='window'][callee.property.name='open']",
+          message:
+            "Use openSafeNavigationHref from components/tool-ui/shared/media/safe-navigation instead of window.open.",
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

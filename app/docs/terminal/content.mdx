@@ -136,25 +136,21 @@ import {
   TerminalErrorBoundary,
   safeParseSerializableTerminal,
 } from "@/components/tool-ui/terminal";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showTerminal: {
     type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableTerminal(result);
-
-      if (!parsedResult) {
-        return null;
-      }
-
-      return (
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableTerminal,
+      render: (parsedResult) => (
         <>
           <TerminalErrorBoundary>
             <Terminal {...parsedResult} />
           </TerminalErrorBoundary>
         </>
-      );
-    },
+      ),
+    }),
   },
 };
 ```

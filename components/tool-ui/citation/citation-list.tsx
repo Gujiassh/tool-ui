@@ -12,14 +12,17 @@ import {
   File,
   ExternalLink,
 } from "lucide-react";
-import {
-  cn,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "./_adapter";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
 import { Citation } from "./citation";
-import type { SerializableCitation, CitationType, CitationVariant } from "./schema";
+import type {
+  SerializableCitation,
+  CitationType,
+  CitationVariant,
+} from "./schema";
+import {
+  openSafeNavigationHref,
+  resolveSafeNavigationHref,
+} from "../shared/media";
 
 const TYPE_ICONS: Record<CitationType, LucideIcon> = {
   webpage: Globe,
@@ -101,8 +104,11 @@ export function CitationList(props: CitationListProps) {
     onNavigate,
   } = props;
 
-  const shouldTruncate = maxVisible !== undefined && citations.length > maxVisible;
-  const visibleCitations = shouldTruncate ? citations.slice(0, maxVisible) : citations;
+  const shouldTruncate =
+    maxVisible !== undefined && citations.length > maxVisible;
+  const visibleCitations = shouldTruncate
+    ? citations.slice(0, maxVisible)
+    : citations;
   const overflowCitations = shouldTruncate ? citations.slice(maxVisible) : [];
   const overflowCount = overflowCitations.length;
 
@@ -192,10 +198,12 @@ function OverflowIndicator({
   const { open, handleMouseEnter, handleMouseLeave } = useHoverPopover();
 
   const handleClick = (citation: SerializableCitation) => {
+    const href = resolveSafeNavigationHref(citation.href);
+    if (!href) return;
     if (onNavigate) {
-      onNavigate(citation.href, citation);
-    } else if (typeof window !== "undefined") {
-      window.open(citation.href, "_blank", "noopener,noreferrer");
+      onNavigate(href, citation);
+    } else {
+      openSafeNavigationHref(href);
     }
   };
 
@@ -224,7 +232,7 @@ function OverflowIndicator({
               "bg-muted/60 text-sm tabular-nums",
               "transition-colors duration-150",
               "hover:bg-muted",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           >
             <span className="text-muted-foreground">+{count} more</span>
@@ -254,10 +262,10 @@ function OverflowIndicator({
           onMouseLeave={handleMouseLeave}
           className={cn(
             "flex items-center justify-center rounded-xl px-4 py-3",
-            "border border-dashed border-border bg-card",
+            "border-border bg-card border border-dashed",
             "transition-colors duration-150",
             "hover:border-foreground/25 hover:bg-muted/50",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           )}
         >
           <span className="text-muted-foreground text-sm tabular-nums">
@@ -291,7 +299,7 @@ function OverflowItem({ citation, onClick }: OverflowItemProps) {
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+      className="group hover:bg-muted focus-visible:bg-muted flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors focus-visible:outline-none"
     >
       {citation.favicon ? (
         <img
@@ -303,15 +311,20 @@ function OverflowItem({ citation, onClick }: OverflowItemProps) {
           className="bg-muted size-4 shrink-0 rounded object-cover"
         />
       ) : (
-        <TypeIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <TypeIcon
+          className="text-muted-foreground size-4 shrink-0"
+          aria-hidden="true"
+        />
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium group-hover:underline group-hover:decoration-foreground/30 group-hover:underline-offset-2">
+        <p className="group-hover:decoration-foreground/30 truncate text-sm font-medium group-hover:underline group-hover:underline-offset-2">
           {citation.title}
         </p>
-        <p className="truncate text-xs text-muted-foreground">{citation.domain}</p>
+        <p className="text-muted-foreground truncate text-xs">
+          {citation.domain}
+        </p>
       </div>
-      <ExternalLink className="mt-0.5 size-3.5 shrink-0 self-start text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+      <ExternalLink className="text-muted-foreground mt-0.5 size-3.5 shrink-0 self-start opacity-0 transition-opacity group-hover:opacity-100" />
     </button>
   );
 }
@@ -342,10 +355,12 @@ function StackedCitations({
   const remainingCount = Math.max(0, citations.length - maxIcons);
 
   const handleClick = (citation: SerializableCitation) => {
+    const href = resolveSafeNavigationHref(citation.href);
+    if (!href) return;
     if (onNavigate) {
-      onNavigate(citation.href, citation);
-    } else if (typeof window !== "undefined") {
-      window.open(citation.href, "_blank", "noopener,noreferrer");
+      onNavigate(href, citation);
+    } else {
+      openSafeNavigationHref(href);
     }
   };
 
@@ -370,73 +385,76 @@ function StackedCitations({
               "bg-muted/40 outline-none",
               "transition-colors duration-150",
               "hover:bg-muted/70",
-              "focus-visible:ring-2 focus-visible:ring-ring",
+              "focus-visible:ring-ring focus-visible:ring-2",
               className,
             )}
           >
-          <div className="flex items-center">
-            {visibleCitations.map((citation, index) => {
-              const TypeIcon = TYPE_ICONS[citation.type ?? "webpage"] ?? Globe;
-              return (
+            <div className="flex items-center">
+              {visibleCitations.map((citation, index) => {
+                const TypeIcon =
+                  TYPE_ICONS[citation.type ?? "webpage"] ?? Globe;
+                return (
+                  <div
+                    key={citation.id}
+                    className={cn(
+                      "border-border bg-background dark:border-foreground/20 relative flex size-6 items-center justify-center rounded-full border shadow-xs",
+                      index > 0 && "-ml-2",
+                    )}
+                    style={{ zIndex: maxIcons - index }}
+                  >
+                    {citation.favicon ? (
+                      <img
+                        src={citation.favicon}
+                        alt=""
+                        aria-hidden="true"
+                        width={18}
+                        height={18}
+                        className="size-4.5 rounded-full object-cover"
+                      />
+                    ) : (
+                      <TypeIcon
+                        className="text-muted-foreground size-3"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+              {remainingCount > 0 && (
                 <div
-                  key={citation.id}
-                  className={cn(
-                    "relative flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-xs dark:border-foreground/20",
-                    index > 0 && "-ml-2",
-                  )}
-                  style={{ zIndex: maxIcons - index }}
+                  className="border-border bg-background dark:border-foreground/20 relative -ml-2 flex size-6 items-center justify-center rounded-full border shadow-xs"
+                  style={{ zIndex: 0 }}
                 >
-                  {citation.favicon ? (
-                    <img
-                      src={citation.favicon}
-                      alt=""
-                      aria-hidden="true"
-                      width={18}
-                      height={18}
-                      className="size-4.5 rounded-full object-cover"
-                    />
-                  ) : (
-                    <TypeIcon
-                      className="size-3 text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                  )}
+                  <span className="text-muted-foreground text-[10px] font-medium tracking-tight">
+                    •••
+                  </span>
                 </div>
-              );
-            })}
-            {remainingCount > 0 && (
-              <div
-                className="-ml-2 relative flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-xs dark:border-foreground/20"
-                style={{ zIndex: 0 }}
-              >
-                <span className="text-[10px] font-medium text-muted-foreground tracking-tight">•••</span>
-              </div>
-            )}
+              )}
+            </div>
+            <span className="text-muted-foreground text-sm tabular-nums">
+              {citations.length} source{citations.length !== 1 && "s"}
+            </span>
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          side="bottom"
+          align="start"
+          className="w-80 p-1"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onBlur={handleBlur}
+          onEscapeKeyDown={() => setOpen(false)}
+        >
+          <div className="flex max-h-72 flex-col overflow-y-auto">
+            {citations.map((citation) => (
+              <OverflowItem
+                key={citation.id}
+                citation={citation}
+                onClick={() => handleClick(citation)}
+              />
+            ))}
           </div>
-          <span className="text-muted-foreground text-sm tabular-nums">
-            {citations.length} source{citations.length !== 1 && "s"}
-          </span>
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="bottom"
-        align="start"
-        className="w-80 p-1"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onBlur={handleBlur}
-        onEscapeKeyDown={() => setOpen(false)}
-      >
-        <div className="flex max-h-72 flex-col overflow-y-auto">
-          {citations.map((citation) => (
-            <OverflowItem
-              key={citation.id}
-              citation={citation}
-              onClick={() => handleClick(citation)}
-            />
-          ))}
-        </div>
-      </PopoverContent>
+        </PopoverContent>
       </Popover>
     </div>
   );

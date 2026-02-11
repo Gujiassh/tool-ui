@@ -116,6 +116,7 @@ import {
   LinkPreviewErrorBoundary,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 import {
   useChatRuntime,
   AssistantChatTransport,
@@ -124,22 +125,16 @@ import {
 const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableLinkPreview(result);
-
-      // Tool UI renderers should mount only when the full payload parses.
-      if (!parsedResult) {
-        return null;
-      }
-
-      return (
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableLinkPreview,
+      render: (parsedResult) => (
         <>
           <LinkPreviewErrorBoundary>
             <LinkPreview {...parsedResult} maxWidth="420px" />
           </LinkPreviewErrorBoundary>
         </>
-      );
-    },
+      ),
+    }),
   },
 };
 
@@ -248,38 +243,32 @@ import {
   safeParseSerializableOptionList,
   SerializableOptionListSchema,
 } from "@/components/tool-ui/option-list";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   selectFormat: {
-  description: "Ask the user to choose an output format.",
-  parameters: SerializableOptionListSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    const parsedArgs = safeParseSerializableOptionList({
-      ...args,
-      // `id` is required and should be stable/meaningful; fall back for DX.
-      id: (args as any)?.id ?? `format-selection-${toolCallId}`,
-    });
+    description: "Ask the user to choose an output format.",
+    parameters: SerializableOptionListSchema,
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableOptionList,
+      idPrefix: "format-selection",
+      render: (parsedArgs, { result, addResult }) => {
+        if (result) {
+          return (
+            <OptionList {...parsedArgs} value={undefined} choice={result} />
+          );
+        }
 
-    // Tool UI renderers should mount only when the full payload parses.
-    if (!parsedArgs) {
-      return null;
-    }
-
-    if (result) {
-      return (
-        <OptionList {...parsedArgs} value={undefined} choice={result} />
-      );
-    }
-
-    return (
-      <OptionList
-        {...parsedArgs}
-        // Avoid controlled selection in LLM-driven payloads.
-        value={undefined}
-        onConfirm={(selection) => addResult(selection)}
-      />
-    );
-  },
+        return (
+          <OptionList
+            {...parsedArgs}
+            // Avoid controlled selection in LLM-driven payloads.
+            value={undefined}
+            onConfirm={(selection) => addResult?.(selection)}
+          />
+        );
+      },
+    }),
   },
 };
 ```

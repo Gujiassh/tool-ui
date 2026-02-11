@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
-import { parseWithSchema, safeParseWithSchema } from "../shared/parse";
+import { defineToolUiContract } from "../shared";
 
 export const MessageDraftChannelSchema = z.enum(["email", "slack"]);
 
@@ -60,21 +60,19 @@ export type SerializableSlackDraft = z.infer<
   typeof SerializableSlackDraftSchema
 >;
 
-export function parseSerializableMessageDraft(
-  input: unknown,
-): SerializableMessageDraft {
-  return parseWithSchema(
-    SerializableMessageDraftSchema,
-    input,
-    "MessageDraft",
-  );
-}
+const SerializableMessageDraftSchemaContract = defineToolUiContract(
+  "MessageDraft",
+  SerializableMessageDraftSchema,
+);
 
-export function safeParseSerializableMessageDraft(
+export const parseSerializableMessageDraft: (
   input: unknown,
-): SerializableMessageDraft | null {
-  return safeParseWithSchema(SerializableMessageDraftSchema, input);
-}
+) => SerializableMessageDraft = SerializableMessageDraftSchemaContract.parse;
+
+export const safeParseSerializableMessageDraft: (
+  input: unknown,
+) => SerializableMessageDraft | null =
+  SerializableMessageDraftSchemaContract.safeParse;
 
 export type MessageDraftProps = SerializableMessageDraft & {
   className?: string;

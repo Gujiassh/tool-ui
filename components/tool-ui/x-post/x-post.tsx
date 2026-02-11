@@ -18,6 +18,7 @@ import {
   formatCount,
   getDomain,
 } from "../shared";
+import { resolveSafeNavigationHref } from "../shared/media";
 import type { XPostData, XPostMedia, XPostLinkPreview } from "./schema";
 
 export interface XPostProps {
@@ -155,15 +156,10 @@ function PostMedia({
 }
 
 function PostLinkPreview({ preview }: { preview: XPostLinkPreview }) {
+  const href = resolveSafeNavigationHref(preview.url);
   const domain = preview.domain ?? getDomain(preview.url);
-
-  return (
-    <a
-      href={preview.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:bg-muted/50 mt-2 block overflow-hidden rounded-xl border transition-colors"
-    >
+  const content = (
+    <>
       {preview.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -186,6 +182,25 @@ function PostLinkPreview({ preview }: { preview: XPostLinkPreview }) {
           </div>
         )}
       </div>
+    </>
+  );
+
+  if (!href) {
+    return (
+      <div className="mt-2 block overflow-hidden rounded-xl border">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:bg-muted/50 mt-2 block overflow-hidden rounded-xl border transition-colors"
+    >
+      {content}
     </a>
   );
 }

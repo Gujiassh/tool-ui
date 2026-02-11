@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const ChartSeriesSchema = z.object({
@@ -109,12 +108,14 @@ export const SerializableChartSchema = ChartPropsSchema;
 
 export type SerializableChart = z.infer<typeof SerializableChartSchema>;
 
-export function parseSerializableChart(input: unknown): SerializableChart {
-  return parseWithSchema(SerializableChartSchema, input, "Chart");
-}
+const SerializableChartSchemaContract = defineToolUiContract(
+  "Chart",
+  SerializableChartSchema,
+);
 
-export function safeParseSerializableChart(
+export const parseSerializableChart: (input: unknown) => SerializableChart =
+  SerializableChartSchemaContract.parse;
+
+export const safeParseSerializableChart: (
   input: unknown,
-): SerializableChart | null {
-  return safeParseWithSchema(SerializableChartSchema, input);
-}
+) => SerializableChart | null = SerializableChartSchemaContract.safeParse;

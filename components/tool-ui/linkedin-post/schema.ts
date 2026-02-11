@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseWithSchema, safeParseWithSchema } from "../shared";
+import { defineToolUiContract } from "../shared";
 
 export const LinkedInPostAuthorSchema = z.object({
   name: z.string(),
@@ -45,14 +45,15 @@ export type LinkedInPostLinkPreview = z.infer<
 >;
 export type LinkedInPostStats = z.infer<typeof LinkedInPostStatsSchema>;
 
-export function parseSerializableLinkedInPost(
-  input: unknown,
-): LinkedInPostData {
-  return parseWithSchema(SerializableLinkedInPostSchema, input, "LinkedInPost");
-}
+const SerializableLinkedInPostSchemaContract = defineToolUiContract(
+  "LinkedInPost",
+  SerializableLinkedInPostSchema,
+);
 
-export function safeParseSerializableLinkedInPost(
+export const parseSerializableLinkedInPost: (
   input: unknown,
-): LinkedInPostData | null {
-  return safeParseWithSchema(SerializableLinkedInPostSchema, input);
-}
+) => LinkedInPostData = SerializableLinkedInPostSchemaContract.parse;
+
+export const safeParseSerializableLinkedInPost: (
+  input: unknown,
+) => LinkedInPostData | null = SerializableLinkedInPostSchemaContract.safeParse;

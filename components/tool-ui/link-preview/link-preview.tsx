@@ -4,8 +4,17 @@
 import * as React from "react";
 import { Globe } from "lucide-react";
 import { cn } from "./_adapter";
-import { ActionButtons, normalizeActionsConfig, type ActionsProp } from "../shared";
-import { RATIO_CLASS_MAP, getFitClass, sanitizeHref } from "../shared/media";
+import {
+  ActionButtons,
+  normalizeActionsConfig,
+  type ActionsProp,
+} from "../shared";
+import {
+  RATIO_CLASS_MAP,
+  getFitClass,
+  openSafeNavigationHref,
+  sanitizeHref,
+} from "../shared/media";
 import type { SerializableLinkPreview } from "./schema";
 
 const FALLBACK_LOCALE = "en-US";
@@ -60,14 +69,14 @@ export function LinkPreview(props: LinkPreviewProps) {
     if (!sanitizedHref) return;
     if (onNavigate) {
       onNavigate(sanitizedHref, previewData);
-    } else if (typeof window !== "undefined") {
-      window.open(sanitizedHref, "_blank", "noopener,noreferrer");
+    } else {
+      openSafeNavigationHref(sanitizedHref);
     }
   };
 
   return (
     <article
-      className={cn("relative w-full min-w-80 max-w-md", className)}
+      className={cn("relative w-full max-w-md min-w-80", className)}
       lang={locale}
       data-tool-ui-id={id}
       data-slot="link-preview"
@@ -75,7 +84,7 @@ export function LinkPreview(props: LinkPreviewProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden rounded-xl",
-          "border border-border bg-card text-sm shadow-xs",
+          "border-border bg-card border text-sm shadow-xs",
           sanitizedHref && "cursor-pointer",
         )}
         onClick={sanitizedHref ? handleClick : undefined}
@@ -136,12 +145,12 @@ export function LinkPreview(props: LinkPreviewProps) {
               </div>
             )}
             {title && (
-              <h3 className="text-foreground text-pretty text-base font-medium">
+              <h3 className="text-foreground text-base font-medium text-pretty">
                 <span className="line-clamp-2">{title}</span>
               </h3>
             )}
             {description && (
-              <p className="text-muted-foreground text-pretty leading-snug">
+              <p className="text-muted-foreground leading-snug text-pretty">
                 <span className="line-clamp-2">{description}</span>
               </p>
             )}

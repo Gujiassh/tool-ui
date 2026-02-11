@@ -9,6 +9,11 @@ export interface ToolUIErrorBoundaryProps {
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
+export type ToolUiComponentBoundaryProps = Omit<
+  ToolUIErrorBoundaryProps,
+  "componentName"
+>;
+
 interface ToolUIErrorBoundaryState {
   hasError: boolean;
   error?: Error;
@@ -28,7 +33,11 @@ export class ToolUIErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error(`[${this.props.componentName}] render error:`, error, errorInfo);
+    console.error(
+      `[${this.props.componentName}] render error:`,
+      error,
+      errorInfo,
+    );
     this.props.onError?.(error, errorInfo);
   }
 
@@ -49,3 +58,16 @@ export class ToolUIErrorBoundary extends React.Component<
   }
 }
 
+export function createToolUiErrorBoundary(componentName: string) {
+  const ToolUiComponentBoundary = ({
+    children,
+    ...rest
+  }: ToolUiComponentBoundaryProps) => (
+    <ToolUIErrorBoundary componentName={componentName} {...rest}>
+      {children}
+    </ToolUIErrorBoundary>
+  );
+
+  ToolUiComponentBoundary.displayName = `${componentName}ErrorBoundary`;
+  return ToolUiComponentBoundary;
+}

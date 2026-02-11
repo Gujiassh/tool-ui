@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const SourceSchema = z.object({
@@ -33,14 +32,15 @@ export const SerializableAudioSchema = z.object({
 
 export type SerializableAudio = z.infer<typeof SerializableAudioSchema>;
 
-export function parseSerializableAudio(input: unknown): SerializableAudio {
-  return parseWithSchema(SerializableAudioSchema, input, "Audio");
-}
+const SerializableAudioSchemaContract = defineToolUiContract(
+  "Audio",
+  SerializableAudioSchema,
+);
 
-export function safeParseSerializableAudio(
+export const parseSerializableAudio: (input: unknown) => SerializableAudio =
+  SerializableAudioSchemaContract.parse;
+
+export const safeParseSerializableAudio: (
   input: unknown,
-): SerializableAudio | null {
-  return safeParseWithSchema(SerializableAudioSchema, input);
-}
-
+) => SerializableAudio | null = SerializableAudioSchemaContract.safeParse;
 export type AudioVariant = "full" | "compact";

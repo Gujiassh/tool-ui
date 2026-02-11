@@ -5,8 +5,7 @@ import {
   ToolUIRoleSchema,
   SerializableActionSchema,
   SerializableActionsConfigSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const SliderConfigSchema = z.object({
@@ -38,29 +37,30 @@ export type SerializableParameterSlider = z.infer<
   typeof SerializableParameterSliderSchema
 >;
 
-export function parseSerializableParameterSlider(
-  input: unknown,
-): SerializableParameterSlider {
-  return parseWithSchema(
-    SerializableParameterSliderSchema,
-    input,
-    "ParameterSlider",
-  );
-}
+const SerializableParameterSliderSchemaContract = defineToolUiContract(
+  "ParameterSlider",
+  SerializableParameterSliderSchema,
+);
 
-export function safeParseSerializableParameterSlider(
+export const parseSerializableParameterSlider: (
   input: unknown,
-): SerializableParameterSlider | null {
-  return safeParseWithSchema(SerializableParameterSliderSchema, input);
-}
+) => SerializableParameterSlider =
+  SerializableParameterSliderSchemaContract.parse;
+
+export const safeParseSerializableParameterSlider: (
+  input: unknown,
+) => SerializableParameterSlider | null =
+  SerializableParameterSliderSchemaContract.safeParse;
 
 export interface SliderValue {
   id: string;
   value: number;
 }
 
-export interface ParameterSliderProps
-  extends Omit<SerializableParameterSlider, "responseActions"> {
+export interface ParameterSliderProps extends Omit<
+  SerializableParameterSlider,
+  "responseActions"
+> {
   className?: string;
   values?: SliderValue[];
   onChange?: (values: SliderValue[]) => void;

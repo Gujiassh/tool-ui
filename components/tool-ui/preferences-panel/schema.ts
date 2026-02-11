@@ -6,8 +6,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 const PreferenceItemBaseSchema = z.object({
@@ -66,14 +65,15 @@ const PreferencesPanelBaseSchema = z.object({
   sections: z.array(PreferenceSectionSchema).min(1),
 });
 
-export const SerializablePreferencesPanelSchema = PreferencesPanelBaseSchema.extend({
-  responseActions: z
-    .union([
-      z.array(SerializableActionSchema),
-      SerializableActionsConfigSchema,
-    ])
-    .optional(),
-});
+export const SerializablePreferencesPanelSchema =
+  PreferencesPanelBaseSchema.extend({
+    responseActions: z
+      .union([
+        z.array(SerializableActionSchema),
+        SerializableActionsConfigSchema,
+      ])
+      .optional(),
+  });
 
 export const SerializablePreferencesPanelReceiptSchema =
   PreferencesPanelBaseSchema.extend({
@@ -89,44 +89,44 @@ export type SerializablePreferencesPanelReceipt = z.infer<
   typeof SerializablePreferencesPanelReceiptSchema
 >;
 
-export function parseSerializablePreferencesPanel(
-  input: unknown,
-): SerializablePreferencesPanel {
-  return parseWithSchema(
-    SerializablePreferencesPanelSchema,
-    input,
-    "PreferencesPanel",
-  );
-}
+const SerializablePreferencesPanelSchemaContract = defineToolUiContract(
+  "PreferencesPanel",
+  SerializablePreferencesPanelSchema,
+);
 
-export function safeParseSerializablePreferencesPanel(
-  input: unknown,
-): SerializablePreferencesPanel | null {
-  return safeParseWithSchema(SerializablePreferencesPanelSchema, input);
-}
+const SerializablePreferencesPanelReceiptSchemaContract = defineToolUiContract(
+  "PreferencesPanelReceipt",
+  SerializablePreferencesPanelReceiptSchema,
+);
 
-export function parseSerializablePreferencesPanelReceipt(
+export const parseSerializablePreferencesPanel: (
   input: unknown,
-): SerializablePreferencesPanelReceipt {
-  return parseWithSchema(
-    SerializablePreferencesPanelReceiptSchema,
-    input,
-    "PreferencesPanelReceipt",
-  );
-}
+) => SerializablePreferencesPanel =
+  SerializablePreferencesPanelSchemaContract.parse;
 
-export function safeParseSerializablePreferencesPanelReceipt(
+export const safeParseSerializablePreferencesPanel: (
   input: unknown,
-): SerializablePreferencesPanelReceipt | null {
-  return safeParseWithSchema(SerializablePreferencesPanelReceiptSchema, input);
-}
+) => SerializablePreferencesPanel | null =
+  SerializablePreferencesPanelSchemaContract.safeParse;
+
+export const parseSerializablePreferencesPanelReceipt: (
+  input: unknown,
+) => SerializablePreferencesPanelReceipt =
+  SerializablePreferencesPanelReceiptSchemaContract.parse;
+
+export const safeParseSerializablePreferencesPanelReceipt: (
+  input: unknown,
+) => SerializablePreferencesPanelReceipt | null =
+  SerializablePreferencesPanelReceiptSchemaContract.safeParse;
 
 export interface PreferencesValue {
   [itemId: string]: string | boolean;
 }
 
-export interface PreferencesPanelProps
-  extends Omit<SerializablePreferencesPanel, "responseActions"> {
+export interface PreferencesPanelProps extends Omit<
+  SerializablePreferencesPanel,
+  "responseActions"
+> {
   className?: string;
   value?: PreferencesValue;
   onChange?: (value: PreferencesValue) => void;
@@ -140,8 +140,7 @@ export interface PreferencesPanelProps
   onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
-export interface PreferencesPanelReceiptProps
-  extends SerializablePreferencesPanelReceipt {
+export interface PreferencesPanelReceiptProps extends SerializablePreferencesPanelReceipt {
   className?: string;
 }
 

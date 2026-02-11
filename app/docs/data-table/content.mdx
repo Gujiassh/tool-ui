@@ -284,25 +284,21 @@ import {
   DataTableErrorBoundary,
   safeParseSerializableDataTable,
 } from "@/components/tool-ui/data-table";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchProducts: {
     type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableDataTable(result);
-
-      if (!parsedResult) {
-        return null;
-      }
-
-      return (
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableDataTable,
+      render: (parsedResult) => (
         <>
           <DataTableErrorBoundary>
             <DataTable rowIdKey="id" {...parsedResult} />
           </DataTableErrorBoundary>
         </>
-      );
-    },
+      ),
+    }),
   },
 };
 ```

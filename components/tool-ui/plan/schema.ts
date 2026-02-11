@@ -5,8 +5,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const PlanTodoStatusSchema = z.enum([
@@ -49,12 +48,14 @@ export const SerializablePlanSchema = PlanPropsSchema;
 
 export type SerializablePlan = z.infer<typeof SerializablePlanSchema>;
 
-export function parseSerializablePlan(input: unknown): SerializablePlan {
-  return parseWithSchema(SerializablePlanSchema, input, "Plan");
-}
+const SerializablePlanSchemaContract = defineToolUiContract(
+  "Plan",
+  SerializablePlanSchema,
+);
 
-export function safeParseSerializablePlan(
+export const parseSerializablePlan: (input: unknown) => SerializablePlan =
+  SerializablePlanSchemaContract.parse;
+
+export const safeParseSerializablePlan: (
   input: unknown,
-): SerializablePlan | null {
-  return safeParseWithSchema(SerializablePlanSchema, input);
-}
+) => SerializablePlan | null = SerializablePlanSchemaContract.safeParse;

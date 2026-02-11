@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 
 export const CitationTypeSchema = z.enum([
@@ -39,12 +38,15 @@ export const SerializableCitationSchema = z.object({
 
 export type SerializableCitation = z.infer<typeof SerializableCitationSchema>;
 
-export function parseSerializableCitation(input: unknown): SerializableCitation {
-  return parseWithSchema(SerializableCitationSchema, input, "Citation");
-}
+const SerializableCitationSchemaContract = defineToolUiContract(
+  "Citation",
+  SerializableCitationSchema,
+);
 
-export function safeParseSerializableCitation(
+export const parseSerializableCitation: (
   input: unknown,
-): SerializableCitation | null {
-  return safeParseWithSchema(SerializableCitationSchema, input);
-}
+) => SerializableCitation = SerializableCitationSchemaContract.parse;
+
+export const safeParseSerializableCitation: (
+  input: unknown,
+) => SerializableCitation | null = SerializableCitationSchemaContract.safeParse;

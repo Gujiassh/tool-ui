@@ -18,6 +18,7 @@ import {
   formatCount,
   getDomain,
 } from "../shared";
+import { resolveSafeNavigationHref } from "../shared/media";
 import type {
   LinkedInPostData,
   LinkedInPostMedia,
@@ -146,15 +147,10 @@ function PostMedia({ media }: { media: LinkedInPostMedia }) {
 }
 
 function PostLinkPreview({ preview }: { preview: LinkedInPostLinkPreview }) {
+  const href = resolveSafeNavigationHref(preview.url);
   const domain = preview.domain ?? getDomain(preview.url);
-
-  return (
-    <a
-      href={preview.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:bg-muted/50 block overflow-hidden rounded-lg border transition-colors"
-    >
+  const content = (
+    <>
       {preview.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -174,6 +170,21 @@ function PostLinkPreview({ preview }: { preview: LinkedInPostLinkPreview }) {
           <div className="text-muted-foreground mt-1 text-xs">{domain}</div>
         )}
       </div>
+    </>
+  );
+
+  if (!href) {
+    return <div className="block overflow-hidden rounded-lg border">{content}</div>;
+  }
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:bg-muted/50 block overflow-hidden rounded-lg border transition-colors"
+    >
+      {content}
     </a>
   );
 }

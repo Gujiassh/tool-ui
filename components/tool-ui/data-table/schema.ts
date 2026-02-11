@@ -3,8 +3,7 @@ import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 import type { Column, DataTableProps, RowData } from "./types";
 
@@ -93,7 +92,12 @@ export const serializableColumnSchema = z.object({
   format: formatSchema.optional(),
 });
 
-const JsonPrimitiveSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+const JsonPrimitiveSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+]);
 
 /**
  * Schema for serializable row data.
@@ -153,6 +157,11 @@ export const SerializableDataTableSchema = z.object({
   columns: z.array(serializableColumnSchema),
   data: z.array(serializableDataSchema),
 });
+
+const SerializableDataTableSchemaContract = defineToolUiContract(
+  "DataTable",
+  SerializableDataTableSchema,
+);
 
 /**
  * Type representing the serializable parts of a DataTable payload.
@@ -217,11 +226,8 @@ export function parseSerializableDataTable(
   DataTableProps<RowData>,
   "id" | "role" | "receipt" | "columns" | "data"
 > {
-  const { id, role, receipt, columns, data } = parseWithSchema(
-    SerializableDataTableSchema,
-    input,
-    "DataTable",
-  );
+  const { id, role, receipt, columns, data } =
+    SerializableDataTableSchemaContract.parse(input);
   return {
     id,
     role,
@@ -237,7 +243,7 @@ export function safeParseSerializableDataTable(
   DataTableProps<RowData>,
   "id" | "role" | "receipt" | "columns" | "data"
 > | null {
-  const res = safeParseWithSchema(SerializableDataTableSchema, input);
+  const res = SerializableDataTableSchemaContract.safeParse(input);
   if (!res) return null;
   const { id, role, receipt, columns, data } = res;
   return {

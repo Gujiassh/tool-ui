@@ -4,8 +4,7 @@ import {
   ToolUIReceiptSchema,
   SerializableActionSchema,
   SerializableActionsConfigSchema,
-  parseWithSchema,
-  safeParseWithSchema,
+  defineToolUiContract,
 } from "../shared";
 import type { ActionsProp, ToolUIReceipt } from "../shared";
 
@@ -39,21 +38,20 @@ export type SerializableProgressTracker = z.infer<
   typeof SerializableProgressTrackerSchema
 >;
 
-export function parseSerializableProgressTracker(
-  input: unknown,
-): SerializableProgressTracker {
-  return parseWithSchema(
-    SerializableProgressTrackerSchema,
-    input,
-    "ProgressTracker",
-  );
-}
+const SerializableProgressTrackerSchemaContract = defineToolUiContract(
+  "ProgressTracker",
+  SerializableProgressTrackerSchema,
+);
 
-export function safeParseSerializableProgressTracker(
+export const parseSerializableProgressTracker: (
   input: unknown,
-): SerializableProgressTracker | null {
-  return safeParseWithSchema(SerializableProgressTrackerSchema, input);
-}
+) => SerializableProgressTracker =
+  SerializableProgressTrackerSchemaContract.parse;
+
+export const safeParseSerializableProgressTracker: (
+  input: unknown,
+) => SerializableProgressTracker | null =
+  SerializableProgressTrackerSchemaContract.safeParse;
 
 export interface ProgressTrackerProps extends SerializableProgressTracker {
   className?: string;

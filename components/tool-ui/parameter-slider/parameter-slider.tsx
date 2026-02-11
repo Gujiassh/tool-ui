@@ -5,13 +5,23 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
-  useState,
   useRef,
+  useState,
 } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
+import {
+  ActionButtons,
+  normalizeActionsConfig,
+  useControllableState,
+  useSignatureReset,
+} from "../shared";
 import { cn } from "./_adapter";
+import {
+  createSliderSignature,
+  createSliderValueSnapshot,
+  sliderRangeToPercent,
+} from "./math";
 
 function formatSignedValue(
   value: number,
@@ -245,7 +255,7 @@ function SliderRow({
     const valueRect = valueEl.getBoundingClientRect();
 
     const trackWidth = trackRect.width;
-    const valuePercent = ((value - min) / (max - min)) * 100;
+    const valuePercent = sliderRangeToPercent({ value, min, max });
     // Use same inset coordinate system as visual elements
     const thumbCenterPx =
       TRACK_EDGE_INSET +
@@ -641,15 +651,30 @@ export function ParameterSlider({
   fillClassName,
   handleClassName,
 }: ParameterSliderProps) {
-  const initialValuesRef = useRef<SliderValue[]>(
-    sliders.map((s) => ({ id: s.id, value: s.value })),
+  const slidersSignature = useMemo(
+    () => createSliderSignature(sliders),
+    [sliders],
   );
-
-  const [uncontrolledValues, setUncontrolledValues] = useState<SliderValue[]>(
-    () => sliders.map((s) => ({ id: s.id, value: s.value })),
+  const sliderSnapshot = useMemo(
+    () => createSliderValueSnapshot(sliders),
+    [sliders],
   );
+  const {
+    value: currentValues,
+    isControlled,
+    setValue,
+    setUncontrolledValue,
+  } = useControllableState<SliderValue[]>({
+    value: controlledValues,
+    defaultValue: sliderSnapshot,
+    onChange,
+  });
 
-  const currentValues = controlledValues ?? uncontrolledValues;
+  useSignatureReset(slidersSignature, () => {
+    if (!isControlled) {
+      setUncontrolledValue(sliderSnapshot);
+    }
+  });
 
   const valueMap = useMemo(() => {
     const map = new Map<string, number>();
@@ -661,24 +686,16 @@ export function ParameterSlider({
 
   const updateValue = useCallback(
     (sliderId: string, newValue: number) => {
-      const next = currentValues.map((v) =>
-        v.id === sliderId ? { ...v, value: newValue } : v,
+      setValue((prev) =>
+        prev.map((v) => (v.id === sliderId ? { ...v, value: newValue } : v)),
       );
-      if (controlledValues === undefined) {
-        setUncontrolledValues(next);
-      }
-      onChange?.(next);
     },
-    [currentValues, controlledValues, onChange],
+    [setValue],
   );
 
   const handleReset = useCallback(() => {
-    const initial = initialValuesRef.current;
-    if (controlledValues === undefined) {
-      setUncontrolledValues(initial);
-    }
-    onChange?.(initial);
-  }, [controlledValues, onChange]);
+    setValue(sliderSnapshot);
+  }, [setValue, sliderSnapshot]);
 
   const handleAction = useCallback(
     async (actionId: string) => {

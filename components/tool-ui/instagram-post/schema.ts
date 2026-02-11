@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseWithSchema, safeParseWithSchema } from "../shared";
+import { defineToolUiContract } from "../shared";
 
 export const InstagramPostAuthorSchema = z.object({
   name: z.string(),
@@ -42,18 +42,16 @@ export type InstagramPostAuthor = z.infer<typeof InstagramPostAuthorSchema>;
 export type InstagramPostMedia = z.infer<typeof InstagramPostMediaSchema>;
 export type InstagramPostStats = z.infer<typeof InstagramPostStatsSchema>;
 
-export function parseSerializableInstagramPost(
-  input: unknown,
-): InstagramPostData {
-  return parseWithSchema(
-    SerializableInstagramPostSchema,
-    input,
-    "InstagramPost",
-  );
-}
+const SerializableInstagramPostSchemaContract = defineToolUiContract(
+  "InstagramPost",
+  SerializableInstagramPostSchema,
+);
 
-export function safeParseSerializableInstagramPost(
+export const parseSerializableInstagramPost: (
   input: unknown,
-): InstagramPostData | null {
-  return safeParseWithSchema(SerializableInstagramPostSchema, input);
-}
+) => InstagramPostData = SerializableInstagramPostSchemaContract.parse;
+
+export const safeParseSerializableInstagramPost: (
+  input: unknown,
+) => InstagramPostData | null =
+  SerializableInstagramPostSchemaContract.safeParse;
