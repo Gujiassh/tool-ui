@@ -11,7 +11,6 @@ import {
 } from "@/lib/docs/preview-config";
 import { usePresetParam } from "@/hooks/use-preset-param";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { DocsMotionBoundary } from "./docs-motion-boundary";
 
 interface ComponentPreviewProps {
   componentId: ComponentId;
@@ -64,7 +63,7 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
     previewContent
   );
 
-  const displayPreview = <DocsMotionBoundary>{wrappedPreview}</DocsMotionBoundary>;
+  const displayPreview = wrappedPreview;
 
   const chatPanel = (
     <ChatContextPreview

@@ -5,17 +5,12 @@ import { cn } from "@/lib/ui/cn";
 import { useDocsToc } from "./docs-toc-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useTocKeyboardNav } from "@/hooks/use-toc-keyboard-nav";
-import { resolveTocIndicatorState } from "./toc-indicator-state";
 
 export function DocsToc() {
   const { scrollContainer, headings, activeId } = useDocsToc();
   const reducedMotion = useReducedMotion();
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const hasPositionedIndicator = useRef(false);
-  const [indicatorState, setIndicatorState] = useState({
-    top: null as number | null,
-    transition: "none",
-  });
+  const [indicatorTop, setIndicatorTop] = useState(0);
 
   const scrollToHeading = useCallback(
     (id: string) => {
@@ -64,7 +59,6 @@ export function DocsToc() {
 
   // Update indicator position when activeId changes
   useEffect(() => {
-    let measuredTop: number | null = null;
     const activeIndex = headings.findIndex((h) => h.id === activeId);
     if (activeIndex >= 0 && linkRefs.current[activeIndex]) {
       const activeLink = linkRefs.current[activeIndex];
@@ -72,23 +66,12 @@ export function DocsToc() {
         const linkRect = activeLink.getBoundingClientRect();
         const navRect = activeLink.parentElement?.getBoundingClientRect();
         if (navRect) {
-          measuredTop = linkRect.top - navRect.top + 8;
+          const relativeTop = linkRect.top - navRect.top + 8;
+          setIndicatorTop(relativeTop);
         }
       }
     }
-
-    setIndicatorState(
-      resolveTocIndicatorState({
-        reducedMotion,
-        measuredTop,
-        hasPositioned: hasPositionedIndicator.current,
-      }),
-    );
-
-    if (measuredTop !== null) {
-      hasPositionedIndicator.current = true;
-    }
-  }, [activeId, headings, reducedMotion]);
+  }, [activeId, headings]);
 
   if (headings.length === 0) {
     return null;
@@ -110,14 +93,14 @@ export function DocsToc() {
       <p className="text-primary/60 mb-4 cursor-default text-xs tracking-widest uppercase select-none">
         On This Page
       </p>
-      {activeIndex >= 0 && indicatorState.top !== null && (
+      {activeIndex >= 0 && (
         <span
           aria-hidden="true"
           className="bg-foreground pointer-events-none absolute -left-3 h-3 w-0.5 rounded-full"
           style={{
-            top: indicatorState.top,
+            top: indicatorTop,
             opacity: 1,
-            transition: indicatorState.transition,
+            transition: reducedMotion ? "none" : "top 150ms ease-out",
           }}
         />
       )}

@@ -5,7 +5,6 @@ import { DocsBorderedShell } from "./docs-bordered-shell";
 import { DocsContent } from "./docs-content";
 import { useDocsToc } from "./docs-toc-context";
 import { DocsTocWrapper } from "./docs-toc-wrapper";
-import { DocsMotionBoundary } from "./docs-motion-boundary";
 
 export function DocsArticle({
   children,
@@ -23,9 +22,7 @@ export function DocsArticle({
         className="scrollbar-subtle z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain"
       >
         <div className="mx-auto flex max-w-[1200px] gap-8 p-6 pb-96 sm:p-10 sm:pb-96 lg:p-12 lg:pb-96 lg:pt-16">
-          <DocsMotionBoundary>
-            <DocsContent className={className}>{children}</DocsContent>
-          </DocsMotionBoundary>
+          <DocsContent className={className}>{children}</DocsContent>
           <DocsTocWrapper />
         </div>
       </div>

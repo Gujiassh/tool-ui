@@ -33,7 +33,6 @@ import {
   questionFlowPresets,
   QuestionFlowPresetName,
 } from "@/lib/presets/question-flow";
-import { DocsMotionBoundary } from "./docs-motion-boundary";
 
 function generateOptionListCode(preset: OptionListPresetName): string {
   const list = optionListPresets[preset].data;
@@ -156,11 +155,9 @@ export function OptionListPresetExample({
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose mx-auto max-w-md">
-            <OptionList {...data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose mx-auto max-w-md">
+          <OptionList {...data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -214,11 +211,9 @@ export function ChartPresetExample({ preset }: ChartPresetExampleProps) {
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose">
-            <Chart id={`chart-${preset}`} {...config} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose">
+          <Chart id={`chart-${preset}`} {...config} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -240,11 +235,9 @@ export function CodeBlockPresetExample({
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose">
-            <CodeBlock {...data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose">
+          <CodeBlock {...data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -264,11 +257,9 @@ export function TerminalPresetExample({ preset }: TerminalPresetExampleProps) {
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose">
-            <Terminal {...data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose">
+          <Terminal {...data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -310,11 +301,9 @@ export function PlanPresetExample({ preset }: PlanPresetExampleProps) {
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose mx-auto max-w-xl">
-            <Plan {...data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose mx-auto max-w-xl">
+          <Plan {...data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -354,11 +343,9 @@ export function ItemCarouselPresetExample({
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose">
-            <ItemCarousel {...data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose">
+          <ItemCarousel {...data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -420,11 +407,9 @@ export function ApprovalCardPresetExample({
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose mx-auto max-w-sm">
-            <ApprovalCard {...data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose mx-auto max-w-sm">
+          <ApprovalCard {...data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
@@ -446,11 +431,9 @@ export function QuestionFlowPresetExample({
   return (
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
-        <DocsMotionBoundary>
-          <div className="not-prose mx-auto max-w-md">
-            <QuestionFlow {...presetData.data} />
-          </div>
-        </DocsMotionBoundary>
+        <div className="not-prose mx-auto max-w-md">
+          <QuestionFlow {...presetData.data} />
+        </div>
       </Tab>
       <Tab value="Code">
         <DynamicCodeBlock lang="tsx" code={code} />
