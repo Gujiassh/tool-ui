@@ -51,13 +51,8 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: [
-      "components/tool-ui/data-table/**/*.{ts,tsx}",
-      "components/tool-ui/message-draft/**/*.{ts,tsx}",
-      "components/tool-ui/option-list/**/*.{ts,tsx}",
-      "components/tool-ui/plan/**/*.{ts,tsx}",
-      "components/tool-ui/progress-tracker/**/*.{ts,tsx}",
-    ],
+    files: ["components/tool-ui/**/*.ts", "components/tool-ui/**/*.tsx"],
+    ignores: ["components/tool-ui/shared/**/*.ts", "components/tool-ui/shared/**/*.tsx"],
     rules: {
       "no-restricted-imports": [
         "error",

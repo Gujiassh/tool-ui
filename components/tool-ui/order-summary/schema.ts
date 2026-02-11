@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
-import { defineToolUiContract } from "../shared";
+import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";import { defineToolUiContract } from "../shared/contract";
 
 export const OrderItemSchema = z.object({
   id: z.string(),

@@ -1,10 +1,6 @@
-import { z } from "zod";
-import {
-  ToolUIIdSchema,
-  ToolUIReceiptSchema,
-  ToolUIRoleSchema,
-  defineToolUiContract,
-} from "../shared";
+import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
+import { ToolUIIdSchema, ToolUIReceiptSchema, ToolUIRoleSchema } from "../shared/schema";
+
 import { AspectRatioSchema, MediaFitSchema } from "../shared/media";
 
 export const SerializableLinkPreviewSchema = z.object({

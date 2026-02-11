@@ -12,12 +12,9 @@ import {
   File,
   ExternalLink,
 } from "lucide-react";
-import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  type ActionsProp,
-} from "../shared";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+
 import { openSafeNavigationHref, sanitizeHref } from "../shared/media";
 import type {
   SerializableCitation,

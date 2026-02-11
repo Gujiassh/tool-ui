@@ -9,15 +9,10 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./_adapter";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  type ActionsProp,
-  formatRelativeTime,
-  formatCount,
-  getDomain,
-} from "../shared";
+} from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+import { formatCount, formatRelativeTime, getDomain } from "../shared/utils";
+
 import { resolveSafeNavigationHref } from "../shared/media";
 import type { XPostData, XPostMedia, XPostLinkPreview } from "./schema";
 

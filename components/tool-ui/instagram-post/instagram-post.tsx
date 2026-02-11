@@ -9,13 +9,10 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./_adapter";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  type ActionsProp,
-  formatRelativeTime,
-} from "../shared";
+} from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+import { formatRelativeTime } from "../shared/utils";
+
 import type { InstagramPostData, InstagramPostMedia } from "./schema";
 
 export interface InstagramPostProps {

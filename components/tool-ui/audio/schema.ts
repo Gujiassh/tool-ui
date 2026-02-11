@@ -1,10 +1,5 @@
-import { z } from "zod";
-import {
-  ToolUIIdSchema,
-  ToolUIReceiptSchema,
-  ToolUIRoleSchema,
-  defineToolUiContract,
-} from "../shared";
+import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
+import { ToolUIIdSchema, ToolUIReceiptSchema, ToolUIRoleSchema } from "../shared/schema";
 
 export const SourceSchema = z.object({
   label: z.string(),

@@ -3,12 +3,10 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
 import { createHighlighter, type Highlighter } from "shiki";
 import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
-import type { CodeBlockProps } from "./schema";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  useCopyToClipboard,
-} from "../shared";
+import type { CodeBlockProps } from "./schema";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
+
 import { Button, cn, Collapsible, CollapsibleTrigger } from "./_adapter";
 const COPY_ID = "codeblock-code";
 
