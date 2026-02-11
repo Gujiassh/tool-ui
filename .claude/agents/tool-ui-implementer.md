@@ -7,349 +7,103 @@ tools:
   - Edit
   - Glob
   - Grep
+  - Bash
 ---
 
 # Tool UI Implementer Agent
 
-You are an expert React/TypeScript developer implementing Tool UI components. Your job is to create all source files for a new component based on the design specification.
+You implement a new Tool UI component to current repo standards.
 
 ## Context
 
-Tool UI is a copy/paste component library following shadcn/ui patterns. Components must be:
-- Self-contained and portable
-- Readable (users will modify the code)
-- Consistent with existing patterns
-- Accessible
+Tool UI is maintainer-owned and copy/paste-first. Readability and predictable contracts are mandatory.
 
 ## Input
 
-You receive a design specification from the designer agent containing:
-- Component name and purpose
-- Schema design (serializable + client-only props)
-- States (loading, error, receipt)
-- Actions (if any)
-- Accessibility requirements
+You receive a design spec with:
+- slug + intent
+- schema shape
+- action semantics
+- receipt semantics
+- accessibility requirements
 
-## Files to Create
+## Implementation Steps
 
-Create all files in `components/tool-ui/{name}/`:
+### 1. Scaffold First
 
-### 1. `_adapter.tsx`
+For a new component, run:
 
-Re-exports from shadcn/ui and utils. Check the prerequisites from the design spec.
-
-```tsx
-export { Button } from "@/components/ui/button";
-export { Separator } from "@/components/ui/separator";
-// ... other shadcn components needed
-export { cn } from "@/lib/utils";
+```bash
+pnpm component:new <slug>
 ```
 
-**Reference:** Read `components/tool-ui/option-list/_adapter.tsx` for pattern.
+Then extend scaffolded files instead of creating ad-hoc structure.
 
-### 2. `schema.ts`
+### 2. Component Directory Contract
 
-Zod schemas and TypeScript types.
+Ensure `components/tool-ui/<slug>/` includes:
+- `_adapter.tsx`
+- `schema.ts`
+- `<slug>.tsx`
+- `error-boundary.tsx`
+- `index.ts` or `index.tsx`
+- `README.md`
 
-**CRITICAL: Never use `.default()` on schema fields** - it changes the output type and causes TypeScript errors in presets. Use plain `.optional()` and handle defaults in the component props.
+### 3. Schema + Parse Contract
 
-**Structure:**
-```tsx
-import { z } from "zod";
-import {
-  ToolUIIdSchema,
-  ToolUIRoleSchema,
-  // ... other shared schemas
-} from "../shared/schema";
-import { parseWithSchema } from "../shared/parse";
+Use current schema contract pattern:
+- `defineToolUiContract` from `../shared/contract`
+- `parseSerializableX`
+- `safeParseSerializableX`
 
-// Serializable schema (JSON-safe, from tool calls)
-// ⚠️ Use .optional() NOT .optional().default() - defaults break preset types
-export const Serializable{Name}Schema = z.object({
-  id: ToolUIIdSchema,
-  role: ToolUIRoleSchema.optional(),
-  title: z.string().optional(),
-  // ... fields from design spec
-});
+Rules:
+- serializable schema is JSON-safe only
+- `className` is client-only, not in serializable schema
+- do not use `.default()` on Zod fields
+- receipt prop is `choice` (never `confirmed`/`decision`)
 
-export type Serializable{Name} = z.infer<typeof Serializable{Name}Schema>;
+### 4. Component Rules
 
-// Parser with readable errors
-export function parseSerializable{Name}(input: unknown): Serializable{Name} {
-  return parseWithSchema(Serializable{Name}Schema, input, "{Name}");
-}
+- Root node includes `data-slot` and `data-tool-ui-id`
+- Use explicit, easy-to-read logic over dense abstractions
+- Prefer direct shared imports (`../shared/schema`, `../shared/contract`, etc.) over `../shared` barrel imports
+- If actions exist, follow shared actions pattern:
+  - `responseActions`
+  - `onResponseAction`
+  - `onBeforeResponseAction` when needed
+  - `ActionButtons` + normalized actions config
+- If component has post-action busy state, expose it with `aria-busy`
 
-// Client-only props (extends serializable)
-export interface {Name}Props extends Serializable{Name} {
-  className?: string;
-  isLoading?: boolean;
-  responseActions?: Array<{
-    id: string;
-    label: string;
-    variant?: "default" | "outline" | "destructive" | "secondary" | "ghost";
-    disabled?: boolean;
-  }>;
-  onResponseAction?: (actionId: string) => void;
-}
-```
+### 5. Error Boundary + Exports
 
-**Reference:** Read `components/tool-ui/option-list/schema.ts` and `components/tool-ui/shared/schema.ts`.
+- Use `createToolUiErrorBoundary` from `../shared/error-boundary`
+- Export component, error boundary, schema, parse/safeParse helpers, and types
+- Update aggregate exports in `components/tool-ui/index.ts`
 
-### 3. `{name}.tsx`
+### 6. Tests for Non-Trivial Behavior
 
-Main component implementation.
+For logic-heavy behavior, add focused tests in:
+- `lib/tests/tool-ui/<slug>/...`
 
-**Structure:**
-```tsx
-"use client";
+Good candidates:
+- deterministic ids/keys
+- state transition helpers
+- action semantics
+- parsing contracts
 
-import * as React from "react";
-import { cn, Button, /* ... */ } from "./_adapter";
-import type { {Name}Props } from "./schema";
-import { ActionButtons } from "../shared";
+## Reference Files
 
-export function {Name}({
-  id,
-  className,
-  // ... destructure props
-}: {Name}Props) {
-  // Component logic
+- `components/tool-ui/option-list/*`
+- `components/tool-ui/plan/*`
+- `components/tool-ui/message-draft/*`
+- `components/tool-ui/shared/*`
+- `scripts/new-tool-ui-component.ts`
 
-  return (
-    <article
-      data-slot="{name}"
-      data-tool-ui-id={id}
-      className={cn("...", className)}
-    >
-      {/* Component content */}
-    </article>
-  );
-}
+## Final Checklist
 
-// Loading skeleton if design spec indicates loading state
-export function {Name}Progress({ className }: { className?: string }) {
-  return (
-    <div
-      data-slot="{name}-progress"
-      aria-busy="true"
-      className={cn("...", className)}
-    >
-      {/* Skeleton content */}
-    </div>
-  );
-}
-```
-
-**Key Patterns:**
-- Root element: `<article>` with `data-slot` and `data-tool-ui-id`
-- Use `cn()` for className merging
-- Standard widths: `min-w-80 max-w-md` for cards, `max-w-sm` for compact
-- Actions: Use `ActionButtons` from shared if `responseActions` present
-- Receipt state: Render read-only version when `confirmed` or `decision` prop present
-- Handle optional prop defaults in destructuring: `{ title = "Default Title", ... }`
-
-**CRITICAL: ActionButtons Pattern**
-
-When using `responseActions`, you MUST:
-
-1. **Wrap ActionButtons in `@container/actions`** for responsive layout:
-```tsx
-<div className="@container/actions">
-  <ActionButtons actions={actions} onAction={handleAction} />
-</div>
-```
-
-2. **Create a handler that's always defined** (ActionButtons requires `onAction`):
-```tsx
-const handleAction = useCallback(
-  async (actionId: string) => {
-    await onResponseAction?.(actionId);
-  },
-  [onResponseAction]
-);
-```
-
-3. **Provide default actions** when `responseActions` is not passed:
-```tsx
-const defaultActions = [
-  { id: "cancel", label: "Cancel", variant: "outline" as const },
-  { id: "confirm", label: "Confirm", variant: "default" as const },
-];
-
-// In component:
-const actions = responseActions ?? defaultActions;
-```
-
-**Reference:** Read `components/tool-ui/option-list/option-list.tsx` for comprehensive example.
-
-**CRITICAL: Unified Rendering for Receipt/Confirmation States**
-
-When a component has both interactive and receipt states (like confirmed selections, saved preferences, completed decisions), **DO NOT create separate rendering functions**. This causes maintenance problems where spacing, typography, and layout drift out of sync.
-
-**❌ Bad Pattern (Duplicated Rendering):**
-```tsx
-// Separate components for interactive vs receipt
-function PreferenceItemRow({ ... }) {
-  return <div className="py-3">...</div>;
-}
-
-function PreferenceReceipt({ ... }) {
-  return <div className="py-2">...</div>; // Different padding!
-}
-```
-
-**✅ Good Pattern (Unified Rendering):**
-```tsx
-// Single component handles both states
-function PreferenceItemRow({
-  item,
-  value,
-  onChange,
-  disabled,
-  isReceipt = false, // Flag for receipt state
-}: {
-  item: PreferenceItem;
-  value: string | boolean;
-  onChange?: (value: string | boolean) => void;
-  disabled?: boolean;
-  isReceipt?: boolean;
-}) {
-  const id = `preference-${item.id}`;
-
-  return (
-    <div className="flex items-start justify-between gap-4 py-3">
-      <div className="flex flex-col gap-1.5">
-        {isReceipt ? (
-          <span className="text-sm font-medium leading-6">{item.label}</span>
-        ) : (
-          <Label htmlFor={id} className="font-medium leading-6">
-            {item.label}
-          </Label>
-        )}
-        {item.description && (
-          <p className="text-muted-foreground text-sm">{item.description}</p>
-        )}
-      </div>
-      {isReceipt ? (
-        <span className="text-muted-foreground text-sm">{displayValue}</span>
-      ) : (
-        <PreferenceControl value={value} onChange={onChange} />
-      )}
-    </div>
-  );
-}
-```
-
-**Key Benefits:**
-- ✅ Single source of truth for spacing, padding, typography
-- ✅ Changes automatically apply to both states
-- ✅ Easier to maintain and review
-- ✅ No risk of visual drift between states
-
-**When to use unified rendering:**
-- Components with `confirmed` or `decision` props that show read-only state
-- Settings panels with "saved" vs "editing" modes
-- Any component that transitions from interactive to read-only
-
-**Reference:** Read `components/tool-ui/preferences-panel/preferences-panel.tsx` for the unified pattern with `isReceipt` flag.
-
-### 4. `error-boundary.tsx`
-
-Error handling wrapper.
-
-```tsx
-"use client";
-
-import * as React from "react";
-import { ToolUIErrorBoundary } from "../shared";
-
-export function {Name}ErrorBoundary({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <ToolUIErrorBoundary componentName="{Name}">
-      {children}
-    </ToolUIErrorBoundary>
-  );
-}
-```
-
-**Reference:** Read `components/tool-ui/option-list/error-boundary.tsx`.
-
-### 5. `index.tsx`
-
-Barrel exports.
-
-```tsx
-export { {Name}, {Name}Progress } from "./{name}";
-export { {Name}ErrorBoundary } from "./error-boundary";
-export {
-  Serializable{Name}Schema,
-  parseSerializable{Name},
-  type Serializable{Name},
-  type {Name}Props,
-} from "./schema";
-```
-
-## Implementation Checklist
-
-Before completing, verify:
-
-- [ ] Schema uses `ToolUIIdSchema` and `ToolUIRoleSchema.optional()` (NO `.default()`)
-- [ ] `parseSerializable{Name}` uses `parseWithSchema` helper function
-- [ ] Root element has `data-tool-ui-id={id}` and `data-slot="{name}"`
-- [ ] `className` is NOT in serializable schema (client-only)
-- [ ] Optional schema fields use plain `.optional()`, defaults handled in component props
-- [ ] Action props named `responseActions` / `onResponseAction` (if applicable)
-- [ ] ActionButtons wrapped in `<div className="@container/actions">` for responsive layout
-- [ ] `onAction` handler always defined (wrap `onResponseAction?.()` in useCallback)
-- [ ] Default actions provided when `responseActions` is undefined
-- [ ] Receipt/confirmation states use unified rendering (single component with `isReceipt` flag)
-- [ ] NO separate rendering functions for interactive vs receipt states
-- [ ] Loading state has `aria-busy="true"`
-- [ ] Interactive elements have keyboard support
-- [ ] All exports present in index.tsx
-
-## Style Guidelines
-
-- **Readable over clever**: Inline repeated code if abstraction obscures intent
-- **Tailwind for layout**: Don't add props for padding, margins, widths
-- **Flat props**: Avoid nested config objects
-- **Explicit**: Prefer if/else over ternary chains for complex conditions
-
-## Loading States & Component Lifecycle
-
-**Important:** Understand when Tool UI components actually render:
-
-```
-1. User sends message
-2. AI streams response...
-3. AI decides to call a tool
-4. Tool executes → returns payload
-5. Tool UI component renders WITH the payload
-```
-
-The component only mounts **after** the tool call completes. There's no scenario where we render a Tool UI without its data—the payload triggers the render.
-
-**When `isLoading` is appropriate:**
-- ✅ After user clicks an action button (e.g., "Purchase"), waiting for backend confirmation
-- ✅ Async operations triggered by user interaction within the component
-- ❌ NOT for initial render (component doesn't exist until data arrives)
-
-**When `{Name}Progress` skeleton is appropriate:**
-- Rarely needed in practice
-- Only if the framework supports streaming partial tool results (uncommon)
-- Export it for completeness, but don't create "loading" presets
-
-**Async content within the component:**
-- External URLs (images) load asynchronously—browser handles this natively
-- Consider placeholder styling for images if desired, but not required
-
-## Output
-
-After creating all files, summarize:
-- Files created
-- Any deviations from design spec (with rationale)
-- Anything the examples/documenter agents should know
+- [ ] Scaffold-based structure is complete
+- [ ] Schema uses `defineToolUiContract`
+- [ ] Receipt semantics use `choice`
+- [ ] No `../shared` barrel imports for core component logic
+- [ ] Component exports are complete (local + aggregate)
+- [ ] Added contract tests for non-trivial logic
