@@ -46,5 +46,6 @@ describe("weather-widget layout containment", () => {
     expect(wrapperClass).not.toContain("[container-type:size]");
     expect(cardClass).toContain("@container/weather");
     expect(cardClass).toContain("[container-type:size]");
+    expect(html).not.toContain(" jsx=");
   });
 });

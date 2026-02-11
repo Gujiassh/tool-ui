@@ -1,5 +1,5 @@
 import { DocsHeader } from "../_components/docs-header";
-import { WeatherWidget } from "@/components/tool-ui/weather-widget";
+import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
 
 <DocsHeader
   title="Weather Widget"
@@ -35,7 +35,7 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget";
   </Tab>
   <Tab>
     ```tsx
-    import { WeatherWidget } from "@/components/tool-ui/weather-widget";
+    import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
 
     export function Example() {
       return (
@@ -110,7 +110,7 @@ import {
   WeatherWidgetErrorBoundary,
   safeParseWeatherWidgetPayload,
   WeatherWidgetPayloadSchema,
-} from "@/components/tool-ui/weather-widget";
+} from "@/components/tool-ui/weather-widget/runtime";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -170,10 +170,6 @@ export const toolkit: Toolkit = {
     },
     updatedAt: {
       description: "Last update timestamp (ISO 8601)",
-      type: "string",
-    },
-    locale: {
-      description: "Locale for relative time formatting",
       type: "string",
     },
   }}

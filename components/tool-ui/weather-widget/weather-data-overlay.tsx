@@ -20,10 +20,12 @@ import {
   getSceneBrightnessFromTimeOfDay,
   getTimeOfDay,
   getWeatherTheme,
-  useGlassStyles,
-  resolveGlassBackdropFilterStyles,
   type WeatherTheme,
-} from "./effects";
+} from "./effects/parameter-mapper";
+import {
+  resolveGlassBackdropFilterStyles,
+} from "./effects/glass-style-resolver";
+import { useGlassStyles } from "./effects/glass-panel-svg";
 
 function getPeakIntensity(timeOfDay: number): number {
   const noonDistance = Math.abs(timeOfDay - 0.5);
@@ -86,11 +88,7 @@ export interface WeatherDataOverlayProps {
   tempLow: number;
   forecast?: ForecastDay[];
   unit?: TemperatureUnit;
-  /**
-   * Optional, pre-formatted string like "Updated 5 min ago".
-   * Useful when embedding the overlay inside `WeatherWidget`.
-   */
-  updatedAtLabel?: string;
+  theme?: WeatherTheme;
   /**
    * Provide either `timeOfDay` (0-1) or a `timestamp` ISO string.
    * If neither is provided, defaults to noon (0.5).
@@ -105,6 +103,19 @@ export interface WeatherDataOverlayProps {
   glassParams?: GlassEffectParams;
 }
 
+export function observeCardDimensions(
+  element: HTMLDivElement | null,
+  onResize: () => void,
+): () => void {
+  if (!element || typeof ResizeObserver !== "function") {
+    return () => {};
+  }
+
+  const observer = new ResizeObserver(onResize);
+  observer.observe(element);
+  return () => observer.disconnect();
+}
+
 export function WeatherDataOverlay({
   location,
   conditionCode,
@@ -113,7 +124,7 @@ export function WeatherDataOverlay({
   tempLow,
   forecast = [],
   unit = "fahrenheit",
-  updatedAtLabel: _updatedAtLabel,
+  theme: themeProp,
   timeOfDay: timeOfDayProp,
   timestamp,
   className,
@@ -126,7 +137,6 @@ export function WeatherDataOverlay({
         ? getTimeOfDay(timestamp)
         : 0.5;
 
-  const [theme, setTheme] = useState<WeatherTheme>("dark");
   const [glowState, setGlowState] = useState<{
     x: number;
     y: number;
@@ -165,20 +175,12 @@ export function WeatherDataOverlay({
 
   useEffect(() => {
     updateCardDimensions();
-    const observer = new ResizeObserver(updateCardDimensions);
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
-    return () => observer.disconnect();
+    return observeCardDimensions(cardRef.current, updateCardDimensions);
   }, [updateCardDimensions]);
 
-  useEffect(() => {
-    const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, conditionCode);
-    const newTheme = getWeatherTheme(brightness, theme);
-    if (newTheme !== theme) {
-      setTheme(newTheme);
-    }
-  }, [timeOfDay, conditionCode, theme]);
+  const theme =
+    themeProp ??
+    getWeatherTheme(getSceneBrightnessFromTimeOfDay(timeOfDay, conditionCode));
 
   useEffect(() => {
     const container = containerRef.current;
@@ -455,7 +457,7 @@ export function WeatherDataOverlay({
       )}
 
       {/* Height-based container queries (requires container-type:size on the weather container). */}
-      <style jsx>{`
+      <style>{`
         @container weather (min-height: 245px) {
           .weather-forecast-strip {
             display: block !important;

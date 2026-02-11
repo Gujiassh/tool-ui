@@ -1,4 +1,4 @@
-import type { WeatherWidgetPayload } from "@/components/tool-ui/weather-widget";
+import type { WeatherWidgetPayload } from "@/components/tool-ui/weather-widget/runtime";
 import type { PresetWithCodeGen } from "./types";
 
 export type WeatherWidgetPresetName =

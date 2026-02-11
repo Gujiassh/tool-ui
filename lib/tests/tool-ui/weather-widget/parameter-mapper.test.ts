@@ -4,6 +4,7 @@ import {
   configToRainProps,
   configToSnowProps,
   getSceneBrightness,
+  timeOfDayToSunAltitude,
   mapWeatherToEffects,
 } from "@/components/tool-ui/weather-widget/effects/parameter-mapper";
 
@@ -49,5 +50,18 @@ describe("weather-widget parameter-mapper", () => {
     const snow = configToSnowProps(config);
     expect(snow).not.toBeNull();
     expect((snow?.intensity ?? 0)).toBeGreaterThan(0);
+  });
+
+  test("explicit timeOfDay drives atmosphere day/night state even when timestamp differs", () => {
+    const config = mapWeatherToEffects({
+      conditionCode: "clear",
+      // Noon timestamp conflicts with explicit midnight timeOfDay.
+      timestamp: "2025-01-01T12:00:00Z",
+      timeOfDay: 0,
+    });
+
+    expect(config.celestial?.timeOfDay).toBe(0);
+    expect(config.atmosphere.sunAltitude).toBeCloseTo(timeOfDayToSunAltitude(0), 6);
+    expect(config.atmosphere.starVisibility).toBeGreaterThan(0);
   });
 });

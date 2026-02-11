@@ -1,6 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import {
+  __resetWeatherWebglCanvasBudgetForTests,
+  getAllocatedWeatherWebglCanvasCount,
+  getMaxConcurrentWeatherWebglCanvases,
+  releaseWeatherWebglBudgetSlotOnInitFailure,
+  releaseWeatherWebglCanvasBudgetSlot,
+  setMaxConcurrentWeatherWebglCanvases,
+  tryAcquireWeatherWebglCanvasBudgetSlot,
+} from "./weather-webgl-budget";
 
 // =============================================================================
 // TYPES
@@ -1865,37 +1874,15 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
 // WEBGL HELPERS
 // =============================================================================
 
-// WebGL contexts are a limited resource and creating too many can cause
-// unpredictable "context lost" behavior or black canvases.
-//
-// We default to a conservative budget and allow sandbox tooling (tuning studio)
-// to raise it temporarily when rendering many previews at once.
-let maxConcurrentWeatherWebglCanvases = 8;
-const allocatedWeatherWebglCanvases = new Set<HTMLCanvasElement>();
-
-export function getMaxConcurrentWeatherWebglCanvases(): number {
-  return maxConcurrentWeatherWebglCanvases;
-}
-
-export function setMaxConcurrentWeatherWebglCanvases(value: number): void {
-  if (!Number.isFinite(value)) return;
-  const next = Math.max(1, Math.min(64, Math.floor(value)));
-  maxConcurrentWeatherWebglCanvases = next;
-}
-
-function tryAcquireWeatherWebglCanvas(canvas: HTMLCanvasElement): boolean {
-  if (allocatedWeatherWebglCanvases.has(canvas)) return true;
-  if (
-    allocatedWeatherWebglCanvases.size >= maxConcurrentWeatherWebglCanvases
-  )
-    return false;
-  allocatedWeatherWebglCanvases.add(canvas);
-  return true;
-}
-
-function releaseWeatherWebglCanvas(canvas: HTMLCanvasElement): void {
-  allocatedWeatherWebglCanvases.delete(canvas);
-}
+export {
+  __resetWeatherWebglCanvasBudgetForTests,
+  getAllocatedWeatherWebglCanvasCount,
+  getMaxConcurrentWeatherWebglCanvases,
+  releaseWeatherWebglBudgetSlotOnInitFailure,
+  releaseWeatherWebglCanvasBudgetSlot,
+  setMaxConcurrentWeatherWebglCanvases,
+  tryAcquireWeatherWebglCanvasBudgetSlot,
+};
 
 function createShader(
   gl: WebGL2RenderingContext,
@@ -2225,7 +2212,7 @@ export function WeatherEffectsCanvas({
 
     if (hasWebglBudgetSlotRef.current === false) return false;
     if (hasWebglBudgetSlotRef.current === null) {
-      const ok = tryAcquireWeatherWebglCanvas(canvas);
+      const ok = tryAcquireWeatherWebglCanvasBudgetSlot(canvas);
       if (!ok) {
         hasWebglBudgetSlotRef.current = false;
         if (process.env.NODE_ENV !== "production") {
@@ -2245,6 +2232,10 @@ export function WeatherEffectsCanvas({
     const gl = canvas.getContext("webgl2");
     if (!gl) {
       initFailedRef.current = true;
+      hasWebglBudgetSlotRef.current = releaseWeatherWebglBudgetSlotOnInitFailure(
+        canvas,
+        hasWebglBudgetSlotRef.current,
+      );
       if (process.env.NODE_ENV !== "production") {
         console.warn(
           "[WeatherEffectsCanvas] WebGL2 not supported; rendering without effects.",
@@ -2256,6 +2247,10 @@ export function WeatherEffectsCanvas({
     if (gl.isContextLost()) {
       isContextLostRef.current = true;
       disposeGL();
+      hasWebglBudgetSlotRef.current = releaseWeatherWebglBudgetSlotOnInitFailure(
+        canvas,
+        hasWebglBudgetSlotRef.current,
+      );
       return false;
     }
 
@@ -2300,6 +2295,10 @@ export function WeatherEffectsCanvas({
         console.error("Failed to create required WebGL programs");
       }
       disposeGL();
+      hasWebglBudgetSlotRef.current = releaseWeatherWebglBudgetSlotOnInitFailure(
+        canvas,
+        hasWebglBudgetSlotRef.current,
+      );
       return false;
     }
 
@@ -2317,6 +2316,10 @@ export function WeatherEffectsCanvas({
         console.error("Failed to create WebGL framebuffers");
       }
       disposeGL();
+      hasWebglBudgetSlotRef.current = releaseWeatherWebglBudgetSlotOnInitFailure(
+        canvas,
+        hasWebglBudgetSlotRef.current,
+      );
       return false;
     }
     fbRef.current.a = fbA;
@@ -2373,7 +2376,7 @@ export function WeatherEffectsCanvas({
         );
         moonTextureLoadedRef.current = true;
       };
-      image.src = "/assets/moon-texture.jpg";
+      image.src = new URL("../assets/moon-texture.jpg", import.meta.url).toString();
     }
 
     // Setup fullscreen quad
@@ -2389,6 +2392,10 @@ export function WeatherEffectsCanvas({
         console.error("Failed to create WebGL buffer");
       }
       disposeGL();
+      hasWebglBudgetSlotRef.current = releaseWeatherWebglBudgetSlotOnInitFailure(
+        canvas,
+        hasWebglBudgetSlotRef.current,
+      );
       return false;
     }
     positionBufferRef.current = positionBuffer;
@@ -2891,7 +2898,7 @@ export function WeatherEffectsCanvas({
                 // exist but only a subset are visible at once.
                 disposeGL();
                 if (hasWebglBudgetSlotRef.current) {
-                  releaseWeatherWebglCanvas(canvas);
+                  releaseWeatherWebglCanvasBudgetSlot(canvas);
                 }
                 hasWebglBudgetSlotRef.current = null;
                 return;
@@ -2938,7 +2945,7 @@ export function WeatherEffectsCanvas({
       );
       disposeGL();
       if (hasWebglBudgetSlotRef.current) {
-        releaseWeatherWebglCanvas(canvas);
+        releaseWeatherWebglCanvasBudgetSlot(canvas);
       }
     };
   }, [disposeGL, initGL, render, stopRenderLoop]);

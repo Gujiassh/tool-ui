@@ -1,48 +1,16 @@
 "use client";
 
 import { cn, Card } from "./_adapter";
+import { EffectCompositor } from "./effects/effect-compositor";
 import {
-  EffectCompositor,
   getSceneBrightnessFromTimeOfDay,
   getWeatherTheme,
-  getNearestCheckpoint,
-  TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
-} from "./effects";
+} from "./effects/parameter-mapper";
+import { getNearestCheckpoint } from "./effects/tuning";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./effects/tuned-presets";
 import type { WeatherWidgetProps } from "./schema";
 import { resolveWeatherTime } from "./time";
 import { WeatherDataOverlay } from "./weather-data-overlay";
-
-function formatRelativeTime(isoString: string, locale?: string): string {
-  const date = new Date(isoString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-
-  if (diffMinutes < 1) {
-    return "just now";
-  }
-
-  if (diffMinutes < 60) {
-    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
-      -diffMinutes,
-      "minute",
-    );
-  }
-
-  const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) {
-    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
-      -diffHours,
-      "hour",
-    );
-  }
-
-  const diffDays = Math.floor(diffHours / 24);
-  return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
-    -diffDays,
-    "day",
-  );
-}
 
 export function WeatherWidget({
   version: _version,
@@ -54,14 +22,9 @@ export function WeatherWidget({
   time,
   updatedAt,
   className,
-  locale: localeProp,
   effects,
   customEffectProps,
 }: WeatherWidgetProps) {
-  const locale =
-    localeProp ??
-    (typeof navigator !== "undefined" ? navigator.language : undefined);
-
   const prefersReducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
@@ -91,10 +54,6 @@ export function WeatherWidget({
   const backgroundClass = isWeatherDark
     ? "bg-gradient-to-b from-zinc-950 via-zinc-900/70 to-zinc-950"
     : "bg-gradient-to-b from-sky-50 via-sky-100/70 to-white";
-
-  const updatedAtLabel = updatedAt
-    ? `Updated ${formatRelativeTime(updatedAt, locale)}`
-    : undefined;
 
   return (
     <article
@@ -129,7 +88,7 @@ export function WeatherWidget({
           tempLow={current.tempMin}
           forecast={forecast}
           unit={units.temperature}
-          updatedAtLabel={updatedAtLabel}
+          theme={weatherTheme}
           timeOfDay={timeOfDay}
           timestamp={updatedAt}
           glassParams={glassParams}

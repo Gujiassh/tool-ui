@@ -59,7 +59,7 @@ const MessageDraft = dynamic(() =>
   import("@/components/tool-ui/message-draft").then((m) => m.MessageDraft)
 );
 const WeatherWidget = dynamic(() =>
-  import("@/components/tool-ui/weather-widget").then((m) => m.WeatherWidget)
+  import("@/components/tool-ui/weather-widget/runtime").then((m) => m.WeatherWidget)
 );
 import { approvalCardPresets } from "@/lib/presets/approval-card";
 import { citationPresets } from "@/lib/presets/citation";
