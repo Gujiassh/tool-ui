@@ -12,6 +12,11 @@ import * as SliderPrimitive from "@radix-ui/react-slider";
 import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";
 import { ActionButtons, normalizeActionsConfig } from "../shared";
 import { cn } from "./_adapter";
+import {
+  createSliderSignature,
+  createSliderValueSnapshot,
+  sliderRangeToPercent,
+} from "./math";
 
 function formatSignedValue(
   value: number,
@@ -245,7 +250,7 @@ function SliderRow({
     const valueRect = valueEl.getBoundingClientRect();
 
     const trackWidth = trackRect.width;
-    const valuePercent = ((value - min) / (max - min)) * 100;
+    const valuePercent = sliderRangeToPercent({ value, min, max });
     // Use same inset coordinate system as visual elements
     const thumbCenterPx =
       TRACK_EDGE_INSET +
@@ -641,13 +646,24 @@ export function ParameterSlider({
   fillClassName,
   handleClassName,
 }: ParameterSliderProps) {
-  const initialValuesRef = useRef<SliderValue[]>(
-    sliders.map((s) => ({ id: s.id, value: s.value })),
+  const slidersSignature = useMemo(() => createSliderSignature(sliders), [sliders]);
+  const sliderSnapshot = useMemo(
+    () => createSliderValueSnapshot(sliders),
+    [slidersSignature],
   );
 
+  const initialValuesRef = useRef<SliderValue[]>(sliderSnapshot);
+
   const [uncontrolledValues, setUncontrolledValues] = useState<SliderValue[]>(
-    () => sliders.map((s) => ({ id: s.id, value: s.value })),
+    () => sliderSnapshot,
   );
+
+  useEffect(() => {
+    initialValuesRef.current = sliderSnapshot;
+    if (controlledValues === undefined) {
+      setUncontrolledValues(sliderSnapshot);
+    }
+  }, [sliderSnapshot, controlledValues]);
 
   const currentValues = controlledValues ?? uncontrolledValues;
 

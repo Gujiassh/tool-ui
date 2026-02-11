@@ -189,10 +189,10 @@ export const toolkit: Toolkit = {
         <PreferencesPanel
           {...parsedArgs}
           onSave={async (values) => {
-            await addResult({ status: "saved", values });
+            await addResult({ choice: values });
           }}
           onCancel={() => {
-            addResult({ status: "cancelled" });
+            addResult({ choice: {} });
           }}
         />
       </PreferencesPanelErrorBoundary>

@@ -7,6 +7,7 @@ import { ActionButtons, normalizeActionsConfig, type ActionsProp } from "../shar
 import {
   RATIO_CLASS_MAP,
   getFitClass,
+  resolveSafeNavigationHref,
   sanitizeHref,
 } from "../shared/media";
 import type { SerializableImage, Source } from "./schema";
@@ -69,7 +70,12 @@ export function Image(props: ImageProps) {
   const handleSourceClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    const targetUrl = resolvedSourceUrl ?? source?.url ?? sanitizedHref ?? src;
+    const targetUrl = resolveSafeNavigationHref(
+      resolvedSourceUrl,
+      source?.url,
+      sanitizedHref,
+      src,
+    );
     if (!targetUrl) return;
     if (onNavigate) {
       onNavigate(targetUrl, imageData);

@@ -20,6 +20,7 @@ import {
 } from "./_adapter";
 import { Citation } from "./citation";
 import type { SerializableCitation, CitationType, CitationVariant } from "./schema";
+import { resolveSafeNavigationHref } from "../shared/media";
 
 const TYPE_ICONS: Record<CitationType, LucideIcon> = {
   webpage: Globe,
@@ -192,10 +193,12 @@ function OverflowIndicator({
   const { open, handleMouseEnter, handleMouseLeave } = useHoverPopover();
 
   const handleClick = (citation: SerializableCitation) => {
+    const href = resolveSafeNavigationHref(citation.href);
+    if (!href) return;
     if (onNavigate) {
-      onNavigate(citation.href, citation);
+      onNavigate(href, citation);
     } else if (typeof window !== "undefined") {
-      window.open(citation.href, "_blank", "noopener,noreferrer");
+      window.open(href, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -342,10 +345,12 @@ function StackedCitations({
   const remainingCount = Math.max(0, citations.length - maxIcons);
 
   const handleClick = (citation: SerializableCitation) => {
+    const href = resolveSafeNavigationHref(citation.href);
+    if (!href) return;
     if (onNavigate) {
-      onNavigate(citation.href, citation);
+      onNavigate(href, citation);
     } else if (typeof window !== "undefined") {
-      window.open(citation.href, "_blank", "noopener,noreferrer");
+      window.open(href, "_blank", "noopener,noreferrer");
     }
   };
 

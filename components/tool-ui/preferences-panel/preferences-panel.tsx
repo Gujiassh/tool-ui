@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   PreferencesPanelProps,
   PreferencesPanelReceiptProps,
@@ -24,6 +24,7 @@ import {
   Label,
 } from "./_adapter";
 import { Check, AlertCircle } from "lucide-react";
+import { createPreferencesSectionSignature } from "./signature";
 
 function getInitialValue(item: PreferenceItem): string | boolean {
   switch (item.type) {
@@ -488,8 +489,24 @@ function PreferencesPanelRoot({
   className,
 }: PreferencesPanelProps) {
   const initialValues = useMemo(() => computeInitialValues(sections), [sections]);
+  const sectionsSignature = useMemo(
+    () => createPreferencesSectionSignature(sections),
+    [sections],
+  );
+  const previousSectionsSignature = useRef(sectionsSignature);
 
   const [uncontrolledValue, setUncontrolledValue] = useState<PreferencesValue>(initialValues);
+
+  useEffect(() => {
+    if (previousSectionsSignature.current === sectionsSignature) {
+      return;
+    }
+
+    previousSectionsSignature.current = sectionsSignature;
+    if (controlledValue === undefined) {
+      setUncontrolledValue(initialValues);
+    }
+  }, [sectionsSignature, controlledValue, initialValues]);
 
   const currentValue = controlledValue ?? uncontrolledValue;
 

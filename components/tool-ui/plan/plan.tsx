@@ -27,6 +27,7 @@ import {
   CollapsibleContent,
 } from "./_adapter";
 import { ActionButtons, normalizeActionsConfig } from "../shared";
+import { calculatePlanProgress, shouldCelebrateProgress } from "./progress";
 
 const INITIAL_VISIBLE_TODO_COUNT = 4;
 
@@ -260,7 +261,10 @@ function PlanRoot({
         hiddenTodos: todos.slice(maxVisibleTodos),
         completedCount: completed,
         allComplete: completed === todos.length,
-        progress: (completed / todos.length) * 100,
+        progress: calculatePlanProgress({
+          completedCount: completed,
+          totalCount: todos.length,
+        }),
       };
     }, [todos, maxVisibleTodos]);
 
@@ -292,12 +296,17 @@ function PlanRoot({
   }, [todos]);
 
   useEffect(() => {
-    if (progress === 100 && prevProgressRef.current < 100) {
+    const shouldCelebrate = shouldCelebrateProgress({
+      previous: prevProgressRef.current,
+      next: progress,
+    });
+    prevProgressRef.current = progress;
+
+    if (shouldCelebrate) {
       setIsCelebrating(true);
       const timer = setTimeout(() => setIsCelebrating(false), 1000);
       return () => clearTimeout(timer);
     }
-    prevProgressRef.current = progress;
   }, [progress]);
 
   const resolvedFooterActions = useMemo(

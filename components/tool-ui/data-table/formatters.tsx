@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn, Badge, Tooltip, TooltipContent, TooltipTrigger } from "./_adapter";
+import { resolveSafeNavigationHref } from "../shared/media";
 
 type Tone = "success" | "warning" | "danger" | "info" | "neutral";
 
@@ -249,8 +250,9 @@ interface LinkValueProps {
 }
 
 export function LinkValue({ value, options, row }: LinkValueProps) {
-  const href =
+  const rawHref =
     options?.hrefKey && row ? String(row[options.hrefKey] ?? "") : value;
+  const href = resolveSafeNavigationHref(rawHref);
   const external = options?.external ?? false;
 
   if (!href) {

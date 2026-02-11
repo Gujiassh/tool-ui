@@ -4,6 +4,7 @@ import { useRef, useCallback } from "react";
 import { cn, Button, X } from "./_adapter";
 import { useImageGallery } from "./context";
 import type { ImageGalleryItem } from "./schema";
+import { resolveSafeNavigationHref } from "../shared/media";
 
 type LightboxImage = Pick<ImageGalleryItem, "title" | "caption" | "source">;
 
@@ -127,13 +128,14 @@ function SourceLink({
 }: {
   source: NonNullable<LightboxImage["source"]>;
 }) {
-  if (!source.url) {
+  const href = resolveSafeNavigationHref(source.url);
+  if (!href) {
     return <>{source.label}</>;
   }
 
   return (
     <a
-      href={source.url}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className="hover:text-white/80 hover:underline"
