@@ -21,7 +21,7 @@
       "path": "components/tool-ui/item-carousel/error-boundary.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/item-carousel/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport { createToolUiErrorBoundary } from \"../shared\";\n\nexport const ItemCarouselErrorBoundary =\n  createToolUiErrorBoundary(\"ItemCarousel\");\n"
+      "content": "\"use client\";\n\nimport { createToolUiErrorBoundary } from \"../shared/error-boundary\";\n\nexport const ItemCarouselErrorBoundary =\n  createToolUiErrorBoundary(\"ItemCarousel\");\n"
     },
     {
       "path": "components/tool-ui/item-carousel/index.tsx",
