@@ -1,9 +1,5 @@
-import type {
-  ActionsProp,
-  ToolUIId,
-  ToolUIReceipt,
-  ToolUIRole,
-} from "../shared";
+import type { ToolUIId, ToolUIReceipt, ToolUIRole } from "../shared/schema";
+import type { ActionsProp } from "../shared/actions-config";
 import type { FormatConfig } from "./formatters";
 
 /**

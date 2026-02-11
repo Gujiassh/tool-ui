@@ -29,7 +29,8 @@ import type {
   ColumnKey,
   Column,
 } from "./types";
-import { ActionButtons, normalizeActionsConfig } from "../shared";
+import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
 import type { FormatConfig } from "./formatters";
 import { DataTableErrorBoundary } from "./error-boundary";
 
@@ -254,7 +255,11 @@ function DataTableLayout({
 
       <div
         className={cn(
-          layout === "cards" ? "" : layout === "table" ? "hidden" : "@md:hidden",
+          layout === "cards"
+            ? ""
+            : layout === "table"
+              ? "hidden"
+              : "@md:hidden",
         )}
         role="list"
         aria-label="Data table (mobile card view)"
@@ -311,7 +316,9 @@ function DataTableLayout({
   );
 }
 
-function DataTableBase<T extends object = RowData>(props: DataTableBaseProps<T>) {
+function DataTableBase<T extends object = RowData>(
+  props: DataTableBaseProps<T>,
+) {
   const {
     columns,
     data,

@@ -38,3 +38,19 @@ When you're ready to submit a PR, please read:
 ## License
 
 MIT License — see the [LICENSE](LICENSE) file for details.
+
+## Shadcn Registry
+
+Build Tool UI registry artifacts:
+
+```bash
+pnpm registry:build
+```
+
+This generates:
+
+- `public/r/registry.json`
+- `public/r/<component>.json` (e.g. `public/r/plan.json`)
+
+Each component artifact includes only the shared files it directly depends on
+(plus `lib/ui/cn.ts`) instead of requiring a monolithic `shared.json`.

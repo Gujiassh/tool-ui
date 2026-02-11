@@ -4,9 +4,10 @@ import {
   ToolUIReceiptSchema,
   SerializableActionSchema,
   SerializableActionsConfigSchema,
-  defineToolUiContract,
-} from "../shared";
-import type { ActionsProp, ToolUIReceipt } from "../shared";
+  type ToolUIReceipt,
+} from "../shared/schema";
+import { defineToolUiContract } from "../shared/contract";
+import type { ActionsProp } from "../shared/actions-config";
 
 /**
  * Receipt state for ProgressTracker showing the outcome of a workflow.
