@@ -23,7 +23,7 @@ export function MobileNavSheet() {
   const isGallery = pathname === "/docs/gallery";
 
   const mainNavLinks = [
-    { href: "/docs/overview", label: "Docs", isActive: isDocs },
+    { href: "/docs/quick-start", label: "Docs", isActive: isDocs },
     { href: "/docs/gallery", label: "Gallery", isActive: isGallery },
   ];
 

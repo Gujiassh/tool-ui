@@ -183,7 +183,7 @@ function OptionListConfirmation({
   return (
     <div
       className={cn(
-        "@container/option-list flex w-full max-w-md min-w-80 flex-col",
+        "@container/option-list flex w-full max-w-md min-w-80 flex-col py-4",
         "text-foreground",
         "motion-safe:animate-[fade-blur-in_300ms_cubic-bezier(0.16,1,0.3,1)_both]",
         className,

@@ -6,8 +6,8 @@ export type DocsPageLink = {
 };
 
 export const BASE_DOCS_PAGES: DocsPageLink[] = [
-  { path: "/docs/overview", label: "Overview" },
   { path: "/docs/quick-start", label: "Quick Start" },
+  { path: "/docs/overview", label: "Overview" },
   { path: "/docs/response-actions", label: "Response Actions" },
   { path: "/docs/receipts", label: "Receipts" },
   { path: "/docs/advanced", label: "Advanced" },

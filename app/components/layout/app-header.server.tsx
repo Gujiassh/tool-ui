@@ -14,7 +14,7 @@ interface ResponsiveHeaderProps {
 
 export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
   const navLinks = [
-    { href: "/docs/overview", label: "Docs" },
+    { href: "/docs/quick-start", label: "Docs" },
     { href: "/docs/gallery", label: "Gallery" },
   ];
 

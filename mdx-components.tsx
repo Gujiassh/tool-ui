@@ -60,6 +60,14 @@ const FeatureGrid = dynamic(() =>
 const Feature = dynamic(() =>
   import("@/app/components/mdx/features").then((m) => m.Feature)
 );
+const RegistryInstall = dynamic(() =>
+  import("@/app/docs/_components/registry-install").then((m) => m.RegistryInstall)
+);
+const QuickStartInstallTabs = dynamic(() =>
+  import("@/app/docs/_components/quick-start-install-tabs").then(
+    (m) => m.QuickStartInstallTabs
+  )
+);
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   // Wrap selected default components to auto-link Tool UI mentions
@@ -139,6 +147,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     QuestionFlowPresetExample,
     FeatureGrid,
     Feature,
+    RegistryInstall,
+    QuickStartInstallTabs,
     ...components,
   };
 }

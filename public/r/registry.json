@@ -1,0 +1,76 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "tool-ui",
+  "homepage": "http://localhost:3001",
+  "items": [
+    {
+      "name": "tool-ui-shared"
+    },
+    {
+      "name": "approval-card"
+    },
+    {
+      "name": "chart"
+    },
+    {
+      "name": "citation"
+    },
+    {
+      "name": "code-block"
+    },
+    {
+      "name": "data-table"
+    },
+    {
+      "name": "image"
+    },
+    {
+      "name": "image-gallery"
+    },
+    {
+      "name": "video"
+    },
+    {
+      "name": "audio"
+    },
+    {
+      "name": "link-preview"
+    },
+    {
+      "name": "message-draft"
+    },
+    {
+      "name": "option-list"
+    },
+    {
+      "name": "order-summary"
+    },
+    {
+      "name": "parameter-slider"
+    },
+    {
+      "name": "plan"
+    },
+    {
+      "name": "preferences-panel"
+    },
+    {
+      "name": "progress-tracker"
+    },
+    {
+      "name": "question-flow"
+    },
+    {
+      "name": "item-carousel"
+    },
+    {
+      "name": "stats-display"
+    },
+    {
+      "name": "terminal"
+    },
+    {
+      "name": "weather-widget"
+    }
+  ]
+}

@@ -33,7 +33,7 @@ export function HomeHero() {
         <HomeHexnutScene />
       </motion.div>
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3">
+        {/* <div className="flex flex-col gap-3">
           <div className="flex flex-col items-start md:flex-row md:items-end md:gap-3">
             <motion.h1
               className="text-6xl font-bold tracking-wide"
@@ -56,7 +56,7 @@ export function HomeHero() {
               </Badge>
             </motion.div>
           </div>
-        </div>
+        </div> */}
         <motion.h2
           className="text-2xl text-pretty"
           initial={{ opacity: 0, y: 20 }}

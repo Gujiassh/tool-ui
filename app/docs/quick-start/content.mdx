@@ -6,315 +6,137 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/quick-start/content.mdx"
 />
 
-## Setup
+## Get started
+
+<div className="not-prose grid gap-4 sm:grid-cols-2 my-6 items-center">
+  <blockquote className="border-l-4 border-muted-foreground/30 pl-4 my-0">
+    <strong>Reference Example App:</strong>
+    <br />
+    Explore a working starter project:
+    <br />
+    <a href="https://github.com/assistant-ui/tool-ui-starter">assistant-ui/tool-ui-starter</a>
+  </blockquote>
+  <img src="/assets/thunderstorm.jpg" alt="Thunderstorm" width="400" className="justify-self-end" />
+</div>
 
 <Steps>
 
 <Step title="Initialize assistant-ui">
 
-Set up the assistant-ui runtime provider that manages the connection between your frontend and backend. This handles message streaming, tool execution, and state management.
+Set up assistant-ui in your application.
 
-**What this demonstrates:**
+<Tabs items={["npm", "pnpm", "bun", "yarn"]}>
+  <Tab>
 
-- `useChatRuntime` creates a runtime that connects to your backend API
-- `AssistantChatTransport` handles the communication protocol with your `/api/chat` endpoint
-- `AssistantRuntimeProvider` makes the runtime available to all child components
+```bash
+npx assistant-ui@latest init
+```
+
+  </Tab>
+  <Tab>
+
+```bash
+pnpm dlx assistant-ui@latest init
+```
+
+  </Tab>
+  <Tab>
+
+```bash
+bunx assistant-ui@latest init
+```
+
+  </Tab>
+  <Tab>
+
+```bash
+yarn dlx assistant-ui@latest init
+```
+
+  </Tab>
+</Tabs>
+
+Add a tool-ui component like option-list to your application:
+
+<QuickStartInstallTabs componentId="option-list" />
+
+Your frontend code should look something like this:
 
 ```tsx
 "use client";
-import { AssistantRuntimeProvider } from "@assistant-ui/react";
+
+import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { AssistantRuntimeProvider, Tools, useAui } from "@assistant-ui/react";
+import { AssistantChatTransport, useChatRuntime } from "@assistant-ui/react-ai-sdk";
+import { Thread } from "@/components/assistant-ui/thread";
+import { type Toolkit } from "@assistant-ui/react";
 import {
-  useChatRuntime,
-  AssistantChatTransport,
-} from "@assistant-ui/react-ai-sdk";
+  OptionList,
+  OptionListErrorBoundary,
+  SerializableOptionListSchema,
+  type OptionListSelection,
+} from "@/components/tool-ui/option-list";
 
-function App() {
-  const runtime = useChatRuntime({
-    transport: new AssistantChatTransport({ api: "/api/chat" }),
-  });
-
-  return (
-    <AssistantRuntimeProvider runtime={runtime}>
-      {/* Your chat UI */}
-    </AssistantRuntimeProvider>
-  );
-}
-```
-
-</Step>
-
-<Step title="Define a backend tool">
-
-Create a tool on your server that the LLM can call. The tool returns structured JSON that matches a Tool UI component schema. Here we're creating a link preview tool that returns data for the LinkPreview component.
-
-**What this demonstrates:**
-
-- `SerializableLinkPreviewSchema` ensures your tool output matches the LinkPreview component's expected format
-- `id` identifies this rendering in the conversation
-- `safeParseSerializableLinkPreview` on the frontend gates rendering until the payload is complete
-- Your tool can fetch real data (APIs, databases) and return it in the component schema format
-
-```ts
-import { streamText, tool, convertToModelMessages, jsonSchema } from "ai";
-import { openai } from "@ai-sdk/openai";
-
-export async function POST(req: Request) {
-  const { messages } = await req.json();
-
-  const result = streamText({
-    model: openai("gpt-4o"),
-    messages: await convertToModelMessages(messages),
-    tools: {
-      previewLink: tool({
-        description: "Show a preview card for a URL",
-        inputSchema: jsonSchema<{ url: string }>({
-          type: "object",
-          properties: { url: { type: "string", format: "uri" } },
-          required: ["url"],
-          additionalProperties: false,
-        }),
-        async execute({ url }) {
-          // In production, you'd fetch real metadata here
-          return {
-            id: "link-preview-1",
-            href: url,
-            title: "Example Site",
-            description: "A description of the linked content",
-            image: "https://example.com/image.jpg",
-          };
-        },
-      }),
-    },
-  });
-
-  return result.toUIMessageStreamResponse();
-}
-```
-
-</Step>
-
-<Step title="Register the Tool UI">
-
-Connect your backend tool to a frontend component. When the LLM calls the `previewLink` tool, assistant-ui will automatically render the LinkPreview component with the returned data.
-
-**What this demonstrates:**
-
-- `Tools({ toolkit })` registers tool renderers in one place
-- `safeParseSerializableLinkPreview` is the render gate: no payload, no render (`return null`)
-- The toolkit key (`previewLink`) must match your backend tool name
-- `useAui({ tools: ... })` wires tool rendering into `AssistantRuntimeProvider`
-
-```tsx
-import {
-  AssistantRuntimeProvider,
-  Tools,
-  useAui,
-  type Toolkit,
-} from "@assistant-ui/react";
-import {
-  LinkPreview,
-  LinkPreviewErrorBoundary,
-  safeParseSerializableLinkPreview,
-} from "@/components/tool-ui/link-preview";
-import {
-  useChatRuntime,
-  AssistantChatTransport,
-} from "@assistant-ui/react-ai-sdk";
-
-const toolkit: Toolkit = {
-  previewLink: {
-    type: "backend",
-    render: ({ result }) => {
-      const parsedResult = safeParseSerializableLinkPreview(result);
-
-      // Tool UI renderers should mount only when the full payload parses.
-      if (!parsedResult) {
-        return null;
-      }
-
+export const toolkit: Toolkit = {
+  selectOptionFromListTool: {
+    description: "Let the user choose options from a list.",
+    parameters: SerializableOptionListSchema,
+    render: ({ args, result, status, addResult, toolCallId }) => {
+      if (status.type === "complete" && result) return `Selected: ${JSON.stringify(result)}`;
+      if (status.type === "running") return <div>Loading...</div>;
       return (
-        <>
-          <LinkPreviewErrorBoundary>
-            <LinkPreview {...parsedResult} maxWidth="420px" />
-          </LinkPreviewErrorBoundary>
-        </>
+        <OptionListErrorBoundary>
+          <OptionList
+            {...args}
+            value={undefined}
+            choice={result as OptionListSelection}
+            onConfirm={(selection) => addResult(selection)}
+          />
+        </OptionListErrorBoundary>
       );
     },
   },
 };
 
-function App() {
+export const Assistant = () => {
   const runtime = useChatRuntime({
     transport: new AssistantChatTransport({ api: "/api/chat" }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
   });
   const aui = useAui({ tools: Tools({ toolkit }) });
 
   return (
     <AssistantRuntimeProvider runtime={runtime} aui={aui}>
-      <Thread />
+      <div className="h-dvh">
+        <Thread />
+      </div>
     </AssistantRuntimeProvider>
   );
-}
+};
 ```
 
-That's it! When a user asks the assistant to preview a link, it will call your tool and render the LinkPreview component.
+Your API chat route should look something like this:
 
-</Step>
-
-</Steps>
-
-## Installation
-
-The fastest way to get started is with the assistant-ui CLI:
-
-```sh
-npx assistant-ui@latest init
-```
-
-Or install packages manually if you prefer to configure yourself:
-
-```sh
-pnpm add @assistant-ui/react @assistant-ui/react-ai-sdk ai @ai-sdk/openai zod
-```
-
-Add your OpenAI API key to your environment variables:
-
-```env
-OPENAI_API_KEY=sk-...
-```
-
-## Frontend tools (interactive Tool UIs)
-
-Some Tool UIs (especially decision surfaces like **Option List**) are easiest to model as **frontend tools**: the model calls a tool with Tool UI props as the arguments, and your UI calls `addResult(...)` after the user confirms.
-
-If you're using `AssistantChatTransport`, it forwards **system instructions** and **registered tools** in the request body. Make sure your `/api/chat` route reads and forwards them, otherwise the model won't see your frontend tools.
-
-```ts
+```tsx
 import { openai } from "@ai-sdk/openai";
-import {
-  streamText,
-  convertToModelMessages,
-  jsonSchema,
-  type UIMessage,
-  type JSONSchema7,
-} from "ai";
-
-type ForwardedTools = Record<
-  string,
-  { description?: string; parameters: JSONSchema7 }
->;
-
-function toStreamTextTools(tools?: ForwardedTools) {
-  if (!tools) return undefined;
-  return Object.fromEntries(
-    Object.entries(tools).map(([name, tool]) => [
-      name,
-      {
-        ...(tool.description ? { description: tool.description } : {}),
-        inputSchema: jsonSchema(tool.parameters),
-      },
-    ]),
-  );
-}
+import { streamText, convertToModelMessages, type UIMessage } from "ai";
+import { frontendTools } from "@assistant-ui/react-ai-sdk";
 
 export async function POST(req: Request) {
-  const body = (await req.json()) as {
-    messages: UIMessage[];
-    system?: string;
-    tools?: ForwardedTools;
-  };
+  const { messages, tools }: { messages: UIMessage[]; tools: Parameters<typeof frontendTools>[0] } = await req.json();
 
   const result = streamText({
     model: openai("gpt-4o"),
-    messages: await convertToModelMessages(body.messages),
-    system: body.system,
-    tools: toStreamTextTools(body.tools),
+    messages: await convertToModelMessages(messages),
+    tools: { ...frontendTools(tools) },
   });
 
   return result.toUIMessageStreamResponse();
 }
 ```
 
-### Register a frontend tool (assistant-ui)
+</Step>
 
-When the tool is frontend/interactive, you register the tool **on the client** (so it gets forwarded by `AssistantChatTransport`) and render a Tool UI when it is called.
+</Steps>
 
-```tsx
-"use client";
-
-import { type Toolkit } from "@assistant-ui/react";
-import {
-  OptionList,
-  safeParseSerializableOptionList,
-  SerializableOptionListSchema,
-} from "@/components/tool-ui/option-list";
-
-export const toolkit: Toolkit = {
-  selectFormat: {
-  description: "Ask the user to choose an output format.",
-  parameters: SerializableOptionListSchema,
-  render: ({ args, result, addResult, toolCallId }) => {
-    const parsedArgs = safeParseSerializableOptionList({
-      ...args,
-      // `id` is required and should be stable/meaningful; fall back for DX.
-      id: (args as any)?.id ?? `format-selection-${toolCallId}`,
-    });
-
-    // Tool UI renderers should mount only when the full payload parses.
-    if (!parsedArgs) {
-      return null;
-    }
-
-    if (result) {
-      return (
-        <OptionList {...parsedArgs} value={undefined} choice={result} />
-      );
-    }
-
-    return (
-      <OptionList
-        {...parsedArgs}
-        // Avoid controlled selection in LLM-driven payloads.
-        value={undefined}
-        onConfirm={(selection) => addResult(selection)}
-      />
-    );
-  },
-  },
-};
-```
-
-Register this toolkit with `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so the tool and UI are forwarded by `AssistantChatTransport`.
-
-### Auto-continue after `addResult(...)` (AI SDK runtime)
-
-If you want the assistant to continue automatically after the user confirms (instead of waiting for the next user message), enable AI SDK's auto-resubmit behavior:
-
-```tsx
-import {
-  useChatRuntime,
-  AssistantChatTransport,
-} from "@assistant-ui/react-ai-sdk";
-import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-
-const runtime = useChatRuntime({
-  transport: new AssistantChatTransport({ api: "/api/chat" }),
-  sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-});
-```
-
-## Other Frameworks
-
-Tool UI components work with any React app. Without assistant-ui, you'll need to manually parse tool outputs and render components. For the best experience, we recommend using assistant-ui.
-
-When copying components manually, always include the [`shared`](https://github.com/assistant-ui/tool-ui/tree/main/components/tool-ui/shared) directory alongside the component you need. It contains utilities (action buttons, schemas, formatters) used by all Tool UI components.
-
-## Runtime Options
-
-[assistant-ui](https://www.assistant-ui.com/) supports multiple runtimes: [AI SDK](https://ai-sdk.dev/), [LangGraph](https://langchain-ai.github.io/langgraphjs/), LangServe, [Mastra](https://mastra.dev/), or custom backends. The examples above use AI SDK v6.
-
-## Next Steps
-
-- [**Explore Components**](/docs/data-table): Data Table, Image, Video, Link Preview, Option List, Social Post
-- [**UI Guidelines**](/docs/design-guidelines): Learn the interaction patterns
-- [**Examples**](https://github.com/assistant-ui/assistant-ui/tree/main/examples): Full implementations
+For **installation**, **backend tools**, **frontend tools**, **tool type inference**, and more, see [**Advanced**](/docs/advanced).
