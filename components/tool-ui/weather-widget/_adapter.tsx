@@ -9,9 +9,4 @@
  */
 
 export { cn } from "../../../lib/ui/cn";
-export {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "../../ui/card";
+export { Card } from "../../ui/card";

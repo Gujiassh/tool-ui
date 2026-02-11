@@ -14,7 +14,7 @@ import { ParameterSlider } from "@/components/tool-ui/parameter-slider";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
 import { MessageDraft } from "@/components/tool-ui/message-draft";
-import { WeatherWidget } from "@/components/tool-ui/weather-widget";
+import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
 import {
   type Flight,
   TABLE_COLUMNS,

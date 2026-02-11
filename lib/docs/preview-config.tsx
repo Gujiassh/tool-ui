@@ -29,7 +29,7 @@ import type { ProgressTracker } from "@/components/tool-ui/progress-tracker";
 import type { StatsDisplay } from "@/components/tool-ui/stats-display";
 import type { Terminal } from "@/components/tool-ui/terminal";
 import type { QuestionFlow } from "@/components/tool-ui/question-flow";
-import type { WeatherWidget } from "@/components/tool-ui/weather-widget";
+import type { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
 
 import {
   approvalCardPresets,
@@ -182,7 +182,7 @@ const DynamicQuestionFlow = dynamic(() =>
   import("@/components/tool-ui/question-flow").then((m) => m.QuestionFlow)
 );
 const DynamicWeatherWidget = dynamic(() =>
-  import("@/components/tool-ui/weather-widget").then((m) => m.WeatherWidget)
+  import("@/components/tool-ui/weather-widget/runtime").then((m) => m.WeatherWidget)
 );
 
 function QuestionFlowUpfrontWithReceipt({

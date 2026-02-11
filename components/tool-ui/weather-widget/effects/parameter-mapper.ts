@@ -418,8 +418,10 @@ export function mapWeatherToEffects(
   // Get base preset for this condition
   const preset = CONDITION_PRESETS[conditionCode];
 
-  // Calculate derived values
-  const sunAltitude = getSunAltitude(timestamp);
+  // Calculate derived values.
+  // When explicit timeOfDay is provided, it is the canonical scene-time input.
+  const resolvedTimeOfDay = explicitTimeOfDay ?? getTimeOfDay(timestamp);
+  const sunAltitude = timeOfDayToSunAltitude(resolvedTimeOfDay);
   const windIntensity = mapWindSpeed(windSpeed);
   const precipIntensity = mapPrecipitation(precipitationLevel);
   const hazeAmount = mapVisibility(visibility);
@@ -474,11 +476,10 @@ export function mapWeatherToEffects(
   }
 
   // Celestial layer - always present, calculated from timestamp + condition presets
-  const timeOfDay = explicitTimeOfDay ?? getTimeOfDay(timestamp);
   const moonPhase = getMoonPhase(timestamp);
   const celestialPreset = CELESTIAL_PRESETS[conditionCode];
   config.celestial = {
-    timeOfDay,
+    timeOfDay: resolvedTimeOfDay,
     moonPhase,
     starDensity: isNight ? celestialPreset.starDensity : 0,
     celestialX: celestialPreset.x,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { defineToolUiContract } from "../shared";
-import type { CustomEffectProps } from "./effects";
+import type { CustomEffectProps } from "./effects/custom-effect-props";
 import type { EffectSettings } from "./effects/types";
 
 export const WeatherConditionCodeSchema = z.enum([
@@ -130,7 +130,6 @@ export const safeParseWeatherWidgetPayload: (
 ) => WeatherWidgetPayload | null = WeatherWidgetPayloadSchemaContract.safeParse;
 export interface WeatherWidgetProps extends WeatherWidgetPayload {
   className?: string;
-  locale?: string;
   effects?: EffectSettings;
   /**
    * Custom effect props for direct control over all effect parameters.

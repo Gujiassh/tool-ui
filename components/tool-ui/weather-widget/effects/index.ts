@@ -1,5 +1,5 @@
 export { EffectCompositor } from "./effect-compositor";
-export type { CustomEffectProps, WeatherEffectLayer } from "./effect-compositor";
+export type { CustomEffectProps, WeatherEffectLayer } from "./custom-effect-props";
 export {
   mapWeatherToEffects,
   getSunAltitude,
@@ -12,7 +12,6 @@ export {
   getWeatherTheme,
 } from "./parameter-mapper";
 export type { WeatherTheme } from "./parameter-mapper";
-export { useWeatherTheme } from "./use-weather-theme";
 export type {
   EffectSettings,
   EffectQuality,
@@ -31,7 +30,7 @@ export type {
   SnowParams,
   InteractionParams,
   LayerToggles,
-} from "./weather-effects-canvas";
+} from "./weather-effects-types";
 
 export * from "./tuning";
 export { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
