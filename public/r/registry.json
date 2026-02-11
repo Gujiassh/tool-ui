@@ -59,11 +59,6 @@
           "target": "components/tool-ui/shared/action-buttons.tsx"
         },
         {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -72,11 +67,6 @@
           "path": "components/tool-ui/shared/error-boundary.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/error-boundary.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
         },
         {
           "path": "components/tool-ui/shared/parse.ts",
@@ -89,34 +79,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -202,11 +167,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -217,34 +177,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -296,21 +231,6 @@
           "target": "components/tool-ui/chart/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -321,11 +241,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -334,36 +249,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -448,11 +333,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/media/aspect-ratio.ts"
@@ -493,34 +373,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -598,11 +453,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -613,34 +463,14 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
         },
         {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
           "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -849,11 +679,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/media/aspect-ratio.ts"
@@ -894,34 +719,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -993,21 +793,6 @@
           "target": "components/tool-ui/image-gallery/styles.css"
         },
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -1016,11 +801,6 @@
           "path": "components/tool-ui/shared/error-boundary.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/error-boundary.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
         },
         {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
@@ -1061,36 +841,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -1167,11 +917,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -1182,29 +927,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
         },
         {
           "path": "components/tool-ui/shared/utils.ts",
@@ -1266,21 +991,6 @@
           "target": "components/tool-ui/item-carousel/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -1289,11 +999,6 @@
           "path": "components/tool-ui/shared/error-boundary.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/error-boundary.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
         },
         {
           "path": "components/tool-ui/shared/parse.ts",
@@ -1306,39 +1011,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
           "path": "components/tool-ui/shared/utils.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/utils.ts"
-        },
-        {
-          "path": "lib/ui/cn.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/cn.ts"
         }
       ]
     },
@@ -1410,11 +1085,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/media/aspect-ratio.ts"
@@ -1455,34 +1125,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -1559,11 +1204,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/media/aspect-ratio.ts"
@@ -1604,29 +1244,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
         },
         {
           "path": "components/tool-ui/shared/utils.ts",
@@ -1866,11 +1486,6 @@
           "target": "components/tool-ui/shared/action-buttons.tsx"
         },
         {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -1879,11 +1494,6 @@
           "path": "components/tool-ui/shared/error-boundary.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/error-boundary.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
         },
         {
           "path": "components/tool-ui/shared/parse.ts",
@@ -1896,34 +1506,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -2005,11 +1590,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -2018,11 +1598,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
         },
         {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
@@ -2035,19 +1610,9 @@
           "target": "components/tool-ui/shared/use-controllable-state.ts"
         },
         {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
           "path": "components/tool-ui/shared/use-signature-reset.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -2223,11 +1788,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -2236,11 +1796,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
         },
         {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
@@ -2253,19 +1808,9 @@
           "target": "components/tool-ui/shared/use-controllable-state.ts"
         },
         {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
           "path": "components/tool-ui/shared/use-signature-reset.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -2406,21 +1951,6 @@
           "target": "components/tool-ui/question-flow/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -2431,11 +1961,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -2444,36 +1969,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "lib/ui/cn.ts",
@@ -2494,21 +1989,6 @@
       ],
       "files": [
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -2519,11 +1999,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -2532,36 +2007,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "components/tool-ui/stats-display/_adapter.tsx",
@@ -2644,11 +2089,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -2659,34 +2099,14 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
         },
         {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
           "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "components/tool-ui/terminal/_adapter.tsx",
@@ -2766,11 +2186,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/media/aspect-ratio.ts"
@@ -2811,34 +2226,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "components/tool-ui/video/_adapter.tsx",
@@ -2895,21 +2285,6 @@
       ],
       "files": [
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -2920,49 +2295,9 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/schema.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/utils.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/utils.ts"
         },
         {
           "path": "components/tool-ui/weather-widget/_adapter.tsx",
@@ -3194,11 +2529,6 @@
           "target": "components/tool-ui/shared/error-boundary.tsx"
         },
         {
-          "path": "components/tool-ui/shared/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/index.ts"
-        },
-        {
           "path": "components/tool-ui/shared/media/aspect-ratio.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/media/aspect-ratio.ts"
@@ -3239,29 +2569,9 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/toolkit.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/toolkit.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/use-controllable-state.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-controllable-state.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-signature-reset.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/use-signature-reset.ts"
         },
         {
           "path": "components/tool-ui/shared/utils.ts",
