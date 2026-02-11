@@ -5,18 +5,67 @@
 
 ## Current State Summary
 
-Tool UI is a copy/paste component library (shadcn/ui model) for AI assistant interfaces. Components follow flat prop APIs and unified `choice` receipt semantics. Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
+Tool UI is a maintainer-owned copy/paste component library (shadcn/ui model) for AI assistant interfaces. Component APIs are flat, receipt semantics are unified on `choice`, and component directories are treated as the product surface (`schema`, `component`, `error-boundary`, `README`, exports). Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
 
 ## Stale Information Detected
 
 | Location | States | Reality | Since |
 |----------|--------|---------|-------|
-| README.md | Lists 17 components | Actually 25 components exist | 2026-01 |
-| README.md | Missing MessageDraft, QuestionFlow, StatsDisplay, WeatherWidget, etc. | These components exist | 2026-01 |
 | `plan-sequential-munching-canyon.md` | References `app/sandbox/weather-tuning/hooks/use-code-gen.ts` export workflow | Tuning flow is apply/recover via repo routes; `use-code-gen.ts` removed | 2026-02 |
 | `.claude/plans/plan-sequential-munching-canyon.md` | References `hooks/use-code-gen.ts` TypeScript generation | Tuning flow is apply/recover via repo routes; `use-code-gen.ts` removed | 2026-02 |
+| `plan-sequential-munching-canyon.md` | Targets deletion of `app/sandbox/weather-compositor/` | `weather-tuning` still imports compositor presets/interpolation modules; compositor remains active | 2026-02 |
+| `.claude/plans/plan-sequential-munching-canyon.md` | Targets deletion of `app/sandbox/weather-compositor/` | `weather-tuning` still imports compositor presets/interpolation modules; compositor remains active | 2026-02 |
 
 ## Timeline
+
+### 2026-02-11 — Maintainer Workflow + State Contract Hardening
+
+**What changed:** Shifted docs and tooling to a maintainer-first workflow and added targeted regression contracts for high-risk UI state paths.
+
+Highlights:
+- Reframed onboarding/docs around maintainers (`README.md`, `CONTRIBUTING.md`, `app/docs/contributing/content.mdx`, `docs/playground.md`, `docs/tests.md`)
+- Added component-local README coverage and scaffold automation via `pnpm component:new` (`scripts/new-tool-ui-component.ts`)
+- Added `components/tool-ui/index.ts` aggregate export surface
+- Added contract tests for deterministic row keys, outcome sync transitions, step ids, and tab search param resolution
+- Closed component contract gaps (for example, missing `item-carousel/error-boundary.tsx`)
+
+**Why:** Reduce time-to-first-working-component, make component directory contracts explicit, and keep state/ID behavior stable as internals evolve.
+
+**Agent impact:** Use scaffold + maintainer docs as the default path for new components. When changing stateful behavior, expose deterministic helpers and add contract tests under `lib/tests/**`.
+
+**Files:** `README.md`, `CONTRIBUTING.md`, `app/docs/contributing/content.mdx`, `scripts/new-tool-ui-component.ts`, `components/tool-ui/index.ts`, `lib/tests/tool-ui/**/*`
+
+---
+
+### 2026-02-10 — Registry Pipeline Hardened for Per-Component Install
+
+**What changed:** Registry generation moved to component-directory discovery with per-item artifacts and minimal dependency closure (instead of relying on prefixed/manual lists and shared monolith assumptions).
+
+Highlights:
+- Component discovery from `components/tool-ui/*` (excluding `shared`)
+- Registry items unprefixed (`tool-ui-foo` → `foo`)
+- Shared artifact dependencies inlined per item where needed
+- Registry tests assert discovered items match component directories
+
+**Why:** Keep shadcn registry output aligned with the actual product surface and reduce drift from manually curated registry definitions.
+
+**Agent impact:** Treat `components/tool-ui` directories as source of truth for registry coverage. After adding/refactoring components, run `pnpm registry:build` and `pnpm registry:check`.
+
+**Files:** `lib/registry/tool-ui-registry.ts`, `lib/tests/registry/tool-ui-registry.test.ts`, `scripts/build-tool-ui-registry.ts`, `public/r/*.json`
+
+---
+
+### 2026-02-10 — CI 1.0 Quality Gates
+
+**What changed:** CI now enforces lint/typecheck/test/registry artifact consistency on push/PR to `main`.
+
+**Why:** Prevent state contract regressions and stale registry artifacts from landing.
+
+**Agent impact:** A local "done" state for maintainer work is: `pnpm lint:ci`, `pnpm typecheck`, `pnpm test`, `pnpm registry:check`.
+
+**Files:** `.github/workflows/ci.yml`, `package.json`
+
+---
 
 ### 2026-02-10 — Weather Widget V3.1 Clean Break
 
@@ -237,11 +286,15 @@ const glassStyles = useGlassStyles({
 | Use legacy serializable weather parser/types | Use `WeatherWidgetPayloadSchema` + `safeParseWeatherWidgetPayload` | 2026-02-10 |
 | Put executable tests in `components/tool-ui/**` | Put tests in `lib/tests/**` (or `lib/playground/**`) | 2026-02-10 |
 | Use `app/sandbox/weather-tuning/hooks/use-code-gen.ts` export flow | Use apply/recover API routes and `tuned-presets.ts` | 2026-02-10 |
+| Curate registry component lists by hand | Discover from `components/tool-ui/*` and validate with registry tests | 2026-02-10 |
+| Import from `../shared` barrel in core interactive components | Import direct leaf modules from `../shared/*` | 2026-02-10 |
+| Add new components without local READMEs and contract scaffold files | Use `pnpm component:new` and keep the full component directory contract | 2026-02-11 |
 
 ## Trajectory
 
 Based on recent changes, the project is:
 - **Standardizing APIs** — Receipt props unified, flat prop patterns enforced
+- **Maintainer-first DX** — onboarding and docs tuned for direct maintenance in this repo
 - **Polishing copy** — Moving from capability demos to believable scenarios
 - **Keeping dependencies current** — AI SDK v6, assistant-ui v0.12
 - **Reducing bundle** — View Transitions over Framer Motion where possible
@@ -249,3 +302,4 @@ Based on recent changes, the project is:
 - **Adding visual effects** — SVG-based glass refraction for weather widget, preferring CSS/SVG over WebGL
 - **Adding analytics** — PostHog + Vercel Analytics for usage tracking
 - **Hardening weather contracts** — V3.1 clean-break payloads with deterministic `time` input and apply-only tuning workflow
+- **Hardening delivery rails** — registry auto-discovery + CI gates to catch drift early
