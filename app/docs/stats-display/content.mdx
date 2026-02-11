@@ -176,37 +176,25 @@ import {
   StatsDisplayErrorBoundary,
   safeParseSerializableStatsDisplay,
   SerializableStatsDisplaySchema,
-  type SerializableStatsDisplay,
 } from "@/components/tool-ui/stats-display";
-import {
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showStats: {
   description: "Display key metrics in a grid",
   parameters: SerializableStatsDisplaySchema,
-  render: ({ args, status, toolCallId }) => {
-      SerializableStatsDisplay,
-      never
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `stats-${toolCallId}`,
-      },
-      safeParseArgs: safeParseSerializableStatsDisplay,
-      loadingMessage: "Loading stats…",
+  render: ({ args, toolCallId }) => {
+    const parsedArgs = safeParseSerializableStatsDisplay({
+      ...args,
+      id: (args as any)?.id ?? `stats-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <StatsDisplayErrorBoundary>
-        <StatsDisplay {...state.args} />
+        <StatsDisplay {...parsedArgs} />
       </StatsDisplayErrorBoundary>
     );
   },

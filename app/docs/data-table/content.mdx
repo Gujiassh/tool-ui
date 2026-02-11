@@ -284,27 +284,21 @@ import {
   DataTableErrorBoundary,
   safeParseSerializableDataTable,
 } from "@/components/tool-ui/data-table";
-import {
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchProducts: {
     type: "backend",
-    render: ({ result, status }) => {
-        status,
-        result,
-        safeParseResult: safeParseSerializableDataTable,
-        loadingMessage: "Loading table…",
-        unavailableMessage: "Table unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableDataTable(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
           <DataTableErrorBoundary>
-            <DataTable rowIdKey="id" {...state.result} />
+            <DataTable rowIdKey="id" {...parsedResult} />
           </DataTableErrorBoundary>
         </>
       );

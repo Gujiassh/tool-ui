@@ -144,27 +144,21 @@ import {
   ChartErrorBoundary,
   safeParseSerializableChart,
 } from "@/components/tool-ui/chart";
-import {
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showChart: {
     type: "backend",
-    render: ({ result, status }) => {
-        status,
-        result,
-        safeParseResult: safeParseSerializableChart,
-        loadingMessage: "Loading chart…",
-        unavailableMessage: "Chart unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableChart(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
           <ChartErrorBoundary>
-            <Chart {...state.result} />
+            <Chart {...parsedResult} />
           </ChartErrorBoundary>
         </>
       );
