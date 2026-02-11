@@ -77,16 +77,6 @@
           "target": "components/tool-ui/shared/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/streaming-render.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/streaming-render.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/streaming-state.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/streaming-state.tsx"
-        },
-        {
           "path": "components/tool-ui/shared/use-action-buttons.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/use-action-buttons.tsx"
