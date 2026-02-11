@@ -72,4 +72,24 @@ describe("Tool UI registry artifacts", () => {
       "tooltip",
     ]);
   });
+
+  it("includes accordion/collapsible registry dependencies for motion primitives", async () => {
+    const artifacts = await buildToolUiRegistryArtifacts(getProjectRoot());
+
+    const expectations = new Map<string, string[]>([
+      ["plan", ["accordion", "collapsible"]],
+      ["data-table", ["accordion"]],
+      ["code-block", ["collapsible"]],
+      ["terminal", ["collapsible"]],
+    ]);
+
+    for (const [componentName, requiredDependencies] of expectations) {
+      const item = artifacts.items.find((candidate) => candidate.name === componentName);
+      expect(item, `missing registry item: ${componentName}`).toBeDefined();
+
+      for (const dependency of requiredDependencies) {
+        expect(item?.registryDependencies ?? []).toContain(dependency);
+      }
+    }
+  });
 });

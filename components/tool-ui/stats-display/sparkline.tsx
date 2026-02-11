@@ -54,6 +54,11 @@ export function Sparkline({
   ].join(" ");
 
   const animationDelay = style?.animationDelay ?? "0ms";
+  const baseAnimationDelay =
+    typeof animationDelay === "number"
+      ? `${animationDelay}ms`
+      : animationDelay;
+  const secondaryAnimationDelay = `calc(${baseAnimationDelay} + 100ms)`;
 
   return (
     <svg
@@ -99,10 +104,10 @@ export function Sparkline({
         vectorEffect="non-scaling-stroke"
         pathLength={1}
         strokeDasharray="0.36 0.64"
-        strokeDashoffset={1}
-        strokeOpacity={0}
-        className="animate-[sparkline-glint-slow_0.8s_ease-out_forwards]"
-        style={{ animationDelay }}
+        strokeDashoffset={0}
+        strokeOpacity={0.2}
+        className="opacity-0 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-700 motion-safe:ease-out motion-safe:fill-mode-both"
+        style={{ animationDelay: baseAnimationDelay }}
       />
       <polyline
         points={linePointsString}
@@ -114,23 +119,11 @@ export function Sparkline({
         vectorEffect="non-scaling-stroke"
         pathLength={1}
         strokeDasharray="0.24 0.76"
-        strokeDashoffset={1}
-        strokeOpacity={0}
-        className="animate-[sparkline-glint_0.8s_ease-out_forwards]"
-        style={{ animationDelay }}
+        strokeDashoffset={0}
+        strokeOpacity={0.65}
+        className="opacity-0 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 motion-safe:ease-out motion-safe:fill-mode-both"
+        style={{ animationDelay: secondaryAnimationDelay }}
       />
-      <style>{`
-        @keyframes sparkline-glint {
-          0% { stroke-dashoffset: 1; stroke-opacity: 0; }
-          20% { stroke-opacity: 0.9; }
-          100% { stroke-dashoffset: -1; stroke-opacity: 0; }
-        }
-        @keyframes sparkline-glint-slow {
-          0% { stroke-dashoffset: 1; stroke-opacity: 0; }
-          20% { stroke-opacity: 0.2; }
-          100% { stroke-dashoffset: -1; stroke-opacity: 0; }
-        }
-      `}</style>
     </svg>
   );
 }

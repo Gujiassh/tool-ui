@@ -72,7 +72,7 @@ function SelectionIndicator({
         shape,
         isSelected && [
           "border-primary bg-primary text-primary-foreground",
-          "motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]",
+          "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out",
         ],
         !isSelected && "border-muted-foreground/50",
         disabled && "opacity-50",
@@ -80,13 +80,12 @@ function SelectionIndicator({
     >
       {mode === "multi" && isSelected && (
         <Check
-          className="size-3 [&_path]:motion-safe:animate-[check-draw_400ms_cubic-bezier(0.34,1.56,0.64,1)_100ms_backwards]"
+          className="size-3 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:delay-75 motion-safe:duration-200 motion-safe:fill-mode-both"
           strokeWidth={3}
-          style={{ "--check-path-length": "24" } as React.CSSProperties}
         />
       )}
       {mode === "single" && isSelected && (
-        <span className="size-2 rounded-full bg-current motion-safe:animate-[spring-bounce_500ms_cubic-bezier(0.34,1.56,0.64,1)]" />
+        <span className="size-2 rounded-full bg-current motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out" />
       )}
     </div>
   );
