@@ -10,6 +10,11 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "button",
+    "separator",
+    "slider"
+  ],
   "files": [
     {
       "path": "components/tool-ui/parameter-slider/_adapter.tsx",

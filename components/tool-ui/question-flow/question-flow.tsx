@@ -227,9 +227,11 @@ interface StepBodyData {
 }
 
 export function getQuestionFlowStepIds(id: string, stepKey: string) {
+  const safeId = encodeURIComponent(id).replace(/%/g, "_");
+  const safeStepKey = encodeURIComponent(stepKey).replace(/%/g, "_");
   return {
-    titleId: `${id}-${stepKey}-title`,
-    descriptionId: `${id}-${stepKey}-description`,
+    titleId: `${safeId}-${safeStepKey}-title`,
+    descriptionId: `${safeId}-${safeStepKey}-description`,
   };
 }
 

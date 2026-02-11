@@ -10,6 +10,10 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "card",
+    "chart"
+  ],
   "files": [
     {
       "path": "components/tool-ui/chart/_adapter.tsx",

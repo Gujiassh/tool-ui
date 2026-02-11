@@ -10,6 +10,10 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "button",
+    "card"
+  ],
   "files": [
     {
       "path": "components/tool-ui/item-carousel/_adapter.tsx",

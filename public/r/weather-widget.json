@@ -10,6 +10,9 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "card"
+  ],
   "files": [
     {
       "path": "components/tool-ui/shared/contract.ts",

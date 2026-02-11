@@ -10,6 +10,14 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "button",
+    "label",
+    "select",
+    "separator",
+    "switch",
+    "toggle-group"
+  ],
   "files": [
     {
       "path": "components/tool-ui/preferences-panel/_adapter.tsx",

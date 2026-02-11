@@ -57,5 +57,13 @@ describe("Tool UI registry artifacts", () => {
       dataTableItem?.files.some((file) => file.path === "lib/ui/cn.ts"),
     ).toBe(true);
     expect(dataTableItem?.dependencies?.includes("zod")).toBe(true);
+    expect(dataTableItem?.registryDependencies).toEqual([
+      "accordion",
+      "badge",
+      "button",
+      "dropdown-menu",
+      "table",
+      "tooltip",
+    ]);
   });
 });

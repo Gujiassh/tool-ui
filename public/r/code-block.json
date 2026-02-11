@@ -11,6 +11,10 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "button",
+    "collapsible"
+  ],
   "files": [
     {
       "path": "components/tool-ui/code-block/_adapter.tsx",

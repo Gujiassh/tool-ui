@@ -184,8 +184,12 @@ export function createDataTableRowKeys(
   });
 }
 
+function sanitizeDomIdToken(value: string): string {
+  return encodeURIComponent(value).replace(/%/g, "_");
+}
+
 export function getDataTableMobileDescriptionId(surfaceId: string): string {
-  return `${surfaceId}-mobile-table-description`;
+  return `${sanitizeDomIdToken(surfaceId)}-mobile-table-description`;
 }
 
 /**

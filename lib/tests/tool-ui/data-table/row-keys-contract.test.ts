@@ -43,4 +43,10 @@ describe("data-table row key contracts", () => {
       "orders-mobile-table-description",
     );
   });
+
+  it("sanitizes per-instance mobile description ids", () => {
+    expect(getDataTableMobileDescriptionId("orders 2026/q1")).toBe(
+      "orders_202026_2Fq1-mobile-table-description",
+    );
+  });
 });

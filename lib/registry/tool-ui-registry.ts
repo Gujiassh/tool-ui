@@ -209,6 +209,17 @@ function toRegistryDependency(specifier: string): string | null {
   return value || null;
 }
 
+function toRegistryDependencyFromResolvedPath(
+  relativePath: string,
+): string | null {
+  if (!relativePath.startsWith("components/ui/")) return null;
+  const value = relativePath
+    .replace("components/ui/", "")
+    .split("/")[0]
+    .replace(/\.[^.]+$/, "");
+  return value || null;
+}
+
 async function discoverToolUiRegistryDefinitions(
   projectRoot: string,
 ): Promise<ToolUiRegistryDefinition[]> {
@@ -308,7 +319,17 @@ async function buildRegistryItem(
           dependencySet.add(pkg);
         }
 
-        const registryDependency = toRegistryDependency(specifier);
+        let registryDependency = toRegistryDependency(specifier);
+        if (!registryDependency && specifier.startsWith(".")) {
+          const resolvedPath = resolveLocalImport(absolutePath, specifier);
+          if (resolvedPath) {
+            const resolvedRelativePath = toPosixPath(
+              path.relative(projectRoot, resolvedPath),
+            );
+            registryDependency =
+              toRegistryDependencyFromResolvedPath(resolvedRelativePath);
+          }
+        }
         if (registryDependency) {
           registryDependencySet.add(registryDependency);
         }

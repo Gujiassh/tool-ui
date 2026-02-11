@@ -12,4 +12,15 @@ describe("question-flow accessible id contracts", () => {
     expect(second.descriptionId).toBe("checkout-flow-payment-description");
     expect(first.titleId).not.toBe(second.titleId);
   });
+
+  it("sanitizes ids for aria references", () => {
+    const ids = getQuestionFlowStepIds("checkout flow", "shipping & billing");
+
+    expect(ids.titleId).toBe("checkout_20flow-shipping_20_26_20billing-title");
+    expect(ids.descriptionId).toBe(
+      "checkout_20flow-shipping_20_26_20billing-description",
+    );
+    expect(ids.titleId).not.toMatch(/\s/);
+    expect(ids.descriptionId).not.toMatch(/\s/);
+  });
 });

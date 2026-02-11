@@ -10,6 +10,9 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "button"
+  ],
   "files": [
     {
       "path": "components/tool-ui/progress-tracker/_adapter.tsx",

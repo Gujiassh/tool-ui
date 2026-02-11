@@ -15,6 +15,7 @@
         "zod"
       ],
       "registryDependencies": [
+        "button",
         "separator"
       ],
       "files": [
@@ -179,6 +180,10 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "card",
+        "chart"
+      ],
       "files": [
         {
           "path": "components/tool-ui/chart/_adapter.tsx",
@@ -239,6 +244,7 @@
         "zod"
       ],
       "registryDependencies": [
+        "button",
         "popover"
       ],
       "files": [
@@ -356,6 +362,10 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button",
+        "collapsible"
+      ],
       "files": [
         {
           "path": "components/tool-ui/code-block/_adapter.tsx",
@@ -438,6 +448,14 @@
         "clsx",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "accordion",
+        "badge",
+        "button",
+        "dropdown-menu",
+        "table",
+        "tooltip"
       ],
       "files": [
         {
@@ -562,6 +580,9 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/tool-ui/image/_adapter.tsx",
@@ -670,6 +691,9 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button"
       ],
       "files": [
         {
@@ -780,6 +804,10 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button",
+        "tooltip"
+      ],
       "files": [
         {
           "path": "components/tool-ui/instagram-post/_adapter.tsx",
@@ -864,6 +892,10 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button",
+        "card"
+      ],
       "files": [
         {
           "path": "components/tool-ui/item-carousel/_adapter.tsx",
@@ -927,6 +959,9 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button"
       ],
       "files": [
         {
@@ -1036,6 +1071,10 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "tooltip"
       ],
       "files": [
         {
@@ -1151,6 +1190,9 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/tool-ui/message-draft/_adapter.tsx",
@@ -1224,6 +1266,10 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "separator"
       ],
       "files": [
         {
@@ -1304,6 +1350,11 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button",
+        "separator",
+        "skeleton"
+      ],
       "files": [
         {
           "path": "components/tool-ui/order-summary/_adapter.tsx",
@@ -1377,6 +1428,11 @@
         "clsx",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "separator",
+        "slider"
       ],
       "files": [
         {
@@ -1472,6 +1528,12 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "accordion",
+        "button",
+        "card",
+        "collapsible"
+      ],
       "files": [
         {
           "path": "components/tool-ui/plan/_adapter.tsx",
@@ -1555,6 +1617,14 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "label",
+        "select",
+        "separator",
+        "switch",
+        "toggle-group"
       ],
       "files": [
         {
@@ -1650,6 +1720,9 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/tool-ui/progress-tracker/_adapter.tsx",
@@ -1729,6 +1802,10 @@
         "tailwind-merge",
         "zod"
       ],
+      "registryDependencies": [
+        "button",
+        "separator"
+      ],
       "files": [
         {
           "path": "components/tool-ui/question-flow/_adapter.tsx",
@@ -1786,6 +1863,9 @@
         "clsx",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "card"
       ],
       "files": [
         {
@@ -1851,6 +1931,10 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "collapsible"
       ],
       "files": [
         {
@@ -2052,6 +2136,9 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "card"
       ],
       "files": [
         {
@@ -2256,6 +2343,10 @@
         "lucide-react",
         "tailwind-merge",
         "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "tooltip"
       ],
       "files": [
         {

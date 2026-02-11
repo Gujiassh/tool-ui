@@ -10,6 +10,10 @@
     "tailwind-merge",
     "zod"
   ],
+  "registryDependencies": [
+    "button",
+    "tooltip"
+  ],
   "files": [
     {
       "path": "components/tool-ui/linkedin-post/_adapter.tsx",
