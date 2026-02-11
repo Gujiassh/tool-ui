@@ -117,10 +117,6 @@ import {
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
-import {
   useChatRuntime,
   AssistantChatTransport,
 } from "@assistant-ui/react-ai-sdk";
@@ -128,24 +124,17 @@ import {
 const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
-    render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
-        status,
-        result,
-        safeParseResult: safeParseSerializableLinkPreview,
-        loadingMessage: "Loading preview…",
-        unavailableMessage: "Preview unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableLinkPreview(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <LinkPreviewErrorBoundary>
-            <LinkPreview {...state.result} maxWidth="420px" />
+            <LinkPreview {...parsedResult} maxWidth="420px" />
           </LinkPreviewErrorBoundary>
         </>
       );
@@ -257,53 +246,32 @@ import {
   OptionList,
   safeParseSerializableOptionList,
   SerializableOptionListSchema,
-  type SerializableOptionList,
-  type OptionListSelection,
 } from "@/components/tool-ui/option-list";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   selectFormat: {
   description: "Ask the user to choose an output format.",
   parameters: SerializableOptionListSchema,
-  render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializableOptionList,
-      OptionListSelection
-    >({
-      status,
-      args: {
-        ...args,
-        // `id` is required and should be stable/meaningful; fall back for DX.
-        id: (args as any)?.id ?? `format-selection-${toolCallId}`,
-      },
-      result,
-      safeParseArgs: safeParseSerializableOptionList,
-      loadingMessage: "Loading options…",
-      awaitingActionMessage: "Choose an option",
+  render: ({ args, result, addResult, toolCallId }) => {
+    const parsedArgs = safeParseSerializableOptionList({
+      ...args,
+      // `id` is required and should be stable/meaningful; fall back for DX.
+      id: (args as any)?.id ?? `format-selection-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
-    const optionList = state.args;
-
-    if (state.kind === "partial" || state.kind === "ready") {
+    if (result) {
       return (
-        <OptionList {...optionList} value={undefined} choice={state.result} />
+        <OptionList {...parsedArgs} value={undefined} choice={result} />
       );
     }
 
     return (
       <OptionList
-        {...optionList}
+        {...parsedArgs}
         // Avoid controlled selection in LLM-driven payloads.
         value={undefined}
         onConfirm={(selection) => addResult(selection)}

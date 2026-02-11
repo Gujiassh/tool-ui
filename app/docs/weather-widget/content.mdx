@@ -109,39 +109,26 @@ import {
   WeatherWidgetErrorBoundary,
   safeParseWeatherWidgetPayload,
   WeatherWidgetPayloadSchema,
-  type WeatherWidgetPayload,
 } from "@/components/tool-ui/weather-widget";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   get_weather: {
   description: "Display current weather and forecast for a location",
   parameters: WeatherWidgetPayloadSchema,
-  render: ({ args, status, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      WeatherWidgetPayload,
-      never
-    >({
-      status,
-      args: {
-        ...args,
-        version: (args as any)?.version ?? "3.1",
-        id: (args as any)?.id ?? `weather-${toolCallId}`,
-      },
-      safeParseArgs: safeParseWeatherWidgetPayload,
-      loadingMessage: "Loading weather…",
-      unavailableMessage: "Weather unavailable",
+  render: ({ args, toolCallId }) => {
+    const parsedArgs = safeParseWeatherWidgetPayload({
+      ...args,
+      version: (args as any)?.version ?? "3.1",
+      id: (args as any)?.id ?? `weather-${toolCallId}`,
     });
-    if (!state.args) {
-      return <ToolRenderState state={state} />;
+
+    if (!parsedArgs) {
+      return null;
     }
 
     return (
       <WeatherWidgetErrorBoundary>
-        <WeatherWidget {...state.args} />
+        <WeatherWidget {...parsedArgs} />
       </WeatherWidgetErrorBoundary>
     );
   },

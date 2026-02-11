@@ -145,30 +145,19 @@ import {
   LinkPreview,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
-    render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
-        status,
-        result,
-        safeParseResult: safeParseSerializableLinkPreview,
-        loadingMessage: "Loading preview…",
-        unavailableMessage: "Preview unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableLinkPreview(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
+      if (!parsedResult) {
+        return null;
       }
       return (
         <>
-          <ToolRenderState state={state} />
-          <LinkPreview {...state.result} maxWidth="420px" />
+          <LinkPreview {...parsedResult} maxWidth="420px" />
         </>
       );
     },

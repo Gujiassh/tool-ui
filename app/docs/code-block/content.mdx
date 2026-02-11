@@ -132,32 +132,21 @@ import {
   CodeBlockErrorBoundary,
   safeParseSerializableCodeBlock,
 } from "@/components/tool-ui/code-block";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showCodeBlock: {
     type: "backend",
-    render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
-        status,
-        result,
-        safeParseResult: safeParseSerializableCodeBlock,
-        loadingMessage: "Loading…",
-        unavailableMessage: "Code block unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableCodeBlock(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <CodeBlockErrorBoundary>
-            <CodeBlock {...state.result} />
+            <CodeBlock {...parsedResult} />
           </CodeBlockErrorBoundary>
         </>
       );

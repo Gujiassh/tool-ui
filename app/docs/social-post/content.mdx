@@ -254,32 +254,21 @@ import {
   XPostErrorBoundary,
   safeParseSerializableXPost,
 } from "@/components/tool-ui/x-post";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showXPost: {
     type: "backend",
-    render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
-        status,
-        result,
-        safeParseResult: safeParseSerializableXPost,
-        loadingMessage: "Loading post…",
-        unavailableMessage: "Post unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableXPost(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <XPostErrorBoundary>
-            <XPost post={state.result} />
+            <XPost post={parsedResult} />
           </XPostErrorBoundary>
         </>
       );

@@ -240,51 +240,32 @@ import {
   MessageDraftErrorBoundary,
   safeParseSerializableMessageDraft,
   SerializableMessageDraftSchema,
-  type SerializableMessageDraft,
-  type MessageDraftOutcome,
 } from "@/components/tool-ui/message-draft";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   draftMessage: {
   description: "Draft a message for the user to review before sending.",
   parameters: SerializableMessageDraftSchema,
-  render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializableMessageDraft,
-      MessageDraftOutcome
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `message-draft-${toolCallId}`,
-      },
-      result,
-      safeParseArgs: safeParseSerializableMessageDraft,
-      loadingMessage: "Loading draft…",
-      awaitingActionMessage: "Review draft",
+  render: ({ args, result, addResult, toolCallId }) => {
+    const parsedArgs = safeParseSerializableMessageDraft({
+      ...args,
+      id: (args as any)?.id ?? `message-draft-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <MessageDraftErrorBoundary>
-        {state.kind === "partial" || state.kind === "ready" ? (
-          <MessageDraft {...state.args} outcome={state.result} />
+        {result ? (
+          <MessageDraft {...parsedArgs} outcome={result} />
         ) : (
           <MessageDraft
-            {...state.args}
+            {...parsedArgs}
             onSend={async () => {
               // Perform actual send logic here
-              await sendMessage(state.args);
+              await sendMessage(parsedArgs);
               addResult("sent");
             }}
             onCancel={() => addResult("cancelled")}

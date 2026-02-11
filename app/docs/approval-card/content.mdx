@@ -184,48 +184,29 @@ import {
   ApprovalCardErrorBoundary,
   safeParseSerializableApprovalCard,
   SerializableApprovalCardSchema,
-  type SerializableApprovalCard,
-  type ApprovalDecision,
 } from "@/components/tool-ui/approval-card";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   requestApproval: {
   description: "Request user approval before performing an action.",
   parameters: SerializableApprovalCardSchema,
-  render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializableApprovalCard,
-      ApprovalDecision
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `approval-${toolCallId}`,
-      },
-      result,
-      safeParseArgs: safeParseSerializableApprovalCard,
-      loadingMessage: "Loading approval…",
-      awaitingActionMessage: "Awaiting approval",
+  render: ({ args, result, addResult, toolCallId }) => {
+    const parsedArgs = safeParseSerializableApprovalCard({
+      ...args,
+      id: (args as any)?.id ?? `approval-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <ApprovalCardErrorBoundary>
-        {state.kind === "partial" || state.kind === "ready" ? (
-          <ApprovalCard {...state.args} choice={state.result} />
+        {result ? (
+          <ApprovalCard {...parsedArgs} choice={result} />
         ) : (
           <ApprovalCard
-            {...state.args}
+            {...parsedArgs}
             onConfirm={() => addResult("approved")}
             onCancel={() => addResult("denied")}
           />

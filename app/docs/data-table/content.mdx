@@ -284,32 +284,21 @@ import {
   DataTableErrorBoundary,
   safeParseSerializableDataTable,
 } from "@/components/tool-ui/data-table";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchProducts: {
     type: "backend",
-    render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
-        status,
-        result,
-        safeParseResult: safeParseSerializableDataTable,
-        loadingMessage: "Loading table…",
-        unavailableMessage: "Table unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableDataTable(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <DataTableErrorBoundary>
-            <DataTable rowIdKey="id" {...state.result} />
+            <DataTable rowIdKey="id" {...parsedResult} />
           </DataTableErrorBoundary>
         </>
       );

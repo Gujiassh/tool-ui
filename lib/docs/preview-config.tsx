@@ -257,10 +257,6 @@ export type ComponentId =
   | "question-flow"
   | "weather-widget";
 
-export const STREAMING_PRESET_NAME = "streaming-state" as const;
-export const STREAMING_PRESET_DESCRIPTION =
-  "Preview loading, partial, and error render states.";
-
 export interface ChatContext {
   userMessage: string;
   preamble?: string;
@@ -830,50 +826,5 @@ export const previewConfigs: Record<
 };
 
 export function getPreviewConfig(componentId: ComponentId) {
-  const config = previewConfigs[componentId];
-  const defaultPreset = config.presets[config.defaultPreset];
-
-  if (!defaultPreset || STREAMING_PRESET_NAME in config.presets) {
-    return config;
-  }
-
-  return {
-    ...config,
-    presets: {
-      ...config.presets,
-      [STREAMING_PRESET_NAME]: {
-        description: STREAMING_PRESET_DESCRIPTION,
-        data: defaultPreset.data,
-        generateExampleCode: () => {
-          const componentName = componentId
-            .split("-")
-            .map((part) => part[0]?.toUpperCase() + part.slice(1))
-            .join("");
-
-          return `import { resolveStreamingToolRenderState, ToolRenderState } from "@/components/tool-ui/shared";
-import { ${componentName}, safeParseSerializable${componentName} } from "@/components/tool-ui/${componentId}";
-
-const state = resolveStreamingToolRenderState({
-  status,
-  result, // or args for frontend tools
-  safeParseResult: safeParseSerializable${componentName},
-  loadingMessage: "Loading…",
-  unavailableMessage: "${componentName} unavailable",
-});
-
-if (state.kind === "loading" || state.kind === "error") {
-  return <ToolRenderState state={state} />;
-}
-
-return (
-  <>
-    <ToolRenderState state={state} />
-    {/* render partial + ready output */}
-    <${componentName} {...state.result} />
-  </>
-);`;
-        },
-      } satisfies PresetWithCodeGen<unknown>,
-    },
-  };
+  return previewConfigs[componentId];
 }

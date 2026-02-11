@@ -264,42 +264,26 @@ import {
   ProgressTrackerErrorBoundary,
   safeParseSerializableProgressTracker,
   SerializableProgressTrackerSchema,
-  type SerializableProgressTracker,
 } from "@/components/tool-ui/progress-tracker";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   trackProgress: {
   description: "Display real-time progress for multi-step operations",
   parameters: SerializableProgressTrackerSchema,
-  render: ({ args, status, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializableProgressTracker,
-      never
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `progress-tracker-${toolCallId}`,
-      },
-      safeParseArgs: safeParseSerializableProgressTracker,
-      loadingMessage: "Loading progress…",
+  render: ({ args, toolCallId }) => {
+    const parsedArgs = safeParseSerializableProgressTracker({
+      ...args,
+      id: (args as any)?.id ?? `progress-tracker-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <ProgressTrackerErrorBoundary>
         <ProgressTracker
-          {...state.args}
+          {...parsedArgs}
           onResponseAction={async (actionId) => {
             if (actionId === "cancel") {
               console.log("Cancelled operation");

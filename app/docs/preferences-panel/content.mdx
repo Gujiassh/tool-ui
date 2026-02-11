@@ -168,43 +168,26 @@ import {
   PreferencesPanelErrorBoundary,
   safeParseSerializablePreferencesPanel,
   SerializablePreferencesPanelSchema,
-  type SerializablePreferencesPanel,
 } from "@/components/tool-ui/preferences-panel";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   show_preferences_panel: {
   description: "Display user preference settings with staged changes",
   parameters: SerializablePreferencesPanelSchema,
-  render: ({ args, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializablePreferencesPanel,
-      { status: "saved" | "cancelled"; values?: Record<string, unknown> }
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `preferences-panel-${toolCallId}`,
-      },
-      safeParseArgs: safeParseSerializablePreferencesPanel,
-      loadingMessage: "Loading preferences…",
-      awaitingActionMessage: "Adjust preferences",
+  render: ({ args, addResult, toolCallId }) => {
+    const parsedArgs = safeParseSerializablePreferencesPanel({
+      ...args,
+      id: (args as any)?.id ?? `preferences-panel-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <PreferencesPanelErrorBoundary>
         <PreferencesPanel
-          {...state.args}
+          {...parsedArgs}
           onSave={async (values) => {
             await addResult({ status: "saved", values });
           }}

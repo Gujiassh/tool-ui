@@ -114,43 +114,26 @@ import {
   ParameterSliderErrorBoundary,
   safeParseSerializableParameterSlider,
   SerializableParameterSliderSchema,
-  type SerializableParameterSlider,
 } from "@/components/tool-ui/parameter-slider";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   adjust_parameters: {
   description: "Adjust numeric parameters with sliders",
   parameters: SerializableParameterSliderSchema,
-  render: ({ args, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializableParameterSlider,
-      { values: Record<string, number> }
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `parameter-slider-${toolCallId}`,
-      },
-      safeParseArgs: safeParseSerializableParameterSlider,
-      loadingMessage: "Loading controls…",
-      awaitingActionMessage: "Adjust values",
+  render: ({ args, addResult, toolCallId }) => {
+    const parsedArgs = safeParseSerializableParameterSlider({
+      ...args,
+      id: (args as any)?.id ?? `parameter-slider-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <ParameterSliderErrorBoundary>
         <ParameterSlider
-          {...state.args}
+          {...parsedArgs}
           onResponseAction={(actionId, values) => {
             if (actionId === "apply") {
               addResult({ values });

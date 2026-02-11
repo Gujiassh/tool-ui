@@ -257,48 +257,29 @@ import {
   OrderSummaryErrorBoundary,
   safeParseSerializableOrderSummary,
   SerializableOrderSummarySchema,
-  type SerializableOrderSummary,
-  type OrderDecision,
 } from "@/components/tool-ui/order-summary";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   createOrder: {
   description: "Display a purchase order for user confirmation",
   parameters: SerializableOrderSummarySchema,
-  render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
-      SerializableOrderSummary,
-      OrderDecision
-    >({
-      status,
-      args: {
-        ...args,
-        id: (args as any)?.id ?? `order-${toolCallId}`,
-      },
-      result,
-      safeParseArgs: safeParseSerializableOrderSummary,
-      loadingMessage: "Loading order…",
-      awaitingActionMessage: "Review order",
+  render: ({ args, result, addResult, toolCallId }) => {
+    const parsedArgs = safeParseSerializableOrderSummary({
+      ...args,
+      id: (args as any)?.id ?? `order-${toolCallId}`,
     });
 
-    if (!state.args) {
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
-      }
+    if (!parsedArgs) {
       return null;
     }
 
     return (
       <OrderSummaryErrorBoundary>
-        {state.kind === "partial" || state.kind === "ready" ? (
-          <OrderSummary {...state.args} choice={state.result} />
+        {result ? (
+          <OrderSummary {...parsedArgs} choice={result} />
         ) : (
           <OrderSummary
-            {...state.args}
+            {...parsedArgs}
             onResponseAction={(actionId) => {
               if (actionId === "confirm") {
                 addResult({

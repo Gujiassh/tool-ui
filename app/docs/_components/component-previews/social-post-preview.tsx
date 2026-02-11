@@ -25,21 +25,12 @@ import {
 } from "@/components/ui/item";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/ui/cn";
-import {
-  STREAMING_PRESET_DESCRIPTION,
-  STREAMING_PRESET_NAME,
-} from "@/lib/docs/preview-config";
-import {
-  ToolRenderState,
-  type StreamingToolRenderState,
-} from "@/components/tool-ui/shared";
 
 type Platform = "x" | "instagram" | "linkedin";
 type PresetName =
   | XPostPresetName
   | InstagramPostPresetName
-  | LinkedInPostPresetName
-  | typeof STREAMING_PRESET_NAME;
+  | LinkedInPostPresetName;
 
 const VALID_PLATFORMS: readonly Platform[] = ["x", "instagram", "linkedin"];
 
@@ -61,33 +52,8 @@ const platformConfig = {
   },
 } as const;
 
-const STREAMING_LOADING_STATE: StreamingToolRenderState<unknown, unknown> = {
-  kind: "loading",
-  args: null,
-  result: null,
-  message: "Loading tool output…",
-  status: { type: "running" },
-};
-const STREAMING_PARTIAL_STATE: StreamingToolRenderState<unknown, unknown> = {
-  kind: "partial",
-  args: null,
-  result: {},
-  status: { type: "running" },
-};
-const STREAMING_ERROR_STATE: StreamingToolRenderState<unknown, unknown> = {
-  kind: "error",
-  args: null,
-  result: null,
-  message: "Tool output unavailable",
-  isCancelled: false,
-  status: { type: "complete" },
-};
-
 function getPresetNames(platform: Platform): PresetName[] {
-  return [
-    ...platformConfig[platform].presetNames,
-    STREAMING_PRESET_NAME,
-  ] as PresetName[];
+  return [...platformConfig[platform].presetNames] as PresetName[];
 }
 
 function getValidPreset(platform: Platform, preset: string | null): PresetName {
@@ -171,9 +137,7 @@ function PresetSelector({
                   </span>
                 </ItemTitle>
                 <ItemDescription className="text-sm font-light">
-                  {preset === STREAMING_PRESET_NAME
-                    ? STREAMING_PRESET_DESCRIPTION
-                    : presets[preset].description}
+                  {presets[preset].description}
                 </ItemDescription>
               </div>
             </div>
@@ -257,12 +221,10 @@ export function SocialPostPreview() {
     [currentPlatform, updateUrl],
   );
 
-  const isStreamingPreset = currentPreset === STREAMING_PRESET_NAME;
-  const effectivePreset = (
-    isStreamingPreset
-      ? platformConfig[currentPlatform].presetNames[0]
-      : currentPreset
-  ) as XPostPresetName | InstagramPostPresetName | LinkedInPostPresetName;
+  const effectivePreset = currentPreset as
+    | XPostPresetName
+    | InstagramPostPresetName
+    | LinkedInPostPresetName;
 
   const renderedPost =
     currentPlatform === "x" ? (
@@ -307,23 +269,7 @@ export function SocialPostPreview() {
     );
 
   const previewContent = (
-    <div className="mx-auto w-full max-w-[500px]">
-      {isStreamingPreset ? (
-        <div className="flex w-full flex-col gap-3">
-          <ToolRenderState state={STREAMING_LOADING_STATE} />
-          <div className="flex w-full flex-col gap-2">
-            <ToolRenderState
-              state={STREAMING_PARTIAL_STATE}
-              partialLabel="Streaming partial output"
-            />
-            {renderedPost}
-          </div>
-          <ToolRenderState state={STREAMING_ERROR_STATE} />
-        </div>
-      ) : (
-        renderedPost
-      )}
-    </div>
+    <div className="mx-auto w-full max-w-[500px]">{renderedPost}</div>
   );
 
   const chatPanel = (

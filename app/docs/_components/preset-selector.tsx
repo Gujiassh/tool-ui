@@ -32,10 +32,6 @@ import { terminalPresets } from "@/lib/presets/terminal";
 import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
 import type { Preset } from "@/lib/presets/types";
 import { cn } from "@/lib/ui/cn";
-import {
-  STREAMING_PRESET_DESCRIPTION,
-  STREAMING_PRESET_NAME,
-} from "@/lib/docs/preview-config";
 
 type PresetMap = Record<string, Preset<unknown>>;
 
@@ -67,14 +63,7 @@ const PRESET_REGISTRY: Record<string, PresetMap> = {
 const DEFAULT_COMPONENT = "chart";
 
 function getPresets(componentId: string): PresetMap {
-  const base = PRESET_REGISTRY[componentId] ?? PRESET_REGISTRY[DEFAULT_COMPONENT];
-  return {
-    ...base,
-    [STREAMING_PRESET_NAME]: {
-      description: STREAMING_PRESET_DESCRIPTION,
-      data: {},
-    },
-  };
+  return PRESET_REGISTRY[componentId] ?? PRESET_REGISTRY[DEFAULT_COMPONENT];
 }
 
 function formatPresetName(preset: string): string {

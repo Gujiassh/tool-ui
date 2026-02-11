@@ -136,32 +136,21 @@ import {
   TerminalErrorBoundary,
   safeParseSerializableTerminal,
 } from "@/components/tool-ui/terminal";
-import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
-} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showTerminal: {
     type: "backend",
-    render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
-        status,
-        result,
-        safeParseResult: safeParseSerializableTerminal,
-        loadingMessage: "Loading…",
-        unavailableMessage: "Terminal output unavailable",
-      });
+    render: ({ result }) => {
+      const parsedResult = safeParseSerializableTerminal(result);
 
-      if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
+      if (!parsedResult) {
+        return null;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <TerminalErrorBoundary>
-            <Terminal {...state.result} />
+            <Terminal {...parsedResult} />
           </TerminalErrorBoundary>
         </>
       );
