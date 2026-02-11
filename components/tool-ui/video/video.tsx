@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { Play } from "lucide-react";
-import { cn, Button } from "./_adapter";
-import { ActionButtons, normalizeActionsConfig, type ActionsProp } from "../shared";
+import { cn, Button } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+
 import {
   RATIO_CLASS_MAP,
   OVERLAY_GRADIENT,

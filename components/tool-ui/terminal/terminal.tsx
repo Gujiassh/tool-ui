@@ -9,12 +9,10 @@ import {
   ChevronUp,
   Terminal as TerminalIcon,
 } from "lucide-react";
-import type { TerminalProps } from "./schema";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  useCopyToClipboard,
-} from "../shared";
+import type { TerminalProps } from "./schema";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
+
 import { Button, Collapsible, CollapsibleTrigger } from "./_adapter";
 import { cn } from "./_adapter";
 

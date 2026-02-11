@@ -3,8 +3,9 @@
 
 import * as React from "react";
 import { Pause, Play } from "lucide-react";
-import { cn, Button, Slider } from "./_adapter";
-import { ActionButtons, normalizeActionsConfig, type ActionsProp } from "../shared";
+import { cn, Button, Slider } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+
 import { AudioProvider, useAudio } from "./context";
 import type { SerializableAudio, AudioVariant } from "./schema";
 

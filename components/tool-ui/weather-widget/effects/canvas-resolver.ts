@@ -1,11 +1,9 @@
-import type { WeatherConditionCode } from "../schema";
 import type { WeatherEffectParams } from "./types";
 import {
   buildCanvasBaseFromWeather,
   createStudioTimestamp,
 } from "./canvas-resolver-base";
 import {
-  resolveConditionCheckpointOverridesForTime,
   resolveInterpolatedOverridesForTime,
 } from "./checkpoint-overrides";
 import {

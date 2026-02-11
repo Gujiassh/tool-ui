@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { defineToolUiContract } from "../shared";
+import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
+
 import type { CustomEffectProps } from "./effects/custom-effect-props";
 import type { EffectSettings } from "./effects/types";
 

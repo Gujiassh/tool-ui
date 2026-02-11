@@ -9,13 +9,11 @@ import {
   useState,
 } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  useControllableState,
-  useSignatureReset,
-} from "../shared";
+import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import { useControllableState } from "../shared/use-controllable-state";
+import { useSignatureReset } from "../shared/use-signature-reset";
+
 import { cn } from "./_adapter";
 import {
   createSliderSignature,

@@ -7,14 +7,12 @@ import type {
   PreferencesValue,
   PreferenceItem,
   PreferenceSection,
-} from "./schema";
-import {
-  ActionButtons,
-  normalizeActionsConfig,
-  useControllableState,
-  useSignatureReset,
-} from "../shared";
-import type { Action } from "../shared";
+} from "./schema";import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import { type Action } from "../shared/schema";
+import { useControllableState } from "../shared/use-controllable-state";
+import { useSignatureReset } from "../shared/use-signature-reset";
+
 import {
   cn,
   Switch,

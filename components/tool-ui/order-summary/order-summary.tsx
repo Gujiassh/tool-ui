@@ -4,8 +4,7 @@ import * as React from "react";
 import { useCallback } from "react";
 import { CheckCircle, Package } from "lucide-react";
 import { cn, Separator } from "./_adapter";
-import type { OrderSummaryProps, OrderItem, Pricing } from "./schema";
-import { ActionButtons } from "../shared";
+import type { OrderSummaryProps, OrderItem, Pricing } from "./schema";import { ActionButtons } from "../shared/action-buttons";
 
 const defaultActions = [
   { id: "cancel", label: "Cancel", variant: "outline" as const },
