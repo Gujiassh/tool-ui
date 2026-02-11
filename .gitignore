@@ -42,11 +42,11 @@ next-env.d.ts
 # Cursor
 .cursor
 
-# Claude - track shared config, ignore personal/ephemeral files
-.claude/settings.local.json
-.claude/hud-status.json
+# Claude
+.claude/
 
 # VSCode
+.vscode/
 .vscode.playwright-mcp/
 .vscode/terminals.json
 .playwright-mcp
