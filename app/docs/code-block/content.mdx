@@ -133,15 +133,12 @@ import {
   safeParseSerializableCodeBlock,
 } from "@/components/tool-ui/code-block";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showCodeBlock: {
     type: "backend",
     render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
         status,
         result,
         safeParseResult: safeParseSerializableCodeBlock,
@@ -150,12 +147,10 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <CodeBlockErrorBoundary>
             <CodeBlock {...state.result} />
           </CodeBlockErrorBoundary>

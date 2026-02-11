@@ -145,15 +145,12 @@ import {
   safeParseSerializableChart,
 } from "@/components/tool-ui/chart";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showChart: {
     type: "backend",
     render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
         status,
         result,
         safeParseResult: safeParseSerializableChart,
@@ -162,12 +159,10 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <ChartErrorBoundary>
             <Chart {...state.result} />
           </ChartErrorBoundary>

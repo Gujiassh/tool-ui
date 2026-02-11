@@ -106,15 +106,12 @@ import {
   safeParseSerializablePlan,
 } from "@/components/tool-ui/plan";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showPlan: {
     type: "backend",
     render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
         status,
         result,
         safeParseResult: safeParseSerializablePlan,
@@ -123,12 +120,10 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <PlanErrorBoundary>
             <Plan
               {...state.result}

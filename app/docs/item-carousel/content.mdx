@@ -128,15 +128,12 @@ import {
   safeParseSerializableItemCarousel,
 } from "@/components/tool-ui/item-carousel";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchItems: {
     type: "backend",
     render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
         status,
         result,
         safeParseResult: safeParseSerializableItemCarousel,
@@ -145,12 +142,10 @@ export const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <ItemCarousel
             {...state.result}
             onItemClick={(id) => router.push(`/items/${id}`)}

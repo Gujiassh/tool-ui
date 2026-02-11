@@ -179,8 +179,6 @@ import {
   type SerializableStatsDisplay,
 } from "@/components/tool-ui/stats-display";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -188,7 +186,6 @@ export const toolkit: Toolkit = {
   description: "Display key metrics in a grid",
   parameters: SerializableStatsDisplaySchema,
   render: ({ args, status, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       SerializableStatsDisplay,
       never
     >({
@@ -203,7 +200,6 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
       return null;
     }

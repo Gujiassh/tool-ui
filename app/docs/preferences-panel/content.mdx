@@ -171,8 +171,6 @@ import {
   type SerializablePreferencesPanel,
 } from "@/components/tool-ui/preferences-panel";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -180,7 +178,6 @@ export const toolkit: Toolkit = {
   description: "Display user preference settings with staged changes",
   parameters: SerializablePreferencesPanelSchema,
   render: ({ args, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       SerializablePreferencesPanel,
       { status: "saved" | "cancelled"; values?: Record<string, unknown> }
     >({
@@ -196,7 +193,6 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
       return null;
     }

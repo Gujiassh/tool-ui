@@ -112,8 +112,6 @@ import {
   type WeatherWidgetPayload,
 } from "@/components/tool-ui/weather-widget";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -121,7 +119,6 @@ export const toolkit: Toolkit = {
   description: "Display current weather and forecast for a location",
   parameters: WeatherWidgetPayloadSchema,
   render: ({ args, status, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       WeatherWidgetPayload,
       never
     >({
@@ -136,7 +133,6 @@ export const toolkit: Toolkit = {
       unavailableMessage: "Weather unavailable",
     });
     if (!state.args) {
-      return <ToolRenderState state={state} />;
     }
 
     return (

@@ -98,8 +98,6 @@ import {
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -107,7 +105,6 @@ export const toolkit: Toolkit = {
   description: "Let the user choose an output format.",
   parameters: SerializableOptionListSchema,
   render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       SerializableOptionList,
       OptionListSelection
     >({
@@ -124,7 +121,6 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
       return null;
     }

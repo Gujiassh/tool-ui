@@ -267,8 +267,6 @@ import {
   type SerializableProgressTracker,
 } from "@/components/tool-ui/progress-tracker";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -276,7 +274,6 @@ export const toolkit: Toolkit = {
   description: "Display real-time progress for multi-step operations",
   parameters: SerializableProgressTrackerSchema,
   render: ({ args, status, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       SerializableProgressTracker,
       never
     >({
@@ -291,7 +288,6 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
       return null;
     }

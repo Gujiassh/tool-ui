@@ -1,11 +1,11 @@
 # Agent Changelog
 
 > This file helps coding agents understand project evolution, key decisions, and deprecated patterns.
-> Updated: 2026-02-10
+> Updated: 2026-02-11
 
 ## Current State Summary
 
-Tool UI is a copy/paste component library (shadcn/ui model) for AI assistant interfaces. Components follow flat prop APIs, use unified `choice` receipt semantics, and now standardize streaming rendering through shared helpers (`resolveStreamingToolRenderState` + `ToolRenderState`) in toolkit examples/docs. Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
+Tool UI is a copy/paste component library (shadcn/ui model) for AI assistant interfaces. Components follow flat prop APIs and unified `choice` receipt semantics. Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
 
 ## Stale Information Detected
 
@@ -17,23 +17,6 @@ Tool UI is a copy/paste component library (shadcn/ui model) for AI assistant int
 | `.claude/plans/plan-sequential-munching-canyon.md` | References `hooks/use-code-gen.ts` TypeScript generation | Tuning flow is apply/recover via repo routes; `use-code-gen.ts` removed | 2026-02 |
 
 ## Timeline
-
-### 2026-02-10 — Streaming Render-State Contract Standardized
-
-**What changed:** Main merged streaming-safety work that hardens toolkit/doc patterns around `resolveStreamingToolRenderState` and `ToolRenderState`, plus consistent error labeling (`Failed` vs `Cancelled`) in shared state UI.
-
-**Why:** Eliminate ad hoc loading/error handling across docs/examples and make streaming rendering behavior consistent across components.
-
-**Agent impact:** For tool render snippets, always pair:
-- schema-safe parsing (`safeParse*`)
-- `resolveStreamingToolRenderState(...)`
-- `<ToolRenderState state={state} />` for loading/partial/error placeholders
-
-Avoid manual `state.message` placeholder branches in docs snippets.
-
-**Files:** `components/tool-ui/shared/streaming-render.tsx`, `components/tool-ui/shared/streaming-state.tsx`, `lib/docs/preview-config.tsx`, `app/docs/**/content.mdx`
-
----
 
 ### 2026-02-10 — Weather Widget V3.1 Clean Break
 
@@ -69,7 +52,7 @@ Do not add/restore parallel clipboard/download codegen paths for production tuni
 
 ### 2026-02-10 — Test Location Policy Enforced
 
-**What changed:** Weather + shared streaming tests were moved under `lib/tests/**` to ensure they run under current Vitest include globs and are not copied with component folders.
+**What changed:** Weather + shared tests were moved under `lib/tests/**` to ensure they run under current Vitest include globs and are not copied with component folders.
 
 **Why:** Components are copy-paste product surface; test fixtures/infra should stay internal to this repo.
 
@@ -250,7 +233,6 @@ const glassStyles = useGlassStyles({
 | Use AI SDK v5 patterns | Use AI SDK v6 patterns | 2026-01-26 |
 | Implement WebGL glass effects | Use `useGlassStyles` or `GlassPanel` from glass-panel-svg | 2026-01-29 |
 | Use `ComponentPreviewShell` without `componentId` | Always pass `componentId` prop for analytics | 2026-01-30 |
-| Use ad hoc loading/error JSX in toolkit doc snippets | Use `resolveStreamingToolRenderState` + `ToolRenderState` | 2026-02-10 |
 | Use weather payload prop `visual` | Use weather payload prop `time` | 2026-02-10 |
 | Use legacy serializable weather parser/types | Use `WeatherWidgetPayloadSchema` + `safeParseWeatherWidgetPayload` | 2026-02-10 |
 | Put executable tests in `components/tool-ui/**` | Put tests in `lib/tests/**` (or `lib/playground/**`) | 2026-02-10 |
@@ -266,5 +248,4 @@ Based on recent changes, the project is:
 - **Adding specialized components** — MessageDraft, QuestionFlow, StatsDisplay for specific use cases
 - **Adding visual effects** — SVG-based glass refraction for weather widget, preferring CSS/SVG over WebGL
 - **Adding analytics** — PostHog + Vercel Analytics for usage tracking
-- **Standardizing streaming UX** — Shared render-state helpers and status UI across toolkit docs/examples
 - **Hardening weather contracts** — V3.1 clean-break payloads with deterministic `time` input and apply-only tuning workflow

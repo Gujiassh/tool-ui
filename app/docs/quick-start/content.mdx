@@ -117,8 +117,6 @@ import {
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 import {
   useChatRuntime,
@@ -129,7 +127,6 @@ const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
     render: ({ result, status }) => {
-      const state = resolveStreamingToolRenderState({
         status,
         result,
         safeParseResult: safeParseSerializableLinkPreview,
@@ -138,12 +135,10 @@ const toolkit: Toolkit = {
       });
 
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
 
       return (
         <>
-          <ToolRenderState state={state} />
           <LinkPreviewErrorBoundary>
             <LinkPreview {...state.result} maxWidth="420px" />
           </LinkPreviewErrorBoundary>
@@ -261,8 +256,6 @@ import {
   type OptionListSelection,
 } from "@/components/tool-ui/option-list";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -270,7 +263,6 @@ export const toolkit: Toolkit = {
   description: "Ask the user to choose an output format.",
   parameters: SerializableOptionListSchema,
   render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       SerializableOptionList,
       OptionListSelection
     >({
@@ -288,7 +280,6 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
       return null;
     }

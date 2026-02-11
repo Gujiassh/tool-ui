@@ -188,8 +188,6 @@ import {
   type ApprovalDecision,
 } from "@/components/tool-ui/approval-card";
 import {
-  resolveStreamingToolRenderState,
-  ToolRenderState,
 } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -197,7 +195,6 @@ export const toolkit: Toolkit = {
   description: "Request user approval before performing an action.",
   parameters: SerializableApprovalCardSchema,
   render: ({ args, result, status, addResult, toolCallId }) => {
-    const state = resolveStreamingToolRenderState<
       SerializableApprovalCard,
       ApprovalDecision
     >({
@@ -214,7 +211,6 @@ export const toolkit: Toolkit = {
 
     if (!state.args) {
       if (state.kind === "loading" || state.kind === "error") {
-        return <ToolRenderState state={state} />;
       }
       return null;
     }
