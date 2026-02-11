@@ -226,6 +226,13 @@ interface StepBodyData {
   selectedIds: Set<string>;
 }
 
+export function getQuestionFlowStepIds(id: string, stepKey: string) {
+  return {
+    titleId: `${id}-${stepKey}-title`,
+    descriptionId: `${id}-${stepKey}-description`,
+  };
+}
+
 interface StepContentProps {
   step: number;
   totalSteps?: number;
@@ -270,6 +277,7 @@ function StepBodyContent({
   transitionDirection?: "forward" | "backward";
 }) {
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const { titleId, descriptionId } = getQuestionFlowStepIds(id, stepKey);
 
   const optionStates = useMemo(() => {
     return options.map((option) => {
@@ -383,14 +391,14 @@ function StepBodyContent({
     >
       <div className="flex flex-col gap-1">
         <h2
-          id={`${id}-title`}
+          id={titleId}
           className="text-lg font-semibold leading-tight"
         >
           {title}
         </h2>
         {description && (
           <p
-            id={`${id}-description`}
+            id={descriptionId}
             className="text-muted-foreground text-sm"
           >
             {description}
@@ -454,6 +462,8 @@ function StepContent({
 }: StepContentProps) {
   const isTransitioning = exitingStepData !== null && exitingStepData !== undefined;
   const canProceed = selectedIds.size > 0;
+  const resolvedStepKey = stepKey ?? "current";
+  const { titleId, descriptionId } = getQuestionFlowStepIds(id, resolvedStepKey);
 
   const stepLabel = totalSteps
     ? `Step ${step} of ${totalSteps}`
@@ -469,8 +479,8 @@ function StepContent({
       data-slot="question-flow"
       data-tool-ui-id={id}
       role="form"
-      aria-labelledby={`${id}-title`}
-      aria-describedby={description ? `${id}-description` : undefined}
+      aria-labelledby={titleId}
+      aria-describedby={description ? descriptionId : undefined}
     >
       <div
         className={cn(
@@ -507,8 +517,8 @@ function StepContent({
             />
           )}
           <StepBodyContent
-            key={stepKey || "current"}
-            stepKey={stepKey || "current"}
+            key={resolvedStepKey}
+            stepKey={resolvedStepKey}
             title={title}
             description={description}
             options={options}

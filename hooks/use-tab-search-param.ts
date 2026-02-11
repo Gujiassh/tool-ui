@@ -16,6 +16,16 @@ interface UseTabSearchParamReturn<T extends string> {
   setActiveTab: (tab: T) => void;
 }
 
+export function resolveTabFromSearchParam<T extends string>(
+  rawTab: string | null,
+  defaultTab: T,
+  validTabs: readonly T[],
+): T {
+  return rawTab !== null && validTabs.includes(rawTab as T)
+    ? (rawTab as T)
+    : defaultTab;
+}
+
 export function useTabSearchParam<T extends string>({
   paramName = "tab",
   defaultTab,
@@ -24,15 +34,9 @@ export function useTabSearchParam<T extends string>({
   hashTrigger,
 }: UseTabSearchParamOptions<T>): UseTabSearchParamReturn<T> {
   const isInitialMount = useRef(true);
-  const validTabsSet = useRef(new Set(validTabs));
 
   const [rawTab, setRawTab] = useQueryState(paramName);
-
-  const isValidTab = (value: string | null): value is T => {
-    return value !== null && validTabsSet.current.has(value as T);
-  };
-
-  const activeTab = isValidTab(rawTab) ? rawTab : defaultTab;
+  const activeTab = resolveTabFromSearchParam(rawTab, defaultTab, validTabs);
 
   // Handle hash trigger (e.g., #examples in URL)
   useEffect(() => {
@@ -41,11 +45,11 @@ export function useTabSearchParam<T extends string>({
     const hash = window.location.hash;
     if (hash === hashTrigger) {
       const hashTab = hashTrigger.replace("#", "") as T;
-      if (validTabsSet.current.has(hashTab) && rawTab !== hashTab) {
+      if (validTabs.includes(hashTab) && rawTab !== hashTab) {
         setRawTab(hashTab);
       }
     }
-  }, [hashTrigger, rawTab, setRawTab]);
+  }, [hashTrigger, rawTab, setRawTab, validTabs]);
 
   // Handle scroll to target when switching to hash-triggered tab
   useEffect(() => {

@@ -5,14 +5,10 @@
   "title": "Plan",
   "description": "Display step-by-step task workflows in AI interfaces.",
   "dependencies": [
+    "clsx",
     "lucide-react",
+    "tailwind-merge",
     "zod"
-  ],
-  "registryDependencies": [
-    "accordion",
-    "button",
-    "card",
-    "collapsible"
   ],
   "files": [
     {
@@ -44,6 +40,12 @@
       "type": "registry:lib",
       "target": "components/tool-ui/plan/progress.ts",
       "content": "type ProgressInput = {\n  completedCount: number;\n  totalCount: number;\n};\n\ntype CelebrateProgressInput = {\n  previous: number;\n  next: number;\n};\n\nfunction clampProgress(value: number): number {\n  if (!Number.isFinite(value)) return 0;\n  return Math.max(0, Math.min(100, value));\n}\n\nexport function calculatePlanProgress({\n  completedCount,\n  totalCount,\n}: ProgressInput): number {\n  if (totalCount <= 0) return 0;\n  return clampProgress((completedCount / totalCount) * 100);\n}\n\nexport function shouldCelebrateProgress({\n  previous,\n  next,\n}: CelebrateProgressInput): boolean {\n  return previous < 100 && next === 100;\n}\n"
+    },
+    {
+      "path": "components/tool-ui/plan/README.md",
+      "type": "registry:file",
+      "target": "components/tool-ui/plan/README.md",
+      "content": "# Plan\n\nImplementation for the \"plan\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/plan/index.tsx\n- serializable schema + parse helpers: components/tool-ui/plan/schema.ts\n- error containment: components/tool-ui/plan/error-boundary.tsx\n\n## Companion assets\n\n- Docs page: app/docs/plan/content.mdx\n- Preset payload: lib/presets/plan.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
     },
     {
       "path": "components/tool-ui/plan/schema.ts",

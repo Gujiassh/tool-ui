@@ -43,8 +43,6 @@ interface ToolUiRegistryDefinition {
   title: string;
   description: string;
   sourceDir: string;
-  dependencies?: string[];
-  registryDependencies?: string[];
 }
 
 export interface ToolUiRegistryArtifacts {
@@ -55,58 +53,38 @@ export interface ToolUiRegistryArtifacts {
 const REGISTRY_SCHEMA = "https://ui.shadcn.com/schema/registry.json";
 const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
 
-const TOOL_UI_REGISTRY_DEFINITIONS: ToolUiRegistryDefinition[] = [
-  {
-    name: "plan",
-    title: "Plan",
-    description: "Display step-by-step task workflows in AI interfaces.",
-    sourceDir: "components/tool-ui/plan",
-    dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["accordion", "button", "card", "collapsible"],
-  },
-  {
-    name: "progress-tracker",
-    title: "Progress Tracker",
-    description:
-      "Show real-time status feedback for multi-step operations in AI interfaces.",
-    sourceDir: "components/tool-ui/progress-tracker",
-    dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button"],
-  },
-  {
-    name: "option-list",
-    title: "Option List",
-    description: "Single or multi-select choices with confirmation actions.",
-    sourceDir: "components/tool-ui/option-list",
-    dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button", "separator"],
-  },
-  {
-    name: "message-draft",
-    title: "Message Draft",
-    description: "Review and confirm drafted messages before sending.",
-    sourceDir: "components/tool-ui/message-draft",
-    dependencies: ["lucide-react", "zod"],
-    registryDependencies: ["button"],
-  },
-  {
-    name: "data-table",
-    title: "Data Table",
-    description: "Sortable, responsive data tables for tool call results.",
-    sourceDir: "components/tool-ui/data-table",
-    dependencies: ["zod"],
-    registryDependencies: [
-      "accordion",
-      "badge",
-      "button",
-      "dropdown-menu",
-      "table",
-      "tooltip",
-    ],
-  },
-];
+const IMPORT_SPECIFIER_RE = /(?:import|export)\s[^"']*from\s+["']([^"']+)["']/g;
+const DYNAMIC_IMPORT_RE = /import\(["']([^"']+)["']\)/g;
+const TOOL_UI_COMPONENTS_DIR = "components/tool-ui";
 
-const RELATIVE_IMPORT_RE = /(?:import|export)\s[^"']*from\s+["']([^"']+)["']/g;
+const COMPONENT_DESCRIPTION_OVERRIDES: Partial<Record<string, string>> = {
+  "approval-card": "Binary confirmation for agent actions.",
+  audio: "Audio playback with artwork and metadata.",
+  chart: "Visualize data with interactive charts.",
+  citation: "Display source references with attribution.",
+  "code-block": "Display syntax-highlighted code snippets.",
+  "data-table": "Sortable, responsive data tables for tool call results.",
+  image: "Display images with metadata and attribution.",
+  "image-gallery": "Grid layout for browsing image collections.",
+  "instagram-post": "Render Instagram post previews.",
+  "item-carousel": "Horizontal carousel for browsing collections.",
+  "link-preview": "Rich link previews with OG data.",
+  "linkedin-post": "Render LinkedIn post previews.",
+  "message-draft": "Review and confirm drafted messages before sending.",
+  "option-list": "Single or multi-select choices with confirmation actions.",
+  "order-summary": "Itemized purchase confirmation with pricing.",
+  "parameter-slider": "Numeric parameter adjustment controls.",
+  plan: "Display step-by-step task workflows in AI interfaces.",
+  "preferences-panel": "Compact settings panel for user preferences.",
+  "progress-tracker":
+    "Show real-time status feedback for multi-step operations in AI interfaces.",
+  "question-flow": "Multi-step guided questions with branching.",
+  "stats-display": "Display key metrics in compact cards.",
+  terminal: "Show command-line output and logs.",
+  video: "Video playback with controls and poster.",
+  "weather-widget": "Display weather conditions and forecasts.",
+  "x-post": "Render X (Twitter) post previews.",
+};
 
 function inferRegistryFileType(filePath: string): RegistryItemType {
   if (filePath.endsWith(".tsx")) return "registry:component";
@@ -168,18 +146,87 @@ function resolveLocalImport(
   return null;
 }
 
-function extractRelativeImportSpecifiers(content: string): string[] {
+function extractImportSpecifiers(content: string): string[] {
   const imports = new Set<string>();
-  RELATIVE_IMPORT_RE.lastIndex = 0;
+  IMPORT_SPECIFIER_RE.lastIndex = 0;
+  DYNAMIC_IMPORT_RE.lastIndex = 0;
   let match: RegExpExecArray | null;
 
-  while ((match = RELATIVE_IMPORT_RE.exec(content)) !== null) {
+  while ((match = IMPORT_SPECIFIER_RE.exec(content)) !== null) {
     const specifier = match[1];
-    if (!specifier.startsWith(".")) continue;
+    imports.add(specifier);
+  }
+
+  while ((match = DYNAMIC_IMPORT_RE.exec(content)) !== null) {
+    const specifier = match[1];
     imports.add(specifier);
   }
 
   return Array.from(imports);
+}
+
+function extractRelativeImportSpecifiers(content: string): string[] {
+  return extractImportSpecifiers(content).filter((specifier) =>
+    specifier.startsWith("."),
+  );
+}
+
+function toTitleCase(name: string): string {
+  return name
+    .split("-")
+    .filter(Boolean)
+    .map((segment) => segment[0].toUpperCase() + segment.slice(1))
+    .join(" ");
+}
+
+function toPackageName(specifier: string): string | null {
+  if (
+    specifier.startsWith(".") ||
+    specifier.startsWith("/") ||
+    specifier.startsWith("@/") ||
+    specifier.startsWith("node:")
+  ) {
+    return null;
+  }
+
+  if (specifier.startsWith("@")) {
+    const [scope, pkg] = specifier.split("/");
+    return scope && pkg ? `${scope}/${pkg}` : null;
+  }
+
+  const [pkg] = specifier.split("/");
+  return pkg || null;
+}
+
+function toRegistryDependency(specifier: string): string | null {
+  if (!specifier.startsWith("@/components/ui/")) return null;
+  const value = specifier.replace("@/components/ui/", "").split("/")[0];
+  return value || null;
+}
+
+async function discoverToolUiRegistryDefinitions(
+  projectRoot: string,
+): Promise<ToolUiRegistryDefinition[]> {
+  const absoluteDir = path.join(projectRoot, TOOL_UI_COMPONENTS_DIR);
+  const entries = await fs.readdir(absoluteDir, { withFileTypes: true });
+
+  return entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .filter((name) => name !== "shared")
+    .sort((a, b) => a.localeCompare(b))
+    .map((name) => {
+      const title = toTitleCase(name);
+      const description =
+        COMPONENT_DESCRIPTION_OVERRIDES[name] ??
+        `${title} component for AI interfaces.`;
+      return {
+        name,
+        title,
+        description,
+        sourceDir: `${TOOL_UI_COMPONENTS_DIR}/${name}`,
+      };
+    });
 }
 
 function shouldIncludeResolvedPath(
@@ -241,11 +288,27 @@ async function buildRegistryItem(
     projectRoot,
     definition.sourceDir,
   );
+  const dependencySet = new Set<string>();
+  const registryDependencySet = new Set<string>();
 
   const files = await Promise.all(
     relativeFilePaths.map(async (relativePath): Promise<RegistryFile> => {
       const absolutePath = path.join(projectRoot, relativePath);
       const content = await fs.readFile(absolutePath, "utf8");
+
+      const importSpecifiers = extractImportSpecifiers(content);
+      for (const specifier of importSpecifiers) {
+        const pkg = toPackageName(specifier);
+        if (pkg && pkg !== "react" && pkg !== "react-dom") {
+          dependencySet.add(pkg);
+        }
+
+        const registryDependency = toRegistryDependency(specifier);
+        if (registryDependency) {
+          registryDependencySet.add(registryDependency);
+        }
+      }
+
       return {
         path: relativePath,
         type: inferRegistryFileType(relativePath),
@@ -261,8 +324,14 @@ async function buildRegistryItem(
     type: "registry:block",
     title: definition.title,
     description: definition.description,
-    dependencies: definition.dependencies,
-    registryDependencies: definition.registryDependencies,
+    dependencies:
+      dependencySet.size > 0
+        ? Array.from(dependencySet).sort((a, b) => a.localeCompare(b))
+        : undefined,
+    registryDependencies:
+      registryDependencySet.size > 0
+        ? Array.from(registryDependencySet).sort((a, b) => a.localeCompare(b))
+        : undefined,
     files,
   };
 }
@@ -286,8 +355,9 @@ function toIndexItem(item: RegistryItem): RegistryIndex["items"][number] {
 export async function buildToolUiRegistryArtifacts(
   projectRoot: string,
 ): Promise<ToolUiRegistryArtifacts> {
+  const definitions = await discoverToolUiRegistryDefinitions(projectRoot);
   const items = await Promise.all(
-    TOOL_UI_REGISTRY_DEFINITIONS.map((definition) =>
+    definitions.map((definition) =>
       buildRegistryItem(projectRoot, definition),
     ),
   );

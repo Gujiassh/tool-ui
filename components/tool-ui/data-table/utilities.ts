@@ -97,6 +97,97 @@ export function getRowIdentifier(
   return String(candidate).trim();
 }
 
+function stableStringify(value: unknown): string {
+  if (value == null) return "null";
+  if (typeof value === "string") return JSON.stringify(value);
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "bigint"
+  ) {
+    return String(value);
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+  }
+  if (typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>).sort(
+      ([a], [b]) => a.localeCompare(b),
+    );
+    return `{${entries
+      .map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(String(value));
+}
+
+function hashString(value: string): string {
+  let hash = 5381;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 33) ^ value.charCodeAt(i);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/**
+ * Create deterministic, reorder-stable React keys for DataTable rows.
+ *
+ * - Uses `identifierKey` or common identifier fields as the primary base.
+ * - Falls back to stable content fingerprints when no identifier exists.
+ * - Disambiguates duplicates without relying on array index.
+ */
+export function createDataTableRowKeys(
+  rows: Array<Record<string, unknown>>,
+  identifierKey?: string,
+): string[] {
+  const canonicalRows = rows.map((row) => stableStringify(row));
+
+  const baseKeys = rows.map((row, index) => {
+    const identifier = getRowIdentifier(
+      row as Record<
+        string,
+        string | number | boolean | null | (string | number | boolean | null)[]
+      >,
+      identifierKey,
+    );
+
+    if (identifier) {
+      return `id:${identifier}`;
+    }
+
+    return `row:${hashString(canonicalRows[index])}`;
+  });
+
+  const baseCounts = new Map<string, number>();
+  baseKeys.forEach((key) => {
+    baseCounts.set(key, (baseCounts.get(key) ?? 0) + 1);
+  });
+
+  const usedKeys = new Map<string, number>();
+
+  return rows.map((row, index) => {
+    const baseKey = baseKeys[index];
+    if ((baseCounts.get(baseKey) ?? 0) === 1) {
+      return baseKey;
+    }
+
+    const rowFingerprint = hashString(canonicalRows[index]);
+    let disambiguatedKey = `${baseKey}::${rowFingerprint}`;
+
+    const seenCount = usedKeys.get(disambiguatedKey) ?? 0;
+    usedKeys.set(disambiguatedKey, seenCount + 1);
+    if (seenCount > 0) {
+      disambiguatedKey = `${disambiguatedKey}::d${seenCount + 1}`;
+    }
+
+    return disambiguatedKey;
+  });
+}
+
+export function getDataTableMobileDescriptionId(surfaceId: string): string {
+  return `${surfaceId}-mobile-table-description`;
+}
+
 /**
  * Parse a string that represents a numeric value, handling various formats:
  * - Currency symbols: $, €, £, ¥, etc.

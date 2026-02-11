@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { describe, expect, it } from "vitest";
+import { promises as fs } from "fs";
 import { buildToolUiRegistryArtifacts } from "@/lib/registry/tool-ui-registry";
 
 function getProjectRoot(): string {
@@ -9,17 +10,24 @@ function getProjectRoot(): string {
 }
 
 describe("Tool UI registry artifacts", () => {
+  async function listExpectedComponents(): Promise<string[]> {
+    const projectRoot = getProjectRoot();
+    const componentRoot = path.join(projectRoot, "components", "tool-ui");
+    const entries = await fs.readdir(componentRoot, { withFileTypes: true });
+
+    return entries
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .filter((name) => name !== "shared")
+      .sort((a, b) => a.localeCompare(b));
+  }
+
   it("builds a flat index and per-item content payloads", async () => {
     const artifacts = await buildToolUiRegistryArtifacts(getProjectRoot());
-    const itemNames = artifacts.items.map((item) => item.name);
+    const itemNames = artifacts.items.map((item) => item.name).sort();
+    const expectedComponents = await listExpectedComponents();
 
-    expect(itemNames).toEqual([
-      "plan",
-      "progress-tracker",
-      "option-list",
-      "message-draft",
-      "data-table",
-    ]);
+    expect(itemNames).toEqual(expectedComponents);
 
     expect(artifacts.index.items).toHaveLength(artifacts.items.length);
 
@@ -31,26 +39,23 @@ describe("Tool UI registry artifacts", () => {
       }
     }
 
-    const planItem = artifacts.items.find((item) => item.name === "plan");
-    expect(planItem).toBeDefined();
-    expect(planItem?.files.some((file) => file.path.endsWith("plan.tsx"))).toBe(
-      true,
+    const dataTableItem = artifacts.items.find(
+      (item) => item.name === "data-table",
     );
-    expect(planItem?.registryDependencies).not.toContain(
-      "https://tool-ui.com/r/shared.json",
-    );
+    expect(dataTableItem).toBeDefined();
     expect(
-      planItem?.files.some(
+      dataTableItem?.files.some((file) =>
+        file.path.endsWith("data-table/data-table.tsx"),
+      ),
+    ).toBe(true);
+    expect(
+      dataTableItem?.files.some(
         (file) => file.path === "components/tool-ui/shared/action-buttons.tsx",
       ),
     ).toBe(true);
     expect(
-      planItem?.files.some(
-        (file) => file.path === "components/tool-ui/shared/media/index.ts",
-      ),
-    ).toBe(false);
-    expect(planItem?.files.some((file) => file.path === "lib/ui/cn.ts")).toBe(
-      true,
-    );
+      dataTableItem?.files.some((file) => file.path === "lib/ui/cn.ts"),
+    ).toBe(true);
+    expect(dataTableItem?.dependencies?.includes("zod")).toBe(true);
   });
 });
