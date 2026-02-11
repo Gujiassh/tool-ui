@@ -236,7 +236,6 @@ pnpm dlx shadcn@latest add button separator skeleton
         <File name="order-summary.tsx" />
         <File name="schema.ts" />
         <File name="index.tsx" />
-        <File name="error-boundary.tsx" />
         <File name="_adapter.tsx" />
       </Folder>
     </Folder>
@@ -256,7 +255,6 @@ pnpm dlx shadcn@latest add button separator skeleton
 import { type Toolkit } from "@assistant-ui/react";
 import {
   OrderSummary,
-  OrderSummaryErrorBoundary,
   safeParseSerializableOrderSummary,
   SerializableOrderSummarySchema,
 } from "@/components/tool-ui/order-summary";
@@ -270,7 +268,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableOrderSummary,
       idPrefix: "order",
       render: (parsedArgs, { result, addResult }) => (
-        <OrderSummaryErrorBoundary>
           {result ? (
             <OrderSummary {...parsedArgs} choice={result} />
           ) : (
@@ -287,7 +284,6 @@ export const toolkit: Toolkit = {
               }}
             />
           )}
-        </OrderSummaryErrorBoundary>
       ),
     }),
   },

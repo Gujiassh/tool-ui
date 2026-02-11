@@ -19,7 +19,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./_adapter";
-import { sortData, getRowIdentifier } from "./utilities";
+import {
+  sortData,
+  createDataTableRowKeys,
+  getDataTableMobileDescriptionId,
+} from "./utilities";
 import { renderFormattedValue } from "./formatters";
 import type {
   DataTableProps,
@@ -32,7 +36,6 @@ import type {
 import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import type { FormatConfig } from "./formatters";
-import { DataTableErrorBoundary } from "./error-boundary";
 
 export const DEFAULT_LOCALE = "en-US" as const;
 
@@ -187,6 +190,18 @@ function DataTableLayout({
   onBeforeResponseAction,
 }: DataTableLayoutProps) {
   const { columns, data, rowIdKey, sortBy, sortDirection, id } = useDataTable();
+  const rowKeys = React.useMemo(
+    () =>
+      createDataTableRowKeys(
+        data as Array<Record<string, unknown>>,
+        rowIdKey ? String(rowIdKey) : undefined,
+      ),
+    [data, rowIdKey],
+  );
+  const mobileDescriptionId = React.useMemo(
+    () => getDataTableMobileDescriptionId(String(id ?? "data-table")),
+    [id],
+  );
 
   const sortAnnouncement = React.useMemo(() => {
     const col = columns.find((c) => c.key === sortBy);
@@ -230,7 +245,6 @@ function DataTableLayout({
                 : undefined
             }
           >
-            <DataTableErrorBoundary>
               <Table>
                 {columns.length > 0 && (
                   <colgroup>
@@ -248,7 +262,6 @@ function DataTableLayout({
                   <DataTableContent />
                 )}
               </Table>
-            </DataTableErrorBoundary>
           </div>
         </div>
       </div>
@@ -263,15 +276,14 @@ function DataTableLayout({
         )}
         role="list"
         aria-label="Data table (mobile card view)"
-        aria-describedby="mobile-table-description"
+        aria-describedby={mobileDescriptionId}
       >
-        <div id="mobile-table-description" className="sr-only">
+        <div id={mobileDescriptionId} className="sr-only">
           Table data shown as expandable cards. Each card represents one row.
           {columns.length > 0 &&
             ` Columns: ${columns.map((c) => c.label).join(", ")}.`}
         </div>
 
-        <DataTableErrorBoundary>
           {data.length === 0 ? (
             <div className="text-muted-foreground py-8 text-center">
               {emptyMessage}
@@ -279,20 +291,19 @@ function DataTableLayout({
           ) : (
             <div className="bg-card flex flex-col overflow-hidden rounded-2xl border shadow-xs">
               {data.map((row, i) => {
-                const keyVal = rowIdKey ? row[rowIdKey] : undefined;
-                const rowKey = keyVal != null ? String(keyVal) : String(i);
+                const rowKey = rowKeys[i];
                 return (
                   <DataTableAccordionCard
                     key={rowKey}
                     row={row as unknown as DataTableRowData}
                     index={i}
+                    rowKey={rowKey}
                     isFirst={i === 0}
                   />
                 );
               })}
             </div>
           )}
-        </DataTableErrorBoundary>
       </div>
 
       {sortAnnouncement && (
@@ -578,6 +589,14 @@ function DataTableHead({
 
 function DataTableBody() {
   const { data, rowIdKey } = useDataTable<DataTableRowData>();
+  const rowKeys = React.useMemo(
+    () =>
+      createDataTableRowKeys(
+        data as Array<Record<string, unknown>>,
+        rowIdKey ? String(rowIdKey) : undefined,
+      ),
+    [data, rowIdKey],
+  );
   const hasWarnedRowKeyRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -585,7 +604,7 @@ function DataTableBody() {
     if (process.env.NODE_ENV !== "production" && !rowIdKey && data.length > 0) {
       hasWarnedRowKeyRef.current = true;
       console.warn(
-        "[DataTable] Missing `rowIdKey` prop. Using array index as React key can cause reconciliation issues when data reorders (focus traps, animation glitches, incorrect state preservation). " +
+        "[DataTable] Missing `rowIdKey` prop. Falling back to inferred/content-derived row keys. " +
           "Strongly recommended: Pass a `rowIdKey` prop that points to a unique identifier in your row data (e.g., 'id', 'uuid', 'symbol').\n" +
           'Example: <DataTable rowIdKey="id" columns={...} data={...} />',
       );
@@ -595,8 +614,7 @@ function DataTableBody() {
   return (
     <TableBody>
       {data.map((row, index) => {
-        const keyVal = rowIdKey ? row[rowIdKey] : undefined;
-        const rowKey = keyVal != null ? String(keyVal) : String(index);
+        const rowKey = rowKeys[index];
         return <DataTableRow key={rowKey} row={row} />;
       })}
     </TableBody>
@@ -696,15 +714,21 @@ function categorizeColumns(columns: Column[]) {
 interface DataTableAccordionCardProps {
   row: DataTableRowData;
   index: number;
+  rowKey: string;
   isFirst?: boolean;
+}
+
+function getDataTableRowDomId(rowKey: string): string {
+  return encodeURIComponent(rowKey).replace(/%/g, "_");
 }
 
 function DataTableAccordionCard({
   row,
   index,
+  rowKey,
   isFirst = false,
 }: DataTableAccordionCardProps) {
-  const { columns, locale, rowIdKey } = useDataTable();
+  const { columns, locale } = useDataTable();
 
   const { primary, secondary } = React.useMemo(
     () => categorizeColumns(columns),
@@ -713,16 +737,20 @@ function DataTableAccordionCard({
 
   if (secondary.length === 0) {
     return (
-      <SimpleCard row={row} columns={primary} index={index} isFirst={isFirst} />
+      <SimpleCard
+        row={row}
+        columns={primary}
+        index={index}
+        rowKey={rowKey}
+        isFirst={isFirst}
+      />
     );
   }
 
   const primaryColumn = primary[0];
   const remainingPrimaryColumns = primary.slice(1);
 
-  const stableRowId =
-    getRowIdentifier(row, rowIdKey ? String(rowIdKey) : undefined) ||
-    `${index}-${primaryColumn?.key ?? "row"}`;
+  const stableRowId = getDataTableRowDomId(rowKey);
 
   const headingId = `row-${stableRowId}-heading`;
   const detailsId = `row-${stableRowId}-details`;
@@ -863,20 +891,20 @@ function SimpleCard({
   row,
   columns,
   index,
+  rowKey,
   isFirst = false,
 }: {
   row: DataTableRowData;
   columns: Column[];
   index: number;
+  rowKey: string;
   isFirst?: boolean;
 }) {
-  const { locale, rowIdKey } = useDataTable();
+  const { locale } = useDataTable();
   const primaryColumn = columns[0];
   const otherColumns = columns.slice(1);
 
-  const stableRowId =
-    getRowIdentifier(row, rowIdKey ? String(rowIdKey) : undefined) ||
-    `${index}-${primaryColumn?.key ?? "row"}`;
+  const stableRowId = getDataTableRowDomId(rowKey);
 
   const primaryValue = primaryColumn
     ? String(row[primaryColumn.key] ?? "")

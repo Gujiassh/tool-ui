@@ -5,7 +5,9 @@
   "title": "Plan",
   "description": "Display step-by-step task workflows in AI interfaces.",
   "dependencies": [
+    "clsx",
     "lucide-react",
+    "tailwind-merge",
     "zod"
   ],
   "registryDependencies": [
@@ -19,19 +21,13 @@
       "path": "components/tool-ui/plan/_adapter.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/plan/_adapter.tsx",
-      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn          → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Accordion   → shadcn/ui Accordion\n *   Card        → shadcn/ui Card\n *   Collapsible → shadcn/ui Collapsible\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport {\n  Accordion,\n  AccordionItem,\n  AccordionTrigger,\n  AccordionContent,\n} from \"../../ui/accordion\";\nexport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardContent,\n  CardFooter,\n} from \"../../ui/card\";\nexport {\n  Collapsible,\n  CollapsibleTrigger,\n  CollapsibleContent,\n} from \"../../ui/collapsible\";\n"
-    },
-    {
-      "path": "components/tool-ui/plan/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/plan/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport { createToolUiErrorBoundary } from \"../shared/error-boundary\";\n\nexport const PlanErrorBoundary = createToolUiErrorBoundary(\"Plan\");\n"
+      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn          → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Accordion   → shadcn/ui Accordion\n *   Card        → shadcn/ui Card\n *   Collapsible → shadcn/ui Collapsible\n */\n\nexport { cn } from \"@/lib/ui/cn\";\nexport {\n  Accordion,\n  AccordionItem,\n  AccordionTrigger,\n  AccordionContent,\n} from \"@/components/ui/accordion\";\nexport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardContent,\n  CardFooter,\n} from \"@/components/ui/card\";\nexport {\n  Collapsible,\n  CollapsibleTrigger,\n  CollapsibleContent,\n} from \"@/components/ui/collapsible\";\n"
     },
     {
       "path": "components/tool-ui/plan/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/plan/index.tsx",
-      "content": "export { Plan, PlanCompact } from \"./plan\";\nexport { PlanErrorBoundary } from \"./error-boundary\";\nexport type {\n  PlanProps,\n  PlanTodo,\n  PlanTodoStatus,\n  SerializablePlan,\n} from \"./schema\";\nexport {\n  parseSerializablePlan,\n  safeParseSerializablePlan,\n  PlanPropsSchema,\n  PlanTodoSchema,\n  PlanTodoStatusSchema,\n  SerializablePlanSchema,\n} from \"./schema\";\n"
+      "content": "export { Plan, PlanCompact } from \"./plan\";\nexport type {\n  PlanProps,\n  PlanTodo,\n  PlanTodoStatus,\n  SerializablePlan,\n} from \"./schema\";\nexport {\n  parseSerializablePlan,\n  safeParseSerializablePlan,\n  PlanPropsSchema,\n  PlanTodoSchema,\n  PlanTodoStatusSchema,\n  SerializablePlanSchema,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/plan/plan.tsx",
@@ -46,6 +42,12 @@
       "content": "type ProgressInput = {\n  completedCount: number;\n  totalCount: number;\n};\n\ntype CelebrateProgressInput = {\n  previous: number;\n  next: number;\n};\n\nfunction clampProgress(value: number): number {\n  if (!Number.isFinite(value)) return 0;\n  return Math.max(0, Math.min(100, value));\n}\n\nexport function calculatePlanProgress({\n  completedCount,\n  totalCount,\n}: ProgressInput): number {\n  if (totalCount <= 0) return 0;\n  return clampProgress((completedCount / totalCount) * 100);\n}\n\nexport function shouldCelebrateProgress({\n  previous,\n  next,\n}: CelebrateProgressInput): boolean {\n  return previous < 100 && next === 100;\n}\n"
     },
     {
+      "path": "components/tool-ui/plan/README.md",
+      "type": "registry:file",
+      "target": "components/tool-ui/plan/README.md",
+      "content": "# Plan\n\nImplementation for the \"plan\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/plan/index.tsx\n- serializable schema + parse helpers: components/tool-ui/plan/schema.ts\n\n## Companion assets\n\n- Docs page: app/docs/plan/content.mdx\n- Preset payload: lib/presets/plan.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
+    },
+    {
       "path": "components/tool-ui/plan/schema.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/plan/schema.ts",
@@ -55,7 +57,7 @@
       "path": "components/tool-ui/shared/_adapter.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/shared/_adapter.tsx",
-      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn     → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button → shadcn/ui Button\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport { Button } from \"../../ui/button\";\n"
+      "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn     → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button → shadcn/ui Button\n */\n\nexport { cn } from \"@/lib/ui/cn\";\nexport { Button } from \"@/components/ui/button\";\n"
     },
     {
       "path": "components/tool-ui/shared/action-buttons.tsx",
@@ -74,12 +76,6 @@
       "type": "registry:lib",
       "target": "components/tool-ui/shared/contract.ts",
       "content": "import { z } from \"zod\";\nimport { parseWithSchema, safeParseWithSchema } from \"./parse\";\n\nexport interface ToolUiContract<T> {\n  schema: z.ZodType<T>;\n  parse: (input: unknown) => T;\n  safeParse: (input: unknown) => T | null;\n}\n\nexport function defineToolUiContract<T>(\n  componentName: string,\n  schema: z.ZodType<T>,\n): ToolUiContract<T> {\n  return {\n    schema,\n    parse: (input: unknown) => parseWithSchema(schema, input, componentName),\n    safeParse: (input: unknown) => safeParseWithSchema(schema, input),\n  };\n}\n"
-    },
-    {
-      "path": "components/tool-ui/shared/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/shared/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ToolUIErrorBoundaryProps {\n  componentName: string;\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;\n}\n\nexport type ToolUiComponentBoundaryProps = Omit<\n  ToolUIErrorBoundaryProps,\n  \"componentName\"\n>;\n\ninterface ToolUIErrorBoundaryState {\n  hasError: boolean;\n  error?: Error;\n}\n\nexport class ToolUIErrorBoundary extends React.Component<\n  ToolUIErrorBoundaryProps,\n  ToolUIErrorBoundaryState\n> {\n  constructor(props: ToolUIErrorBoundaryProps) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(error: Error): ToolUIErrorBoundaryState {\n    return { hasError: true, error };\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.error(\n      `[${this.props.componentName}] render error:`,\n      error,\n      errorInfo,\n    );\n    this.props.onError?.(error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        this.props.fallback ?? (\n          <div className=\"border-destructive text-destructive rounded-lg border p-4\">\n            <p className=\"font-semibold\">\n              {this.props.componentName} failed to render\n            </p>\n            <p className=\"text-sm\">{this.state.error?.message}</p>\n          </div>\n        )\n      );\n    }\n    return this.props.children;\n  }\n}\n\nexport function createToolUiErrorBoundary(componentName: string) {\n  const ToolUiComponentBoundary = ({\n    children,\n    ...rest\n  }: ToolUiComponentBoundaryProps) => (\n    <ToolUIErrorBoundary componentName={componentName} {...rest}>\n      {children}\n    </ToolUIErrorBoundary>\n  );\n\n  ToolUiComponentBoundary.displayName = `${componentName}ErrorBoundary`;\n  return ToolUiComponentBoundary;\n}\n"
     },
     {
       "path": "components/tool-ui/shared/parse.ts",

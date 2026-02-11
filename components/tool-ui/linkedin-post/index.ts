@@ -1,6 +1,5 @@
 export { LinkedInPost } from "./linkedin-post";
 export type { LinkedInPostProps } from "./linkedin-post";
-export { LinkedInPostErrorBoundary } from "./error-boundary";
 export {
   SerializableLinkedInPostSchema,
   parseSerializableLinkedInPost,

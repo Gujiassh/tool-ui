@@ -9,6 +9,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --experimental-build-mode=compile",
     "start": "next start",
+    "component:new": "tsx scripts/new-tool-ui-component.ts",
     "registry:build": "tsx scripts/build-tool-ui-registry.ts",
     "registry:check": "pnpm registry:build && git diff --exit-code -- public/r",
     "lint": "eslint .",

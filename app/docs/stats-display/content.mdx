@@ -155,7 +155,6 @@ pnpm dlx shadcn@latest add card
         <File name="sparkline.tsx" />
         <File name="schema.ts" />
         <File name="index.tsx" />
-        <File name="error-boundary.tsx" />
       </Folder>
     </Folder>
   </Folder>
@@ -174,7 +173,6 @@ pnpm dlx shadcn@latest add card
 import { type Toolkit } from "@assistant-ui/react";
 import {
   StatsDisplay,
-  StatsDisplayErrorBoundary,
   safeParseSerializableStatsDisplay,
   SerializableStatsDisplaySchema,
 } from "@/components/tool-ui/stats-display";
@@ -188,9 +186,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableStatsDisplay,
       idPrefix: "stats",
       render: (parsedArgs) => (
-        <StatsDisplayErrorBoundary>
           <StatsDisplay {...parsedArgs} />
-        </StatsDisplayErrorBoundary>
       ),
     }),
   },

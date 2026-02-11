@@ -246,7 +246,6 @@ pnpm dlx shadcn@latest add button
       <Folder name="progress-tracker" defaultOpen>
         <File name="progress-tracker.tsx" />
         <File name="schema.ts" />
-        <File name="error-boundary.tsx" />
         <File name="index.tsx" />
         <File name="_adapter.tsx" />
       </Folder>
@@ -267,7 +266,6 @@ pnpm dlx shadcn@latest add button
 import { type Toolkit } from "@assistant-ui/react";
 import {
   ProgressTracker,
-  ProgressTrackerErrorBoundary,
   safeParseSerializableProgressTracker,
   SerializableProgressTrackerSchema,
 } from "@/components/tool-ui/progress-tracker";
@@ -281,7 +279,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableProgressTracker,
       idPrefix: "progress-tracker",
       render: (parsedArgs) => (
-        <ProgressTrackerErrorBoundary>
           <ProgressTracker
             {...parsedArgs}
             onResponseAction={async (actionId) => {
@@ -290,7 +287,6 @@ export const toolkit: Toolkit = {
               }
             }}
           />
-        </ProgressTrackerErrorBoundary>
       ),
     }),
   },

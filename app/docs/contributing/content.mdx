@@ -1,8 +1,8 @@
 import { DocsHeader } from "../_components/docs-header";
 
 <DocsHeader
-  title="Contributing"
-  description="Guidelines for contributing new components to Tool UI."
+  title="Maintainer Guide"
+  description="Internal guidelines for maintaining Tool UI components."
   mdxPath="app/docs/contributing/content.mdx"
 />
 
@@ -15,10 +15,9 @@ Each component lives in [`components/tool-ui/`](https://github.com/assistant-ui/
 ### Core Files
 
 - `schema.ts`: Serializable schema + strict/safe parsers (`SerializableXSchema`, `parseSerializableX`, `safeParseSerializableX`)
-- `types.ts`: TypeScript type definitions (serializable props, client props, internal types)
+- `types.ts` (optional): TypeScript type definitions when component complexity justifies a dedicated file
 - `component-name.tsx`: Main component implementation
-- `index.tsx`: Public exports (component, types, parser, error boundary)
-- `error-boundary.tsx`: Error boundary wrapper for the component
+- `index.ts` or `index.tsx`: Public exports (component, types, parser)
 
 ### Sub-Components (as needed)
 
@@ -65,8 +64,8 @@ Implementation pattern:
    - In toolkit `render` snippets, always gate with `safeParseSerializableX(...)`; if parsing fails, `return null`.
    - Do not branch on transport/runtime lifecycle state (`status`, `state.kind`, etc.) inside Tool UI renderers.
 2. `types.ts`: Create:
-   - Serializable props type (derived from the schema)
-   - Client props type (serializable props + callbacks like `onAction`, `onBeforeAction`)
+   - If the file exists, keep serializable props + client props separate.
+   - If the component is small, colocating these types in `schema.ts` is acceptable.
 3. `_adapter.tsx`: Re-export `cn` and the shadcn/ui primitives you need (Button, Card, etc.)
 4. `component-name.tsx`: Build the main component, focused on:
    - Single intent and role
@@ -74,8 +73,7 @@ Implementation pattern:
    - Minimal but clear chrome
 5. Sub-components: Extract header/body/footer/actions when the component grows
 6. `context.tsx`: Use React context only when sub-components genuinely need shared state
-7. `error-boundary.tsx`: Wrap the component so bad props don't crash the whole chat
-8. `index.tsx`: Export the public API (component, types, strict/safe parsers, error boundary)
+7. `index.tsx`: Export the public API (component, types, strict/safe parsers)
 
 </Step>
 
@@ -103,14 +101,14 @@ Check that the component meets standards:
 - **Responsive**: Works on mobile (320px) through desktop widths
 - **No scroll traps**: Avoid inner scroll areas when possible; let the chat container handle scrolling
 - **Reduced motion**: Respect `prefers-reduced-motion` for animations
-- **Error handling**: Validate props, show graceful error states, use error boundaries
+- **Error handling**: Validate props and show graceful error states
 - **Performance**: Avoid unnecessary re-renders and layout thrash
 
 </Step>
 
 </Steps>
 
-## Design Principles for Contributors
+## Design Principles for Maintainers
 
 All components must follow the [UI Guidelines](/docs/design-guidelines). In practice, that means:
 
@@ -124,13 +122,13 @@ All components must follow the [UI Guidelines](/docs/design-guidelines). In prac
 
 Use UI Guidelines for philosophy; this page is about how to express that philosophy in code.
 
-## Submitting Components
-
-Ready to contribute?
+## Maintaining Components
 
 1. **Test thoroughly**: Check across viewports, themes, and basic assistive tech (screen reader, keyboard only)
 2. **Document completely**: README with features, API, and at least one end-to-end example
 3. **Follow conventions**: Match existing component patterns and file structure
-4. **Open a PR**: Include screenshots or screen recordings, and link to the relevant docs section
+4. **Regenerate registry artifacts**: Run `pnpm registry:build` before final validation.
 
-Questions? [Open an issue on GitHub](https://github.com/assistant-ui/tool-ui/issues) or [reach out on Discord](https://discord.com/channels/1251324227668283443).
+## Export Surface
+
+Use `components/tool-ui/index.ts` as the aggregate export entrypoint when you need to import multiple surfaces together (for example, `import { DataTableToolUi, PlanToolUi } from "@/components/tool-ui"`).

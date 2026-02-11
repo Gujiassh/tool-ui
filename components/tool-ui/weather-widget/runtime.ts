@@ -5,7 +5,6 @@
  * Use `index.tsx` only when you need lower-level internals.
  */
 export { WeatherWidget } from "./weather-widget";
-export { WeatherWidgetErrorBoundary } from "./error-boundary";
 export {
   WeatherWidgetPayloadSchema,
   parseWeatherWidgetPayload,

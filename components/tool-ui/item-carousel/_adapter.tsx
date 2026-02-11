@@ -13,6 +13,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export { Button } from "../../ui/button";
-export { Card } from "../../ui/card";
+export { Button } from "@/components/ui/button";
+export { Card } from "@/components/ui/card";
 export { ChevronLeft, ChevronRight } from "lucide-react";

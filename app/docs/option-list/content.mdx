@@ -91,7 +91,6 @@ pnpm dlx shadcn@latest add button separator
 import { type Toolkit } from "@assistant-ui/react";
 import {
   OptionList,
-  OptionListErrorBoundary,
   safeParseSerializableOptionList,
   SerializableOptionListSchema,
 } from "@/components/tool-ui/option-list";
@@ -105,7 +104,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableOptionList,
       idPrefix: "format-selection",
       render: (parsedArgs, { result, addResult }) => (
-        <OptionListErrorBoundary>
           {result ? (
             <OptionList {...parsedArgs} value={undefined} choice={result} />
           ) : (
@@ -116,7 +114,6 @@ export const toolkit: Toolkit = {
               onConfirm={(selection) => addResult?.(selection)}
             />
           )}
-        </OptionListErrorBoundary>
       ),
     }),
   },

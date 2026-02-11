@@ -1,5 +1,4 @@
 export { MessageDraft } from "./message-draft";
-export { MessageDraftErrorBoundary } from "./error-boundary";
 export {
   SerializableMessageDraftSchema,
   SerializableEmailDraftSchema,

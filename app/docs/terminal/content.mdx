@@ -133,7 +133,6 @@ const showTerminal = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import {
   Terminal,
-  TerminalErrorBoundary,
   safeParseSerializableTerminal,
 } from "@/components/tool-ui/terminal";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -145,9 +144,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableTerminal,
       render: (parsedResult) => (
         <>
-          <TerminalErrorBoundary>
             <Terminal {...parsedResult} />
-          </TerminalErrorBoundary>
         </>
       ),
     }),

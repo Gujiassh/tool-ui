@@ -92,7 +92,6 @@ pnpm dlx shadcn@latest add button separator slider
         <File name="parameter-slider.tsx" />
         <File name="schema.ts" />
         <File name="index.tsx" />
-        <File name="error-boundary.tsx" />
         <File name="_adapter.tsx" />
       </Folder>
     </Folder>
@@ -112,7 +111,6 @@ pnpm dlx shadcn@latest add button separator slider
 import { type Toolkit } from "@assistant-ui/react";
 import {
   ParameterSlider,
-  ParameterSliderErrorBoundary,
   safeParseSerializableParameterSlider,
   SerializableParameterSliderSchema,
 } from "@/components/tool-ui/parameter-slider";
@@ -126,7 +124,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableParameterSlider,
       idPrefix: "parameter-slider",
       render: (parsedArgs, { addResult }) => (
-        <ParameterSliderErrorBoundary>
           <ParameterSlider
             {...parsedArgs}
             onResponseAction={(actionId, values) => {
@@ -135,7 +132,6 @@ export const toolkit: Toolkit = {
               }
             }}
           />
-        </ParameterSliderErrorBoundary>
       ),
     }),
   },

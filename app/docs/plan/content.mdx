@@ -102,7 +102,6 @@ const showPlan = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import {
   Plan,
-  PlanErrorBoundary,
   safeParseSerializablePlan,
 } from "@/components/tool-ui/plan";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -114,7 +113,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializablePlan,
       render: (parsedResult) => (
         <>
-          <PlanErrorBoundary>
             <Plan
               {...parsedResult}
               responseActions={[
@@ -130,7 +128,6 @@ export const toolkit: Toolkit = {
                 // Handle other actions
               }}
             />
-          </PlanErrorBoundary>
         </>
       ),
     }),

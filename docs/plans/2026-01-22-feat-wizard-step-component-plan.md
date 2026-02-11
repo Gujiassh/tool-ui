@@ -114,8 +114,7 @@ components/tool-ui/wizard-step/
 ├── index.tsx           # Barrel exports
 ├── wizard-step.tsx     # Main component (progressive + upfront modes)
 ├── schema.ts           # Zod schemas + SerializableWizardStep type
-├── _adapter.tsx        # shadcn re-exports
-└── error-boundary.tsx  # Error boundary wrapper
+└── _adapter.tsx        # shadcn re-exports
 ```
 
 ### Schema Design
@@ -436,14 +435,12 @@ function WizardStepReceipt({ ... }: WizardStepReceiptProps) {
 - [ ] Render key-value summary items
 - [ ] Add fade-blur-in animation
 
-### Phase 5: Error Boundary & Polish
+### Phase 5: Accessibility & Polish
 
 **Files:**
-- `components/tool-ui/wizard-step/error-boundary.tsx`
 - `components/tool-ui/wizard-step/wizard-step.tsx`
 
 **Tasks:**
-- [ ] Create WizardStepErrorBoundary
 - [ ] Add ARIA labels and live regions
 - [ ] Ensure focus management on step transitions
 - [ ] Add motion-safe animations

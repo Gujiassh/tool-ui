@@ -1,5 +1,4 @@
 export { QuestionFlow } from "./question-flow";
-export { QuestionFlowErrorBoundary } from "./error-boundary";
 export {
   SerializableQuestionFlowSchema,
   SerializableProgressiveModeSchema,

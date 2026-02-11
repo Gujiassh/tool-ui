@@ -12,6 +12,7 @@ import type { Action } from "../shared/schema";
 import { Check, ChevronDown } from "lucide-react";
 
 type DraftState = "review" | "sending" | "sent" | "cancelled";
+type DraftOutcome = MessageDraftProps["outcome"];
 
 const DEFAULT_GRACE_PERIOD = 5000;
 const COLLAPSED_BODY_HEIGHT = 280;
@@ -238,6 +239,23 @@ function formatSentTime(date: Date): string {
   });
 }
 
+export function resolveStateFromOutcome(outcome: DraftOutcome): DraftState {
+  if (outcome === "sent") return "sent";
+  if (outcome === "cancelled") return "cancelled";
+  return "review";
+}
+
+export function resolveOutcomeTransition(
+  previousOutcome: DraftOutcome,
+  nextOutcome: DraftOutcome,
+): DraftState | null {
+  if (previousOutcome === nextOutcome) {
+    return null;
+  }
+
+  return resolveStateFromOutcome(nextOutcome);
+}
+
 interface SentConfirmationProps {
   sentAt: Date;
 }
@@ -270,11 +288,9 @@ export function MessageDraft(props: MessageDraftProps) {
     onCancel,
   } = props;
 
-  const [state, setState] = React.useState<DraftState>(() => {
-    if (outcome === "sent") return "sent";
-    if (outcome === "cancelled") return "cancelled";
-    return "review";
-  });
+  const [state, setState] = React.useState<DraftState>(() =>
+    resolveStateFromOutcome(outcome),
+  );
   const [countdown, setCountdown] = React.useState(
     Math.ceil(undoGracePeriod / 1000),
   );
@@ -288,6 +304,7 @@ export function MessageDraft(props: MessageDraftProps) {
   const countdownRef = React.useRef<ReturnType<typeof setInterval> | null>(
     null,
   );
+  const previousOutcomeRef = React.useRef<DraftOutcome>(outcome);
 
   const clearTimers = React.useCallback(() => {
     if (timerRef.current) {
@@ -303,6 +320,24 @@ export function MessageDraft(props: MessageDraftProps) {
   React.useEffect(() => {
     return clearTimers;
   }, [clearTimers]);
+
+  React.useEffect(() => {
+    const nextState = resolveOutcomeTransition(
+      previousOutcomeRef.current,
+      outcome,
+    );
+
+    previousOutcomeRef.current = outcome;
+
+    if (nextState === null) {
+      return;
+    }
+
+    clearTimers();
+    setState(nextState);
+    setCountdown(Math.ceil(undoGracePeriod / 1000));
+    setSentAt(nextState === "sent" ? new Date() : null);
+  }, [outcome, undoGracePeriod, clearTimers]);
 
   React.useEffect(() => {
     if (state === "sending") {

@@ -1,6 +1,5 @@
 export { XPost } from "./x-post";
 export type { XPostProps } from "./x-post";
-export { XPostErrorBoundary } from "./error-boundary";
 export {
   SerializableXPostSchema,
   parseSerializableXPost,

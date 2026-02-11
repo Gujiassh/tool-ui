@@ -141,7 +141,6 @@ const showChart = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import {
   Chart,
-  ChartErrorBoundary,
   safeParseSerializableChart,
 } from "@/components/tool-ui/chart";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -153,9 +152,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableChart,
       render: (parsedResult) => (
         <>
-          <ChartErrorBoundary>
             <Chart {...parsedResult} />
-          </ChartErrorBoundary>
         </>
       ),
     }),

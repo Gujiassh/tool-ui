@@ -107,7 +107,6 @@ pnpm dlx shadcn@latest add card
 import { type Toolkit } from "@assistant-ui/react";
 import {
   WeatherWidget,
-  WeatherWidgetErrorBoundary,
   safeParseWeatherWidgetPayload,
   WeatherWidgetPayloadSchema,
 } from "@/components/tool-ui/weather-widget/runtime";
@@ -125,9 +124,7 @@ export const toolkit: Toolkit = {
         }),
       idPrefix: "weather",
       render: (parsedArgs) => (
-        <WeatherWidgetErrorBoundary>
           <WeatherWidget {...parsedArgs} />
-        </WeatherWidgetErrorBoundary>
       ),
     }),
   },
