@@ -148,7 +148,6 @@ pnpm dlx shadcn@latest add button label select separator switch toggle-group
         <File name="schema.ts" />
         <File name="index.tsx" />
         <File name="_adapter.tsx" />
-        <File name="error-boundary.tsx" />
       </Folder>
     </Folder>
   </Folder>
@@ -167,7 +166,6 @@ pnpm dlx shadcn@latest add button label select separator switch toggle-group
 import { type Toolkit } from "@assistant-ui/react";
 import {
   PreferencesPanel,
-  PreferencesPanelErrorBoundary,
   safeParseSerializablePreferencesPanel,
   SerializablePreferencesPanelSchema,
 } from "@/components/tool-ui/preferences-panel";
@@ -181,7 +179,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializablePreferencesPanel,
       idPrefix: "preferences-panel",
       render: (parsedArgs, { addResult }) => (
-        <PreferencesPanelErrorBoundary>
           <PreferencesPanel
             {...parsedArgs}
             onSave={async (values) => {
@@ -191,7 +188,6 @@ export const toolkit: Toolkit = {
               addResult({ choice: {} });
             }}
           />
-        </PreferencesPanelErrorBoundary>
       ),
     }),
   },

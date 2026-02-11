@@ -5,7 +5,7 @@
 
 ## Current State Summary
 
-Tool UI is a maintainer-owned copy/paste component library (shadcn/ui model) for AI assistant interfaces. Component APIs are flat, receipt semantics are unified on `choice`, and component directories are treated as the product surface (`schema`, `component`, `error-boundary`, `README`, exports). Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
+Tool UI is a maintainer-owned copy/paste component library (shadcn/ui model) for AI assistant interfaces. Component APIs are flat, receipt semantics are unified on `choice`, and component directories are treated as the product surface (`schema`, `component`, `README`, exports). Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
 
 ## Stale Information Detected
 
@@ -27,7 +27,7 @@ Highlights:
 - Added component-local README coverage and scaffold automation via `pnpm component:new` (`scripts/new-tool-ui-component.ts`)
 - Added `components/tool-ui/index.ts` aggregate export surface
 - Added contract tests for deterministic row keys, outcome sync transitions, step ids, and tab search param resolution
-- Closed component contract gaps (for example, missing `item-carousel/error-boundary.tsx`)
+- Closed component contract gaps and improved scaffold consistency
 
 **Why:** Reduce time-to-first-working-component, make component directory contracts explicit, and keep state/ID behavior stable as internals evolve.
 

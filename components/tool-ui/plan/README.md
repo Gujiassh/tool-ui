@@ -6,7 +6,6 @@ Implementation for the "plan" Tool UI surface.
 
 - public exports: components/tool-ui/plan/index.tsx
 - serializable schema + parse helpers: components/tool-ui/plan/schema.ts
-- error containment: components/tool-ui/plan/error-boundary.tsx
 
 ## Companion assets
 

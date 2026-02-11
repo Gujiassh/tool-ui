@@ -6,7 +6,6 @@ Implementation for the "question-flow" Tool UI surface.
 
 - public exports: components/tool-ui/question-flow/index.tsx
 - serializable schema + parse helpers: components/tool-ui/question-flow/schema.ts
-- error containment: components/tool-ui/question-flow/error-boundary.tsx
 
 ## Companion assets
 

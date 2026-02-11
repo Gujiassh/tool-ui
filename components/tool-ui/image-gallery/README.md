@@ -6,7 +6,6 @@ Implementation for the "image-gallery" Tool UI surface.
 
 - public exports: components/tool-ui/image-gallery/index.tsx
 - serializable schema + parse helpers: components/tool-ui/image-gallery/schema.ts
-- error containment: components/tool-ui/image-gallery/error-boundary.tsx
 
 ## Companion assets
 

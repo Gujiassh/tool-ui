@@ -18,16 +18,10 @@
       "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn        → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button    → shadcn/ui Button\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport { Button } from \"../../ui/button\";\n"
     },
     {
-      "path": "components/tool-ui/message-draft/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/message-draft/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport { createToolUiErrorBoundary } from \"../shared/error-boundary\";\n\nexport const MessageDraftErrorBoundary =\n  createToolUiErrorBoundary(\"MessageDraft\");\n"
-    },
-    {
       "path": "components/tool-ui/message-draft/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/message-draft/index.tsx",
-      "content": "export { MessageDraft } from \"./message-draft\";\nexport { MessageDraftErrorBoundary } from \"./error-boundary\";\nexport {\n  SerializableMessageDraftSchema,\n  SerializableEmailDraftSchema,\n  SerializableSlackDraftSchema,\n  MessageDraftChannelSchema,\n  MessageDraftOutcomeSchema,\n  parseSerializableMessageDraft,\n  safeParseSerializableMessageDraft,\n  type SerializableMessageDraft,\n  type SerializableEmailDraft,\n  type SerializableSlackDraft,\n  type MessageDraftChannel,\n  type MessageDraftOutcome,\n  type SlackTarget,\n  type MessageDraftProps,\n} from \"./schema\";\n"
+      "content": "export { MessageDraft } from \"./message-draft\";\nexport {\n  SerializableMessageDraftSchema,\n  SerializableEmailDraftSchema,\n  SerializableSlackDraftSchema,\n  MessageDraftChannelSchema,\n  MessageDraftOutcomeSchema,\n  parseSerializableMessageDraft,\n  safeParseSerializableMessageDraft,\n  type SerializableMessageDraft,\n  type SerializableEmailDraft,\n  type SerializableSlackDraft,\n  type MessageDraftChannel,\n  type MessageDraftOutcome,\n  type SlackTarget,\n  type MessageDraftProps,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/message-draft/message-draft.tsx",
@@ -39,7 +33,7 @@
       "path": "components/tool-ui/message-draft/README.md",
       "type": "registry:file",
       "target": "components/tool-ui/message-draft/README.md",
-      "content": "# Message Draft\n\nImplementation for the \"message-draft\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/message-draft/index.tsx\n- serializable schema + parse helpers: components/tool-ui/message-draft/schema.ts\n- error containment: components/tool-ui/message-draft/error-boundary.tsx\n\n## Companion assets\n\n- Docs page: app/docs/message-draft/content.mdx\n- Preset payload: lib/presets/message-draft.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
+      "content": "# Message Draft\n\nImplementation for the \"message-draft\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/message-draft/index.tsx\n- serializable schema + parse helpers: components/tool-ui/message-draft/schema.ts\n\n## Companion assets\n\n- Docs page: app/docs/message-draft/content.mdx\n- Preset payload: lib/presets/message-draft.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
     },
     {
       "path": "components/tool-ui/message-draft/schema.ts",
@@ -64,12 +58,6 @@
       "type": "registry:lib",
       "target": "components/tool-ui/shared/contract.ts",
       "content": "import { z } from \"zod\";\nimport { parseWithSchema, safeParseWithSchema } from \"./parse\";\n\nexport interface ToolUiContract<T> {\n  schema: z.ZodType<T>;\n  parse: (input: unknown) => T;\n  safeParse: (input: unknown) => T | null;\n}\n\nexport function defineToolUiContract<T>(\n  componentName: string,\n  schema: z.ZodType<T>,\n): ToolUiContract<T> {\n  return {\n    schema,\n    parse: (input: unknown) => parseWithSchema(schema, input, componentName),\n    safeParse: (input: unknown) => safeParseWithSchema(schema, input),\n  };\n}\n"
-    },
-    {
-      "path": "components/tool-ui/shared/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/shared/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ToolUIErrorBoundaryProps {\n  componentName: string;\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;\n}\n\nexport type ToolUiComponentBoundaryProps = Omit<\n  ToolUIErrorBoundaryProps,\n  \"componentName\"\n>;\n\ninterface ToolUIErrorBoundaryState {\n  hasError: boolean;\n  error?: Error;\n}\n\nexport class ToolUIErrorBoundary extends React.Component<\n  ToolUIErrorBoundaryProps,\n  ToolUIErrorBoundaryState\n> {\n  constructor(props: ToolUIErrorBoundaryProps) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(error: Error): ToolUIErrorBoundaryState {\n    return { hasError: true, error };\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.error(\n      `[${this.props.componentName}] render error:`,\n      error,\n      errorInfo,\n    );\n    this.props.onError?.(error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        this.props.fallback ?? (\n          <div className=\"border-destructive text-destructive rounded-lg border p-4\">\n            <p className=\"font-semibold\">\n              {this.props.componentName} failed to render\n            </p>\n            <p className=\"text-sm\">{this.state.error?.message}</p>\n          </div>\n        )\n      );\n    }\n    return this.props.children;\n  }\n}\n\nexport function createToolUiErrorBoundary(componentName: string) {\n  const ToolUiComponentBoundary = ({\n    children,\n    ...rest\n  }: ToolUiComponentBoundaryProps) => (\n    <ToolUIErrorBoundary componentName={componentName} {...rest}>\n      {children}\n    </ToolUIErrorBoundary>\n  );\n\n  ToolUiComponentBoundary.displayName = `${componentName}ErrorBoundary`;\n  return ToolUiComponentBoundary;\n}\n"
     },
     {
       "path": "components/tool-ui/shared/parse.ts",

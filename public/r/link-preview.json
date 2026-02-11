@@ -18,16 +18,10 @@
       "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n */\n\"use client\";\n\nexport { cn } from \"@/lib/ui/cn\";\n"
     },
     {
-      "path": "components/tool-ui/link-preview/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/link-preview/error-boundary.tsx",
-      "content": "\"use client\";import { createToolUiErrorBoundary } from \"../shared/error-boundary\";\n\nexport const LinkPreviewErrorBoundary =\n  createToolUiErrorBoundary(\"LinkPreview\");\n"
-    },
-    {
       "path": "components/tool-ui/link-preview/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/link-preview/index.ts",
-      "content": "export { LinkPreview } from \"./link-preview\";\nexport type { LinkPreviewProps } from \"./link-preview\";\nexport { LinkPreviewErrorBoundary } from \"./error-boundary\";\nexport {\n  SerializableLinkPreviewSchema,\n  parseSerializableLinkPreview,\n  safeParseSerializableLinkPreview,\n} from \"./schema\";\nexport type { SerializableLinkPreview } from \"./schema\";\n"
+      "content": "export { LinkPreview } from \"./link-preview\";\nexport type { LinkPreviewProps } from \"./link-preview\";\nexport {\n  SerializableLinkPreviewSchema,\n  parseSerializableLinkPreview,\n  safeParseSerializableLinkPreview,\n} from \"./schema\";\nexport type { SerializableLinkPreview } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/link-preview/link-preview.tsx",
@@ -39,7 +33,7 @@
       "path": "components/tool-ui/link-preview/README.md",
       "type": "registry:file",
       "target": "components/tool-ui/link-preview/README.md",
-      "content": "# Link Preview\n\nImplementation for the \"link-preview\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/link-preview/index.ts\n- serializable schema + parse helpers: components/tool-ui/link-preview/schema.ts\n- error containment: components/tool-ui/link-preview/error-boundary.tsx\n\n## Companion assets\n\n- Docs page: app/docs/link-preview/content.mdx\n- Preset payload: lib/presets/link-preview.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
+      "content": "# Link Preview\n\nImplementation for the \"link-preview\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/link-preview/index.ts\n- serializable schema + parse helpers: components/tool-ui/link-preview/schema.ts\n\n## Companion assets\n\n- Docs page: app/docs/link-preview/content.mdx\n- Preset payload: lib/presets/link-preview.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
     },
     {
       "path": "components/tool-ui/link-preview/schema.ts",
@@ -70,12 +64,6 @@
       "type": "registry:lib",
       "target": "components/tool-ui/shared/contract.ts",
       "content": "import { z } from \"zod\";\nimport { parseWithSchema, safeParseWithSchema } from \"./parse\";\n\nexport interface ToolUiContract<T> {\n  schema: z.ZodType<T>;\n  parse: (input: unknown) => T;\n  safeParse: (input: unknown) => T | null;\n}\n\nexport function defineToolUiContract<T>(\n  componentName: string,\n  schema: z.ZodType<T>,\n): ToolUiContract<T> {\n  return {\n    schema,\n    parse: (input: unknown) => parseWithSchema(schema, input, componentName),\n    safeParse: (input: unknown) => safeParseWithSchema(schema, input),\n  };\n}\n"
-    },
-    {
-      "path": "components/tool-ui/shared/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/shared/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ToolUIErrorBoundaryProps {\n  componentName: string;\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;\n}\n\nexport type ToolUiComponentBoundaryProps = Omit<\n  ToolUIErrorBoundaryProps,\n  \"componentName\"\n>;\n\ninterface ToolUIErrorBoundaryState {\n  hasError: boolean;\n  error?: Error;\n}\n\nexport class ToolUIErrorBoundary extends React.Component<\n  ToolUIErrorBoundaryProps,\n  ToolUIErrorBoundaryState\n> {\n  constructor(props: ToolUIErrorBoundaryProps) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(error: Error): ToolUIErrorBoundaryState {\n    return { hasError: true, error };\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.error(\n      `[${this.props.componentName}] render error:`,\n      error,\n      errorInfo,\n    );\n    this.props.onError?.(error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        this.props.fallback ?? (\n          <div className=\"border-destructive text-destructive rounded-lg border p-4\">\n            <p className=\"font-semibold\">\n              {this.props.componentName} failed to render\n            </p>\n            <p className=\"text-sm\">{this.state.error?.message}</p>\n          </div>\n        )\n      );\n    }\n    return this.props.children;\n  }\n}\n\nexport function createToolUiErrorBoundary(componentName: string) {\n  const ToolUiComponentBoundary = ({\n    children,\n    ...rest\n  }: ToolUiComponentBoundaryProps) => (\n    <ToolUIErrorBoundary componentName={componentName} {...rest}>\n      {children}\n    </ToolUIErrorBoundary>\n  );\n\n  ToolUiComponentBoundary.displayName = `${componentName}ErrorBoundary`;\n  return ToolUiComponentBoundary;\n}\n"
     },
     {
       "path": "components/tool-ui/shared/media/aspect-ratio.ts",

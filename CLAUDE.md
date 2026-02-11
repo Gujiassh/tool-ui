@@ -28,7 +28,6 @@ Key files:
 - `{name}.tsx` — Main component
 - `schema.ts` — Zod schema + SerializableX types
 - `_adapter.tsx` — shadcn re-exports
-- `error-boundary.tsx` — Error wrapper
 
 The `shared/` directory contains utilities all components need.
 

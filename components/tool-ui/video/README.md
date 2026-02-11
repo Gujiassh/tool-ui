@@ -6,7 +6,6 @@ Implementation for the "video" Tool UI surface.
 
 - public exports: components/tool-ui/video/index.ts
 - serializable schema + parse helpers: components/tool-ui/video/schema.ts
-- error containment: components/tool-ui/video/error-boundary.tsx
 
 ## Companion assets
 

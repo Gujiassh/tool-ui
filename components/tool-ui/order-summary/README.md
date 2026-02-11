@@ -6,7 +6,6 @@ Implementation for the "order-summary" Tool UI surface.
 
 - public exports: components/tool-ui/order-summary/index.tsx
 - serializable schema + parse helpers: components/tool-ui/order-summary/schema.ts
-- error containment: components/tool-ui/order-summary/error-boundary.tsx
 
 ## Companion assets
 

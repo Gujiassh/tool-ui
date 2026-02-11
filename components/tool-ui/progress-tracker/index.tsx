@@ -1,5 +1,4 @@
 export { ProgressTracker } from "./progress-tracker";
-export { ProgressTrackerErrorBoundary } from "./error-boundary";
 export {
   SerializableProgressTrackerSchema,
   parseSerializableProgressTracker,

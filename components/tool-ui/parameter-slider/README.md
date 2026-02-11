@@ -6,7 +6,6 @@ Implementation for the "parameter-slider" Tool UI surface.
 
 - public exports: components/tool-ui/parameter-slider/index.tsx
 - serializable schema + parse helpers: components/tool-ui/parameter-slider/schema.ts
-- error containment: components/tool-ui/parameter-slider/error-boundary.tsx
 
 ## Companion assets
 

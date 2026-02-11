@@ -6,7 +6,6 @@ Implementation for the "instagram-post" Tool UI surface.
 
 - public exports: components/tool-ui/instagram-post/index.ts
 - serializable schema + parse helpers: components/tool-ui/instagram-post/schema.ts
-- error containment: components/tool-ui/instagram-post/error-boundary.tsx
 
 ## Companion assets
 

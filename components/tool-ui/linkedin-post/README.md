@@ -6,7 +6,6 @@ Implementation for the "linkedin-post" Tool UI surface.
 
 - public exports: components/tool-ui/linkedin-post/index.ts
 - serializable schema + parse helpers: components/tool-ui/linkedin-post/schema.ts
-- error containment: components/tool-ui/linkedin-post/error-boundary.tsx
 
 ## Companion assets
 

@@ -182,7 +182,6 @@ pnpm dlx shadcn@latest add button
 import { type Toolkit } from "@assistant-ui/react";
 import {
   ApprovalCard,
-  ApprovalCardErrorBoundary,
   safeParseSerializableApprovalCard,
   SerializableApprovalCardSchema,
 } from "@/components/tool-ui/approval-card";
@@ -196,7 +195,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableApprovalCard,
       idPrefix: "approval",
       render: (parsedArgs, { result, addResult }) => (
-        <ApprovalCardErrorBoundary>
           {result ? (
             <ApprovalCard {...parsedArgs} choice={result} />
           ) : (
@@ -206,7 +204,6 @@ export const toolkit: Toolkit = {
               onCancel={() => addResult?.("denied")}
             />
           )}
-        </ApprovalCardErrorBoundary>
       ),
     }),
   },

@@ -1,5 +1,4 @@
 export { PreferencesPanel, PreferencesPanelReceipt } from "./preferences-panel";
-export { PreferencesPanelErrorBoundary } from "./error-boundary";
 export {
   SerializablePreferencesPanelSchema,
   SerializablePreferencesPanelReceiptSchema,

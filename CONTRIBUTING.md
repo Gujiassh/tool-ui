@@ -37,7 +37,6 @@ Each `components/tool-ui/<name>/` directory should include:
 - `schema.ts` with `SerializableXSchema`, `parseSerializableX`, and `safeParseSerializableX`
 - Main component file (usually `<name>.tsx`)
 - `_adapter.tsx` for local primitive re-exports
-- `error-boundary.tsx`
 - `index.ts` or `index.tsx`
 - `README.md`
 

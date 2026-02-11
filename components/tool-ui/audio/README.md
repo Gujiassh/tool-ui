@@ -6,7 +6,6 @@ Implementation for the "audio" Tool UI surface.
 
 - public exports: components/tool-ui/audio/index.ts
 - serializable schema + parse helpers: components/tool-ui/audio/schema.ts
-- error containment: components/tool-ui/audio/error-boundary.tsx
 
 ## Companion assets
 

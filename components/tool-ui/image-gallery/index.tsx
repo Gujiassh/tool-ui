@@ -1,5 +1,4 @@
 export { ImageGallery } from "./image-gallery";
-export { ImageGalleryErrorBoundary } from "./error-boundary";
 export type {
   ImageGalleryProps,
   ImageGalleryItem,

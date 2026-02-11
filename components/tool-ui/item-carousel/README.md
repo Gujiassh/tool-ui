@@ -6,7 +6,6 @@ Implementation for the "item-carousel" Tool UI surface.
 
 - public exports: components/tool-ui/item-carousel/index.tsx
 - serializable schema + parse helpers: components/tool-ui/item-carousel/schema.ts
-- error containment: components/tool-ui/item-carousel/error-boundary.tsx
 
 ## Companion assets
 

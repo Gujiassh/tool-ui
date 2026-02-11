@@ -251,7 +251,6 @@ const showXPost = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import {
   XPost,
-  XPostErrorBoundary,
   safeParseSerializableXPost,
 } from "@/components/tool-ui/x-post";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -263,9 +262,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableXPost,
       render: (parsedResult) => (
         <>
-          <XPostErrorBoundary>
             <XPost post={parsedResult} />
-          </XPostErrorBoundary>
         </>
       ),
     }),

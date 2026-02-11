@@ -108,7 +108,6 @@ pnpm dlx shadcn@latest add button separator
 import { type Toolkit } from "@assistant-ui/react";
 import {
   QuestionFlow,
-  QuestionFlowErrorBoundary,
   safeParseSerializableQuestionFlow,
   SerializableQuestionFlowSchema,
 } from "@/components/tool-ui/question-flow";
@@ -122,7 +121,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableQuestionFlow,
       idPrefix: "wizard",
       render: (parsedArgs, { result, addResult }) => (
-        <QuestionFlowErrorBoundary>
           {result ? (
             <QuestionFlow
               id={parsedArgs.id}
@@ -142,7 +140,6 @@ export const toolkit: Toolkit = {
               onComplete={(answers) => addResult?.(answers)}
             />
           )}
-        </QuestionFlowErrorBoundary>
       ),
     }),
   },

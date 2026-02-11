@@ -17,12 +17,6 @@
       "content": "import { z } from \"zod\";\nimport { parseWithSchema, safeParseWithSchema } from \"./parse\";\n\nexport interface ToolUiContract<T> {\n  schema: z.ZodType<T>;\n  parse: (input: unknown) => T;\n  safeParse: (input: unknown) => T | null;\n}\n\nexport function defineToolUiContract<T>(\n  componentName: string,\n  schema: z.ZodType<T>,\n): ToolUiContract<T> {\n  return {\n    schema,\n    parse: (input: unknown) => parseWithSchema(schema, input, componentName),\n    safeParse: (input: unknown) => safeParseWithSchema(schema, input),\n  };\n}\n"
     },
     {
-      "path": "components/tool-ui/shared/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/shared/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ToolUIErrorBoundaryProps {\n  componentName: string;\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;\n}\n\nexport type ToolUiComponentBoundaryProps = Omit<\n  ToolUIErrorBoundaryProps,\n  \"componentName\"\n>;\n\ninterface ToolUIErrorBoundaryState {\n  hasError: boolean;\n  error?: Error;\n}\n\nexport class ToolUIErrorBoundary extends React.Component<\n  ToolUIErrorBoundaryProps,\n  ToolUIErrorBoundaryState\n> {\n  constructor(props: ToolUIErrorBoundaryProps) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(error: Error): ToolUIErrorBoundaryState {\n    return { hasError: true, error };\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.error(\n      `[${this.props.componentName}] render error:`,\n      error,\n      errorInfo,\n    );\n    this.props.onError?.(error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        this.props.fallback ?? (\n          <div className=\"border-destructive text-destructive rounded-lg border p-4\">\n            <p className=\"font-semibold\">\n              {this.props.componentName} failed to render\n            </p>\n            <p className=\"text-sm\">{this.state.error?.message}</p>\n          </div>\n        )\n      );\n    }\n    return this.props.children;\n  }\n}\n\nexport function createToolUiErrorBoundary(componentName: string) {\n  const ToolUiComponentBoundary = ({\n    children,\n    ...rest\n  }: ToolUiComponentBoundaryProps) => (\n    <ToolUIErrorBoundary componentName={componentName} {...rest}>\n      {children}\n    </ToolUIErrorBoundary>\n  );\n\n  ToolUiComponentBoundary.displayName = `${componentName}ErrorBoundary`;\n  return ToolUiComponentBoundary;\n}\n"
-    },
-    {
       "path": "components/tool-ui/shared/parse.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/shared/parse.ts",
@@ -41,22 +35,16 @@
       "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn   → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Card → shadcn/ui Card\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport {\n  Card,\n  CardHeader,\n  CardTitle,\n  CardDescription,\n  CardContent,\n} from \"../../ui/card\";\n"
     },
     {
-      "path": "components/tool-ui/stats-display/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/stats-display/error-boundary.tsx",
-      "content": "\"use client\";import { createToolUiErrorBoundary } from \"../shared/error-boundary\";\n\nexport const StatsDisplayErrorBoundary =\n  createToolUiErrorBoundary(\"StatsDisplay\");\n"
-    },
-    {
       "path": "components/tool-ui/stats-display/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/stats-display/index.tsx",
-      "content": "export { StatsDisplay } from \"./stats-display\";\nexport { StatsDisplayErrorBoundary } from \"./error-boundary\";\nexport { Sparkline, type SparklineProps } from \"./sparkline\";\nexport {\n  SerializableStatsDisplaySchema,\n  parseSerializableStatsDisplay,\n  safeParseSerializableStatsDisplay,\n  StatFormatSchema,\n  StatDiffSchema,\n  StatSparklineSchema,\n  StatItemSchema,\n  type SerializableStatsDisplay,\n  type StatsDisplayProps,\n  type StatFormat,\n  type StatDiff,\n  type StatSparkline,\n  type StatItem,\n} from \"./schema\";\n"
+      "content": "export { StatsDisplay } from \"./stats-display\";\nexport { Sparkline, type SparklineProps } from \"./sparkline\";\nexport {\n  SerializableStatsDisplaySchema,\n  parseSerializableStatsDisplay,\n  safeParseSerializableStatsDisplay,\n  StatFormatSchema,\n  StatDiffSchema,\n  StatSparklineSchema,\n  StatItemSchema,\n  type SerializableStatsDisplay,\n  type StatsDisplayProps,\n  type StatFormat,\n  type StatDiff,\n  type StatSparkline,\n  type StatItem,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/stats-display/README.md",
       "type": "registry:file",
       "target": "components/tool-ui/stats-display/README.md",
-      "content": "# Stats Display\n\nImplementation for the \"stats-display\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/stats-display/index.tsx\n- serializable schema + parse helpers: components/tool-ui/stats-display/schema.ts\n- error containment: components/tool-ui/stats-display/error-boundary.tsx\n\n## Companion assets\n\n- Docs page: app/docs/stats-display/content.mdx\n- Preset payload: lib/presets/stats-display.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
+      "content": "# Stats Display\n\nImplementation for the \"stats-display\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/stats-display/index.tsx\n- serializable schema + parse helpers: components/tool-ui/stats-display/schema.ts\n\n## Companion assets\n\n- Docs page: app/docs/stats-display/content.mdx\n- Preset payload: lib/presets/stats-display.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
     },
     {
       "path": "components/tool-ui/stats-display/schema.ts",

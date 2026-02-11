@@ -222,7 +222,6 @@ pnpm dlx shadcn@latest add button separator
         <File name="message-draft.tsx" />
         <File name="schema.ts" />
         <File name="index.tsx" />
-        <File name="error-boundary.tsx" />
         <File name="_adapter.tsx" />
       </Folder>
     </Folder>
@@ -242,7 +241,6 @@ pnpm dlx shadcn@latest add button separator
 import { type Toolkit } from "@assistant-ui/react";
 import {
   MessageDraft,
-  MessageDraftErrorBoundary,
   safeParseSerializableMessageDraft,
   SerializableMessageDraftSchema,
 } from "@/components/tool-ui/message-draft";
@@ -256,7 +254,6 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableMessageDraft,
       idPrefix: "message-draft",
       render: (parsedArgs, { result, addResult }) => (
-        <MessageDraftErrorBoundary>
           {result ? (
             <MessageDraft {...parsedArgs} outcome={result} />
           ) : (
@@ -270,7 +267,6 @@ export const toolkit: Toolkit = {
               onCancel={() => addResult?.("cancelled")}
             />
           )}
-        </MessageDraftErrorBoundary>
       ),
     }),
   },

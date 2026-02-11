@@ -6,7 +6,6 @@ Implementation for the "code-block" Tool UI surface.
 
 - public exports: components/tool-ui/code-block/index.tsx
 - serializable schema + parse helpers: components/tool-ui/code-block/schema.ts
-- error containment: components/tool-ui/code-block/error-boundary.tsx
 
 ## Companion assets
 

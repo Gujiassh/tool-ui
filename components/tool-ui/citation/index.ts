@@ -2,7 +2,6 @@ export { Citation } from "./citation";
 export type { CitationProps } from "./citation";
 export { CitationList } from "./citation-list";
 export type { CitationListProps } from "./citation-list";
-export { CitationErrorBoundary } from "./error-boundary";
 export {
   SerializableCitationSchema,
   CitationTypeSchema,

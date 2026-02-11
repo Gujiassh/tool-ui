@@ -6,7 +6,6 @@ Implementation for the "shared" Tool UI surface.
 
 - public exports: components/tool-ui/shared/index.ts
 - serializable schema + parse helpers: components/tool-ui/shared/schema.ts
-- error containment: components/tool-ui/shared/error-boundary.tsx
 
 ## Companion assets
 

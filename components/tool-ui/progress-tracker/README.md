@@ -6,7 +6,6 @@ Implementation for the "progress-tracker" Tool UI surface.
 
 - public exports: components/tool-ui/progress-tracker/index.tsx
 - serializable schema + parse helpers: components/tool-ui/progress-tracker/schema.ts
-- error containment: components/tool-ui/progress-tracker/error-boundary.tsx
 
 ## Companion assets
 

@@ -59,7 +59,6 @@ async function main(): Promise<void> {
   const schemaFile = path.join(componentDir, "schema.ts");
   const adapterFile = path.join(componentDir, "_adapter.tsx");
   const componentFile = path.join(componentDir, `${fileStem}.tsx`);
-  const errorBoundaryFile = path.join(componentDir, "error-boundary.tsx");
   const indexFile = path.join(componentDir, "index.tsx");
   const readmeFile = path.join(componentDir, "README.md");
   const docsFile = path.join(docsDir, "content.mdx");
@@ -135,41 +134,8 @@ export function ${componentName}({ id, className }: ${componentName}Props) {
   );
 
   await writeFileSafe(
-    errorBoundaryFile,
-    `"use client";
-
-import { Component, type ReactNode } from "react";
-
-interface ${componentName}ErrorBoundaryProps {
-  children: ReactNode;
-}
-
-interface ${componentName}ErrorBoundaryState {
-  hasError: boolean;
-}
-
-export class ${componentName}ErrorBoundary extends Component<
-  ${componentName}ErrorBoundaryProps,
-  ${componentName}ErrorBoundaryState
-> {
-  state: ${componentName}ErrorBoundaryState = { hasError: false };
-
-  static getDerivedStateFromError(): ${componentName}ErrorBoundaryState {
-    return { hasError: true };
-  }
-
-  override render() {
-    if (this.state.hasError) return null;
-    return this.props.children;
-  }
-}
-`,
-  );
-
-  await writeFileSafe(
     indexFile,
     `export { ${componentName} } from "./${fileStem}";
-export { ${componentName}ErrorBoundary } from "./error-boundary";
 export {
   Serializable${componentName}Schema,
   parseSerializable${componentName},
@@ -189,7 +155,6 @@ Source for the \`${componentName}\` Tool UI component.
 
 - \`./schema.ts\` - serializable contract + parse helpers
 - \`./${fileStem}.tsx\` - component implementation
-- \`./error-boundary.tsx\` - local error containment
 - \`./index.tsx\` - public exports
 
 ## Companion docs

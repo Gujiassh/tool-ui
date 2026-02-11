@@ -281,7 +281,6 @@ const searchProducts = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import {
   DataTable,
-  DataTableErrorBoundary,
   safeParseSerializableDataTable,
 } from "@/components/tool-ui/data-table";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -293,9 +292,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableDataTable,
       render: (parsedResult) => (
         <>
-          <DataTableErrorBoundary>
             <DataTable rowIdKey="id" {...parsedResult} />
-          </DataTableErrorBoundary>
         </>
       ),
     }),

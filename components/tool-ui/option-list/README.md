@@ -6,7 +6,6 @@ Implementation for the "option-list" Tool UI surface.
 
 - public exports: components/tool-ui/option-list/index.tsx
 - serializable schema + parse helpers: components/tool-ui/option-list/schema.ts
-- error containment: components/tool-ui/option-list/error-boundary.tsx
 
 ## Companion assets
 

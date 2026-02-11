@@ -18,16 +18,10 @@
       "content": "/**\n * Adapter: UI and utility re-exports for copy-standalone portability.\n *\n * When copying this component to another project, update these imports\n * to match your project's paths:\n *\n *   cn        → Your Tailwind merge utility (e.g., \"@/lib/utils\", \"~/lib/cn\")\n *   Button    → shadcn/ui Button\n *   Separator → shadcn/ui Separator\n */\n\nexport { cn } from \"../../../lib/ui/cn\";\nexport { Button } from \"../../ui/button\";\nexport { Separator } from \"../../ui/separator\";\n"
     },
     {
-      "path": "components/tool-ui/question-flow/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/question-flow/error-boundary.tsx",
-      "content": "\"use client\";import { createToolUiErrorBoundary } from \"../shared/error-boundary\";\n\nexport const QuestionFlowErrorBoundary =\n  createToolUiErrorBoundary(\"QuestionFlow\");\n"
-    },
-    {
       "path": "components/tool-ui/question-flow/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/question-flow/index.tsx",
-      "content": "export { QuestionFlow } from \"./question-flow\";\nexport { QuestionFlowErrorBoundary } from \"./error-boundary\";\nexport {\n  SerializableQuestionFlowSchema,\n  SerializableProgressiveModeSchema,\n  SerializableUpfrontModeSchema,\n  SerializableReceiptModeSchema,\n  QuestionFlowOptionSchema,\n  QuestionFlowStepDefinitionSchema,\n  QuestionFlowChoiceSchema,\n  QuestionFlowSummaryItemSchema,\n  parseSerializableQuestionFlow,\n  safeParseSerializableQuestionFlow,\n  type SerializableQuestionFlow,\n  type SerializableProgressiveMode,\n  type SerializableUpfrontMode,\n  type SerializableReceiptMode,\n  type QuestionFlowProps,\n  type QuestionFlowProgressiveProps,\n  type QuestionFlowUpfrontProps,\n  type QuestionFlowReceiptProps,\n  type QuestionFlowOption,\n  type QuestionFlowStepDefinition,\n  type QuestionFlowChoice,\n  type QuestionFlowSummaryItem,\n} from \"./schema\";\n"
+      "content": "export { QuestionFlow } from \"./question-flow\";\nexport {\n  SerializableQuestionFlowSchema,\n  SerializableProgressiveModeSchema,\n  SerializableUpfrontModeSchema,\n  SerializableReceiptModeSchema,\n  QuestionFlowOptionSchema,\n  QuestionFlowStepDefinitionSchema,\n  QuestionFlowChoiceSchema,\n  QuestionFlowSummaryItemSchema,\n  parseSerializableQuestionFlow,\n  safeParseSerializableQuestionFlow,\n  type SerializableQuestionFlow,\n  type SerializableProgressiveMode,\n  type SerializableUpfrontMode,\n  type SerializableReceiptMode,\n  type QuestionFlowProps,\n  type QuestionFlowProgressiveProps,\n  type QuestionFlowUpfrontProps,\n  type QuestionFlowReceiptProps,\n  type QuestionFlowOption,\n  type QuestionFlowStepDefinition,\n  type QuestionFlowChoice,\n  type QuestionFlowSummaryItem,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/question-flow/question-flow.tsx",
@@ -39,7 +33,7 @@
       "path": "components/tool-ui/question-flow/README.md",
       "type": "registry:file",
       "target": "components/tool-ui/question-flow/README.md",
-      "content": "# Question Flow\n\nImplementation for the \"question-flow\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/question-flow/index.tsx\n- serializable schema + parse helpers: components/tool-ui/question-flow/schema.ts\n- error containment: components/tool-ui/question-flow/error-boundary.tsx\n\n## Companion assets\n\n- Docs page: app/docs/question-flow/content.mdx\n- Preset payload: lib/presets/question-flow.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
+      "content": "# Question Flow\n\nImplementation for the \"question-flow\" Tool UI surface.\n\n## Files\n\n- public exports: components/tool-ui/question-flow/index.tsx\n- serializable schema + parse helpers: components/tool-ui/question-flow/schema.ts\n\n## Companion assets\n\n- Docs page: app/docs/question-flow/content.mdx\n- Preset payload: lib/presets/question-flow.ts\n\n## Quick check\n\nRun this after edits:\n\npnpm test\n"
     },
     {
       "path": "components/tool-ui/question-flow/schema.ts",
@@ -52,12 +46,6 @@
       "type": "registry:lib",
       "target": "components/tool-ui/shared/contract.ts",
       "content": "import { z } from \"zod\";\nimport { parseWithSchema, safeParseWithSchema } from \"./parse\";\n\nexport interface ToolUiContract<T> {\n  schema: z.ZodType<T>;\n  parse: (input: unknown) => T;\n  safeParse: (input: unknown) => T | null;\n}\n\nexport function defineToolUiContract<T>(\n  componentName: string,\n  schema: z.ZodType<T>,\n): ToolUiContract<T> {\n  return {\n    schema,\n    parse: (input: unknown) => parseWithSchema(schema, input, componentName),\n    safeParse: (input: unknown) => safeParseWithSchema(schema, input),\n  };\n}\n"
-    },
-    {
-      "path": "components/tool-ui/shared/error-boundary.tsx",
-      "type": "registry:component",
-      "target": "components/tool-ui/shared/error-boundary.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nexport interface ToolUIErrorBoundaryProps {\n  componentName: string;\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;\n}\n\nexport type ToolUiComponentBoundaryProps = Omit<\n  ToolUIErrorBoundaryProps,\n  \"componentName\"\n>;\n\ninterface ToolUIErrorBoundaryState {\n  hasError: boolean;\n  error?: Error;\n}\n\nexport class ToolUIErrorBoundary extends React.Component<\n  ToolUIErrorBoundaryProps,\n  ToolUIErrorBoundaryState\n> {\n  constructor(props: ToolUIErrorBoundaryProps) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError(error: Error): ToolUIErrorBoundaryState {\n    return { hasError: true, error };\n  }\n\n  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {\n    console.error(\n      `[${this.props.componentName}] render error:`,\n      error,\n      errorInfo,\n    );\n    this.props.onError?.(error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        this.props.fallback ?? (\n          <div className=\"border-destructive text-destructive rounded-lg border p-4\">\n            <p className=\"font-semibold\">\n              {this.props.componentName} failed to render\n            </p>\n            <p className=\"text-sm\">{this.state.error?.message}</p>\n          </div>\n        )\n      );\n    }\n    return this.props.children;\n  }\n}\n\nexport function createToolUiErrorBoundary(componentName: string) {\n  const ToolUiComponentBoundary = ({\n    children,\n    ...rest\n  }: ToolUiComponentBoundaryProps) => (\n    <ToolUIErrorBoundary componentName={componentName} {...rest}>\n      {children}\n    </ToolUIErrorBoundary>\n  );\n\n  ToolUiComponentBoundary.displayName = `${componentName}ErrorBoundary`;\n  return ToolUiComponentBoundary;\n}\n"
     },
     {
       "path": "components/tool-ui/shared/parse.ts",

@@ -6,7 +6,6 @@ Implementation for the "terminal" Tool UI surface.
 
 - public exports: components/tool-ui/terminal/index.tsx
 - serializable schema + parse helpers: components/tool-ui/terminal/schema.ts
-- error containment: components/tool-ui/terminal/error-boundary.tsx
 
 ## Companion assets
 

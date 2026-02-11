@@ -6,7 +6,6 @@ Implementation for the "citation" Tool UI surface.
 
 - public exports: components/tool-ui/citation/index.ts
 - serializable schema + parse helpers: components/tool-ui/citation/schema.ts
-- error containment: components/tool-ui/citation/error-boundary.tsx
 
 ## Companion assets
 

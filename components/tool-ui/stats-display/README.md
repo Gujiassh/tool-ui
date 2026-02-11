@@ -6,7 +6,6 @@ Implementation for the "stats-display" Tool UI surface.
 
 - public exports: components/tool-ui/stats-display/index.tsx
 - serializable schema + parse helpers: components/tool-ui/stats-display/schema.ts
-- error containment: components/tool-ui/stats-display/error-boundary.tsx
 
 ## Companion assets
 

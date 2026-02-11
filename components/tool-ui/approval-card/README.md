@@ -6,7 +6,6 @@ Implementation for the "approval-card" Tool UI surface.
 
 - public exports: components/tool-ui/approval-card/index.tsx
 - serializable schema + parse helpers: components/tool-ui/approval-card/schema.ts
-- error containment: components/tool-ui/approval-card/error-boundary.tsx
 
 ## Companion assets
 

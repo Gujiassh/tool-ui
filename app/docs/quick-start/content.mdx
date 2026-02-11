@@ -113,7 +113,6 @@ import {
 } from "@assistant-ui/react";
 import {
   LinkPreview,
-  LinkPreviewErrorBoundary,
   safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -129,9 +128,7 @@ const toolkit: Toolkit = {
       safeParse: safeParseSerializableLinkPreview,
       render: (parsedResult) => (
         <>
-          <LinkPreviewErrorBoundary>
             <LinkPreview {...parsedResult} maxWidth="420px" />
-          </LinkPreviewErrorBoundary>
         </>
       ),
     }),

@@ -17,8 +17,7 @@ Each component lives in [`components/tool-ui/`](https://github.com/assistant-ui/
 - `schema.ts`: Serializable schema + strict/safe parsers (`SerializableXSchema`, `parseSerializableX`, `safeParseSerializableX`)
 - `types.ts` (optional): TypeScript type definitions when component complexity justifies a dedicated file
 - `component-name.tsx`: Main component implementation
-- `index.ts` or `index.tsx`: Public exports (component, types, parser, error boundary)
-- `error-boundary.tsx`: Error boundary wrapper for the component
+- `index.ts` or `index.tsx`: Public exports (component, types, parser)
 
 ### Sub-Components (as needed)
 
@@ -74,8 +73,7 @@ Implementation pattern:
    - Minimal but clear chrome
 5. Sub-components: Extract header/body/footer/actions when the component grows
 6. `context.tsx`: Use React context only when sub-components genuinely need shared state
-7. `error-boundary.tsx`: Wrap the component so bad props don't crash the whole chat
-8. `index.tsx`: Export the public API (component, types, strict/safe parsers, error boundary)
+7. `index.tsx`: Export the public API (component, types, strict/safe parsers)
 
 </Step>
 
@@ -103,7 +101,7 @@ Check that the component meets standards:
 - **Responsive**: Works on mobile (320px) through desktop widths
 - **No scroll traps**: Avoid inner scroll areas when possible; let the chat container handle scrolling
 - **Reduced motion**: Respect `prefers-reduced-motion` for animations
-- **Error handling**: Validate props, show graceful error states, use error boundaries
+- **Error handling**: Validate props and show graceful error states
 - **Performance**: Avoid unnecessary re-renders and layout thrash
 
 </Step>

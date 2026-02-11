@@ -129,7 +129,6 @@ const showCodeBlock = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import {
   CodeBlock,
-  CodeBlockErrorBoundary,
   safeParseSerializableCodeBlock,
 } from "@/components/tool-ui/code-block";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
@@ -141,9 +140,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableCodeBlock,
       render: (parsedResult) => (
         <>
-          <CodeBlockErrorBoundary>
             <CodeBlock {...parsedResult} />
-          </CodeBlockErrorBoundary>
         </>
       ),
     }),

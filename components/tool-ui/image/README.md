@@ -6,7 +6,6 @@ Implementation for the "image" Tool UI surface.
 
 - public exports: components/tool-ui/image/index.ts
 - serializable schema + parse helpers: components/tool-ui/image/schema.ts
-- error containment: components/tool-ui/image/error-boundary.tsx
 
 ## Companion assets
 

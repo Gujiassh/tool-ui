@@ -36,7 +36,6 @@ import type {
 import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import type { FormatConfig } from "./formatters";
-import { DataTableErrorBoundary } from "./error-boundary";
 
 export const DEFAULT_LOCALE = "en-US" as const;
 
@@ -246,7 +245,6 @@ function DataTableLayout({
                 : undefined
             }
           >
-            <DataTableErrorBoundary>
               <Table>
                 {columns.length > 0 && (
                   <colgroup>
@@ -264,7 +262,6 @@ function DataTableLayout({
                   <DataTableContent />
                 )}
               </Table>
-            </DataTableErrorBoundary>
           </div>
         </div>
       </div>
@@ -287,7 +284,6 @@ function DataTableLayout({
             ` Columns: ${columns.map((c) => c.label).join(", ")}.`}
         </div>
 
-        <DataTableErrorBoundary>
           {data.length === 0 ? (
             <div className="text-muted-foreground py-8 text-center">
               {emptyMessage}
@@ -308,7 +304,6 @@ function DataTableLayout({
               })}
             </div>
           )}
-        </DataTableErrorBoundary>
       </div>
 
       {sortAnnouncement && (

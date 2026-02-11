@@ -6,7 +6,6 @@ Implementation for the "preferences-panel" Tool UI surface.
 
 - public exports: components/tool-ui/preferences-panel/index.tsx
 - serializable schema + parse helpers: components/tool-ui/preferences-panel/schema.ts
-- error containment: components/tool-ui/preferences-panel/error-boundary.tsx
 
 ## Companion assets
 

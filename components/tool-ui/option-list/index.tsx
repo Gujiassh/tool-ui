@@ -1,5 +1,4 @@
 export { OptionList } from "./option-list";
-export { OptionListErrorBoundary } from "./error-boundary";
 export type {
   OptionListProps,
   OptionListOption,

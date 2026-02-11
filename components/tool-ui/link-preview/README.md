@@ -6,7 +6,6 @@ Implementation for the "link-preview" Tool UI surface.
 
 - public exports: components/tool-ui/link-preview/index.ts
 - serializable schema + parse helpers: components/tool-ui/link-preview/schema.ts
-- error containment: components/tool-ui/link-preview/error-boundary.tsx
 
 ## Companion assets
 

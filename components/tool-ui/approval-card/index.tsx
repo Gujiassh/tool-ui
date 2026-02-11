@@ -1,5 +1,4 @@
 export { ApprovalCard } from "./approval-card";
-export { ApprovalCardErrorBoundary } from "./error-boundary";
 export {
   SerializableApprovalCardSchema,
   parseSerializableApprovalCard,
