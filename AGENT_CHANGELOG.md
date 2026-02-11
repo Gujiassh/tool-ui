@@ -5,12 +5,13 @@
 
 ## Current State Summary
 
-Tool UI is a maintainer-owned copy/paste component library (shadcn/ui model) for AI assistant interfaces. Component APIs are flat, receipt semantics are unified on `choice`, and component directories are treated as the product surface (`schema`, `component`, `README`, exports). Interactive component modules import UI primitives through local `_adapter.tsx` files, and per-component `error-boundary.tsx` wrappers are no longer part of the component contract. Weather Widget is on a clean-break V3.1 payload contract with deterministic scene-time input via `time`.
+Tool UI is a maintainer-owned copy/paste component library (shadcn/ui model) for AI assistant interfaces with a registry-first install path (`https://tool-ui.com/r/<component>.json`). Component APIs are flat, receipt semantics are unified on `choice`, and component directories remain the product surface (`schema`, `component`, `README`, exports). Registry adapters now use `@/lib/utils` for `cn` (no registry-shipped `lib/ui/cn.ts`), Tool UI component motion is constrained to Tailwind/tw-animate-compatible classes, and docs place Source/Install + GitHub source links ahead of feature marketing sections.
 
 ## Stale Information Detected
 
 | Location | States | Reality | Since |
 |----------|--------|---------|-------|
+| `README.md` (Shadcn Registry section) | Registry artifacts include `lib/ui/cn.ts` | Registry adapters use `@/lib/utils`; `lib/ui/cn.ts` is no longer part of generated install artifacts | 2026-02 |
 | `.claude/plans/plan-sequential-munching-canyon.md` | References `hooks/use-code-gen.ts` TypeScript generation | Tuning flow is apply/recover via repo routes; `use-code-gen.ts` removed | 2026-02 |
 | `.claude/plans/plan-sequential-munching-canyon.md` | Targets deletion of `app/sandbox/weather-compositor/` | `weather-tuning` still imports compositor presets/interpolation modules; compositor remains active | 2026-02 |
 | `.claude/docs/component-workflow.md` | New component contract requires `error-boundary.tsx` | Error-boundary layer was removed from component contracts; index exports no longer include local error boundaries | 2026-02 |
@@ -21,6 +22,77 @@ Tool UI is a maintainer-owned copy/paste component library (shadcn/ui model) for
 | `docs/plans/2026-01-23-feat-wizard-step-visual-polish-plan.md` | Polish targets `WizardStep` paths and naming | Final shipped component naming/path is `QuestionFlow` | 2026-01 |
 
 ## Timeline
+
+### 2026-02-11 — Component Docs Prioritize Install + Source Visibility
+
+**What changed:** All component docs were normalized so `## Source and Install` appears above `## Key Features`, with a GitHub source link for each component (`components/tool-ui/<id>`).
+
+Highlights:
+- Reordered sections across all component docs to surface install instructions first
+- Normalized mixed `## Features`/`## Key Features` headings to `## Key Features`
+- Added docs contract enforcement to prevent regressions in section order and source-link presence
+
+**Why:** Make integration steps and source discovery immediately visible for maintainers/copy-paste users.
+
+**Agent impact:** In component docs, place install/source sections before feature callouts. Include both:
+- `npx shadcn@latest add https://tool-ui.com/r/<component>.json`
+- GitHub source link to `components/tool-ui/<component>`
+
+**Files:** `app/docs/*/content.mdx`, `lib/tests/tool-ui/docs/registry-installation-contract.test.ts`
+
+---
+
+### 2026-02-11 — Tool UI Animation Portability Standardized for Registry Consumers
+
+**What changed:** Tool UI components were migrated off repo-private animation keyframes and now rely on Tailwind/tw-animate-compatible classes only.
+
+Highlights:
+- Replaced private animation names (e.g. `spring-bounce`, `check-draw`, `fade-blur-in`, `progress-pulse`) in shipped component code
+- Removed inline `@keyframes` from `stats-display/sparkline`
+- Added portability contract tests that fail on private keyframe tokens or inline keyframes in source and generated registry artifacts
+- Added registry dependency assertions for motion primitives (`accordion`/`collapsible`)
+
+**Why:** Prevent no-op/broken transitions in downstream shadcn apps that do not include this repo’s private CSS.
+
+**Agent impact:** For `components/tool-ui/**`, use Tailwind/tw-animate classes (`animate-in/out`, fade/zoom/slide, `animate-spin`, `animate-pulse`) and avoid custom keyframe names unless they are provided by stock shadcn/tw-animate setup.
+
+**Files:** `components/tool-ui/plan/plan.tsx`, `components/tool-ui/progress-tracker/progress-tracker.tsx`, `components/tool-ui/question-flow/question-flow.tsx`, `components/tool-ui/approval-card/approval-card.tsx`, `components/tool-ui/option-list/option-list.tsx`, `components/tool-ui/stats-display/sparkline.tsx`, `lib/tests/tool-ui/docs/animation-portability-contract.test.ts`, `lib/tests/registry/tool-ui-registry.test.ts`
+
+---
+
+### 2026-02-11 — Registry Adapter `cn` Dependency Migrated to shadcn `@/lib/utils`
+
+**What changed:** Registry component adapters were updated to import `cn` from `@/lib/utils`; generated artifacts no longer rely on/emit `lib/ui/cn.ts`.
+
+Highlights:
+- Adapter imports switched from `@/lib/ui/cn` to `@/lib/utils`
+- Registry artifact checks updated accordingly
+- Fresh install path validated against root-level shadcn command and hosted component JSON URLs
+
+**Why:** Align Tool UI install output with stock shadcn app structure and eliminate repo-specific `cn` scaffolding.
+
+**Agent impact:** For registry-consumed component adapters, expect:
+- `import { cn } from "@/lib/utils"`
+- no generated `lib/ui/cn.ts` dependency
+
+**Files:** `components/tool-ui/*/_adapter.tsx`, `lib/tests/registry/tool-ui-registry.test.ts`, `app/docs/quick-start/content.mdx`, `public/r/*.json`
+
+---
+
+### 2026-02-11 — Registry-First Install Path Finalized; ZIP/Manual Guidance Removed
+
+**What changed:** Docs were converted to a single registry-first install flow using full component URLs, and legacy ZIP/manual copy instructions were removed.
+
+**Why:** Reduce install ambiguity and support a single canonical setup path for consumers.
+
+**Agent impact:** Use only:
+- `npx shadcn@latest add https://tool-ui.com/r/<component>.json`
+
+Do not propose ZIP/manual copy workflows.
+
+**Files:** `app/docs/*/content.mdx`, `app/docs/quick-start/content.mdx`, `lib/tests/tool-ui/docs/registry-installation-contract.test.ts`
+
+---
 
 ### 2026-02-11 — Import Boundary Enforcement + Error Boundary Layer Removal
 
@@ -313,6 +385,9 @@ const glassStyles = useGlassStyles({
 | Import shadcn primitives (`@/components/ui/*`, `@/lib/ui/cn`) directly in non-adapter component files | Import those primitives from local `./_adapter` files | 2026-02-11 |
 | Require/export per-component `error-boundary.tsx` wrappers | Export component + schema contracts directly; rely on caller/app-level boundaries | 2026-02-11 |
 | Add new components without local READMEs and contract scaffold files | Use `pnpm component:new` and keep the full component directory contract | 2026-02-11 |
+| Depend on registry-shipped `lib/ui/cn.ts` in generated component installs | Use shadcn `@/lib/utils` (`cn`) in adapter output | 2026-02-11 |
+| Use private animation keyframes in `components/tool-ui/**` (e.g. `spring-bounce`, `check-draw`, `fade-blur-in`) | Use Tailwind/tw-animate-compatible classes only | 2026-02-11 |
+| Put `## Source and Install` below features in component docs | Put `## Source and Install` above `## Key Features` and include GitHub source link | 2026-02-11 |
 
 ## Trajectory
 
@@ -328,3 +403,5 @@ Based on recent changes, the project is:
 - **Hardening weather contracts** — V3.1 clean-break payloads with deterministic `time` input and apply-only tuning workflow
 - **Hardening delivery rails** — registry auto-discovery + CI gates to catch drift early
 - **Tightening portability boundaries** — adapter-only UI imports and removal of per-component error-boundary wrappers
+- **Registry-first distribution UX** — docs and tests now prioritize install/source visibility and hosted registry URLs
+- **Runtime portability over private styling** — shipped Tool UI components avoid repo-private keyframes and rely on tw-animate-compatible motion
