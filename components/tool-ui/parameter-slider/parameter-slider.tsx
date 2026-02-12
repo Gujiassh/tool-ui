@@ -435,35 +435,20 @@ function SliderRow({
   // Metallic reflection gradient that follows the handle position
   // Visible while dragging OR when resting at edges (0%/100%)
   const reflectionStyle = useMemo(() => {
-    // At terminal values, position gradient at actual edge for clean alignment
-    const atLeftEdge = valuePercent <= 0;
-    const atRightEdge = valuePercent >= 100;
     const edgeThreshold = 3;
     const nearEdge =
       valuePercent <= edgeThreshold || valuePercent >= 100 - edgeThreshold;
 
     // Narrower spread when stationary at edges (~35% narrower)
-    const spread = nearEdge && !isDragging ? 6.5 : 10;
-
-    // Position: at terminal values use actual edge, otherwise use inset formula
-    let handlePos: number;
-    if (atLeftEdge) {
-      handlePos = 0;
-    } else if (atRightEdge) {
-      handlePos = 100;
-    } else {
-      // Approximate the inset: map 0-100% to ~1-99% for gradient
-      const insetApprox = 1;
-      handlePos = insetApprox + (100 - insetApprox * 2) * (valuePercent / 100);
-    }
-
-    const start = Math.max(0, handlePos - spread);
-    const end = Math.min(100, handlePos + spread);
+    const spreadPercent = nearEdge && !isDragging ? 6.5 : 10;
+    const handlePos = toRadixThumbPosition(valuePercent);
+    const start = `clamp(0%, calc(${handlePos} - ${spreadPercent}%), 100%)`;
+    const end = `clamp(0%, calc(${handlePos} + ${spreadPercent}%), 100%)`;
 
     const gradient = `linear-gradient(to right,
-      transparent ${start}%,
-      white ${handlePos}%,
-      transparent ${end}%)`;
+      transparent ${start},
+      white ${handlePos},
+      transparent ${end})`;
 
     return {
       background: gradient,
