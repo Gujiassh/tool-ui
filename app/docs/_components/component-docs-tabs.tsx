@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useRef, type ReactNode, Suspense } from "react";
+import { memo, useCallback, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/ui/cn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocsBorderedShell } from "./docs-bordered-shell";
@@ -10,18 +10,6 @@ import { useTabSearchParam } from "@/hooks/use-tab-search-param";
 type DocsTab = "docs" | "examples";
 
 const VALID_TABS = ["docs", "examples"] as const;
-
-function ContentSkeleton() {
-  return (
-    <div className="animate-pulse space-y-4 p-6">
-      <div className="bg-muted h-8 w-3/4 rounded" />
-      <div className="bg-muted h-4 w-full rounded" />
-      <div className="bg-muted h-4 w-5/6 rounded" />
-      <div className="bg-muted h-4 w-4/5 rounded" />
-      <div className="bg-muted mt-6 h-32 w-full rounded" />
-    </div>
-  );
-}
 
 interface ComponentDocsTabsProps {
   docs: ReactNode;
@@ -80,16 +68,14 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             className="scrollbar-subtle h-full min-h-0 flex-1 overflow-y-auto"
           >
             <div className="z-0 min-h-0 flex-1 p-6 pb-24 sm:p-10 lg:p-12">
-              <DocsContent>
-                <Suspense fallback={<ContentSkeleton />}>{docs}</Suspense>
-              </DocsContent>
+              <DocsContent>{docs}</DocsContent>
             </div>
           </TabsContent>
           <TabsContent
             value="examples"
             className="flex h-full min-h-0 flex-1 overflow-hidden"
           >
-            <Suspense fallback={<ContentSkeleton />}>{examples}</Suspense>
+            {examples}
           </TabsContent>
         </div>
       </Tabs>
