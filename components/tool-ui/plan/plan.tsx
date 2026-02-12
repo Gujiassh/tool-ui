@@ -366,7 +366,12 @@ function PlanRoot({
             </>
           )}
 
-          <ul className="mt-4 min-w-0 space-y-1">
+          <ul
+            className={cn(
+              "min-w-0 space-y-1",
+              showProgress ? "mt-4" : "mt-0",
+            )}
+          >
             <TodoList todos={visibleTodos} newTodoIds={newTodoIds} />
 
             {hiddenTodos.length > 0 && (

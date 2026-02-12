@@ -21,4 +21,19 @@ describe("plan render contract", () => {
     expect(html).toContain('aria-valuemax="100"');
     expect(html).toContain('aria-valuenow="50"');
   });
+
+  it("does not reserve progress spacing in compact mode", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(Plan.Compact, {
+        id: "plan-compact-render-contract",
+        title: "Compact Render Contract",
+        todos: [
+          { id: "todo-1", label: "First", status: "completed" as const },
+          { id: "todo-2", label: "Second", status: "pending" as const },
+        ],
+      }),
+    );
+
+    expect(html).not.toContain('class="mt-4 min-w-0 space-y-1"');
+  });
 });
