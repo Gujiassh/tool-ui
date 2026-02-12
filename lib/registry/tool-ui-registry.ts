@@ -57,6 +57,9 @@ const IMPORT_SPECIFIER_RE = /(?:import|export)\s[^"']*from\s+["']([^"']+)["']/g;
 const DYNAMIC_IMPORT_RE = /import\(["']([^"']+)["']\)/g;
 const TOOL_UI_COMPONENTS_DIR = "components/tool-ui";
 const IGNORED_REGISTRY_FILE_NAMES = new Set([".DS_Store", "Thumbs.db"]);
+const DEPENDENCY_VERSION_OVERRIDES: Record<string, string> = {
+  recharts: "2.15.4",
+};
 
 const COMPONENT_DESCRIPTION_OVERRIDES: Partial<Record<string, string>> = {
   "approval-card": "Binary confirmation for agent actions.",
@@ -227,6 +230,11 @@ function toRegistryDependencyFromResolvedPath(
   return value || null;
 }
 
+function withPinnedVersion(pkg: string): string {
+  const pinnedVersion = DEPENDENCY_VERSION_OVERRIDES[pkg];
+  return pinnedVersion ? `${pkg}@${pinnedVersion}` : pkg;
+}
+
 async function discoverToolUiRegistryDefinitions(
   projectRoot: string,
 ): Promise<ToolUiRegistryDefinition[]> {
@@ -326,7 +334,7 @@ async function buildRegistryItem(
       for (const specifier of importSpecifiers) {
         const pkg = toPackageName(specifier);
         if (pkg && pkg !== "react" && pkg !== "react-dom") {
-          dependencySet.add(pkg);
+          dependencySet.add(withPinnedVersion(pkg));
         }
 
         let registryDependency = toRegistryDependency(specifier);

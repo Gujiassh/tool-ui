@@ -161,7 +161,7 @@
       "title": "Chart",
       "description": "Visualize data with interactive charts.",
       "dependencies": [
-        "recharts",
+        "recharts@2.15.4",
         "zod"
       ],
       "registryDependencies": [

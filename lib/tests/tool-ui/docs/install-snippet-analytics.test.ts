@@ -12,7 +12,7 @@ describe("install snippet analytics helpers", () => {
   });
 
   test("detects shadcn registry install commands", () => {
-    const snippet = "npx shadcn@latest add https://tool-ui.com/r/plan.json";
+    const snippet = "npx shadcn@latest add @tool-ui/plan";
     expect(detectInstallSnippetType(snippet)).toBe("registry");
   });
 

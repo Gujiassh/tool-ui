@@ -92,4 +92,13 @@ describe("Tool UI registry artifacts", () => {
       }
     }
   });
+
+  it("pins chart dependency to a recharts v2 release compatible with shadcn charts", async () => {
+    const artifacts = await buildToolUiRegistryArtifacts(getProjectRoot());
+    const chartItem = artifacts.items.find((item) => item.name === "chart");
+
+    expect(chartItem, "missing registry item: chart").toBeDefined();
+    expect(chartItem?.dependencies ?? []).toContain("recharts@2.15.4");
+    expect(chartItem?.dependencies ?? []).not.toContain("recharts");
+  });
 });
