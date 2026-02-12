@@ -9,7 +9,12 @@ import {
   useState,
 } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";import { ActionButtons } from "../shared/action-buttons";
+import type {
+  ParameterSliderProps,
+  SliderConfig,
+  SliderValue,
+} from "./schema";
+import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import { useControllableState } from "../shared/use-controllable-state";
 import { useSignatureReset } from "../shared/use-signature-reset";
@@ -64,14 +69,35 @@ const DETECTION_MARGIN_Y = 12;
 const TRACK_HEIGHT = 48;
 const TEXT_RELEASE_INSET = 8;
 const TRACK_EDGE_INSET = 4; // px from track edge - keeps elements visible at extremes
+const THUMB_WIDTH = 12; // w-3
 // Text vertical offset: raised slightly from center
 // Positive = raised, negative = lowered
 const TEXT_VERTICAL_OFFSET = 0.5;
 
+function clampPercent(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
 // Convert a percentage (0-100) to an inset position string
 // At 0%: 4px from left edge; at 100%: 4px from right edge
 function toInsetPosition(percent: number): string {
-  return `calc(${TRACK_EDGE_INSET}px + (100% - ${TRACK_EDGE_INSET * 2}px) * ${percent / 100})`;
+  const safePercent = clampPercent(percent);
+  return `calc(${TRACK_EDGE_INSET}px + (100% - ${TRACK_EDGE_INSET * 2}px) * ${safePercent / 100})`;
+}
+
+// Radix keeps the thumb in bounds by applying a percent-dependent px offset.
+// Matching this for fill clipping prevents handle/fill drift near extremes.
+function getRadixThumbInBoundsOffsetPx(percent: number): number {
+  const safePercent = clampPercent(percent);
+  const halfWidth = THUMB_WIDTH / 2;
+  return halfWidth - (safePercent * halfWidth) / 50;
+}
+
+function toRadixThumbPosition(percent: number): string {
+  const safePercent = clampPercent(percent);
+  const offsetPx = getRadixThumbInBoundsOffsetPx(safePercent);
+  return `calc(${safePercent}% + ${offsetPx}px)`;
 }
 
 function signedDistanceToRoundedRect(
@@ -202,7 +228,6 @@ interface SliderRowProps {
   config: SliderConfig;
   value: number;
   onChange: (value: number) => void;
-  disabled?: boolean;
   trackClassName?: string;
   fillClassName?: string;
   handleClassName?: string;
@@ -212,12 +237,11 @@ function SliderRow({
   config,
   value,
   onChange,
-  disabled,
   trackClassName,
   fillClassName,
   handleClassName,
 }: SliderRowProps) {
-  const { id, label, min, max, step = 1, unit, precision } = config;
+  const { id, label, min, max, step = 1, unit, precision, disabled } = config;
   // Per-slider theming overrides component-level theming
   const resolvedTrackClassName = config.trackClassName ?? trackClassName;
   const resolvedFillClassName = config.fillClassName ?? fillClassName;
@@ -233,6 +257,7 @@ function SliderRow({
   const [dragGap, setDragGap] = useState(0);
   const [fullGap, setFullGap] = useState(0);
   const [intersectsText, setIntersectsText] = useState(false);
+  const [layoutVersion, setLayoutVersion] = useState(0);
 
   useEffect(() => {
     if (!isDragging) return;
@@ -240,6 +265,28 @@ function SliderRow({
     document.addEventListener("pointerup", handlePointerUp);
     return () => document.removeEventListener("pointerup", handlePointerUp);
   }, [isDragging]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const labelEl = labelRef.current;
+    const valueEl = valueRef.current;
+    if (!track || !labelEl || !valueEl) return;
+
+    const bumpLayoutVersion = () => setLayoutVersion((v) => v + 1);
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => {
+        bumpLayoutVersion();
+      });
+      observer.observe(track);
+      observer.observe(labelEl);
+      observer.observe(valueEl);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener("resize", bumpLayoutVersion);
+    return () => window.removeEventListener("resize", bumpLayoutVersion);
+  }, []);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -256,9 +303,9 @@ function SliderRow({
     const valuePercent = sliderRangeToPercent({ value, min, max });
     // Use same inset coordinate system as visual elements
     const thumbCenterPx =
-      TRACK_EDGE_INSET +
-      ((trackWidth - TRACK_EDGE_INSET * 2) * valuePercent) / 100;
-    const thumbHalfWidth = 6;
+      (trackWidth * clampPercent(valuePercent)) / 100 +
+      getRadixThumbInBoundsOffsetPx(valuePercent);
+    const thumbHalfWidth = THUMB_WIDTH / 2;
 
     // Text is raised by TEXT_VERTICAL_OFFSET from center
     const trackCenterY = TRACK_HEIGHT / 2 - TEXT_VERTICAL_OFFSET;
@@ -315,7 +362,7 @@ function SliderRow({
             ? valueFullGap
             : 0;
     setFullGap(releaseGap);
-  }, [value, min, max]);
+  }, [value, min, max, layoutVersion]);
 
   // While dragging: gradual separation based on distance
   // On release: fully open if intersecting text, fully closed otherwise
@@ -354,27 +401,31 @@ function SliderRow({
     return result;
   }, [crossesZero]);
 
-  const zeroPercent = crossesZero ? ((0 - min) / (max - min)) * 100 : 0;
-  const valuePercent = ((value - min) / (max - min)) * 100;
+  const zeroPercent = crossesZero
+    ? sliderRangeToPercent({ value: 0, min, max })
+    : 0;
+  const valuePercent = sliderRangeToPercent({ value, min, max });
 
-  // Fill clip-path - uses percentage-based inset for Safari compatibility
-  // Safari has issues with complex calc() inside clip-path inset()
+  // Fill clip-path uses the same inset coordinate system as the handle.
+  // This keeps the collapsed stroke aligned with the fill edge near extremes.
   const fillClipPath = useMemo(() => {
-    // Use simple percentages - Safari doesn't handle calc() well in clip-path
-    const toClipFromRight = (percent: number) => `${100 - percent}%`;
-    const toClipFromLeft = (percent: number) => `${percent}%`;
+    const toClipFromRightInset = (percent: number) =>
+      `calc(100% - ${toRadixThumbPosition(percent)})`;
+    const toClipFromLeftInset = (percent: number) =>
+      toRadixThumbPosition(percent);
+    const minInset = toRadixThumbPosition(0);
 
     if (crossesZero) {
       if (valuePercent >= zeroPercent) {
         // Positive: clip from zero on left, value on right
-        return `inset(0 ${toClipFromRight(valuePercent)} 0 ${toClipFromLeft(zeroPercent)})`;
+        return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
       } else {
         // Negative: clip from value on left, zero on right
-        return `inset(0 ${toClipFromRight(zeroPercent)} 0 ${toClipFromLeft(valuePercent)})`;
+        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
       }
     }
-    // Non-crossing: fill from left edge to value
-    return `inset(0 ${toClipFromRight(valuePercent)} 0 0)`;
+    // Non-crossing: fill from min inset to value inset
+    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${minInset})`;
   }, [crossesZero, zeroPercent, valuePercent]);
 
   const fillMaskImage = crossesZero
@@ -384,35 +435,20 @@ function SliderRow({
   // Metallic reflection gradient that follows the handle position
   // Visible while dragging OR when resting at edges (0%/100%)
   const reflectionStyle = useMemo(() => {
-    // At terminal values, position gradient at actual edge for clean alignment
-    const atLeftEdge = valuePercent <= 0;
-    const atRightEdge = valuePercent >= 100;
     const edgeThreshold = 3;
     const nearEdge =
       valuePercent <= edgeThreshold || valuePercent >= 100 - edgeThreshold;
 
     // Narrower spread when stationary at edges (~35% narrower)
-    const spread = nearEdge && !isDragging ? 6.5 : 10;
-
-    // Position: at terminal values use actual edge, otherwise use inset formula
-    let handlePos: number;
-    if (atLeftEdge) {
-      handlePos = 0;
-    } else if (atRightEdge) {
-      handlePos = 100;
-    } else {
-      // Approximate the inset: map 0-100% to ~1-99% for gradient
-      const insetApprox = 1;
-      handlePos = insetApprox + (100 - insetApprox * 2) * (valuePercent / 100);
-    }
-
-    const start = Math.max(0, handlePos - spread);
-    const end = Math.min(100, handlePos + spread);
+    const spreadPercent = nearEdge && !isDragging ? 6.5 : 10;
+    const handlePos = toRadixThumbPosition(valuePercent);
+    const start = `clamp(0%, calc(${handlePos} - ${spreadPercent}%), 100%)`;
+    const end = `clamp(0%, calc(${handlePos} + ${spreadPercent}%), 100%)`;
 
     const gradient = `linear-gradient(to right,
-      transparent ${start}%,
-      white ${handlePos}%,
-      transparent ${end}%)`;
+      transparent ${start},
+      white ${handlePos},
+      transparent ${end})`;
 
     return {
       background: gradient,
@@ -528,10 +564,6 @@ function SliderRow({
         />
 
         <SliderPrimitive.Thumb
-          style={{
-            left: toInsetPosition(valuePercent),
-            transform: "translateX(-50%)",
-          }}
           className={cn(
             "group/thumb z-0 block w-3 shrink-0 cursor-grab rounded-sm",
             "relative bg-transparent outline-none",
