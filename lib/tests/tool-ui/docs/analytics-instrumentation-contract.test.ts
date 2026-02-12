@@ -20,6 +20,17 @@ const FILE_ASSERTIONS = [
     needles: ["analytics.code.blockCopied("],
   },
   {
+    file: "app/docs/_components/tracked-dynamic-codeblock.tsx",
+    needles: [
+      "analytics.code.blockCopied(",
+      "analytics.docs.installSnippetCopied(",
+    ],
+  },
+  {
+    file: "mdx-components.tsx",
+    needles: ["TrackedDynamicCodeBlock"],
+  },
+  {
     file: "app/docs/_components/component-docs-tabs.tsx",
     needles: ["analytics.component.tabSwitched("],
   },
