@@ -107,7 +107,7 @@
       "path": "components/tool-ui/shared/media/sanitize-href.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/shared/media/sanitize-href.ts",
-      "content": "/**\n * Sanitize a URL to ensure it's safe for use in href attributes.\n * Only allows http: and https: protocols.\n *\n * @returns The sanitized URL string, or undefined if invalid/unsafe\n */\nexport function sanitizeHref(href?: string): string | undefined {\n  if (!href) return undefined;\n  try {\n    const url = new URL(href);\n    if (url.protocol === \"http:\" || url.protocol === \"https:\") {\n      return url.toString();\n    }\n  } catch {\n    return undefined;\n  }\n  return undefined;\n}\n"
+      "content": "/**\n * Sanitize a URL to ensure it's safe for use in href attributes.\n * Allows:\n * - Absolute http(s) URLs\n * - Relative URLs (/path, ./path, ../path, ?query, #hash)\n *\n * @returns The sanitized URL string, or undefined if invalid/unsafe\n */\nexport function sanitizeHref(href?: string): string | undefined {\n  if (!href) return undefined;\n  const candidate = href.trim();\n  if (!candidate) return undefined;\n\n  if (\n    candidate.startsWith(\"/\") ||\n    candidate.startsWith(\"./\") ||\n    candidate.startsWith(\"../\") ||\n    candidate.startsWith(\"?\") ||\n    candidate.startsWith(\"#\")\n  ) {\n    if (candidate.startsWith(\"//\")) return undefined;\n    if (/[\\u0000-\\u001F\\u007F]/.test(candidate)) return undefined;\n    return candidate;\n  }\n\n  try {\n    const url = new URL(candidate);\n    if (url.protocol === \"http:\" || url.protocol === \"https:\") {\n      return url.toString();\n    }\n  } catch {\n    return undefined;\n  }\n  return undefined;\n}\n"
     },
     {
       "path": "components/tool-ui/shared/parse.ts",
