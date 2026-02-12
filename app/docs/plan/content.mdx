@@ -154,7 +154,12 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
 
 ### Compact Variant
 
-Use `Plan.Compact` to hide the progress summary and bar.
+Use `Plan.Compact` for a steps-only card body:
+
+- No title/description header
+- No progress summary or progress bar
+- No muted inner container
+- No footer action buttons
 
 ## Todo Item Schema
 
@@ -184,15 +189,15 @@ Use `Plan.Compact` to hide the progress summary and bar.
       type: "Not started",
     },
     in_progress: {
-      description: "Dashed circle (spinning) icon, shimmer text effect",
+      description: "Spinner icon with subtle highlight ring, shimmer text effect",
       type: "Active",
     },
     completed: {
-      description: "Checkmark icon, emerald green with strikethrough",
+      description: "Checkmark icon with emphasized completion state",
       type: "Done",
     },
     cancelled: {
-      description: "X circle icon, destructive color with strikethrough",
+      description: "X circle icon with destructive emphasis",
       type: "Skipped",
     },
   }}
@@ -200,6 +205,6 @@ Use `Plan.Compact` to hide the progress summary and bar.
 
 ## Accessibility
 
-- All animations disable when users have `prefers-reduced-motion` enabled
-- Users who prefer reduced motion see instant state changes without visual motion
-- Functionality is preserved regardless of motion preferences
+- Decorative motion classes (spinner rotation, shimmer, enter/exit effects) are gated behind `motion-safe` variants
+- The progress bar fill uses a base CSS transition, so completion updates can still animate unless your app adds `motion-reduce` overrides
+- Functionality and content remain available regardless of motion preferences
