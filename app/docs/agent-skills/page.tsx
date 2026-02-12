@@ -3,13 +3,13 @@ import Content from "./content.mdx";
 import { DocsArticle } from "../_components/docs-article";
 
 export const metadata: Metadata = {
-  title: "Agent Resources",
-  description: "Resources for coding agents integrating and maintaining Tool UI",
+  title: "Agent Skills",
+  description: "Let your coding agent to the heavy lifting.",
 };
 
 export const revalidate = 3600;
 
-export default function AgentResourcesPage() {
+export default function AgentSkillsPage() {
   return (
     <DocsArticle>
       <Content />

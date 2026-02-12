@@ -1,54 +1,15 @@
 import { DocsHeader } from "../_components/docs-header";
 
 <DocsHeader
-  title="Agent Resources"
-  description="Project resources tailored for coding agents working in this repo."
-  mdxPath="app/docs/agent-resources/content.mdx"
+  title="Agent Skills"
+  description="Let your coding agent to the heavy lifting."
+  mdxPath="app/docs/agent-skills/content.mdx"
 />
 
-This page is the operating map for coding agents integrating or maintaining Tool UI.
-
-## Available project-local skills
-
-Tool UI currently ships one project-local skill:
-
-- **`tool-ui`** at `.agents/skills/tool-ui/SKILL.md`
-
-Use it when the task is to find, install, configure, or integrate Tool UI components in React apps.
-
-### Install this skill (copy/paste)
+## Skill installation
 
 ```bash
 npx skills add https://github.com/assistant-ui/tool-ui --skill tool-ui
-```
-
-## Recommended execution flow for agents
-
-1. Run compatibility checks:
-
-```bash
-python .agents/skills/tool-ui/scripts/tool_ui_compat.py --project .
-python .agents/skills/tool-ui/scripts/tool_ui_compat.py --project . --doctor
-```
-
-2. Discover components or bundles:
-
-```bash
-python .agents/skills/tool-ui/scripts/tool_ui_components.py find "<intent>"
-python .agents/skills/tool-ui/scripts/tool_ui_components.py bundle
-```
-
-3. Generate install command and scaffold:
-
-```bash
-python .agents/skills/tool-ui/scripts/tool_ui_components.py install plan
-python .agents/skills/tool-ui/scripts/tool_ui_scaffold.py --mode assistant-backend --component plan
-```
-
-4. Validate and debug:
-
-```bash
-python3 -m unittest discover -s .agents/skills/tool-ui/tests -p "test_*.py"
 ```
 
 ## High-signal resources for coding agents
