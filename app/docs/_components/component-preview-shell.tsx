@@ -139,6 +139,7 @@ export function ComponentPreviewShell({
 
   const handleCopy = useCallback(() => {
     analytics.component.codeCopied(componentId, "full");
+    analytics.code.blockCopied("tsx", "component_preview");
     copy(code, COPY_ID);
   }, [componentId, code, copy]);
 

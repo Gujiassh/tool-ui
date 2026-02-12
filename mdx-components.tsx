@@ -9,11 +9,11 @@ import {
   Tab,
 } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Files, File, Folder } from "fumadocs-ui/components/files";
 import * as React from "react";
 import dynamic from "next/dynamic";
 import { AutoLinkChildren, withAutoLink } from "@/lib/docs/auto-link";
+import { TrackedDynamicCodeBlock } from "@/app/docs/_components/tracked-dynamic-codeblock";
 
 const Mermaid = dynamic(() =>
   import("@/app/components/mdx/mermaid").then((m) => m.Mermaid)
@@ -110,7 +110,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
           "data-line-numbers-start": 1,
         };
 
-        return <DynamicCodeBlock lang={lang} code={code} codeblock={attrs} />;
+        return (
+          <TrackedDynamicCodeBlock lang={lang} code={code} codeblock={attrs} />
+        );
       }
 
       return React.createElement("pre", props);

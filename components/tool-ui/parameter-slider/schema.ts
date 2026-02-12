@@ -1,19 +1,42 @@
-import { z } from "zod";import { type ActionsProp } from "../shared/actions-config";
+import { z } from "zod";
+import { type ActionsProp } from "../shared/actions-config";
 import { defineToolUiContract } from "../shared/contract";
-import { SerializableActionSchema, SerializableActionsConfigSchema, ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
+import {
+  SerializableActionSchema,
+  SerializableActionsConfigSchema,
+  ToolUIIdSchema,
+  ToolUIRoleSchema,
+} from "../shared/schema";
 
 export const SliderConfigSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
-  min: z.number(),
-  max: z.number(),
-  step: z.number().positive().optional(),
-  value: z.number(),
+  min: z.number().finite(),
+  max: z.number().finite(),
+  step: z.number().finite().positive().optional(),
+  value: z.number().finite(),
   unit: z.string().optional(),
   precision: z.number().int().min(0).optional(),
+  disabled: z.boolean().optional(),
   trackClassName: z.string().optional(),
   fillClassName: z.string().optional(),
   handleClassName: z.string().optional(),
+}).superRefine((slider, ctx) => {
+  if (slider.max <= slider.min) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["max"],
+      message: "max must be greater than min",
+    });
+  }
+
+  if (slider.value < slider.min || slider.value > slider.max) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["value"],
+      message: "value must be between min and max",
+    });
+  }
 });
 
 export type SliderConfig = z.infer<typeof SliderConfigSchema>;
@@ -25,6 +48,21 @@ export const SerializableParameterSliderSchema = z.object({
   responseActions: z
     .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
     .optional(),
+}).superRefine((payload, ctx) => {
+  const seenIds = new Map<string, number>();
+
+  payload.sliders.forEach((slider, index) => {
+    const firstSeenAt = seenIds.get(slider.id);
+    if (firstSeenAt !== undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["sliders", index, "id"],
+        message: `duplicate slider id '${slider.id}' (first seen at index ${firstSeenAt})`,
+      });
+      return;
+    }
+    seenIds.set(slider.id, index);
+  });
 });
 
 export type SerializableParameterSlider = z.infer<

@@ -105,6 +105,16 @@ export const analytics = {
         heading_title: headingTitle,
         heading_depth: headingDepth,
       }),
+
+    /** Installation command copy intent (high-conversion docs action) */
+    installSnippetCopied: (
+      snippetType: "skills" | "registry" | "package_manager",
+      location: "docs_code_block" | "docs_header",
+    ) =>
+      trackEvent("install_snippet_copied", {
+        snippet_type: snippetType,
+        location,
+      }),
   },
 
   code: {
