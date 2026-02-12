@@ -1,10 +1,5 @@
 export { InstagramPost } from "./instagram-post";
 export type { InstagramPostProps } from "./instagram-post";
-export {
-  SerializableInstagramPostSchema,
-  parseSerializableInstagramPost,
-  safeParseSerializableInstagramPost,
-} from "./schema";
 export type {
   InstagramPostData,
   InstagramPostAuthor,

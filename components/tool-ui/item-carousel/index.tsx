@@ -6,11 +6,3 @@ export type {
   SerializableItem,
   SerializableItemCarousel,
 } from "./schema";
-export {
-  ItemSchema,
-  ItemCarouselPropsSchema,
-  SerializableItemSchema,
-  SerializableItemCarouselSchema,
-  parseSerializableItemCarousel,
-  safeParseSerializableItemCarousel,
-} from "./schema";

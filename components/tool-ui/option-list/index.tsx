@@ -5,10 +5,3 @@ export type {
   OptionListSelection,
   SerializableOptionList,
 } from "./schema";
-export {
-  OptionListOptionSchema,
-  OptionListPropsSchema,
-  SerializableOptionListSchema,
-  parseSerializableOptionList,
-  safeParseSerializableOptionList,
-} from "./schema";

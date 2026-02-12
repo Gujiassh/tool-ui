@@ -59,11 +59,11 @@ Register this renderer so tool results display as `ParameterSlider`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { ParameterSlider } from "@/components/tool-ui/parameter-slider";
 import {
-  ParameterSlider,
   safeParseSerializableParameterSlider,
   SerializableParameterSliderSchema,
-} from "@/components/tool-ui/parameter-slider";
+} from "@/components/tool-ui/parameter-slider/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

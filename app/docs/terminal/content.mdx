@@ -79,10 +79,8 @@ const showTerminal = tool({
 
 // Frontend with assistant-ui
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  Terminal,
-  safeParseSerializableTerminal,
-} from "@/components/tool-ui/terminal";
+import { Terminal } from "@/components/tool-ui/terminal";
+import { safeParseSerializableTerminal } from "@/components/tool-ui/terminal/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

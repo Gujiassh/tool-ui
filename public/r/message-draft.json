@@ -22,7 +22,7 @@
       "path": "components/tool-ui/message-draft/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/message-draft/index.tsx",
-      "content": "export { MessageDraft } from \"./message-draft\";\nexport {\n  SerializableMessageDraftSchema,\n  SerializableEmailDraftSchema,\n  SerializableSlackDraftSchema,\n  MessageDraftChannelSchema,\n  MessageDraftOutcomeSchema,\n  parseSerializableMessageDraft,\n  safeParseSerializableMessageDraft,\n  type SerializableMessageDraft,\n  type SerializableEmailDraft,\n  type SerializableSlackDraft,\n  type MessageDraftChannel,\n  type MessageDraftOutcome,\n  type SlackTarget,\n  type MessageDraftProps,\n} from \"./schema\";\n"
+      "content": "export { MessageDraft } from \"./message-draft\";\nexport {\n  type SerializableMessageDraft,\n  type SerializableEmailDraft,\n  type SerializableSlackDraft,\n  type MessageDraftChannel,\n  type MessageDraftOutcome,\n  type SlackTarget,\n  type MessageDraftProps,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/message-draft/message-draft.tsx",

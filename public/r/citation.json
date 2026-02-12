@@ -35,7 +35,7 @@
       "path": "components/tool-ui/citation/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/citation/index.ts",
-      "content": "export { Citation } from \"./citation\";\nexport type { CitationProps } from \"./citation\";\nexport { CitationList } from \"./citation-list\";\nexport type { CitationListProps } from \"./citation-list\";\nexport {\n  SerializableCitationSchema,\n  CitationTypeSchema,\n  CitationVariantSchema,\n  parseSerializableCitation,\n  safeParseSerializableCitation,\n} from \"./schema\";\nexport type {\n  SerializableCitation,\n  CitationType,\n  CitationVariant,\n} from \"./schema\";\n"
+      "content": "export { Citation } from \"./citation\";\nexport type { CitationProps } from \"./citation\";\nexport { CitationList } from \"./citation-list\";\nexport type { CitationListProps } from \"./citation-list\";\nexport type {\n  SerializableCitation,\n  CitationType,\n  CitationVariant,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/citation/README.md",

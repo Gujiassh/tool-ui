@@ -71,9 +71,11 @@ Register this renderer so tool results display as `WeatherWidget`.
 import { type Toolkit } from "@assistant-ui/react";
 import {
   WeatherWidget,
+} from "@/components/tool-ui/weather-widget/runtime";
+import {
   safeParseWeatherWidgetPayload,
   WeatherWidgetPayloadSchema,
-} from "@/components/tool-ui/weather-widget/runtime";
+} from "@/components/tool-ui/weather-widget/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

@@ -62,11 +62,11 @@ Register this renderer so tool results display as `MessageDraft`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { MessageDraft } from "@/components/tool-ui/message-draft";
 import {
-  MessageDraft,
   safeParseSerializableMessageDraft,
   SerializableMessageDraftSchema,
-} from "@/components/tool-ui/message-draft";
+} from "@/components/tool-ui/message-draft/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

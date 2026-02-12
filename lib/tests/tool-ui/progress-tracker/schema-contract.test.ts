@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   parseSerializableProgressTracker,
   safeParseSerializableProgressTracker,
-} from "@/components/tool-ui/progress-tracker";
+} from "@/components/tool-ui/progress-tracker/schema";
 
 const baseProgressTracker = {
   id: "progress-tracker-schema-contract",

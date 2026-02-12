@@ -126,8 +126,8 @@ import {
 } from "@assistant-ui/react";
 import {
   LinkPreview,
-  safeParseSerializableLinkPreview,
 } from "@/components/tool-ui/link-preview";
+import { safeParseSerializableLinkPreview } from "@/components/tool-ui/link-preview/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 import {
   useChatRuntime,
@@ -272,11 +272,11 @@ When the tool is frontend/interactive, you register the tool **on the client** (
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { OptionList } from "@/components/tool-ui/option-list";
 import {
-  OptionList,
   safeParseSerializableOptionList,
   SerializableOptionListSchema,
-} from "@/components/tool-ui/option-list";
+} from "@/components/tool-ui/option-list/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

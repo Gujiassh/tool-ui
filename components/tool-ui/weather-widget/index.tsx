@@ -3,14 +3,6 @@ export { WeatherDataOverlay } from "./weather-data-overlay";
 export type { WeatherDataOverlayProps, GlassEffectParams } from "./weather-data-overlay";
 export { resolveWeatherTime, timeBucketToTimeOfDay } from "./time";
 export {
-  WeatherWidgetPayloadSchema,
-  parseWeatherWidgetPayload,
-  safeParseWeatherWidgetPayload,
-  WeatherConditionCodeSchema,
-  ForecastDaySchema,
-  TemperatureUnitSchema,
-  TimeBucketSchema,
-  PrecipitationLevelSchema,
   type WeatherWidgetPayload,
   type WeatherWidgetProps,
   type WeatherWidgetCurrent,

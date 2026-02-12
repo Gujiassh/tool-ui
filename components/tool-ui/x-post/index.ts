@@ -1,10 +1,5 @@
 export { XPost } from "./x-post";
 export type { XPostProps } from "./x-post";
-export {
-  SerializableXPostSchema,
-  parseSerializableXPost,
-  safeParseSerializableXPost,
-} from "./schema";
 export type {
   XPostData,
   XPostAuthor,

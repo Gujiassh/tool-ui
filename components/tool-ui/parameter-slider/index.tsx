@@ -5,9 +5,3 @@ export type {
   SliderValue,
   SerializableParameterSlider,
 } from "./schema";
-export {
-  SliderConfigSchema,
-  SerializableParameterSliderSchema,
-  parseSerializableParameterSlider,
-  safeParseSerializableParameterSlider,
-} from "./schema";

@@ -25,7 +25,7 @@
       "path": "components/tool-ui/plan/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/plan/index.tsx",
-      "content": "export { Plan, PlanCompact } from \"./plan\";\nexport type {\n  PlanProps,\n  PlanTodo,\n  PlanTodoStatus,\n  SerializablePlan,\n} from \"./schema\";\nexport {\n  parseSerializablePlan,\n  safeParseSerializablePlan,\n  PlanPropsSchema,\n  PlanTodoSchema,\n  PlanTodoStatusSchema,\n  SerializablePlanSchema,\n} from \"./schema\";\n"
+      "content": "export { Plan, PlanCompact } from \"./plan\";\nexport type {\n  PlanProps,\n  PlanTodo,\n  PlanTodoStatus,\n  SerializablePlan,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/plan/plan.tsx",

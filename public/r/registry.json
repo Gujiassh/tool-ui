@@ -1210,6 +1210,11 @@
           "target": "components/tool-ui/option-list/schema.ts"
         },
         {
+          "path": "components/tool-ui/option-list/selection.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/option-list/selection.ts"
+        },
+        {
           "path": "components/tool-ui/shared/_adapter.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/shared/_adapter.tsx"

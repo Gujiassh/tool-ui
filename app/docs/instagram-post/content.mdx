@@ -67,10 +67,8 @@ Register this renderer so tool results display as `InstagramPost`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  InstagramPost,
-  safeParseSerializableInstagramPost,
-} from "@/components/tool-ui/instagram-post";
+import { InstagramPost } from "@/components/tool-ui/instagram-post";
+import { safeParseSerializableInstagramPost } from "@/components/tool-ui/instagram-post/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

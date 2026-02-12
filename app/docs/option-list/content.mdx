@@ -49,11 +49,11 @@ Register this renderer so tool results display as `OptionList`.
 // - The model calls the tool with SerializableOptionList props as the args
 // - Your UI calls addResult(selection) when the user confirms
 import { type Toolkit } from "@assistant-ui/react";
+import { OptionList } from "@/components/tool-ui/option-list";
 import {
-  OptionList,
   safeParseSerializableOptionList,
   SerializableOptionListSchema,
-} from "@/components/tool-ui/option-list";
+} from "@/components/tool-ui/option-list/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

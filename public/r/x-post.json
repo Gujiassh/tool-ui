@@ -107,7 +107,7 @@
       "path": "components/tool-ui/x-post/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/x-post/index.ts",
-      "content": "export { XPost } from \"./x-post\";\nexport type { XPostProps } from \"./x-post\";\nexport {\n  SerializableXPostSchema,\n  parseSerializableXPost,\n  safeParseSerializableXPost,\n} from \"./schema\";\nexport type {\n  XPostData,\n  XPostAuthor,\n  XPostMedia,\n  XPostLinkPreview,\n  XPostStats,\n} from \"./schema\";\n"
+      "content": "export { XPost } from \"./x-post\";\nexport type { XPostProps } from \"./x-post\";\nexport type {\n  XPostData,\n  XPostAuthor,\n  XPostMedia,\n  XPostLinkPreview,\n  XPostStats,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/x-post/README.md",

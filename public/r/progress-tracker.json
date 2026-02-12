@@ -22,7 +22,7 @@
       "path": "components/tool-ui/progress-tracker/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/progress-tracker/index.tsx",
-      "content": "export { ProgressTracker } from \"./progress-tracker\";\nexport {\n  SerializableProgressTrackerSchema,\n  parseSerializableProgressTracker,\n  safeParseSerializableProgressTracker,\n  ProgressStepSchema,\n  type SerializableProgressTracker,\n  type ProgressTrackerProps,\n  type ProgressTrackerChoice,\n  type ProgressStep,\n} from \"./schema\";\n"
+      "content": "export { ProgressTracker } from \"./progress-tracker\";\nexport {\n  type SerializableProgressTracker,\n  type ProgressTrackerProps,\n  type ProgressTrackerChoice,\n  type ProgressStep,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/progress-tracker/progress-tracker.tsx",
