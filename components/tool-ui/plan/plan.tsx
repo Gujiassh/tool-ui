@@ -224,7 +224,13 @@ interface ProgressBarProps {
 
 function ProgressBar({ progress, isCelebrating }: ProgressBarProps) {
   return (
-    <div className="bg-muted relative mb-3 h-1.5 overflow-hidden rounded-full">
+    <div
+      className="bg-muted relative mb-3 h-1.5 overflow-hidden rounded-full"
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={progress}
+    >
       <div
         className={cn(
           "h-full rounded-full transition-all duration-500",
@@ -264,7 +270,6 @@ function PlanRoot({
 }: PlanProps & { showProgress?: boolean }) {
   const seenTodoIds = useRef(new Set<string>());
   const [newTodoIds, setNewTodoIds] = useState<Set<string>>(new Set());
-  const isInitialMount = useRef(true);
   const [isCelebrating, setIsCelebrating] = useState(false);
   const prevProgressRef = useRef(0);
 
@@ -282,6 +287,13 @@ function PlanRoot({
         }),
       };
     }, [todos, maxVisibleTodos]);
+
+  useEffect(() => {
+    seenTodoIds.current = new Set<string>();
+    prevProgressRef.current = 0;
+    setNewTodoIds(new Set<string>());
+    setIsCelebrating(false);
+  }, [id]);
 
   useEffect(() => {
     const newIds = new Set<string>();
@@ -302,11 +314,6 @@ function PlanRoot({
       }, 500);
 
       return () => clearTimeout(timer);
-    }
-
-    // Mark initial mount complete
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
     }
   }, [todos]);
 
