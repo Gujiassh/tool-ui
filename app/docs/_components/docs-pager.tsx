@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getAllDocsPageLinks } from "./docs-pages";
 import { cn } from "@/lib/ui/cn";
 import { Button } from "@/components/ui/button";
+import { analytics } from "@/lib/analytics";
 
 function useDocsPagination() {
   const pathname = usePathname();
@@ -42,6 +43,7 @@ function PagerLink({ href, label, direction }: PagerLinkProps) {
     >
       <Link
         href={href}
+        onClick={() => analytics.docs.navigationClicked(label, href)}
         className={cn(
           "inline-flex items-center gap-3",
           isPrev ? "text-left" : "text-right",

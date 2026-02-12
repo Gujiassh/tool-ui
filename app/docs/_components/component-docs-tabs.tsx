@@ -1,11 +1,14 @@
 "use client";
 
-import { memo, useCallback, useRef, type ReactNode } from "react";
+import { memo, useCallback, useMemo, useRef, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/ui/cn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocsBorderedShell } from "./docs-bordered-shell";
 import { DocsContent } from "./docs-content";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
+import { analytics } from "@/lib/analytics";
+import { componentsRegistry } from "@/lib/docs/component-registry";
 
 type DocsTab = "docs" | "examples";
 
@@ -21,6 +24,11 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
   examples,
 }: ComponentDocsTabsProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const componentMeta = useMemo(
+    () => componentsRegistry.find((component) => component.path === pathname),
+    [pathname],
+  );
 
   const { activeTab, setActiveTab } = useTabSearchParam<DocsTab>({
     defaultTab: "docs",
@@ -32,10 +40,13 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
   const handleTabChange = useCallback(
     (value: string) => {
       if (value === "docs" || value === "examples") {
+        if (componentMeta && value !== activeTab) {
+          analytics.component.tabSwitched(componentMeta.id, value);
+        }
         setActiveTab(value);
       }
     },
-    [setActiveTab],
+    [activeTab, componentMeta, setActiveTab],
   );
 
   return (

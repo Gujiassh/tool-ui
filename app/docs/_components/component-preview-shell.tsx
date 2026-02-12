@@ -142,6 +142,20 @@ export function ComponentPreviewShell({
     copy(code, COPY_ID);
   }, [componentId, code, copy]);
 
+  const handleViewModeChange = useCallback(
+    (nextViewMode: ViewMode) => {
+      if (nextViewMode === viewMode) return;
+
+      analytics.component.tabSwitched(componentId, nextViewMode);
+      analytics.component.previewInteracted(
+        componentId,
+        `view_mode_${nextViewMode}`,
+      );
+      setViewMode(nextViewMode);
+    },
+    [componentId, setViewMode, viewMode],
+  );
+
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-clip lg:flex-row">
       {/* Desktop sidebar */}
@@ -164,7 +178,10 @@ export function ComponentPreviewShell({
         <div className="flex flex-col gap-3 border-b px-4 pt-3 pb-3 lg:hidden">
           <div className="scrollbar-subtle overflow-x-auto">{sidebar}</div>
           <div className="flex items-center justify-end">
-            <ViewModeToggle value={viewMode} onValueChange={setViewMode} />
+            <ViewModeToggle
+              value={viewMode}
+              onValueChange={handleViewModeChange}
+            />
           </div>
         </div>
 
@@ -195,7 +212,10 @@ export function ComponentPreviewShell({
 
           {/* View mode toggle - top left corner */}
           <div className="absolute top-3 left-3 z-30 hidden lg:block">
-            <ViewModeToggle value={viewMode} onValueChange={setViewMode} />
+            <ViewModeToggle
+              value={viewMode}
+              onValueChange={handleViewModeChange}
+            />
           </div>
 
           {/* Copy button - top right corner (code view only) */}
