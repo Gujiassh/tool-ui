@@ -185,10 +185,8 @@ function OptionListConfirmation({
       >
         {confirmedOptions.map((option, index) => (
           <Fragment key={option.id}>
-            {index > 0 && (
-              <Separator className="my-1.5" orientation="horizontal" />
-            )}
-            <div className="flex items-start gap-3 py-1">
+            {index > 0 && <Separator className="my-3" orientation="horizontal" />}
+            <div className="flex items-start gap-3 py-2">
               <span className="flex h-6 items-center">
                 <Check className="text-primary size-4 shrink-0" />
               </span>
