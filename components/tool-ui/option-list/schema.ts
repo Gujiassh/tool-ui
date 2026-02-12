@@ -19,7 +19,87 @@ export const OptionListOptionSchema = z.object({
   disabled: z.boolean().optional(),
 });
 
-export const OptionListPropsSchema = z.object({
+export type OptionListSelection = string[] | string | null;
+
+const OptionListSelectionSchema = z
+  .union([z.array(z.string()), z.string(), z.null()])
+  .optional();
+
+type OptionListSchemaInvariantInput = {
+  options: Array<{ id: string }>;
+  minSelections?: number;
+  maxSelections?: number;
+  value?: OptionListSelection;
+  defaultValue?: OptionListSelection;
+  choice?: OptionListSelection;
+};
+
+function selectionToIds(selection: OptionListSelection | undefined): string[] {
+  if (selection == null) return [];
+  if (typeof selection === "string") return [selection];
+  return Array.isArray(selection) ? selection : [];
+}
+
+function validateOptionListInvariants(
+  data: OptionListSchemaInvariantInput,
+  ctx: z.RefinementCtx,
+) {
+  if (
+    data.minSelections !== undefined &&
+    data.maxSelections !== undefined &&
+    data.minSelections > data.maxSelections
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["minSelections"],
+      message: "`minSelections` cannot be greater than `maxSelections`.",
+    });
+  }
+
+  const optionIds = new Set<string>();
+  for (let index = 0; index < data.options.length; index++) {
+    const optionId = data.options[index]?.id;
+    if (!optionId) continue;
+
+    if (optionIds.has(optionId)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["options", index, "id"],
+        message: `Duplicate option id "${optionId}" is not allowed.`,
+      });
+    } else {
+      optionIds.add(optionId);
+    }
+  }
+
+  const selectionFields: Array<
+    ["value" | "defaultValue" | "choice", OptionListSelection | undefined]
+  > = [
+    ["value", data.value],
+    ["defaultValue", data.defaultValue],
+    ["choice", data.choice],
+  ];
+
+  for (const [fieldName, selection] of selectionFields) {
+    if (selection == null) continue;
+
+    const ids = selectionToIds(selection);
+    ids.forEach((selectionId, index) => {
+      if (!optionIds.has(selectionId)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path:
+            typeof selection === "string"
+              ? [fieldName]
+              : [fieldName, index],
+          message: `Selection id "${selectionId}" must exist in options.`,
+        });
+      }
+    });
+  }
+}
+
+const OptionListPropsSchemaBase = z.object({
   /**
    * Unique identifier for this tool UI instance in the conversation.
    *
@@ -45,8 +125,8 @@ export const OptionListPropsSchema = z.object({
    * from `SerializableOptionListSchema` to avoid accidental "controlled but
    * non-interactive" states when an LLM includes `value` in args.
    */
-  value: z.union([z.array(z.string()), z.string(), z.null()]).optional(),
-  defaultValue: z.union([z.array(z.string()), z.string(), z.null()]).optional(),
+  value: OptionListSelectionSchema,
+  defaultValue: OptionListSelectionSchema,
   /**
    * When set, renders the component in receipt state showing the user's choice.
    *
@@ -65,7 +145,7 @@ export const OptionListPropsSchema = z.object({
    * }
    * ```
    */
-  choice: z.union([z.array(z.string()), z.string(), z.null()]).optional(),
+  choice: OptionListSelectionSchema,
   responseActions: z
     .union([z.array(ActionSchema), SerializableActionsConfigSchema])
     .optional(),
@@ -73,7 +153,9 @@ export const OptionListPropsSchema = z.object({
   maxSelections: z.number().min(1).optional(),
 });
 
-export type OptionListSelection = string[] | string | null;
+export const OptionListPropsSchema = OptionListPropsSchemaBase.superRefine(
+  validateOptionListInvariants,
+);
 
 export type OptionListOption = z.infer<typeof OptionListOptionSchema>;
 
@@ -96,15 +178,17 @@ export type OptionListProps = Omit<
   className?: string;
 };
 
-export const SerializableOptionListSchema = OptionListPropsSchema.omit({
+export const SerializableOptionListSchema = OptionListPropsSchemaBase.omit({
   // Exclude controlled selection from tool/LLM payloads.
   value: true,
-}).extend({
-  options: z.array(OptionListOptionSchema.omit({ icon: true })),
-  responseActions: z
-    .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
-    .optional(),
-});
+})
+  .extend({
+    options: z.array(OptionListOptionSchema.omit({ icon: true })),
+    responseActions: z
+      .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
+      .optional(),
+  })
+  .superRefine(validateOptionListInvariants);
 
 export type SerializableOptionList = z.infer<
   typeof SerializableOptionListSchema

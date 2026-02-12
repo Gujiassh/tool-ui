@@ -98,17 +98,17 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
     Customize confirm, cancel, and other footer buttons
   </Feature>
   <Feature icon="CheckCircle2" title="Receipt state">
-    Confirmed selections render as read-only receipts in conversation history
+    Chosen selections render as read-only receipts in conversation history
   </Feature>
 </FeatureGrid>
 
 ## Receipt State
 
-When `confirmed` is set, the component renders in a read-only receipt state showing only the confirmed selection(s). Use this to display past decisions in conversation history.
+When `choice` is set, the component renders in a read-only receipt state showing only the chosen selection(s). Use this to display past decisions in conversation history.
 
 The receipt state:
 
-- Shows only the confirmed option(s) with a checkmark
+- Shows only the chosen option(s) with a checkmark
 - Hides unselected options and response actions
 - Is read-only (no interaction)
 
@@ -128,15 +128,15 @@ The receipt state:
     },
     value: {
       description:
-        "Controlled selection value (runtime only). Avoid in tool/LLM payloads; prefer defaultValue or confirmed.",
+        "Controlled selection value (runtime only). Avoid in tool/LLM payloads; prefer defaultValue or choice.",
       type: "string | string[] | null",
     },
     defaultValue: {
       description: "Initial selection (uncontrolled)",
       type: "string | string[] | null",
     },
-    confirmed: {
-      description: "Confirmed selection (renders receipt state)",
+    choice: {
+      description: "Chosen selection (renders receipt state)",
       type: "string | string[] | null",
     },
     minSelections: {
@@ -182,6 +182,7 @@ The receipt state:
 
 ## Accessibility
 
-- Selection controls use Radix primitives with full keyboard support
-- Focus management follows WAI-ARIA listbox patterns
-- Confirm and cancel actions are keyboard-accessible
+- Uses a semantic listbox + option pattern (`role="listbox"` with `role="option"` on each option button)
+- Exposes selection state with `aria-selected` and multi-select intent with `aria-multiselectable`
+- Implements roving tab focus with keyboard navigation (`ArrowUp/ArrowDown`, `Home/End`, `Enter`/`Space`, `Escape`)
+- Keeps footer actions keyboard-accessible through native button semantics

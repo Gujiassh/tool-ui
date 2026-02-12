@@ -14,32 +14,15 @@ import type {
   OptionListSelection,
   OptionListOption,
 } from "./schema";
+import {
+  normalizeSelectionForOptions,
+  parseSelectionToIdSet,
+} from "./selection";
 import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import type { Action } from "../shared/schema";
 import { cn, Button, Separator } from "./_adapter";
 import { Check } from "lucide-react";
-
-function parseSelectionToIdSet(
-  value: OptionListSelection | undefined,
-  mode: "multi" | "single",
-  maxSelections?: number,
-): Set<string> {
-  if (mode === "single") {
-    const single =
-      typeof value === "string"
-        ? value
-        : Array.isArray(value)
-          ? value[0]
-          : null;
-    return single ? new Set([single]) : new Set();
-  }
-
-  const arr =
-    typeof value === "string" ? [value] : Array.isArray(value) ? value : [];
-
-  return new Set(maxSelections ? arr.slice(0, maxSelections) : arr);
-}
 
 function convertIdSetToSelection(
   selected: Set<string>,
@@ -259,33 +242,47 @@ export function OptionList({
   }
 
   const effectiveMaxSelections = selectionMode === "single" ? 1 : maxSelections;
+  const optionIds = useMemo(() => new Set(options.map((option) => option.id)), [
+    options,
+  ]);
 
   const [uncontrolledSelected, setUncontrolledSelected] = useState<Set<string>>(
     () =>
-      parseSelectionToIdSet(
-        defaultValue,
-        selectionMode,
-        effectiveMaxSelections,
+      normalizeSelectionForOptions(
+        parseSelectionToIdSet(defaultValue, selectionMode, effectiveMaxSelections),
+        optionIds,
       ),
   );
 
   useEffect(() => {
     setUncontrolledSelected((prev) => {
-      const normalized = parseSelectionToIdSet(
-        Array.from(prev),
-        selectionMode,
-        effectiveMaxSelections,
+      const normalized = normalizeSelectionForOptions(
+        parseSelectionToIdSet(
+          Array.from(prev),
+          selectionMode,
+          effectiveMaxSelections,
+        ),
+        optionIds,
       );
       return areSetsEqual(prev, normalized) ? prev : normalized;
     });
-  }, [selectionMode, effectiveMaxSelections]);
+  }, [selectionMode, effectiveMaxSelections, optionIds]);
 
   const selectedIds = useMemo(
-    () =>
-      value !== undefined
-        ? parseSelectionToIdSet(value, selectionMode, effectiveMaxSelections)
-        : uncontrolledSelected,
-    [value, uncontrolledSelected, selectionMode, effectiveMaxSelections],
+    () => {
+      const parsed =
+        value !== undefined
+          ? parseSelectionToIdSet(value, selectionMode, effectiveMaxSelections)
+          : uncontrolledSelected;
+      return normalizeSelectionForOptions(parsed, optionIds);
+    },
+    [
+      value,
+      uncontrolledSelected,
+      selectionMode,
+      effectiveMaxSelections,
+      optionIds,
+    ],
   );
 
   const selectedCount = selectedIds.size;
@@ -337,10 +334,13 @@ export function OptionList({
 
   const updateSelection = useCallback(
     (next: Set<string>) => {
-      const normalizedNext = parseSelectionToIdSet(
-        Array.from(next),
-        selectionMode,
-        effectiveMaxSelections,
+      const normalizedNext = normalizeSelectionForOptions(
+        parseSelectionToIdSet(
+          Array.from(next),
+          selectionMode,
+          effectiveMaxSelections,
+        ),
+        optionIds,
       );
 
       if (value === undefined) {
@@ -357,6 +357,7 @@ export function OptionList({
       uncontrolledSelected,
       value,
       onChange,
+      optionIds,
     ],
   );
 
@@ -400,7 +401,11 @@ export function OptionList({
     onCancel?.();
   }, [onCancel, updateSelection]);
 
-  const hasCustomResponseActions = responseActions !== undefined;
+  const customResponseActions = useMemo(
+    () => normalizeActionsConfig(responseActions),
+    [responseActions],
+  );
+  const hasCustomResponseActions = customResponseActions !== null;
 
   const handleFooterAction = useCallback(
     async (actionId: string) => {
@@ -417,8 +422,7 @@ export function OptionList({
   );
 
   const normalizedFooterActions = useMemo(() => {
-    const normalized = normalizeActionsConfig(responseActions);
-    if (normalized) return normalized;
+    if (customResponseActions) return customResponseActions;
     return {
       items: [
         { id: "cancel", label: "Clear", variant: "ghost" as const },
@@ -426,7 +430,7 @@ export function OptionList({
       ],
       align: "right" as const,
     } satisfies ReturnType<typeof normalizeActionsConfig>;
-  }, [responseActions]);
+  }, [customResponseActions]);
 
   const isConfirmDisabled =
     selectedCount < minSelections || selectedCount === 0;
@@ -560,7 +564,10 @@ export function OptionList({
         <OptionListConfirmation
           id={id}
           options={options}
-          selectedIds={parseSelectionToIdSet(choice, selectionMode)}
+          selectedIds={normalizeSelectionForOptions(
+            parseSelectionToIdSet(choice, selectionMode),
+            optionIds,
+          )}
           className={className}
         />
       ) : (
