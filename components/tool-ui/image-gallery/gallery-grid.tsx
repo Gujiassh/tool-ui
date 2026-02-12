@@ -11,17 +11,11 @@ type GridImage = Pick<
 >;
 
 interface GalleryGridProps {
-  maxVisible?: number;
   onImageClick?: (imageId: string) => void;
 }
 
-export function GalleryGrid({ maxVisible, onImageClick }: GalleryGridProps) {
+export function GalleryGrid({ onImageClick }: GalleryGridProps) {
   const { images, openLightbox } = useImageGallery();
-
-  const { visibleImages, hiddenCount, overflowIndex } = computeVisibility(
-    images,
-    maxVisible,
-  );
 
   const handleOpen = useCallback(
     (index: number) => {
@@ -39,52 +33,25 @@ export function GalleryGrid({ maxVisible, onImageClick }: GalleryGridProps) {
       className="grid grid-cols-2 gap-2 @md:grid-cols-3 @lg:grid-cols-4"
       role="list"
     >
-      {visibleImages.map((image, index) => {
-        const isOverflowTrigger = hiddenCount > 0 && index === overflowIndex;
-
-        return (
-          <GridImageCard
-            key={image.id}
-            image={image}
-            index={index}
-            onClick={handleOpen}
-            overlayCount={isOverflowTrigger ? hiddenCount + 1 : undefined}
-          />
-        );
-      })}
+      {images.map((image, index) => (
+        <GridImageCard
+          key={image.id}
+          image={image}
+          index={index}
+          onClick={handleOpen}
+        />
+      ))}
     </div>
   );
-}
-
-function computeVisibility(images: GridImage[], maxVisible?: number) {
-  if (!maxVisible) {
-    return {
-      visibleImages: images,
-      hiddenCount: 0,
-      overflowIndex: -1,
-    };
-  }
-
-  return {
-    visibleImages: images.slice(0, maxVisible),
-    hiddenCount: Math.max(0, images.length - maxVisible),
-    overflowIndex: maxVisible - 1,
-  };
 }
 
 interface GridImageCardProps {
   image: GridImage;
   index: number;
   onClick: (index: number) => void;
-  overlayCount?: number;
 }
 
-function GridImageCard({
-  image,
-  index,
-  onClick,
-  overlayCount,
-}: GridImageCardProps) {
+function GridImageCard({ image, index, onClick }: GridImageCardProps) {
   const [hasError, setHasError] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -120,9 +87,7 @@ function GridImageCard({
         type="button"
         onClick={handleClick}
         className="absolute inset-0 z-20 h-full w-full rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-        aria-label={
-          overlayCount ? `View ${overlayCount} more images` : image.alt
-        }
+        aria-label={image.alt}
       />
 
       <div
@@ -147,7 +112,6 @@ function GridImageCard({
         )}
       </div>
 
-      {overlayCount && <OverflowOverlay count={overlayCount} />}
     </div>
   );
 }
@@ -166,14 +130,6 @@ function ImageErrorState({ alt }: { alt: string }) {
       <span className="text-muted-foreground line-clamp-2 text-center text-xs">
         {alt}
       </span>
-    </div>
-  );
-}
-
-function OverflowOverlay({ count }: { count: number }) {
-  return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center rounded-lg bg-black/60">
-      <span className="text-2xl font-semibold text-white">+{count}</span>
     </div>
   );
 }

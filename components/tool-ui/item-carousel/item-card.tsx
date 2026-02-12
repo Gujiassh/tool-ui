@@ -14,37 +14,9 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
   const { id, name, subtitle, image, color, actions } = item;
   const isCardInteractive = typeof onItemClick === "function";
 
-  const handleCardClick = (e: React.MouseEvent) => {
+  const handleCardClick = () => {
     if (!isCardInteractive) return;
-    if ((e.target as HTMLElement).closest("button")) {
-      return;
-    }
     onItemClick?.(id);
-  };
-
-  const handleCardKeyDown = (e: React.KeyboardEvent) => {
-    if (!isCardInteractive) return;
-    if ((e.target as HTMLElement).closest("button")) return;
-
-    if (e.key === " ") {
-      e.preventDefault();
-      return;
-    }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      onItemClick?.(id);
-    }
-  };
-
-  const handleCardKeyUp = (e: React.KeyboardEvent) => {
-    if (!isCardInteractive) return;
-    if ((e.target as HTMLElement).closest("button")) return;
-
-    if (e.key === " ") {
-      e.preventDefault();
-      onItemClick?.(id);
-    }
   };
 
   const handleActionClick = (actionId: string) => {
@@ -56,17 +28,22 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
       className={cn(
         "group @container/card relative flex w-52 min-w-48 flex-col gap-0 self-stretch overflow-clip rounded-md p-0 @lg:w-56",
         isCardInteractive && "cursor-pointer hover:shadow",
-        isCardInteractive &&
-          "focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
         "touch-manipulation",
       )}
-      role={isCardInteractive ? "button" : undefined}
-      tabIndex={isCardInteractive ? 0 : undefined}
-      aria-label={isCardInteractive ? `View item: ${name}` : undefined}
-      onClick={isCardInteractive ? handleCardClick : undefined}
-      onKeyDown={isCardInteractive ? handleCardKeyDown : undefined}
-      onKeyUp={isCardInteractive ? handleCardKeyUp : undefined}
     >
+      {isCardInteractive && (
+        <button
+          type="button"
+          aria-label={`View item: ${name}`}
+          className={cn(
+            "absolute inset-0 z-10 rounded-md",
+            "cursor-pointer touch-manipulation",
+            "focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+          )}
+          onClick={handleCardClick}
+        />
+      )}
+
       <div className="bg-muted relative aspect-square w-full overflow-hidden">
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -110,7 +87,7 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
         {actions && actions.length > 0 && (
           <div
             className={cn(
-              "mt-auto flex flex-col-reverse gap-2 pt-2 @[176px]/card:flex-row",
+              "relative z-20 mt-auto flex flex-col-reverse gap-2 pt-2 @[176px]/card:flex-row",
             )}
           >
             {actions.map((action) => (
@@ -121,10 +98,7 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
                 size="sm"
                 disabled={action.disabled}
                 className="min-h-11 w-full px-3 md:min-h-8 @[176px]/card:h-8 @[176px]/card:w-auto @[176px]/card:flex-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleActionClick(action.id);
-                }}
+                onClick={() => handleActionClick(action.id)}
               >
                 {action.icon}
                 {action.label}
