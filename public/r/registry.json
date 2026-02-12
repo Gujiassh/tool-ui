@@ -1627,21 +1627,6 @@
           "target": "components/tool-ui/progress-tracker/schema.ts"
         },
         {
-          "path": "components/tool-ui/shared/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/action-buttons.tsx"
-        },
-        {
-          "path": "components/tool-ui/shared/actions-config.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/actions-config.ts"
-        },
-        {
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
@@ -1655,11 +1640,6 @@
           "path": "components/tool-ui/shared/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/use-action-buttons.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/shared/use-action-buttons.tsx"
         }
       ]
     },

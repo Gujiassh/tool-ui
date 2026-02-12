@@ -99,7 +99,6 @@ function ProgressTrackerTuningPanel() {
           id="staging-progress-tracker"
           steps={steps}
           elapsedTime={elapsedTime}
-          responseActions={[{ id: "cancel", label: "Cancel", variant: "outline" }]}
         />
       </div>
 

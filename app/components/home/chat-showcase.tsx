@@ -300,7 +300,6 @@ function AnimatedProgressTracker({ className }: { className?: string }) {
       id="chat-showcase-progress-tracker"
       steps={steps}
       elapsedTime={elapsedTime}
-      responseActions={PROGRESS_TRACKER_DATA.responseActions}
       className={className}
     />
   );

@@ -45,4 +45,14 @@ describe("progress tracker schema contract", () => {
     expect(() => parseSerializableProgressTracker(payload)).toThrow();
     expect(safeParseSerializableProgressTracker(payload)).toBeNull();
   });
+
+  it("rejects responseActions in v2 display-only payloads", () => {
+    const payload = {
+      ...baseProgressTracker,
+      responseActions: [{ id: "cancel", label: "Cancel" }],
+    };
+
+    expect(() => parseSerializableProgressTracker(payload)).toThrow();
+    expect(safeParseSerializableProgressTracker(payload)).toBeNull();
+  });
 });

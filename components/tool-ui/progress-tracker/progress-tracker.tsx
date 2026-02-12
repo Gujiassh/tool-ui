@@ -1,11 +1,5 @@
-"use client";
-
-import * as React from "react";
 import { cn } from "./_adapter";
-import type { ProgressTrackerProps } from "./schema";
-import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig } from "../shared/actions-config";
-import type { Action } from "../shared/schema";
+import type { ProgressStep, ProgressTrackerProps } from "./schema";
 import { Check, X, Loader2, Timer, AlertCircle } from "lucide-react";
 
 function formatElapsedTime(milliseconds: number): string {
@@ -18,6 +12,42 @@ function formatElapsedTime(milliseconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = Math.floor(seconds % 60);
   return `${minutes}m ${remainingSeconds}s`;
+}
+
+function formatElapsedTimeDateTime(milliseconds: number): string {
+  const totalSeconds = Math.max(0, milliseconds) / 1000;
+
+  if (totalSeconds < 60) {
+    return `PT${Number(totalSeconds.toFixed(1))}S`;
+  }
+
+  const wholeSeconds = Math.floor(totalSeconds);
+  const hours = Math.floor(wholeSeconds / 3600);
+  const minutes = Math.floor((wholeSeconds % 3600) / 60);
+  const seconds = wholeSeconds % 60;
+
+  const hourPart = hours > 0 ? `${hours}H` : "";
+  const minutePart = minutes > 0 ? `${minutes}M` : "";
+  const secondPart = seconds > 0 ? `${seconds}S` : "";
+
+  if (!hourPart && !minutePart && !secondPart) {
+    return "PT0S";
+  }
+
+  return `PT${hourPart}${minutePart}${secondPart}`;
+}
+
+function getCurrentStepId(steps: ProgressStep[]): string | null {
+  const inProgressStep = steps.find((s) => s.status === "in-progress");
+  if (inProgressStep) return inProgressStep.id;
+
+  const failedStep = steps.find((s) => s.status === "failed");
+  if (failedStep) return failedStep.id;
+
+  const firstPendingStep = steps.find((s) => s.status === "pending");
+  if (firstPendingStep) return firstPendingStep.id;
+
+  return null;
 }
 
 interface StepIndicatorProps {
@@ -80,60 +110,11 @@ export function ProgressTracker({
   id,
   steps,
   elapsedTime,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
   className,
   choice,
 }: ProgressTrackerProps) {
   const hasInProgress = steps.some((step) => step.status === "in-progress");
-  const hasFailed = steps.some((step) => step.status === "failed");
-  const allCompleted = steps.every((step) => step.status === "completed");
-
-  const currentStepId = React.useMemo(() => {
-    const inProgressStep = steps.find((s) => s.status === "in-progress");
-    if (inProgressStep) return inProgressStep.id;
-
-    const failedStep = steps.find((s) => s.status === "failed");
-    if (failedStep) return failedStep.id;
-
-    const firstPendingStep = steps.find((s) => s.status === "pending");
-    if (firstPendingStep) return firstPendingStep.id;
-
-    return null;
-  }, [steps]);
-
-  const handleAction = React.useCallback(
-    async (actionId: string) => {
-      await onResponseAction?.(actionId);
-    },
-    [onResponseAction],
-  );
-
-  const defaultActions: Action[] = React.useMemo(
-    () => [
-      {
-        id: "cancel",
-        label: "Cancel",
-        variant: "outline",
-      },
-    ],
-    [],
-  );
-
-  const normalizedActions = React.useMemo(() => {
-    if (choice) return null;
-
-    const config = normalizeActionsConfig(responseActions);
-    if (config) return config;
-
-    if (allCompleted || hasFailed) return null;
-
-    return {
-      items: defaultActions,
-      align: "right" as const,
-    };
-  }, [allCompleted, choice, responseActions, hasFailed, defaultActions]);
+  const currentStepId = getCurrentStepId(steps);
 
   const viewKey = choice ? `receipt-${choice.outcome}` : "interactive";
   const receiptOutcome = choice?.outcome;
@@ -162,7 +143,9 @@ export function ProgressTracker({
               {elapsedTime !== undefined && elapsedTime > 0 && (
                 <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
                   <Timer className="-mt-px size-3.5" />
-                  <span>{formatElapsedTime(elapsedTime)}</span>
+                  <time dateTime={formatElapsedTimeDateTime(elapsedTime)}>
+                    {formatElapsedTime(elapsedTime)}
+                  </time>
                 </div>
               )}
               <span
@@ -186,7 +169,7 @@ export function ProgressTracker({
               </span>
             </div>
 
-            <ul role="list" className="flex flex-col gap-2">
+            <ol className="m-0 flex list-none flex-col gap-2 p-0">
               {steps.map((step, index) => (
                 <li
                   key={step.id}
@@ -216,7 +199,7 @@ export function ProgressTracker({
                   </div>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
         </div>
       ) : (
@@ -236,11 +219,13 @@ export function ProgressTracker({
             {elapsedTime !== undefined && elapsedTime > 0 && (
               <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
                 <Timer className="-mt-px size-3.5" />
-                <span>{formatElapsedTime(elapsedTime)}</span>
+                <time dateTime={formatElapsedTimeDateTime(elapsedTime)}>
+                  {formatElapsedTime(elapsedTime)}
+                </time>
               </div>
             )}
 
-            <ul role="list" className="flex flex-col gap-3">
+            <ol className="m-0 flex list-none flex-col gap-3 p-0">
               {steps.map((step, index) => {
                 const isCurrent = step.id === currentStepId;
                 const isActive = step.status === "in-progress";
@@ -312,20 +297,8 @@ export function ProgressTracker({
                   </li>
                 );
               })}
-            </ul>
+            </ol>
           </div>
-
-          {normalizedActions && (
-            <div className="@container/actions">
-              <ActionButtons
-                actions={normalizedActions.items}
-                align={normalizedActions.align}
-                confirmTimeout={normalizedActions.confirmTimeout}
-                onAction={handleAction}
-                onBeforeAction={onBeforeResponseAction}
-              />
-            </div>
-          )}
         </article>
       )}
     </div>
