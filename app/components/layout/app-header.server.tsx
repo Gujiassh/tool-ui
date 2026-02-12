@@ -7,6 +7,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { ArrowUpRight } from "lucide-react";
 import { LogoMark } from "@/components/ui/logo";
 import { ActiveNavLink } from "./header-active-link.client";
+import { TrackedExternalAnchor } from "./tracked-external-anchor.client";
 
 interface ResponsiveHeaderProps {
   rightContent?: ReactNode;
@@ -35,38 +36,41 @@ export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
               {label}
             </ActiveNavLink>
           ))}
-          <Link
+          <TrackedExternalAnchor
             href="https://www.assistant-ui.com"
+            destination="docs"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-foreground hover:bg-muted/50 hidden items-center gap-0.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors lg:flex"
           >
             assistant-ui
             <ArrowUpRight className="size-4" />
-          </Link>
+          </TrackedExternalAnchor>
         </nav>
         <div className="flex items-center gap-4">
           {rightContent}
           <div className="flex items-center">
             <Button variant="ghost" size="icon" asChild>
-              <Link
+              <TrackedExternalAnchor
                 href="https://github.com/assistant-ui/tool-ui"
+                destination="github"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FaGithub className="size-5" />
                 <span className="sr-only">GitHub Repository</span>
-              </Link>
+              </TrackedExternalAnchor>
             </Button>
             <Button variant="ghost" size="icon" asChild>
-              <Link
+              <TrackedExternalAnchor
                 href="https://x.com/assistantui"
+                destination="other"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FaXTwitter className="size-5" />
                 <span className="sr-only">X (Twitter)</span>
-              </Link>
+              </TrackedExternalAnchor>
             </Button>
           </div>
         </div>

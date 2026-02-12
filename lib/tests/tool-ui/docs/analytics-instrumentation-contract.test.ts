@@ -5,7 +5,10 @@ import { describe, expect, test } from "vitest";
 const FILE_ASSERTIONS = [
   {
     file: "app/docs/_components/docs-nav.tsx",
-    needles: ["analytics.docs.navigationClicked(", "analytics.component.viewed("],
+    needles: [
+      "analytics.docs.navigationClicked(",
+      "analytics.component.viewed(",
+    ],
   },
   {
     file: "app/docs/_components/docs-pager.tsx",
@@ -52,6 +55,31 @@ const FILE_ASSERTIONS = [
       "analytics.gallery.componentClicked(",
       "analytics.docs.navigationClicked(",
     ],
+  },
+  {
+    file: "app/docs/_components/docs-search.client.tsx",
+    needles: [
+      "analytics.search.opened(",
+      "analytics.search.querySubmitted(",
+      "analytics.search.noResults(",
+      "analytics.search.resultClicked(",
+    ],
+  },
+  {
+    file: "app/components/home/home-hero.tsx",
+    needles: ["analytics.cta.clicked("],
+  },
+  {
+    file: "app/components/layout/tracked-external-anchor.client.tsx",
+    needles: ["analytics.external.linkClicked("],
+  },
+  {
+    file: "app/components/layout/app-header.server.tsx",
+    needles: ["TrackedExternalAnchor"],
+  },
+  {
+    file: "app/components/layout/mobile-nav-sheet.client.tsx",
+    needles: ["TrackedExternalAnchor"],
   },
 ] as const;
 

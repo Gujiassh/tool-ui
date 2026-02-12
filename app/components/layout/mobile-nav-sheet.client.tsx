@@ -11,6 +11,7 @@ import { BASE_DOCS_PAGES } from "@/app/docs/_components/docs-pages";
 import { cn } from "@/lib/ui/cn";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { TrackedExternalAnchor } from "./tracked-external-anchor.client";
 
 import "@/app/styles/nav-sheet.css";
 
@@ -42,7 +43,14 @@ export function MobileNavSheet() {
           className="MobileNavSheet-trigger z-50 size-14 rounded-full shadow-lg md:hidden"
           aria-label="Open navigation"
         >
-          <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <svg
+            className="size-6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
             <line x1="4" y1="8" x2="20" y2="8" />
             <line x1="4" y1="16" x2="20" y2="16" />
           </svg>
@@ -171,22 +179,24 @@ export function MobileNavSheet() {
             <footer className="MobileNavSheet-footer">
               <div className="MobileNavSheet-footerInner">
                 <Button variant="outline" size="lg" className="flex-1" asChild>
-                  <a
+                  <TrackedExternalAnchor
                     href="https://github.com/assistant-ui/tool-ui"
+                    destination="github"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <FaGithub className="size-6" />
-                  </a>
+                  </TrackedExternalAnchor>
                 </Button>
                 <Button variant="outline" size="lg" className="flex-1" asChild>
-                  <a
+                  <TrackedExternalAnchor
                     href="https://x.com/assistantui"
+                    destination="other"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <FaXTwitter className="size-6" />
-                  </a>
+                  </TrackedExternalAnchor>
                 </Button>
               </div>
             </footer>
