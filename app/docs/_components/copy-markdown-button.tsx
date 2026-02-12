@@ -1,17 +1,24 @@
 "use client";
 
+import type { MouseEventHandler } from "react";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Button } from "@/components/ui/button";
 import { Check, Copy as CopyIcon } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 
 type CopyMarkdownButtonProps = {
   markdown: string;
 };
 
 export function CopyMarkdownButton({ markdown }: CopyMarkdownButtonProps) {
-  const [checked, onClick] = useCopyButton(async () => {
+  const [checked, copyMarkdown] = useCopyButton(async () => {
     await navigator.clipboard.writeText(markdown);
   });
+
+  const onClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+    analytics.code.blockCopied("markdown", "docs_header");
+    copyMarkdown(event);
+  };
 
   return (
     <Button type="button" variant="outline" size="sm" onClick={onClick} aria-label="Copy page as Markdown" className="gap-2">
@@ -20,4 +27,3 @@ export function CopyMarkdownButton({ markdown }: CopyMarkdownButtonProps) {
     </Button>
   );
 }
-

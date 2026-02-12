@@ -3,7 +3,6 @@ import { HeaderPreviewTabs } from "./header-preview-tabs";
 import { getMdxAsMarkdown } from "./mdx-to-markdown";
 import {
   isComponentId,
-  type ComponentId,
 } from "@/lib/docs/component-ids";
 
 type DocsHeaderProps = {

@@ -5,6 +5,7 @@ import { cn } from "@/lib/ui/cn";
 import { useDocsToc } from "./docs-toc-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useTocKeyboardNav } from "@/hooks/use-toc-keyboard-nav";
+import { analytics } from "@/lib/analytics";
 
 export function DocsToc() {
   const { scrollContainer, headings, activeId } = useDocsToc();
@@ -40,8 +41,13 @@ export function DocsToc() {
     scrollToHeading,
   );
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const handleClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    id: string,
+    title: string,
+  ) => {
     e.preventDefault();
+    analytics.docs.tocLinkClicked(title, 2);
     scrollToHeading(id);
   };
 
@@ -123,7 +129,7 @@ export function DocsToc() {
             key={heading.id}
             ref={setLinkRef(index)}
             href={`#${heading.id}`}
-            onClick={(e) => handleClick(e, heading.id)}
+            onClick={(e) => handleClick(e, heading.id, heading.text)}
             className={cn(
               "relative block py-1 text-sm transition-colors",
               "hover:text-foreground focus-visible:outline-none focus-visible:text-foreground",

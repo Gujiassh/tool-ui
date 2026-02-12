@@ -5,7 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { LayoutDashboardIcon } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 import {
+  componentsRegistry,
   componentsByCategory,
   CATEGORY_META,
   type ComponentCategory,
@@ -21,6 +23,7 @@ export function DocsNav() {
   const [currentView] = useQueryState("view");
   const [collapsed, setCollapsed] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
+  const previousPathRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     try {
@@ -46,6 +49,16 @@ export function DocsNav() {
     document.addEventListener("mouseup", handleMouseUp);
     return () => document.removeEventListener("mouseup", handleMouseUp);
   }, []);
+
+  React.useEffect(() => {
+    const component = componentsRegistry.find((entry) => entry.path === pathname);
+    if (component) {
+      const source = previousPathRef.current === "/docs/gallery" ? "gallery" : "direct";
+      analytics.component.viewed(component.id, source);
+    }
+
+    previousPathRef.current = pathname;
+  }, [pathname]);
 
   const buildLinkClasses = (isActive: boolean) =>
     cn(
@@ -91,6 +104,7 @@ export function DocsNav() {
             className={buildLinkClasses(isGalleryActive)}
             title={collapsed ? "Gallery" : undefined}
             onMouseDown={handleLinkMouseDown}
+            onClick={() => analytics.docs.navigationClicked("Gallery", galleryPath)}
           >
             {!collapsed && (
               <div className="flex flex-col overflow-hidden">
@@ -120,6 +134,7 @@ export function DocsNav() {
                 className={buildLinkClasses(isActive)}
                 title={collapsed ? page.label : undefined}
                 onMouseDown={handleLinkMouseDown}
+                onClick={() => analytics.docs.navigationClicked(page.label, page.path)}
               >
                 {!collapsed && (
                   <div className="overflow-hidden">
@@ -160,6 +175,9 @@ export function DocsNav() {
                   className={buildLinkClasses(isActive)}
                   title={collapsed ? component.label : undefined}
                   onMouseDown={handleLinkMouseDown}
+                  onClick={() =>
+                    analytics.docs.navigationClicked(component.label, href)
+                  }
                 >
                   {!collapsed && (
                     <div className="overflow-hidden">
