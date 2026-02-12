@@ -31,12 +31,6 @@ function generateProgressTrackerCode(
     );
   }
 
-  if (data.responseActions) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-  }
-
   return `<ProgressTracker\n${props.join("\n")}\n/>`;
 }
 
@@ -66,7 +60,6 @@ export const progressTrackerPresets = {
         },
       ],
       elapsedTime: 43200,
-      responseActions: [{ id: "cancel", label: "Cancel", variant: "outline" }],
     } satisfies SerializableProgressTracker,
     generateExampleCode: generateProgressTrackerCode,
   },
@@ -134,10 +127,6 @@ export const progressTrackerPresets = {
         },
       ],
       elapsedTime: 8300,
-      responseActions: [
-        { id: "cancel", label: "Cancel", variant: "ghost" },
-        { id: "retry", label: "Retry Migration", variant: "default" },
-      ],
     } satisfies SerializableProgressTracker,
     generateExampleCode: generateProgressTrackerCode,
   },
@@ -172,7 +161,6 @@ export const progressTrackerPresets = {
         },
       ],
       elapsedTime: 247800,
-      responseActions: [{ id: "cancel", label: "Cancel", variant: "outline" }],
     } satisfies SerializableProgressTracker,
     generateExampleCode: generateProgressTrackerCode,
   },

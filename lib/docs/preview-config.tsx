@@ -760,14 +760,7 @@ export const previewConfigs: Record<
     },
     renderComponent: ({ data }) => {
       const trackerData = data as Parameters<typeof ProgressTracker>[0];
-      return (
-        <DynamicProgressTracker
-          {...trackerData}
-          onResponseAction={(actionId) =>
-            console.log("Response action:", actionId)
-          }
-        />
-      );
+      return <DynamicProgressTracker {...trackerData} />;
     },
   },
   "stats-display": {

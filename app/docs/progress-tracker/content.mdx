@@ -55,8 +55,6 @@ export function Example() {
         },
       ]}
       elapsedTime={43200}
-      responseActions={[{ id: "cancel", label: "Cancel", variant: "outline" }]}
-      onResponseAction={(actionId) => console.log(actionId)}
     />
   );
 }
@@ -77,27 +75,15 @@ import { type Toolkit } from "@assistant-ui/react";
 import {
   ProgressTracker,
   safeParseSerializableProgressTracker,
-  SerializableProgressTrackerSchema,
 } from "@/components/tool-ui/progress-tracker";
-import { createArgsToolRenderer } from "@/components/tool-ui/shared";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   trackProgress: {
-    description: "Display real-time progress for multi-step operations",
-    parameters: SerializableProgressTrackerSchema,
-    render: createArgsToolRenderer({
+    type: "backend",
+    render: createResultToolRenderer({
       safeParse: safeParseSerializableProgressTracker,
-      idPrefix: "progress-tracker",
-      render: (parsedArgs) => (
-          <ProgressTracker
-            {...parsedArgs}
-            onResponseAction={async (actionId) => {
-              if (actionId === "cancel") {
-                console.log("Cancelled operation");
-              }
-            }}
-          />
-      ),
+      render: (parsedResult) => <ProgressTracker {...parsedResult} />,
     }),
   },
 };
@@ -108,6 +94,8 @@ export const toolkit: Toolkit = {
 </Steps>
 
 These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wiring, but the ProgressTracker component itself is framework-agnostic at the UI layer: you can use it in any React codebase with any LLM SDK or tool-calling interface that can provide compatible props.
+
+ProgressTracker v2 is display-only and result-driven: render it from backend tool result updates. For interactive decisions or confirmations, use dedicated decision surfaces like Option List or Preferences Panel.
 
 ## Key Features
 
@@ -135,7 +123,7 @@ Each step has one of four statuses:
 - **Completed** — Successfully finished (filled checkmark)
 - **Failed** — Encountered an error (filled X icon)
 
-The component automatically highlights the current step (in-progress or first pending) with a subtle background and `aria-current="step"` for accessibility.
+The component automatically highlights the current step (first `in-progress`, otherwise first `failed`, otherwise first `pending`) with a subtle background and `aria-current="step"` for accessibility.
 
 ## Receipt Pattern
 
@@ -175,22 +163,8 @@ Pass `elapsedTime` in milliseconds to display a timer badge. Automatically forma
     },
     elapsedTime: {
       description:
-        "Operation duration in milliseconds. Displayed as formatted timer badge.",
+        "Operation duration in milliseconds (finite, non-negative). Displayed as formatted timer badge.",
       type: "number",
-    },
-    responseActions: {
-      description:
-        "Actions rendered below the card (e.g., Cancel, Retry). Hidden when operation completes unless custom actions provided.",
-      type: "Action[] | ActionsConfig",
-    },
-    onResponseAction: {
-      description: "Handler when a response action is triggered",
-      type: "(actionId: string) => void | Promise<void>",
-    },
-    onBeforeResponseAction: {
-      description:
-        "Handler called before action execution (can prevent action by returning false)",
-      type: "(actionId: string) => boolean | Promise<boolean>",
     },
     choice: {
       description:
@@ -205,7 +179,7 @@ Pass `elapsedTime` in milliseconds to display a timer badge. Automatically forma
 <TypeTable
   type={{
     id: {
-      description: "Unique identifier for the step",
+      description: "Unique identifier for the step (must be unique within the steps array)",
       type: "string",
       required: true,
     },
@@ -216,7 +190,7 @@ Pass `elapsedTime` in milliseconds to display a timer badge. Automatically forma
     },
     description: {
       description:
-        "Additional details shown below the label. Visible for current, failed, in-progress, or completed (when all done) steps.",
+        "Additional details shown below the label. In interactive mode, visible for in-progress and failed steps. In receipt mode, all step descriptions are shown.",
       type: "string",
     },
     status: {
@@ -261,7 +235,7 @@ Pass `elapsedTime` in milliseconds to display a timer badge. Automatically forma
 - Semantic `<article>` with `role="status"` and `aria-live="polite"` for live updates
 - `aria-busy` indicates when an operation is in progress
 - `aria-current="step"` marks the currently active step
-- Steps rendered as semantic list (`<ul>` / `<li>`)
-- Keyboard navigation: `Tab` to focus action buttons, `Enter` or `Space` to activate
+- Steps rendered as semantic ordered list (`<ol>` / `<li>`)
+- Elapsed duration is rendered with semantic `<time>` and machine-readable `dateTime`
 - All animations respect `prefers-reduced-motion`
 - Text is unselectable to prevent accidental highlighting during status changes

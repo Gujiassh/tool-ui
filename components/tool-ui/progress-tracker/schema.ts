@@ -2,12 +2,9 @@ import { z } from "zod";
 import {
   ToolUISurfaceSchema,
   ToolUIReceiptSchema,
-  SerializableActionSchema,
-  SerializableActionsConfigSchema,
   type ToolUIReceipt,
 } from "../shared/schema";
 import { defineToolUiContract } from "../shared/contract";
-import type { ActionsProp } from "../shared/actions-config";
 
 /**
  * Receipt state for ProgressTracker showing the outcome of a workflow.
@@ -23,17 +20,33 @@ export const ProgressStepSchema = z.object({
 
 export type ProgressStep = z.infer<typeof ProgressStepSchema>;
 
+const ProgressStepsSchema = z
+  .array(ProgressStepSchema)
+  .min(1)
+  .superRefine((steps, ctx) => {
+    const seenIds = new Set<string>();
+
+    for (const [index, step] of steps.entries()) {
+      if (seenIds.has(step.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate step id: "${step.id}"`,
+          path: [index, "id"],
+        });
+      }
+
+      seenIds.add(step.id);
+    }
+  });
+
 export const SerializableProgressTrackerSchema = ToolUISurfaceSchema.extend({
-  steps: z.array(ProgressStepSchema).min(1),
-  elapsedTime: z.number().optional(),
+  steps: ProgressStepsSchema,
+  elapsedTime: z.number().finite().nonnegative().optional(),
   /**
    * When set, renders the component in receipt state showing the workflow outcome.
    */
   choice: ToolUIReceiptSchema.optional(),
-  responseActions: z
-    .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
-    .optional(),
-});
+}).strict();
 
 export type SerializableProgressTracker = z.infer<
   typeof SerializableProgressTrackerSchema
@@ -56,7 +69,4 @@ export const safeParseSerializableProgressTracker: (
 
 export interface ProgressTrackerProps extends SerializableProgressTracker {
   className?: string;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }

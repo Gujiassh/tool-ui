@@ -366,5 +366,4 @@ export const PROGRESS_TRACKER_DATA: Omit<SerializableProgressTracker, "id"> = {
     },
   ],
   elapsedTime: 38400,
-  responseActions: [{ id: "cancel", label: "Cancel", variant: "outline" }],
 };
