@@ -196,7 +196,7 @@
       "path": "components/tool-ui/weather-widget/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/weather-widget/index.tsx",
-      "content": "export { WeatherWidget } from \"./weather-widget\";\nexport { WeatherDataOverlay } from \"./weather-data-overlay\";\nexport type { WeatherDataOverlayProps, GlassEffectParams } from \"./weather-data-overlay\";\nexport { resolveWeatherTime, timeBucketToTimeOfDay } from \"./time\";\nexport {\n  WeatherWidgetPayloadSchema,\n  parseWeatherWidgetPayload,\n  safeParseWeatherWidgetPayload,\n  WeatherConditionCodeSchema,\n  ForecastDaySchema,\n  TemperatureUnitSchema,\n  TimeBucketSchema,\n  PrecipitationLevelSchema,\n  type WeatherWidgetPayload,\n  type WeatherWidgetProps,\n  type WeatherWidgetCurrent,\n  type WeatherWidgetTime,\n  type WeatherWidgetLocation,\n  type WeatherConditionCode,\n  type ForecastDay,\n  type TemperatureUnit,\n  type WeatherEffectDrivers,\n  type PrecipitationLevel,\n} from \"./schema\";\n"
+      "content": "export { WeatherWidget } from \"./weather-widget\";\nexport { WeatherDataOverlay } from \"./weather-data-overlay\";\nexport type { WeatherDataOverlayProps, GlassEffectParams } from \"./weather-data-overlay\";\nexport { resolveWeatherTime, timeBucketToTimeOfDay } from \"./time\";\nexport {\n  type WeatherWidgetPayload,\n  type WeatherWidgetProps,\n  type WeatherWidgetCurrent,\n  type WeatherWidgetTime,\n  type WeatherWidgetLocation,\n  type WeatherConditionCode,\n  type ForecastDay,\n  type TemperatureUnit,\n  type WeatherEffectDrivers,\n  type PrecipitationLevel,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/weather-widget/README.md",

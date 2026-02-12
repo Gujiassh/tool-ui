@@ -106,7 +106,7 @@
       "path": "components/tool-ui/video/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/video/index.ts",
-      "content": "export { Video } from \"./video\";\nexport type { VideoProps } from \"./video\";\nexport { VideoProvider, useVideo } from \"./context\";\nexport type { VideoPlaybackState, VideoContextValue } from \"./context\";\nexport {\n  SerializableVideoSchema,\n  parseSerializableVideo,\n  safeParseSerializableVideo,\n} from \"./schema\";\nexport type { SerializableVideo, Source } from \"./schema\";\n"
+      "content": "export { Video } from \"./video\";\nexport type { VideoProps } from \"./video\";\nexport { VideoProvider, useVideo } from \"./context\";\nexport type { VideoPlaybackState, VideoContextValue } from \"./context\";\nexport type { SerializableVideo, Source } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/video/README.md",

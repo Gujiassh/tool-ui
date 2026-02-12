@@ -72,10 +72,8 @@ Register this renderer so tool results display as `ProgressTracker`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  ProgressTracker,
-  safeParseSerializableProgressTracker,
-} from "@/components/tool-ui/progress-tracker";
+import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
+import { safeParseSerializableProgressTracker } from "@/components/tool-ui/progress-tracker/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

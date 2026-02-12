@@ -24,7 +24,7 @@
       "path": "components/tool-ui/order-summary/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/order-summary/index.tsx",
-      "content": "export { OrderSummary } from \"./order-summary\";\nexport {\n  SerializableOrderSummarySchema,\n  OrderItemSchema,\n  PricingSchema,\n  OrderDecisionSchema,\n  parseSerializableOrderSummary,\n  safeParseSerializableOrderSummary,\n  type SerializableOrderSummary,\n  type OrderSummaryProps,\n  type OrderItem,\n  type Pricing,\n  type OrderDecision,\n} from \"./schema\";\n"
+      "content": "export { OrderSummary } from \"./order-summary\";\nexport {\n  type SerializableOrderSummary,\n  type OrderSummaryProps,\n  type OrderItem,\n  type Pricing,\n  type OrderDecision,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/order-summary/order-summary.tsx",

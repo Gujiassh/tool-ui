@@ -60,7 +60,8 @@ Register this renderer so tool results display as `XPost`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import { XPost, safeParseSerializableXPost } from "@/components/tool-ui/x-post";
+import { XPost } from "@/components/tool-ui/x-post";
+import { safeParseSerializableXPost } from "@/components/tool-ui/x-post/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

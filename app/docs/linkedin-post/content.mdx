@@ -59,10 +59,8 @@ Register this renderer so tool results display as `LinkedInPost`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  LinkedInPost,
-  safeParseSerializableLinkedInPost,
-} from "@/components/tool-ui/linkedin-post";
+import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
+import { safeParseSerializableLinkedInPost } from "@/components/tool-ui/linkedin-post/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

@@ -1,12 +1,5 @@
 export { MessageDraft } from "./message-draft";
 export {
-  SerializableMessageDraftSchema,
-  SerializableEmailDraftSchema,
-  SerializableSlackDraftSchema,
-  MessageDraftChannelSchema,
-  MessageDraftOutcomeSchema,
-  parseSerializableMessageDraft,
-  safeParseSerializableMessageDraft,
   type SerializableMessageDraft,
   type SerializableEmailDraft,
   type SerializableSlackDraft,

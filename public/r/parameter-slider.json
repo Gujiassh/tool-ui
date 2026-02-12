@@ -24,7 +24,7 @@
       "path": "components/tool-ui/parameter-slider/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/parameter-slider/index.tsx",
-      "content": "export { ParameterSlider } from \"./parameter-slider\";\nexport type {\n  ParameterSliderProps,\n  SliderConfig,\n  SliderValue,\n  SerializableParameterSlider,\n} from \"./schema\";\nexport {\n  SliderConfigSchema,\n  SerializableParameterSliderSchema,\n  parseSerializableParameterSlider,\n  safeParseSerializableParameterSlider,\n} from \"./schema\";\n"
+      "content": "export { ParameterSlider } from \"./parameter-slider\";\nexport type {\n  ParameterSliderProps,\n  SliderConfig,\n  SliderValue,\n  SerializableParameterSlider,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/parameter-slider/math.ts",

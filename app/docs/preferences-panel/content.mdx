@@ -83,11 +83,11 @@ Register this renderer so tool results display as `PreferencesPanel`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { PreferencesPanel } from "@/components/tool-ui/preferences-panel";
 import {
-  PreferencesPanel,
   safeParseSerializablePreferencesPanel,
   SerializablePreferencesPanelSchema,
-} from "@/components/tool-ui/preferences-panel";
+} from "@/components/tool-ui/preferences-panel/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

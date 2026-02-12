@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   parseSerializablePlan,
   safeParseSerializablePlan,
-} from "@/components/tool-ui/plan";
+} from "@/components/tool-ui/plan/schema";
 
 const basePlan = {
   id: "plan-schema-contract",

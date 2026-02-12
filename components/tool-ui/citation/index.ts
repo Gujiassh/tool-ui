@@ -2,13 +2,6 @@ export { Citation } from "./citation";
 export type { CitationProps } from "./citation";
 export { CitationList } from "./citation-list";
 export type { CitationListProps } from "./citation-list";
-export {
-  SerializableCitationSchema,
-  CitationTypeSchema,
-  CitationVariantSchema,
-  parseSerializableCitation,
-  safeParseSerializableCitation,
-} from "./schema";
 export type {
   SerializableCitation,
   CitationType,

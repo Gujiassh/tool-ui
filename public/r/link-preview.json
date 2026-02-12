@@ -22,7 +22,7 @@
       "path": "components/tool-ui/link-preview/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/link-preview/index.ts",
-      "content": "export { LinkPreview } from \"./link-preview\";\nexport type { LinkPreviewProps } from \"./link-preview\";\nexport {\n  SerializableLinkPreviewSchema,\n  parseSerializableLinkPreview,\n  safeParseSerializableLinkPreview,\n} from \"./schema\";\nexport type { SerializableLinkPreview } from \"./schema\";\n"
+      "content": "export { LinkPreview } from \"./link-preview\";\nexport type { LinkPreviewProps } from \"./link-preview\";\nexport type { SerializableLinkPreview } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/link-preview/link-preview.tsx",

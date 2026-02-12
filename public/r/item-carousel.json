@@ -23,7 +23,7 @@
       "path": "components/tool-ui/item-carousel/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/item-carousel/index.tsx",
-      "content": "export { ItemCarousel } from \"./item-carousel\";\nexport { ItemCard } from \"./item-card\";\nexport type {\n  Item,\n  ItemCarouselProps,\n  SerializableItem,\n  SerializableItemCarousel,\n} from \"./schema\";\nexport {\n  ItemSchema,\n  ItemCarouselPropsSchema,\n  SerializableItemSchema,\n  SerializableItemCarouselSchema,\n  parseSerializableItemCarousel,\n  safeParseSerializableItemCarousel,\n} from \"./schema\";\n"
+      "content": "export { ItemCarousel } from \"./item-carousel\";\nexport { ItemCard } from \"./item-card\";\nexport type {\n  Item,\n  ItemCarouselProps,\n  SerializableItem,\n  SerializableItemCarousel,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/item-carousel/item-card.tsx",

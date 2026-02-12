@@ -30,7 +30,7 @@
       "path": "components/tool-ui/code-block/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/code-block/index.tsx",
-      "content": "export { CodeBlock } from \"./code-block\";\nexport type { CodeBlockProps, SerializableCodeBlock } from \"./schema\";\nexport {\n  CodeBlockPropsSchema,\n  SerializableCodeBlockSchema,\n  parseSerializableCodeBlock,\n  safeParseSerializableCodeBlock,\n} from \"./schema\";\n"
+      "content": "export { CodeBlock } from \"./code-block\";\nexport type { CodeBlockProps, SerializableCodeBlock } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/code-block/README.md",

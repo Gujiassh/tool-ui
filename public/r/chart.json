@@ -29,7 +29,7 @@
       "path": "components/tool-ui/chart/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/chart/index.tsx",
-      "content": "export { Chart } from \"./chart\";\nexport {\n  ChartPropsSchema,\n  ChartSeriesSchema,\n  SerializableChartSchema,\n  parseSerializableChart,\n  safeParseSerializableChart,\n  type ChartProps,\n  type ChartSeries,\n  type ChartDataPoint,\n  type ChartClientProps,\n  type SerializableChart,\n} from \"./schema\";\n"
+      "content": "export { Chart } from \"./chart\";\nexport {\n  type ChartProps,\n  type ChartSeries,\n  type ChartDataPoint,\n  type ChartClientProps,\n  type SerializableChart,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/chart/README.md",

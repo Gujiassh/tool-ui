@@ -4,9 +4,3 @@ export type {
   ImageGalleryItem,
   SerializableImageGallery,
 } from "./schema";
-export {
-  SerializableImageGallerySchema,
-  ImageGalleryItemSchema,
-  parseSerializableImageGallery,
-  safeParseSerializableImageGallery,
-} from "./schema";

@@ -23,7 +23,7 @@
       "path": "components/tool-ui/linkedin-post/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/linkedin-post/index.ts",
-      "content": "export { LinkedInPost } from \"./linkedin-post\";\nexport type { LinkedInPostProps } from \"./linkedin-post\";\nexport {\n  SerializableLinkedInPostSchema,\n  parseSerializableLinkedInPost,\n  safeParseSerializableLinkedInPost,\n} from \"./schema\";\nexport type {\n  LinkedInPostData,\n  LinkedInPostAuthor,\n  LinkedInPostMedia,\n  LinkedInPostLinkPreview,\n  LinkedInPostStats,\n} from \"./schema\";\n"
+      "content": "export { LinkedInPost } from \"./linkedin-post\";\nexport type { LinkedInPostProps } from \"./linkedin-post\";\nexport type {\n  LinkedInPostData,\n  LinkedInPostAuthor,\n  LinkedInPostMedia,\n  LinkedInPostLinkPreview,\n  LinkedInPostStats,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/linkedin-post/linkedin-post.tsx",

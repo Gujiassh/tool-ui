@@ -39,7 +39,7 @@
       "path": "components/tool-ui/stats-display/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/stats-display/index.tsx",
-      "content": "export { StatsDisplay } from \"./stats-display\";\nexport { Sparkline, type SparklineProps } from \"./sparkline\";\nexport {\n  SerializableStatsDisplaySchema,\n  parseSerializableStatsDisplay,\n  safeParseSerializableStatsDisplay,\n  StatFormatSchema,\n  StatDiffSchema,\n  StatSparklineSchema,\n  StatItemSchema,\n  type SerializableStatsDisplay,\n  type StatsDisplayProps,\n  type StatFormat,\n  type StatDiff,\n  type StatSparkline,\n  type StatItem,\n} from \"./schema\";\n"
+      "content": "export { StatsDisplay } from \"./stats-display\";\nexport { Sparkline, type SparklineProps } from \"./sparkline\";\nexport {\n  type SerializableStatsDisplay,\n  type StatsDisplayProps,\n  type StatFormat,\n  type StatDiff,\n  type StatSparkline,\n  type StatItem,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/stats-display/README.md",

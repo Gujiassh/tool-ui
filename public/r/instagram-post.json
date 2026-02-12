@@ -23,7 +23,7 @@
       "path": "components/tool-ui/instagram-post/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/instagram-post/index.ts",
-      "content": "export { InstagramPost } from \"./instagram-post\";\nexport type { InstagramPostProps } from \"./instagram-post\";\nexport {\n  SerializableInstagramPostSchema,\n  parseSerializableInstagramPost,\n  safeParseSerializableInstagramPost,\n} from \"./schema\";\nexport type {\n  InstagramPostData,\n  InstagramPostAuthor,\n  InstagramPostMedia,\n  InstagramPostStats,\n} from \"./schema\";\n"
+      "content": "export { InstagramPost } from \"./instagram-post\";\nexport type { InstagramPostProps } from \"./instagram-post\";\nexport type {\n  InstagramPostData,\n  InstagramPostAuthor,\n  InstagramPostMedia,\n  InstagramPostStats,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/instagram-post/instagram-post.tsx",

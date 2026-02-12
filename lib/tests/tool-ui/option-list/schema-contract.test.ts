@@ -3,7 +3,7 @@ import {
   parseSerializableOptionList,
   safeParseSerializableOptionList,
   type SerializableOptionList,
-} from "@/components/tool-ui/option-list";
+} from "@/components/tool-ui/option-list/schema";
 
 function makePayload(): SerializableOptionList {
   return {

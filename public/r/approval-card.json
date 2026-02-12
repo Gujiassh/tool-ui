@@ -29,7 +29,7 @@
       "path": "components/tool-ui/approval-card/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/approval-card/index.tsx",
-      "content": "export { ApprovalCard } from \"./approval-card\";\nexport {\n  SerializableApprovalCardSchema,\n  parseSerializableApprovalCard,\n  safeParseSerializableApprovalCard,\n  type SerializableApprovalCard,\n  type ApprovalCardProps,\n  type ApprovalDecision,\n  type MetadataItem,\n} from \"./schema\";\n"
+      "content": "export { ApprovalCard } from \"./approval-card\";\nexport {\n  type SerializableApprovalCard,\n  type ApprovalCardProps,\n  type ApprovalDecision,\n  type MetadataItem,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/approval-card/README.md",

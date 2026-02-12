@@ -57,11 +57,11 @@ Register this renderer so tool results display as `ApprovalCard`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { ApprovalCard } from "@/components/tool-ui/approval-card";
 import {
-  ApprovalCard,
   safeParseSerializableApprovalCard,
   SerializableApprovalCardSchema,
-} from "@/components/tool-ui/approval-card";
+} from "@/components/tool-ui/approval-card/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

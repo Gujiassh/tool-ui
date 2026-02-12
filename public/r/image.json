@@ -27,7 +27,7 @@
       "path": "components/tool-ui/image/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/image/index.ts",
-      "content": "export { Image } from \"./image\";\nexport type { ImageProps } from \"./image\";\nexport {\n  SerializableImageSchema,\n  parseSerializableImage,\n  safeParseSerializableImage,\n} from \"./schema\";\nexport type { SerializableImage, Source } from \"./schema\";\n"
+      "content": "export { Image } from \"./image\";\nexport type { ImageProps } from \"./image\";\nexport type { SerializableImage, Source } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/image/README.md",

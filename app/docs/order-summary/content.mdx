@@ -78,11 +78,11 @@ Register this renderer so tool results display as `OrderSummary`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
 import {
-  OrderSummary,
   safeParseSerializableOrderSummary,
   SerializableOrderSummarySchema,
-} from "@/components/tool-ui/order-summary";
+} from "@/components/tool-ui/order-summary/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

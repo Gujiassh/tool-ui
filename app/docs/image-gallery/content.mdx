@@ -72,10 +72,8 @@ Register this renderer so tool results display as `ImageGallery`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  ImageGallery,
-  safeParseSerializableImageGallery,
-} from "@/components/tool-ui/image-gallery";
+import { ImageGallery } from "@/components/tool-ui/image-gallery";
+import { safeParseSerializableImageGallery } from "@/components/tool-ui/image-gallery/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

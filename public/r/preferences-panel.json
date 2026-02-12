@@ -27,7 +27,7 @@
       "path": "components/tool-ui/preferences-panel/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/preferences-panel/index.tsx",
-      "content": "export { PreferencesPanel, PreferencesPanelReceipt } from \"./preferences-panel\";\nexport {\n  SerializablePreferencesPanelSchema,\n  SerializablePreferencesPanelReceiptSchema,\n  parseSerializablePreferencesPanel,\n  safeParseSerializablePreferencesPanel,\n  parseSerializablePreferencesPanelReceipt,\n  safeParseSerializablePreferencesPanelReceipt,\n  type SerializablePreferencesPanel,\n  type SerializablePreferencesPanelReceipt,\n  type PreferencesPanelProps,\n  type PreferencesPanelReceiptProps,\n  type PreferencesValue,\n  type PreferenceItem,\n  type PreferenceSection,\n} from \"./schema\";\n"
+      "content": "export { PreferencesPanel, PreferencesPanelReceipt } from \"./preferences-panel\";\nexport {\n  type SerializablePreferencesPanel,\n  type SerializablePreferencesPanelReceipt,\n  type PreferencesPanelProps,\n  type PreferencesPanelReceiptProps,\n  type PreferencesValue,\n  type PreferenceItem,\n  type PreferenceSection,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/preferences-panel/preferences-panel.tsx",

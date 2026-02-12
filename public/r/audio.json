@@ -35,7 +35,7 @@
       "path": "components/tool-ui/audio/index.ts",
       "type": "registry:lib",
       "target": "components/tool-ui/audio/index.ts",
-      "content": "export { Audio } from \"./audio\";\nexport type { AudioProps } from \"./audio\";\nexport { AudioProvider, useAudio } from \"./context\";\nexport type { AudioPlaybackState, AudioContextValue } from \"./context\";\nexport {\n  SerializableAudioSchema,\n  parseSerializableAudio,\n  safeParseSerializableAudio,\n} from \"./schema\";\nexport type { SerializableAudio, Source, AudioVariant } from \"./schema\";\n"
+      "content": "export { Audio } from \"./audio\";\nexport type { AudioProps } from \"./audio\";\nexport { AudioProvider, useAudio } from \"./context\";\nexport type { AudioPlaybackState, AudioContextValue } from \"./context\";\nexport type { SerializableAudio, Source, AudioVariant } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/audio/README.md",

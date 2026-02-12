@@ -46,7 +46,7 @@
       "path": "components/tool-ui/image-gallery/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/image-gallery/index.tsx",
-      "content": "export { ImageGallery } from \"./image-gallery\";\nexport type {\n  ImageGalleryProps,\n  ImageGalleryItem,\n  SerializableImageGallery,\n} from \"./schema\";\nexport {\n  SerializableImageGallerySchema,\n  ImageGalleryItemSchema,\n  parseSerializableImageGallery,\n  safeParseSerializableImageGallery,\n} from \"./schema\";\n"
+      "content": "export { ImageGallery } from \"./image-gallery\";\nexport type {\n  ImageGalleryProps,\n  ImageGalleryItem,\n  SerializableImageGallery,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/image-gallery/README.md",

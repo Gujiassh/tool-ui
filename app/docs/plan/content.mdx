@@ -63,7 +63,8 @@ Drop this into your runtime provider so tool results render as `Plan`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import { Plan, safeParseSerializablePlan } from "@/components/tool-ui/plan";
+import { Plan } from "@/components/tool-ui/plan";
+import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

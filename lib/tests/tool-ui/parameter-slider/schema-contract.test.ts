@@ -4,7 +4,7 @@ import {
   SerializableParameterSliderSchema,
   safeParseSerializableParameterSlider,
   type SerializableParameterSlider,
-} from "@/components/tool-ui/parameter-slider";
+} from "@/components/tool-ui/parameter-slider/schema";
 
 function makePayload(): SerializableParameterSlider {
   return {

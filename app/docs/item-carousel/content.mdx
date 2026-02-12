@@ -46,7 +46,7 @@ Register this renderer so tool results display as `ItemCarousel`.
 // Backend tool
 import { tool } from "ai";
 import { z } from "zod";
-import { SerializableItemCarouselSchema } from "@/components/tool-ui/item-carousel";
+import { SerializableItemCarouselSchema } from "@/components/tool-ui/item-carousel/schema";
 
 const searchItems = tool({
   description: "Search for items matching criteria",
@@ -75,10 +75,8 @@ const searchItems = tool({
 
 // Frontend with assistant-ui
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  ItemCarousel,
-  safeParseSerializableItemCarousel,
-} from "@/components/tool-ui/item-carousel";
+import { ItemCarousel } from "@/components/tool-ui/item-carousel";
+import { safeParseSerializableItemCarousel } from "@/components/tool-ui/item-carousel/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

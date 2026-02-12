@@ -23,7 +23,7 @@
       "path": "components/tool-ui/question-flow/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/question-flow/index.tsx",
-      "content": "export { QuestionFlow } from \"./question-flow\";\nexport {\n  SerializableQuestionFlowSchema,\n  SerializableProgressiveModeSchema,\n  SerializableUpfrontModeSchema,\n  SerializableReceiptModeSchema,\n  QuestionFlowOptionSchema,\n  QuestionFlowStepDefinitionSchema,\n  QuestionFlowChoiceSchema,\n  QuestionFlowSummaryItemSchema,\n  parseSerializableQuestionFlow,\n  safeParseSerializableQuestionFlow,\n  type SerializableQuestionFlow,\n  type SerializableProgressiveMode,\n  type SerializableUpfrontMode,\n  type SerializableReceiptMode,\n  type QuestionFlowProps,\n  type QuestionFlowProgressiveProps,\n  type QuestionFlowUpfrontProps,\n  type QuestionFlowReceiptProps,\n  type QuestionFlowOption,\n  type QuestionFlowStepDefinition,\n  type QuestionFlowChoice,\n  type QuestionFlowSummaryItem,\n} from \"./schema\";\n"
+      "content": "export { QuestionFlow } from \"./question-flow\";\nexport {\n  type SerializableQuestionFlow,\n  type SerializableProgressiveMode,\n  type SerializableUpfrontMode,\n  type SerializableReceiptMode,\n  type QuestionFlowProps,\n  type QuestionFlowProgressiveProps,\n  type QuestionFlowUpfrontProps,\n  type QuestionFlowReceiptProps,\n  type QuestionFlowOption,\n  type QuestionFlowStepDefinition,\n  type QuestionFlowChoice,\n  type QuestionFlowSummaryItem,\n} from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/question-flow/question-flow.tsx",

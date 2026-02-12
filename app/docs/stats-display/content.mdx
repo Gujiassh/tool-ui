@@ -87,11 +87,11 @@ Register this renderer so tool results display as `StatsDisplay`.
 "use client";
 
 import { type Toolkit } from "@assistant-ui/react";
+import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import {
-  StatsDisplay,
   safeParseSerializableStatsDisplay,
   SerializableStatsDisplaySchema,
-} from "@/components/tool-ui/stats-display";
+} from "@/components/tool-ui/stats-display/schema";
 import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

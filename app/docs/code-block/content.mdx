@@ -76,10 +76,8 @@ const showCodeBlock = tool({
 
 // Frontend with assistant-ui
 import { type Toolkit } from "@assistant-ui/react";
-import {
-  CodeBlock,
-  safeParseSerializableCodeBlock,
-} from "@/components/tool-ui/code-block";
+import { CodeBlock } from "@/components/tool-ui/code-block";
+import { safeParseSerializableCodeBlock } from "@/components/tool-ui/code-block/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {

@@ -72,7 +72,7 @@
       "path": "components/tool-ui/terminal/index.tsx",
       "type": "registry:component",
       "target": "components/tool-ui/terminal/index.tsx",
-      "content": "export { Terminal } from \"./terminal\";\nexport type { TerminalProps, SerializableTerminal } from \"./schema\";\nexport {\n  TerminalPropsSchema,\n  SerializableTerminalSchema,\n  parseSerializableTerminal,\n  safeParseSerializableTerminal,\n} from \"./schema\";\n"
+      "content": "export { Terminal } from \"./terminal\";\nexport type { TerminalProps, SerializableTerminal } from \"./schema\";\n"
     },
     {
       "path": "components/tool-ui/terminal/README.md",
