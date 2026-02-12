@@ -673,7 +673,7 @@ export const previewConfigs: Record<
       const themedSliders = isAudioEq
         ? sliderData.sliders.map((slider, i) => ({
             ...slider,
-            trackClassName: "bg-zinc-900/80 dark:bg-zinc-950/90",
+            trackClassName: "bg-zinc-300/70 dark:bg-zinc-950/90",
             fillClassName: [
               "bg-cyan-500/40",
               "bg-fuchsia-500/40",
