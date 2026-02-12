@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   parseSerializableDataTable,
   safeParseSerializableDataTable,
-} from "@/components/tool-ui/data-table";
+} from "@/components/tool-ui/data-table/schema";
 
 describe("data-table schema contract", () => {
   it("parses and preserves optional serializable props", () => {
