@@ -28,25 +28,3 @@ npx skills add https://github.com/assistant-ui/tool-ui --skill tool-ui
 | Scaffold generator | Generates ready-to-paste runtime wiring snippets | `.agents/skills/tool-ui/scripts/tool_ui_scaffold.py` |
 | Script test suite | Regression coverage for agent-facing tooling | `.agents/skills/tool-ui/tests/` |
 | Docs contract tests | Guards docs consistency and registry-installation policy | `lib/tests/tool-ui/docs/` |
-
-## Suggested additions to improve agent success
-
-These additions would reduce agent error rate and speed up integration work:
-
-1. **Agent resource manifest (`agent-resources.json`)**
-   - Add one machine-readable index for skills, scripts, references, and tests with purpose tags and entry commands.
-2. **Integration fixture app + smoke test**
-   - Add a minimal fixture app that runs compatibility checks and verifies at least one backend tool and one frontend tool end-to-end.
-3. **Troubleshooting examples with known-failing fixtures**
-   - Add reproducible broken setups that map directly to the troubleshooting matrix and expected doctor output.
-4. **CI drift guard for component metadata**
-   - Fail CI when `.agents/skills/tool-ui/references/components-data.json` drifts from `lib/docs/component-registry.ts`.
-5. **Agent-ready prompt templates**
-   - Add templates for common intents such as "onboard first component", "integrate a decision flow", and "migrate from manual wiring to assistant-ui."
-
-## Related docs
-
-- [Quick Start](/docs/quick-start)
-- [UI Guidelines](/docs/design-guidelines)
-- [Maintainer Guide](/docs/contributing)
-- [Gallery](/docs/gallery)
