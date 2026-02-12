@@ -11,6 +11,7 @@ export type OptionListPresetName =
 
 function generateOptionListCode(data: SerializableOptionList): string {
   const props: string[] = [];
+  const hasChoice = data.choice !== undefined && data.choice !== null;
 
   props.push(
     `  options={${JSON.stringify(data.options, null, 4).replace(/\n/g, "\n  ")}}`,
@@ -28,7 +29,7 @@ function generateOptionListCode(data: SerializableOptionList): string {
     props.push(`  maxSelections={${data.maxSelections}}`);
   }
 
-  if (data.choice !== undefined && data.choice !== null) {
+  if (hasChoice) {
     const choiceValue =
       typeof data.choice === "string"
         ? `"${data.choice}"`
@@ -42,9 +43,11 @@ function generateOptionListCode(data: SerializableOptionList): string {
     );
   }
 
-  props.push(
-    `  onConfirm={(selection) => {\n    console.log("Selection:", selection);\n  }}`,
-  );
+  if (!hasChoice) {
+    props.push(
+      `  onConfirm={(selection) => {\n    console.log("Selection:", selection);\n  }}`,
+    );
+  }
 
   return `<OptionList\n${props.join("\n")}\n/>`;
 }

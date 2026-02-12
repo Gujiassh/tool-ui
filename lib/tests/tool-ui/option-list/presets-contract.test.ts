@@ -23,4 +23,16 @@ describe("option-list presets contract", () => {
     const code = preset.generateExampleCode(preset.data);
     expect(code).toContain('choice={["code-review","tests-pass","docs-updated"]}');
   });
+
+  test("does not include onConfirm in receipt-mode examples", () => {
+    const receiptCode = optionListPresets.receipt.generateExampleCode(
+      optionListPresets.receipt.data,
+    );
+    const receiptMultiCode = optionListPresets["receipt-multi"].generateExampleCode(
+      optionListPresets["receipt-multi"].data,
+    );
+
+    expect(receiptCode).not.toContain("onConfirm=");
+    expect(receiptMultiCode).not.toContain("onConfirm=");
+  });
 });
