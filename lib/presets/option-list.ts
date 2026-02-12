@@ -6,6 +6,7 @@ export type OptionListPresetName =
   | "travel"
   | "approval"
   | "receipt"
+  | "receipt-multi"
   | "destructive";
 
 function generateOptionListCode(data: SerializableOptionList): string {
@@ -27,8 +28,12 @@ function generateOptionListCode(data: SerializableOptionList): string {
     props.push(`  maxSelections={${data.maxSelections}}`);
   }
 
-  if (data.choice) {
-    props.push(`  choice="${data.choice}"`);
+  if (data.choice !== undefined && data.choice !== null) {
+    const choiceValue =
+      typeof data.choice === "string"
+        ? `"${data.choice}"`
+        : JSON.stringify(data.choice);
+    props.push(`  choice={${choiceValue}}`);
   }
 
   if (data.responseActions) {
@@ -130,7 +135,7 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
     generateExampleCode: generateOptionListCode,
   },
   receipt: {
-    description: "Chosen selection (receipt state)",
+    description: "Selected travel mode (receipt state)",
     data: {
       id: "option-list-preview-receipt",
       options: [
@@ -139,7 +144,11 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
           label: "Walking",
           description: "Sidewalk-friendly route",
         },
-        { id: "drive", label: "Driving", description: "Fastest ETA" },
+        {
+          id: "drive",
+          label: "Driving",
+          description: "Fastest ETA for this route",
+        },
         {
           id: "transit",
           label: "Transit",
@@ -148,6 +157,37 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
       ],
       selectionMode: "single",
       choice: "drive",
+    } satisfies SerializableOptionList,
+    generateExampleCode: generateOptionListCode,
+  },
+  "receipt-multi": {
+    description: "Selected release checks (receipt state)",
+    data: {
+      id: "option-list-preview-receipt-multi",
+      options: [
+        {
+          id: "code-review",
+          label: "Code Review Complete",
+          description: "All reviewers have approved",
+        },
+        {
+          id: "tests-pass",
+          label: "Tests Passing",
+          description: "CI pipeline is green",
+        },
+        {
+          id: "docs-updated",
+          label: "Documentation Updated",
+          description: "README and API docs are current",
+        },
+        {
+          id: "changelog",
+          label: "Changelog Entry Added",
+          description: "Version bump is documented",
+        },
+      ],
+      selectionMode: "multi",
+      choice: ["code-review", "tests-pass", "docs-updated"],
     } satisfies SerializableOptionList,
     generateExampleCode: generateOptionListCode,
   },
