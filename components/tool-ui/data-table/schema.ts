@@ -187,8 +187,8 @@ const SerializableDataTableSchemaContract = defineToolUiContract(
  * - Row data (primitives: strings, numbers, booleans, null, string arrays)
  *
  * Excluded from this type:
- * - Event handlers (`onSortChange`, `onResponseAction`)
- * - React-specific props (`className`, `responseActions`)
+ * - Event handlers (`onSortChange`)
+ * - React-specific props (`className`)
  *
  * @example
  * ```ts
@@ -215,7 +215,7 @@ export type SerializableDataTable = z.infer<typeof SerializableDataTableSchema>;
  * 3. Returns typed serializable props ready to pass to the `<DataTable>` component
  *
  * The returned props are **serializable only** - you must provide client-side props
- * separately (onSortChange, className, responseActions, onResponseAction).
+ * separately (onSortChange, className).
  *
  * @param input - Unknown data to validate (typically from an LLM tool call)
  * @returns Validated and typed DataTable serializable props (id, columns, data)
@@ -229,8 +229,6 @@ export type SerializableDataTable = z.infer<typeof SerializableDataTableSchema>;
  *   return (
  *     <DataTable
  *       {...serializableProps}
- *       responseActions={[{ id: "export", label: "Export" }]}
- *       onResponseAction={(id) => console.log(id)}
  *     />
  *   )
  * }

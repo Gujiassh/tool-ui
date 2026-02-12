@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { createHighlighter, type Highlighter } from "shiki";
 import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
-import type { CodeBlockProps } from "./schema";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig } from "../shared/actions-config";
+import type { CodeBlockProps } from "./schema";
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
 
 import { Button, cn, Collapsible, CollapsibleTrigger } from "./_adapter";
@@ -110,9 +109,6 @@ export function CodeBlock({
   showLineNumbers = true,
   highlightLines,
   maxCollapsedLines,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
   className,
 }: CodeBlockProps) {
   const resolvedTheme = useResolvedTheme();
@@ -217,11 +213,6 @@ export function CodeBlock({
     resolvedTheme,
   ]);
 
-  const normalizedFooterActions = useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
-
   const lineCount = code.split("\n").length;
   const shouldCollapse = maxCollapsedLines && lineCount > maxCollapsedLines;
   const isCollapsed = shouldCollapse && !isExpanded;
@@ -305,17 +296,6 @@ export function CodeBlock({
         </Collapsible>
       </div>
 
-      {normalizedFooterActions && (
-        <div className="@container/actions">
-          <ActionButtons
-            actions={normalizedFooterActions.items}
-            align={normalizedFooterActions.align}
-            confirmTimeout={normalizedFooterActions.confirmTimeout}
-            onAction={(id) => onResponseAction?.(id)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </div>
   );
 }

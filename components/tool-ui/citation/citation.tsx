@@ -12,8 +12,7 @@ import {
   File,
   ExternalLink,
 } from "lucide-react";
-import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
 
 import { openSafeNavigationHref, sanitizeHref } from "../shared/media";
 import type {
@@ -81,9 +80,6 @@ export interface CitationProps extends SerializableCitation {
   variant?: CitationVariant;
   className?: string;
   onNavigate?: (href: string, citation: SerializableCitation) => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 export function Citation(props: CitationProps) {
@@ -91,9 +87,6 @@ export function Citation(props: CitationProps) {
     variant = "default",
     className,
     onNavigate,
-    responseActions,
-    onResponseAction,
-    onBeforeResponseAction,
     ...serializable
   } = props;
 
@@ -120,11 +113,6 @@ export function Citation(props: CitationProps) {
     domain,
     locale,
   };
-
-  const normalizedActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
 
   const TypeIcon = TYPE_ICONS[type] ?? Globe;
 
@@ -272,17 +260,6 @@ export function Citation(props: CitationProps) {
           )}
         </div>
       </div>
-      {normalizedActions && (
-        <div className="@container/actions mt-3">
-          <ActionButtons
-            actions={normalizedActions.items}
-            align={normalizedActions.align}
-            confirmTimeout={normalizedActions.confirmTimeout}
-            onAction={(actionId: string) => onResponseAction?.(actionId)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </article>
   );
 }

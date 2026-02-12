@@ -4,7 +4,7 @@ import type { PresetWithCodeGen } from "./types";
 
 interface ImageData {
   image: SerializableImage;
-  responseActions?: SerializableAction[];
+  localActions?: SerializableAction[];
 }
 
 function escape(value: string): string {
@@ -16,7 +16,7 @@ function formatObject(value: Record<string, unknown>): string {
 }
 
 function generateImageCode(data: ImageData): string {
-  const { image, responseActions } = data;
+  const { image, localActions } = data;
   const props: string[] = [];
 
   props.push(`  id="${image.id}"`);
@@ -60,16 +60,17 @@ function generateImageCode(data: ImageData): string {
     props.push(`  source={${formatObject(image.source as Record<string, unknown>)}}`);
   }
 
-  if (responseActions && responseActions.length > 0) {
-    props.push(
-      `  responseActions={${JSON.stringify(responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(
-      `  onResponseAction={(actionId) => console.log("Action:", actionId)}`,
-    );
+  const imageCode = `<Image\n${props.join("\n")}\n/>`;
+  if (!localActions || localActions.length === 0) {
+    return imageCode;
   }
 
-  return `<Image\n${props.join("\n")}\n/>`;
+  return `${imageCode}
+<LocalActions
+  id="${image.id}-local"
+  actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export type ImagePresetName = "basic" | "with-source" | "with-actions";
@@ -115,7 +116,7 @@ export const imagePresets: Record<ImagePresetName, PresetWithCodeGen<ImageData>>
     generateExampleCode: generateImageCode,
   },
   "with-actions": {
-    description: "Image with response action buttons",
+    description: "Image with external local actions",
     data: {
       image: {
         id: "image-preview-actions",
@@ -128,7 +129,7 @@ export const imagePresets: Record<ImagePresetName, PresetWithCodeGen<ImageData>>
         domain: "unsplash.com",
         createdAt: "2025-03-15T10:00:00.000Z",
       },
-      responseActions: [
+      localActions: [
         { id: "download", label: "Download", variant: "secondary" },
         { id: "share", label: "Share", variant: "default" },
       ],

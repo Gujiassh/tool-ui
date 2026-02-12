@@ -7,6 +7,7 @@ import { ChatContextPreview } from "../chat-context-preview";
 import { XPost } from "@/components/tool-ui/x-post";
 import { InstagramPost } from "@/components/tool-ui/instagram-post";
 import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
+import { LocalActions, type Action } from "@/components/tool-ui/shared";
 import { xPostPresets, type XPostPresetName } from "@/lib/presets/x-post";
 import {
   instagramPostPresets,
@@ -33,6 +34,17 @@ type PresetName =
   | LinkedInPostPresetName;
 
 const VALID_PLATFORMS: readonly Platform[] = ["x", "instagram", "linkedin"];
+
+function resolveActions(actions: unknown): Action[] | null {
+  if (Array.isArray(actions)) return actions as Action[];
+
+  if (typeof actions === "object" && actions !== null) {
+    const items = (actions as { items?: unknown }).items;
+    if (Array.isArray(items)) return items as Action[];
+  }
+
+  return null;
+}
 
 const platformConfig = {
   x: {
@@ -253,44 +265,83 @@ export function SocialPostPreview({
 
   const renderedPost =
     currentPlatform === "x" ? (
-      <XPost
-        post={xPostPresets[effectivePreset as XPostPresetName].data.post}
-        responseActions={
-          xPostPresets[effectivePreset as XPostPresetName].data.responseActions
-        }
-        onAction={(action, post) => console.log("X action:", action, post.id)}
-        onResponseAction={(id) => alert(`Response action: ${id}`)}
-      />
+      <div className="flex flex-col gap-3">
+        <XPost
+          post={xPostPresets[effectivePreset as XPostPresetName].data.post}
+          onAction={(action, post) => console.log("X action:", action, post.id)}
+        />
+        {resolveActions(
+          xPostPresets[effectivePreset as XPostPresetName].data.localActions,
+        ) ? (
+          <LocalActions
+            id={`${xPostPresets[effectivePreset as XPostPresetName].data.post.id}-local`}
+            actions={
+              resolveActions(
+                xPostPresets[effectivePreset as XPostPresetName].data
+                  .localActions,
+              ) as Action[]
+            }
+            onAction={(id) => alert(`Local action: ${id}`)}
+          />
+        ) : null}
+      </div>
     ) : currentPlatform === "instagram" ? (
-      <InstagramPost
-        post={
+      <div className="flex flex-col gap-3">
+        <InstagramPost
+          post={
+            instagramPostPresets[
+              effectivePreset as InstagramPostPresetName
+            ].data.post
+          }
+          onAction={(action, post) =>
+            console.log("Instagram action:", action, post.id)
+          }
+        />
+        {resolveActions(
           instagramPostPresets[effectivePreset as InstagramPostPresetName].data
-            .post
-        }
-        responseActions={
-          instagramPostPresets[effectivePreset as InstagramPostPresetName].data
-            .responseActions
-        }
-        onAction={(action, post) =>
-          console.log("Instagram action:", action, post.id)
-        }
-        onResponseAction={(id) => alert(`Response action: ${id}`)}
-      />
+            .localActions,
+        ) ? (
+          <LocalActions
+            id={`${instagramPostPresets[effectivePreset as InstagramPostPresetName].data.post.id}-local`}
+            actions={
+              resolveActions(
+                instagramPostPresets[
+                  effectivePreset as InstagramPostPresetName
+                ].data.localActions,
+              ) as Action[]
+            }
+            onAction={(id) => alert(`Local action: ${id}`)}
+          />
+        ) : null}
+      </div>
     ) : (
-      <LinkedInPost
-        post={
+      <div className="flex flex-col gap-3">
+        <LinkedInPost
+          post={
+            linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
+              .post
+          }
+          onAction={(action, post) =>
+            console.log("LinkedIn action:", action, post.id)
+          }
+        />
+        {resolveActions(
           linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
-            .post
-        }
-        responseActions={
-          linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
-            .responseActions
-        }
-        onAction={(action, post) =>
-          console.log("LinkedIn action:", action, post.id)
-        }
-        onResponseAction={(id) => alert(`Response action: ${id}`)}
-      />
+            .localActions,
+        ) ? (
+          <LocalActions
+            id={`${linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data.post.id}-local`}
+            actions={
+              resolveActions(
+                linkedInPostPresets[
+                  effectivePreset as LinkedInPostPresetName
+                ].data.localActions,
+              ) as Action[]
+            }
+            onAction={(id) => alert(`Local action: ${id}`)}
+          />
+        ) : null}
+      </div>
     );
 
   const previewContent = (

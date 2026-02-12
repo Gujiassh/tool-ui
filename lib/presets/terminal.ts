@@ -1,4 +1,5 @@
 import type { SerializableTerminal } from "@/components/tool-ui/terminal";
+import type { SerializableAction } from "@/components/tool-ui/shared";
 import type { PresetWithCodeGen } from "./types";
 
 export type TerminalPresetName = "success" | "error" | "build" | "ansiColors" | "collapsible" | "noOutput" | "with-actions";
@@ -7,7 +8,11 @@ function escape(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/`/g, "\\`");
 }
 
-function generateTerminalCode(data: SerializableTerminal): string {
+interface TerminalPresetData extends SerializableTerminal {
+  localActions?: SerializableAction[];
+}
+
+function generateTerminalCode(data: TerminalPresetData): string {
   const props: string[] = [];
 
   props.push(`  command="${escape(data.command)}"`);
@@ -38,10 +43,20 @@ function generateTerminalCode(data: SerializableTerminal): string {
     props.push(`  maxCollapsedLines={${data.maxCollapsedLines}}`);
   }
 
-  return `<Terminal\n${props.join("\n")}\n/>`;
+  const terminal = `<Terminal\n${props.join("\n")}\n/>`;
+  if (!data.localActions || data.localActions.length === 0) {
+    return terminal;
+  }
+
+  return `${terminal}
+<LocalActions
+  id="${data.id}-local"
+  actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
-export const terminalPresets: Record<TerminalPresetName, PresetWithCodeGen<SerializableTerminal>> = {
+export const terminalPresets: Record<TerminalPresetName, PresetWithCodeGen<TerminalPresetData>> = {
   success: {
     description: "Successful test run with duration",
     data: {
@@ -58,7 +73,7 @@ export const terminalPresets: Record<TerminalPresetName, PresetWithCodeGen<Seria
       exitCode: 0,
       durationMs: 312,
       cwd: "~/project",
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
   error: {
@@ -78,7 +93,7 @@ Found 1 error in src/utils.ts:23`,
       exitCode: 1,
       durationMs: 1523,
       cwd: "~/project",
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
   build: {
@@ -103,7 +118,7 @@ Found 1 error in src/utils.ts:23`,
 Successfully built image myapp:latest`,
       exitCode: 0,
       durationMs: 45200,
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
   ansiColors: {
@@ -120,7 +135,7 @@ Successfully built image myapp:latest`,
 \x1b[1m\x1b[32mAll checks passed!\x1b[0m`,
       exitCode: 0,
       durationMs: 2341,
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
   collapsible: {
@@ -161,7 +176,7 @@ Done in 4.8s`,
       exitCode: 0,
       durationMs: 4800,
       maxCollapsedLines: 8,
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
   noOutput: {
@@ -172,11 +187,11 @@ Done in 4.8s`,
       exitCode: 0,
       durationMs: 12,
       cwd: "~/project",
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
   "with-actions": {
-    description: "Failed command with retry actions",
+    description: "Failed command with external local actions",
     data: {
       id: "terminal-preview-with-actions",
       command: "npm run deploy",
@@ -186,11 +201,11 @@ Unable to reach deployment server after 30s`,
       exitCode: 1,
       durationMs: 30125,
       cwd: "~/project",
-      responseActions: [
+      localActions: [
         { id: "retry", label: "Retry", variant: "default" },
         { id: "debug", label: "View logs", variant: "outline" },
       ],
-    } satisfies SerializableTerminal,
+    } satisfies TerminalPresetData,
     generateExampleCode: generateTerminalCode,
   },
 };

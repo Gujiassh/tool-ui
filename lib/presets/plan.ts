@@ -30,17 +30,6 @@ function generatePlanCode(data: SerializablePlan): string {
     props.push(`  maxVisibleTodos={${data.maxVisibleTodos}}`);
   }
 
-  if (
-    data.responseActions &&
-    Array.isArray(data.responseActions) &&
-    data.responseActions.length > 0
-  ) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(`  onResponseAction={(id) => console.log("Action:", id)}`);
-  }
-
   return `<Plan\n${props.join("\n")}\n/>`;
 }
 
@@ -60,17 +49,6 @@ function generatePlanCompactCode(data: SerializablePlan): string {
 
   if (data.maxVisibleTodos) {
     props.push(`  maxVisibleTodos={${data.maxVisibleTodos}}`);
-  }
-
-  if (
-    data.responseActions &&
-    Array.isArray(data.responseActions) &&
-    data.responseActions.length > 0
-  ) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(`  onResponseAction={(id) => console.log("Action:", id)}`);
   }
 
   return `<Plan.Compact\n${props.join("\n")}\n/>`;

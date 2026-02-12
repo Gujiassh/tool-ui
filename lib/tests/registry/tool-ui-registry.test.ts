@@ -52,7 +52,7 @@ describe("Tool UI registry artifacts", () => {
       dataTableItem?.files.some(
         (file) => file.path === "components/tool-ui/shared/action-buttons.tsx",
       ),
-    ).toBe(true);
+    ).toBe(false);
     expect(
       dataTableItem?.files.some((file) => file.path === "lib/ui/cn.ts"),
     ).toBe(false);

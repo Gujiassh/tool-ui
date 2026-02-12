@@ -4,7 +4,7 @@ import type { PresetWithCodeGen } from "./types";
 
 interface InstagramPostPresetData {
   post: InstagramPostData;
-  responseActions?: ActionsProp;
+  localActions?: ActionsProp;
 }
 
 export type InstagramPostPresetName = "basic" | "carousel" | "footer-actions";
@@ -16,13 +16,17 @@ function generateInstagramPostCode(data: InstagramPostPresetData): string {
     `  post={${JSON.stringify(data.post, null, 2).replace(/\n/g, "\n  ")}}`,
   );
 
-  if (data.responseActions) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 2).replace(/\n/g, "\n  ")}}`,
-    );
+  const postCode = `<InstagramPost\n${props.join("\n")}\n/>`;
+  if (!data.localActions) {
+    return postCode;
   }
 
-  return `<InstagramPost\n${props.join("\n")}\n/>`;
+  return `${postCode}
+<LocalActions
+  id="${data.post.id}-local"
+  actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export const instagramPostPresets: Record<
@@ -90,7 +94,7 @@ export const instagramPostPresets: Record<
     generateExampleCode: generateInstagramPostCode,
   },
   "footer-actions": {
-    description: "Post with custom response actions",
+    description: "Post with external local actions",
     data: {
       post: {
         id: "ig-post-footer",
@@ -110,7 +114,7 @@ export const instagramPostPresets: Record<
         stats: { likes: 8921 },
         createdAt: "2025-11-23T09:30:00.000Z",
       },
-      responseActions: [
+      localActions: [
         { id: "view-more", label: "View More Posts", variant: "secondary" },
         { id: "save-location", label: "Save Location", variant: "default" },
       ],

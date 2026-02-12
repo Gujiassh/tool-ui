@@ -61,11 +61,4 @@ export const safeParseSerializableOrderSummary: (
   SerializableOrderSummarySchemaContract.safeParse;
 export interface OrderSummaryProps extends SerializableOrderSummary {
   className?: string;
-  responseActions?: Array<{
-    id: string;
-    label: string;
-    variant?: "default" | "outline" | "destructive" | "secondary" | "ghost";
-    disabled?: boolean;
-  }>;
-  onResponseAction?: (actionId: string) => void;
 }

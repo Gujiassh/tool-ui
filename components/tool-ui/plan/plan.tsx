@@ -11,7 +11,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
   Accordion,
   AccordionItem,
   AccordionTrigger,
@@ -20,8 +19,6 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "./_adapter";
-import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig } from "../shared/actions-config";
 import { calculatePlanProgress, shouldCelebrateProgress } from "./progress";
 
 const INITIAL_VISIBLE_TODO_COUNT = 4;
@@ -262,9 +259,6 @@ function PlanRoot({
   description,
   todos,
   maxVisibleTodos = INITIAL_VISIBLE_TODO_COUNT,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
   className,
   compact = false,
 }: PlanProps & { compact?: boolean }) {
@@ -331,11 +325,6 @@ function PlanRoot({
     }
   }, [progress]);
 
-  const resolvedFooterActions = useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
-
   const todoList = (
     <ul className={cn("min-w-0 space-y-1", compact ? "mt-0" : "mt-4")}>
       <TodoList todos={visibleTodos} newTodoIds={newTodoIds} />
@@ -399,18 +388,6 @@ function PlanRoot({
         </div>
       </CardContent>
 
-      {!compact && resolvedFooterActions && (
-        <CardFooter className="@container/actions">
-          <ActionButtons
-            actions={resolvedFooterActions.items}
-            align={resolvedFooterActions.align}
-            confirmTimeout={resolvedFooterActions.confirmTimeout}
-            onAction={(id) => onResponseAction?.(id)}
-            onBeforeAction={onBeforeResponseAction}
-            className="w-full"
-          />
-        </CardFooter>
-      )}
     </Card>
   );
 }

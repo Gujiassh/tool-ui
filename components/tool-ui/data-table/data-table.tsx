@@ -33,8 +33,6 @@ import type {
   ColumnKey,
   Column,
 } from "./types";
-import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig } from "../shared/actions-config";
 import type { FormatConfig } from "./formatters";
 
 export const DEFAULT_LOCALE = "en-US" as const;
@@ -175,9 +173,6 @@ interface DataTableLayoutProps {
   emptyMessage: string;
   maxHeight?: string;
   className?: string;
-  responseActions?: DataTableProps["responseActions"];
-  onResponseAction?: DataTableProps["onResponseAction"];
-  onBeforeResponseAction?: DataTableProps["onBeforeResponseAction"];
 }
 
 function DataTableLayout({
@@ -185,9 +180,6 @@ function DataTableLayout({
   emptyMessage,
   maxHeight,
   className,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
 }: DataTableLayoutProps) {
   const { columns, data, rowIdKey, sortBy, sortDirection, id } = useDataTable();
   const rowKeys = React.useMemo(
@@ -210,11 +202,6 @@ function DataTableLayout({
       ? `Sorted by ${label}, ${sortDirection === "asc" ? "ascending" : "descending"}`
       : "";
   }, [columns, sortBy, sortDirection]);
-
-  const normalizedFooterActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
 
   return (
     <div
@@ -312,17 +299,6 @@ function DataTableLayout({
         </div>
       )}
 
-      {normalizedFooterActions ? (
-        <div className="@container/actions mt-4">
-          <ActionButtons
-            actions={normalizedFooterActions.items}
-            align={normalizedFooterActions.align}
-            confirmTimeout={normalizedFooterActions.confirmTimeout}
-            onAction={(actionId) => onResponseAction?.(actionId)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -343,9 +319,6 @@ function DataTableBase<T extends object = RowData>(
     emptyMessage = "No data available",
     maxHeight,
     className,
-    responseActions,
-    onResponseAction,
-    onBeforeResponseAction,
   } = props;
 
   return (
@@ -364,9 +337,6 @@ function DataTableBase<T extends object = RowData>(
         emptyMessage={emptyMessage}
         maxHeight={maxHeight}
         className={className}
-        responseActions={responseActions}
-        onResponseAction={onResponseAction}
-        onBeforeResponseAction={onBeforeResponseAction}
       />
     </DataTableProvider>
   );

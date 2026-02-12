@@ -1,0 +1,82 @@
+import { DocsHeader } from "../_components/docs-header";
+import { DataTable } from "@/components/tool-ui/data-table";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
+import { LocalActions, DecisionActions } from "@/components/tool-ui/shared";
+import { createDecisionResult } from "@/components/tool-ui/shared/schema";
+
+<DocsHeader
+  title="Local Actions"
+  description="Display surfaces stay display-only. Render LocalActions and DecisionActions as siblings."
+  mdxPath="app/docs/local-actions/content.mdx"
+/>
+
+## Model
+
+- `LocalActions`: runtime side effects only, no `addResult(...)`.
+- `DecisionActions`: consequential actions that commit a typed decision envelope.
+- Display components: render data only, plus intrinsic controls.
+
+## Local Action Example
+
+<div className="not-prose flex max-w-2xl flex-col gap-3">
+  <DataTable
+    id="local-actions-table"
+    rowIdKey="id"
+    columns={[
+      { key: "merchant", label: "Merchant" },
+      { key: "amount", label: "Amount", align: "right" },
+    ]}
+    data={[
+      { id: "1", merchant: "Delta Airlines", amount: 847 },
+      { id: "2", merchant: "Acme Hotel", amount: 312 },
+    ]}
+  />
+  <LocalActions
+    id="local-actions-table-local"
+    actions={[
+      { id: "export-csv", label: "Export CSV", variant: "secondary" },
+      { id: "open-report", label: "Open Full Report", variant: "outline" },
+    ]}
+    onAction={(actionId) => {
+      console.log("Local action:", actionId);
+    }}
+  />
+</div>
+
+## Decision Action Example
+
+<div className="not-prose flex max-w-md flex-col gap-3">
+  <OrderSummary
+    id="decision-actions-order"
+    title="Order Summary"
+    items={[
+      { id: "sku-1", name: "Wireless Keyboard", unitPrice: 89, quantity: 1 },
+      { id: "sku-2", name: "Mouse", unitPrice: 49, quantity: 1 },
+    ]}
+    pricing={{
+      subtotal: 138,
+      shipping: 0,
+      tax: 12.42,
+      total: 150.42,
+      currency: "USD",
+    }}
+  />
+  <DecisionActions
+    id="decision-actions-order-decision"
+    title="Confirm order"
+    actions={[
+      { id: "cancel", label: "Cancel", variant: "outline" },
+      { id: "confirm", label: "Purchase", variant: "default" },
+    ]}
+    onAction={(action) =>
+      createDecisionResult({
+        decisionId: "decision-actions-order-decision",
+        action,
+      })
+    }
+    onCommit={(result) => {
+      console.log("Commit decision envelope:", result);
+      // In tool renderers this is typically: addResult(result)
+    }}
+  />
+</div>

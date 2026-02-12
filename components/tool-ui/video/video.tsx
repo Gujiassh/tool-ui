@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { Play } from "lucide-react";
-import { cn, Button } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+import { cn, Button } from "./_adapter";
 
 import {
   RATIO_CLASS_MAP,
@@ -20,9 +19,6 @@ export interface VideoProps extends SerializableVideo {
   defaultMuted?: boolean;
   onNavigate?: (href: string, video: SerializableVideo) => void;
   onMediaEvent?: (type: "play" | "pause" | "mute" | "unmute") => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 export function Video(props: VideoProps) {
@@ -44,9 +40,6 @@ function VideoInner(props: Omit<VideoProps, "defaultMuted">) {
     autoPlay = true,
     onNavigate,
     onMediaEvent,
-    responseActions,
-    onResponseAction,
-    onBeforeResponseAction,
     ...serializable
   } = props;
 
@@ -86,11 +79,6 @@ function VideoInner(props: Omit<VideoProps, "defaultMuted">) {
       video.pause();
     }
   }, [state.playing]);
-
-  const normalizedActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
 
   const handleWatch = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -174,17 +162,6 @@ function VideoInner(props: Omit<VideoProps, "defaultMuted">) {
           )}
         </div>
       </div>
-      {normalizedActions && (
-        <div className="@container/actions mt-3">
-          <ActionButtons
-            actions={normalizedActions.items}
-            align={normalizedActions.align}
-            confirmTimeout={normalizedActions.confirmTimeout}
-            onAction={(actionId: string) => onResponseAction?.(actionId)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </article>
   );
 }

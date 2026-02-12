@@ -13,7 +13,7 @@ interface CitationData {
   citations: SerializableCitation[];
   variant?: CitationVariant;
   maxVisible?: number;
-  responseActions?: SerializableAction[];
+  localActions?: SerializableAction[];
 }
 
 function escape(value: string): string {
@@ -21,7 +21,7 @@ function escape(value: string): string {
 }
 
 function generateCitationCode(data: CitationData): string {
-  const { citations, variant, maxVisible, responseActions } = data;
+  const { citations, variant, maxVisible, localActions } = data;
 
   // Single citation without list wrapper
   if (citations.length === 1 && !maxVisible) {
@@ -61,16 +61,17 @@ function generateCitationCode(data: CitationData): string {
       props.push(`  type="${citation.type}"`);
     }
 
-    if (responseActions && responseActions.length > 0) {
-      props.push(
-        `  responseActions={${JSON.stringify(responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-      );
-      props.push(
-        `  onResponseAction={(actionId) => console.log("Action:", actionId)}`,
-      );
+    const citationCode = `<Citation\n${props.join("\n")}\n/>`;
+    if (!localActions || localActions.length === 0) {
+      return citationCode;
     }
 
-    return `<Citation\n${props.join("\n")}\n/>`;
+    return `${citationCode}
+<LocalActions
+  id="${citation.id}-local"
+  actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
   }
 
   // Multiple citations with CitationList
@@ -266,7 +267,7 @@ export const citationPresets: Record<
     generateExampleCode: generateCitationCode,
   },
   "with-actions": {
-    description: "Card with response actions",
+    description: "Card with external local actions",
     data: {
       citations: [
         {
@@ -280,7 +281,7 @@ export const citationPresets: Record<
           type: "code",
         },
       ],
-      responseActions: [
+      localActions: [
         { id: "view", label: "View source", variant: "default" },
         { id: "copy", label: "Copy link", variant: "secondary" },
       ],

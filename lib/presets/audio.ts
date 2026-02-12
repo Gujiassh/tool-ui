@@ -5,7 +5,7 @@ import type { PresetWithCodeGen } from "./types";
 interface AudioData {
   audio: SerializableAudio;
   variant?: AudioVariant;
-  responseActions?: SerializableAction[];
+  localActions?: SerializableAction[];
 }
 
 function escape(value: string): string {
@@ -17,7 +17,7 @@ function formatObject(value: Record<string, unknown>): string {
 }
 
 function generateAudioCode(data: AudioData): string {
-  const { audio, variant, responseActions } = data;
+  const { audio, variant, localActions } = data;
   const props: string[] = [];
 
   props.push(`  id="${audio.id}"`);
@@ -56,16 +56,17 @@ function generateAudioCode(data: AudioData): string {
     props.push(`  source={${formatObject(audio.source as Record<string, unknown>)}}`);
   }
 
-  if (responseActions && responseActions.length > 0) {
-    props.push(
-      `  responseActions={${JSON.stringify(responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(
-      `  onResponseAction={(actionId) => console.log("Action:", actionId)}`,
-    );
+  const audioCode = `<Audio\n${props.join("\n")}\n/>`;
+  if (!localActions || localActions.length === 0) {
+    return audioCode;
   }
 
-  return `<Audio\n${props.join("\n")}\n/>`;
+  return `${audioCode}
+<LocalActions
+  id="${audio.id}-local"
+  actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export type AudioPresetName = "full" | "compact" | "with-actions";
@@ -103,7 +104,7 @@ export const audioPresets: Record<AudioPresetName, PresetWithCodeGen<AudioData>>
     generateExampleCode: generateAudioCode,
   },
   "with-actions": {
-    description: "Full player with response action buttons",
+    description: "Full player with external local actions",
     data: {
       audio: {
         id: "audio-preview-actions",
@@ -114,7 +115,7 @@ export const audioPresets: Record<AudioPresetName, PresetWithCodeGen<AudioData>>
         artwork: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&auto=format&fit=crop",
         durationMs: 42000,
       },
-      responseActions: [
+      localActions: [
         { id: "download", label: "Download", variant: "secondary" },
         { id: "share", label: "Share", variant: "default" },
       ],

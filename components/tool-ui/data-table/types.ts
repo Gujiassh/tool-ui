@@ -1,5 +1,4 @@
 import type { ToolUIId, ToolUIReceipt, ToolUIRole } from "../shared/schema";
-import type { ActionsProp } from "../shared/actions-config";
 import type { FormatConfig } from "./formatters";
 
 /**
@@ -189,8 +188,7 @@ export interface DataTableSerializableProps<T extends object = RowData> {
  * const clientProps: DataTableClientProps = {
  *   className: "my-table",
  *   onSortChange: (next) => setSort(next),
- *   responseActions: [{ id: "export", label: "Export" }],
- *   onResponseAction: (id) => console.log(id)
+ *   // Compose local/decision actions externally via LocalActions/DecisionActions
  * }
  * ```
  */
@@ -223,10 +221,6 @@ export interface DataTableClientProps<T extends object = RowData> {
     by?: ColumnKey<T>;
     direction?: "asc" | "desc";
   }) => void;
-  /** Optional response actions rendered below the table */
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 /**
@@ -249,8 +243,7 @@ export interface DataTableClientProps<T extends object = RowData> {
  * <DataTable
  *   {...serializableProps}
  *   onSortChange={setSort}
- *   responseActions={[{ id: "export", label: "Export" }]}
- *   onResponseAction={(id) => handleAction(id)}
+ *   // Render sibling LocalActions / DecisionActions where needed
  * />
  * ```
  */

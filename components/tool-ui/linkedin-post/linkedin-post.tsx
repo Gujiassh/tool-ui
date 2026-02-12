@@ -9,8 +9,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+} from "./_adapter";
 import { formatCount, formatRelativeTime, getDomain } from "../shared/utils";
 
 import { resolveSafeNavigationHref } from "../shared/media";
@@ -26,9 +25,6 @@ export interface LinkedInPostProps {
   post: LinkedInPostData;
   className?: string;
   onAction?: (action: string, post: LinkedInPostData) => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 function LinkedInLogo({ className }: { className?: string }) {
@@ -265,15 +261,7 @@ export function LinkedInPost({
   post,
   className,
   onAction,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
 }: LinkedInPostProps) {
-  const normalizedFooterActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
-
   return (
     <div
       className={cn("flex max-w-xl flex-col gap-3", className)}
@@ -296,17 +284,6 @@ export function LinkedInPost({
         />
       </article>
 
-      {normalizedFooterActions && (
-        <div className="@container/actions">
-          <ActionButtons
-            actions={normalizedFooterActions.items}
-            align={normalizedFooterActions.align}
-            confirmTimeout={normalizedFooterActions.confirmTimeout}
-            onAction={(id) => onResponseAction?.(id)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </div>
   );
 }

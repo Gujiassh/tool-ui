@@ -15,7 +15,7 @@ export interface DataTableData {
   maxHeight?: string;
   emptyMessage?: string;
   locale?: string;
-  responseActions?: SerializableAction[];
+  localActions?: SerializableAction[];
 }
 
 function generateDataTableCode(data: DataTableData): string {
@@ -51,16 +51,17 @@ function generateDataTableCode(data: DataTableData): string {
     props.push(`  locale="${data.locale}"`);
   }
 
-  if (data.responseActions && data.responseActions.length > 0) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(
-      `  onResponseAction={(actionId) => console.log("Action:", actionId)}`,
-    );
+  const tableCode = `<DataTable\n${props.join("\n")}\n/>`;
+  if (!data.localActions || data.localActions.length === 0) {
+    return tableCode;
   }
 
-  return `<DataTable\n${props.join("\n")}\n/>`;
+  return `${tableCode}
+<LocalActions
+  id="${data.id}-local"
+  actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 const stockColumns: Column<GenericRow>[] = [
@@ -438,14 +439,14 @@ export const dataTablePresets: Record<
     generateExampleCode: generateDataTableCode,
   },
   actions: {
-    description: "Support queue with response actions and wait time indicators",
+    description: "Support queue with external local actions and wait indicators",
     data: {
       id: "data-table-preview-actions",
       columns: actionsColumns,
       data: actionsData,
       rowIdKey: "id",
       defaultSort: { by: "waitTime", direction: "desc" },
-      responseActions: [
+      localActions: [
         {
           id: "close",
           label: "Close tickets",

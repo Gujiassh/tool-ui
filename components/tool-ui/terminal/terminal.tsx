@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Ansi from "ansi-to-react";
 import {
   Copy,
@@ -9,8 +9,7 @@ import {
   ChevronUp,
   Terminal as TerminalIcon,
 } from "lucide-react";
-import type { TerminalProps } from "./schema";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig } from "../shared/actions-config";
+import type { TerminalProps } from "./schema";
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
 
 import { Button, Collapsible, CollapsibleTrigger } from "./_adapter";
@@ -28,9 +27,6 @@ export function Terminal({
   cwd,
   truncated,
   maxCollapsedLines,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
   className,
 }: TerminalProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -43,11 +39,6 @@ export function Terminal({
   const lineCount = fullOutput.split("\n").length;
   const shouldCollapse = maxCollapsedLines && lineCount > maxCollapsedLines;
   const isCollapsed = shouldCollapse && !isExpanded;
-
-  const normalizedFooterActions = useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
 
   const handleCopy = useCallback(() => {
     copy(fullOutput, COPY_ID);
@@ -160,17 +151,6 @@ export function Terminal({
         )}
       </div>
 
-      {normalizedFooterActions && (
-        <div className="@container/actions">
-          <ActionButtons
-            actions={normalizedFooterActions.items}
-            align={normalizedFooterActions.align}
-            confirmTimeout={normalizedFooterActions.confirmTimeout}
-            onAction={(id) => onResponseAction?.(id)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </div>
   );
 }
