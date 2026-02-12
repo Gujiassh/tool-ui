@@ -1,7 +1,10 @@
 import { CopyMarkdownButton } from "./copy-markdown-button";
 import { HeaderPreviewTabs } from "./header-preview-tabs";
 import { getMdxAsMarkdown } from "./mdx-to-markdown";
-import { getPreviewConfig, type ComponentId } from "@/lib/docs/preview-config";
+import {
+  isComponentId,
+  type ComponentId,
+} from "@/lib/docs/component-ids";
 
 type DocsHeaderProps = {
   title: string;
@@ -13,14 +16,10 @@ export function DocsHeader({ title, description, mdxPath }: DocsHeaderProps) {
   const markdown = mdxPath ? getMdxAsMarkdown(mdxPath) : undefined;
   const componentIdMatch = mdxPath?.match(/^app\/docs\/([^/]+)\/content\.mdx$/);
   const parsedComponentId = componentIdMatch?.[1];
-  const componentId = (() => {
-    if (!parsedComponentId) {
-      return null;
-    }
-
-    const candidateId = parsedComponentId as ComponentId;
-    return getPreviewConfig(candidateId) ? candidateId : null;
-  })();
+  const componentId =
+    parsedComponentId && isComponentId(parsedComponentId)
+      ? parsedComponentId
+      : null;
 
   return (
     <div className="mb-12 flex flex-col gap-2">

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import type { ComponentProps, ComponentType, ReactNode } from "react";
 import type { PresetWithCodeGen } from "@/lib/presets/types";
+import type { ComponentId } from "@/lib/docs/component-ids";
 
 import type { ApprovalCard } from "@/components/tool-ui/approval-card";
 import type { Chart } from "@/components/tool-ui/chart";
@@ -261,33 +262,6 @@ function QuestionFlowUpfrontWithReceipt({
     />
   );
 }
-
-export type ComponentId =
-  | "approval-card"
-  | "chart"
-  | "citation"
-  | "code-block"
-  | "data-table"
-  | "image"
-  | "image-gallery"
-  | "video"
-  | "audio"
-  | "instagram-post"
-  | "link-preview"
-  | "linkedin-post"
-  | "message-draft"
-  | "item-carousel"
-  | "option-list"
-  | "order-summary"
-  | "parameter-slider"
-  | "plan"
-  | "preferences-panel"
-  | "progress-tracker"
-  | "stats-display"
-  | "terminal"
-  | "question-flow"
-  | "weather-widget"
-  | "x-post";
 
 export interface ChatContext {
   userMessage: string;
@@ -919,3 +893,5 @@ export const previewConfigs: Record<
 export function getPreviewConfig(componentId: ComponentId) {
   return previewConfigs[componentId];
 }
+
+export type { ComponentId } from "@/lib/docs/component-ids";
