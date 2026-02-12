@@ -224,6 +224,16 @@ export function parseNumericLike(input: string): number | null {
   // Strip common currency and percent symbols
   s = s.replace(/[\%$€£¥₩₹₽₺₪₫฿₦₴₡₲₵₸]/g, "");
 
+  function hasGroupedThousands(value: string, sep: "," | "."): boolean {
+    const unsigned = value.replace(/^[+-]/, "");
+    const parts = unsigned.split(sep);
+    if (parts.length < 2) return false;
+    if (parts.some((part) => part.length === 0)) return false;
+    if (!/^\d{1,3}$/.test(parts[0])) return false;
+    if (parts[0] === "0") return false;
+    return parts.slice(1).every((part) => /^\d{3}$/.test(part));
+  }
+
   const lastComma = s.lastIndexOf(",");
   const lastDot = s.lastIndexOf(".");
   if (lastComma !== -1 && lastDot !== -1) {
@@ -234,12 +244,20 @@ export function parseNumericLike(input: string): number | null {
     s = s.replace(decimalSep, ".");
   } else if (lastComma !== -1) {
     // Only comma present
-    const frac = s.length - lastComma - 1;
-    if (frac === 2 || frac === 3) s = s.replace(/,/g, ".");
-    else s = s.replace(/,/g, "");
+    if (hasGroupedThousands(s, ",")) {
+      s = s.replace(/,/g, "");
+    } else {
+      const frac = s.length - lastComma - 1;
+      if (frac >= 1 && frac <= 3) s = s.replace(/,/g, ".");
+      else s = s.replace(/,/g, "");
+    }
   } else if (lastDot !== -1) {
-    // Only dot present; if multiple dots, treat as thousands and strip
-    if ((s.match(/\./g) || []).length > 1) s = s.replace(/\./g, "");
+    // Only dot present; normalize grouped thousands separators.
+    if (hasGroupedThousands(s, ".")) {
+      s = s.replace(/\./g, "");
+    } else if ((s.match(/\./g) || []).length > 1) {
+      s = s.replace(/\./g, "");
+    }
   }
 
   // Handle compact notation (K, M, B, T, P, G) and byte suffixes (KB, MB, GB, TB, PB)

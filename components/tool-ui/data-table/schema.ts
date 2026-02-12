@@ -137,7 +137,7 @@ export const serializableDataSchema = z.record(
  * - id: Unique identifier for this tool UI in the conversation
  * - columns: Column definitions (keys, labels, formatting, etc.)
  * - data: Data rows (primitives only - no functions or class instances)
- * - layout: Optional layout override ('auto' | 'table' | 'cards')
+ * - optional presentation props: rowIdKey, sort/defaultSort, locale, etc.
  *
  * Non-serializable props like `onSortChange`, `className`, and response actions
  * must be provided separately in your React component.
@@ -156,6 +156,22 @@ export const SerializableDataTableSchema = z.object({
   receipt: ToolUIReceiptSchema.optional(),
   columns: z.array(serializableColumnSchema),
   data: z.array(serializableDataSchema),
+  rowIdKey: z.string().optional(),
+  defaultSort: z
+    .object({
+      by: z.string().optional(),
+      direction: z.enum(["asc", "desc"]).optional(),
+    })
+    .optional(),
+  sort: z
+    .object({
+      by: z.string().optional(),
+      direction: z.enum(["asc", "desc"]).optional(),
+    })
+    .optional(),
+  emptyMessage: z.string().optional(),
+  maxHeight: z.string().optional(),
+  locale: z.string().optional(),
 });
 
 const SerializableDataTableSchemaContract = defineToolUiContract(
@@ -224,16 +240,53 @@ export function parseSerializableDataTable(
   input: unknown,
 ): Pick<
   DataTableProps<RowData>,
-  "id" | "role" | "receipt" | "columns" | "data"
+  | "id"
+  | "role"
+  | "receipt"
+  | "columns"
+  | "data"
+  | "rowIdKey"
+  | "defaultSort"
+  | "sort"
+  | "emptyMessage"
+  | "maxHeight"
+  | "locale"
 > {
-  const { id, role, receipt, columns, data } =
-    SerializableDataTableSchemaContract.parse(input);
+  const {
+    id,
+    role,
+    receipt,
+    columns,
+    data,
+    rowIdKey,
+    defaultSort,
+    sort,
+    emptyMessage,
+    maxHeight,
+    locale,
+  } = SerializableDataTableSchemaContract.parse(input);
   return {
     id,
     role,
     receipt,
     columns: columns as unknown as Column<RowData>[],
     data: data as RowData[],
+    rowIdKey: rowIdKey as keyof RowData | undefined,
+    defaultSort: defaultSort
+      ? {
+          by: defaultSort.by as keyof RowData | undefined,
+          direction: defaultSort.direction,
+        }
+      : undefined,
+    sort: sort
+      ? {
+          by: sort.by as keyof RowData | undefined,
+          direction: sort.direction,
+        }
+      : undefined,
+    emptyMessage,
+    maxHeight,
+    locale,
   };
 }
 
@@ -241,16 +294,54 @@ export function safeParseSerializableDataTable(
   input: unknown,
 ): Pick<
   DataTableProps<RowData>,
-  "id" | "role" | "receipt" | "columns" | "data"
+  | "id"
+  | "role"
+  | "receipt"
+  | "columns"
+  | "data"
+  | "rowIdKey"
+  | "defaultSort"
+  | "sort"
+  | "emptyMessage"
+  | "maxHeight"
+  | "locale"
 > | null {
   const res = SerializableDataTableSchemaContract.safeParse(input);
   if (!res) return null;
-  const { id, role, receipt, columns, data } = res;
+  const {
+    id,
+    role,
+    receipt,
+    columns,
+    data,
+    rowIdKey,
+    defaultSort,
+    sort,
+    emptyMessage,
+    maxHeight,
+    locale,
+  } = res;
   return {
     id,
     role,
     receipt,
     columns: columns as unknown as Column<RowData>[],
     data: data as RowData[],
+    rowIdKey: rowIdKey as keyof RowData | undefined,
+    defaultSort: defaultSort
+      ? {
+          by: defaultSort.by as keyof RowData | undefined,
+          direction: defaultSort.direction,
+        }
+      : undefined,
+    sort: sort
+      ? {
+          by: sort.by as keyof RowData | undefined,
+          direction: sort.direction,
+        }
+      : undefined,
+    emptyMessage,
+    maxHeight,
+    locale,
   };
 }

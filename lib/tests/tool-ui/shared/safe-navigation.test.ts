@@ -26,4 +26,14 @@ describe("resolveSafeNavigationHref", () => {
       "http://example.com/path",
     );
   });
+
+  test("keeps safe relative URLs", () => {
+    expect(resolveSafeNavigationHref("/docs")).toBe("/docs");
+    expect(resolveSafeNavigationHref("./reference")).toBe("./reference");
+    expect(resolveSafeNavigationHref("../guides")).toBe("../guides");
+  });
+
+  test("rejects protocol-relative URLs", () => {
+    expect(resolveSafeNavigationHref("//evil.example.com")).toBeUndefined();
+  });
 });

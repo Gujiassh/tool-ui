@@ -65,8 +65,17 @@ const columns: Column<Row>[] = [
       },
     },
   },
-  { key: "createdAt", label: "Created", format: { kind: "date", dateFormat: "relative" } },
-  { key: "amount", label: "Amount", align: "right", format: { kind: "currency", currency: "USD", decimals: 2 } },
+  {
+    key: "createdAt",
+    label: "Created",
+    format: { kind: "date", dateFormat: "relative" },
+  },
+  {
+    key: "amount",
+    label: "Amount",
+    align: "right",
+    format: { kind: "currency", currency: "USD", decimals: 2 },
+  },
 ];
 
 const data: Row[] = [
@@ -170,7 +179,7 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableDataTable,
       render: (parsedResult) => (
         <>
-            <DataTable rowIdKey="id" {...parsedResult} />
+          <DataTable rowIdKey="id" {...parsedResult} />
         </>
       ),
     }),
@@ -230,9 +239,10 @@ import { DataTable } from "@/components/tool-ui/data-table";
       required: true,
     },
     rowIdKey: {
-      description: "Unique key per row",
+      description:
+        "Unique key per row (strongly recommended for stable reconciliation)",
       type: "keyof T",
-      required: true,
+      required: false,
     },
     locale: { description: "Intl locale", type: "string", default: '"en-US"' },
   }}
@@ -315,7 +325,7 @@ All visual formatting for data stays declarative via `columns[i].format`. Keep r
           }
         />
       ),
-      type: "{ kind: 'number', decimals?: number, unit?: string }",
+      type: "{ kind: 'number', decimals?: number, unit?: string, compact?: boolean, showSign?: boolean }",
     },
     currency: {
       description: (
@@ -529,4 +539,4 @@ All visual formatting for data stays declarative via `columns[i].format`. Keep r
 
 - Uses semantic `<table>` markup with proper header associations
 - Sortable columns are keyboard-accessible via shadcn/ui Button
-- Row selection uses standard checkbox patterns from Radix
+- Sort changes are announced via `aria-live` for assistive technologies

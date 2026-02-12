@@ -204,20 +204,24 @@ export function DateValue({ value, options, locale }: DateValueProps) {
 
 function getRelativeTime(date: Date, locale?: string): string {
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffInSeconds = Math.trunc((date.getTime() - now.getTime()) / 1000);
+  const absDiffInSeconds = Math.abs(diffInSeconds);
 
-  if (diffInSeconds < 60) return "just now";
-  if (diffInSeconds < 3600) {
-    const mins = Math.floor(diffInSeconds / 60);
-    return `${mins} ${mins === 1 ? "minute" : "minutes"} ago`;
+  if (absDiffInSeconds < 60) return "just now";
+
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+
+  if (absDiffInSeconds < 3600) {
+    const mins = Math.trunc(diffInSeconds / 60);
+    return rtf.format(mins, "minute");
   }
-  if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  if (absDiffInSeconds < 86400) {
+    const hours = Math.trunc(diffInSeconds / 3600);
+    return rtf.format(hours, "hour");
   }
-  if (diffInSeconds < 604800) {
-    const days = Math.floor(diffInSeconds / 86400);
-    return `${days} ${days === 1 ? "day" : "days"} ago`;
+  if (absDiffInSeconds < 604800) {
+    const days = Math.trunc(diffInSeconds / 86400);
+    return rtf.format(days, "day");
   }
 
   return new Intl.DateTimeFormat(locale, {
