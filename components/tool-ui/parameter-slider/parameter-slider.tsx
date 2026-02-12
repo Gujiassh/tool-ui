@@ -391,24 +391,25 @@ function SliderRow({
     : 0;
   const valuePercent = sliderRangeToPercent({ value, min, max });
 
-  // Fill clip-path - uses percentage-based inset for Safari compatibility
-  // Safari has issues with complex calc() inside clip-path inset()
+  // Fill clip-path uses the same inset coordinate system as the handle.
+  // This keeps the collapsed stroke aligned with the fill edge near extremes.
   const fillClipPath = useMemo(() => {
-    // Use simple percentages - Safari doesn't handle calc() well in clip-path
-    const toClipFromRight = (percent: number) => `${100 - percent}%`;
-    const toClipFromLeft = (percent: number) => `${percent}%`;
+    const toClipFromRightInset = (percent: number) =>
+      `calc(100% - ${toInsetPosition(percent)})`;
+    const toClipFromLeftInset = (percent: number) => toInsetPosition(percent);
+    const minInset = toClipFromLeftInset(0);
 
     if (crossesZero) {
       if (valuePercent >= zeroPercent) {
         // Positive: clip from zero on left, value on right
-        return `inset(0 ${toClipFromRight(valuePercent)} 0 ${toClipFromLeft(zeroPercent)})`;
+        return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
       } else {
         // Negative: clip from value on left, zero on right
-        return `inset(0 ${toClipFromRight(zeroPercent)} 0 ${toClipFromLeft(valuePercent)})`;
+        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
       }
     }
-    // Non-crossing: fill from left edge to value
-    return `inset(0 ${toClipFromRight(valuePercent)} 0 0)`;
+    // Non-crossing: fill from min inset to value inset
+    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${minInset})`;
   }, [crossesZero, zeroPercent, valuePercent]);
 
   const fillMaskImage = crossesZero
