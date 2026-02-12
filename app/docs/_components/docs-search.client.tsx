@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { componentsRegistry } from "@/lib/docs/component-registry";
 import { cn } from "@/lib/ui/cn";
 import { BASE_DOCS_PAGES } from "./docs-pages";
+import { triggerSearchFromShortcut } from "./docs-search-shortcut";
 
 type SearchResult = {
   kind: "page" | "component";
@@ -77,13 +78,7 @@ export function DocsSearch() {
 
   React.useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const isModifierPressed = event.metaKey || event.ctrlKey;
-      const isShortcutKey = event.key.toLowerCase() === "k";
-
-      if (!isModifierPressed || !isShortcutKey) return;
-
-      event.preventDefault();
-      openSearch("keyboard");
+      triggerSearchFromShortcut(event, () => openSearch("keyboard"));
     };
 
     window.addEventListener("keydown", onKeyDown);
