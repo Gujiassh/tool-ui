@@ -69,6 +69,7 @@ const DETECTION_MARGIN_Y = 12;
 const TRACK_HEIGHT = 48;
 const TEXT_RELEASE_INSET = 8;
 const TRACK_EDGE_INSET = 4; // px from track edge - keeps elements visible at extremes
+const THUMB_WIDTH = 12; // w-3
 // Text vertical offset: raised slightly from center
 // Positive = raised, negative = lowered
 const TEXT_VERTICAL_OFFSET = 0.5;
@@ -83,6 +84,20 @@ function clampPercent(value: number): number {
 function toInsetPosition(percent: number): string {
   const safePercent = clampPercent(percent);
   return `calc(${TRACK_EDGE_INSET}px + (100% - ${TRACK_EDGE_INSET * 2}px) * ${safePercent / 100})`;
+}
+
+// Radix keeps the thumb in bounds by applying a percent-dependent px offset.
+// Matching this for fill clipping prevents handle/fill drift near extremes.
+function getRadixThumbInBoundsOffsetPx(percent: number): number {
+  const safePercent = clampPercent(percent);
+  const halfWidth = THUMB_WIDTH / 2;
+  return halfWidth - (safePercent * halfWidth) / 50;
+}
+
+function toRadixThumbPosition(percent: number): string {
+  const safePercent = clampPercent(percent);
+  const offsetPx = getRadixThumbInBoundsOffsetPx(safePercent);
+  return `calc(${safePercent}% + ${offsetPx}px)`;
 }
 
 function signedDistanceToRoundedRect(
@@ -288,9 +303,9 @@ function SliderRow({
     const valuePercent = sliderRangeToPercent({ value, min, max });
     // Use same inset coordinate system as visual elements
     const thumbCenterPx =
-      TRACK_EDGE_INSET +
-      ((trackWidth - TRACK_EDGE_INSET * 2) * valuePercent) / 100;
-    const thumbHalfWidth = 6;
+      (trackWidth * clampPercent(valuePercent)) / 100 +
+      getRadixThumbInBoundsOffsetPx(valuePercent);
+    const thumbHalfWidth = THUMB_WIDTH / 2;
 
     // Text is raised by TEXT_VERTICAL_OFFSET from center
     const trackCenterY = TRACK_HEIGHT / 2 - TEXT_VERTICAL_OFFSET;
@@ -395,9 +410,10 @@ function SliderRow({
   // This keeps the collapsed stroke aligned with the fill edge near extremes.
   const fillClipPath = useMemo(() => {
     const toClipFromRightInset = (percent: number) =>
-      `calc(100% - ${toInsetPosition(percent)})`;
-    const toClipFromLeftInset = (percent: number) => toInsetPosition(percent);
-    const minInset = toClipFromLeftInset(0);
+      `calc(100% - ${toRadixThumbPosition(percent)})`;
+    const toClipFromLeftInset = (percent: number) =>
+      toRadixThumbPosition(percent);
+    const minInset = toRadixThumbPosition(0);
 
     if (crossesZero) {
       if (valuePercent >= zeroPercent) {
@@ -563,10 +579,6 @@ function SliderRow({
         />
 
         <SliderPrimitive.Thumb
-          style={{
-            left: toInsetPosition(valuePercent),
-            transform: "translateX(-50%)",
-          }}
           className={cn(
             "group/thumb z-0 block w-3 shrink-0 cursor-grab rounded-sm",
             "relative bg-transparent outline-none",

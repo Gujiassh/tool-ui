@@ -21,9 +21,8 @@ describe("parameter-slider visual alignment contract", () => {
       }),
     );
 
-    expect(html).toContain("left:calc(4px + (100% - 8px) * 0.875)");
     expect(html).toContain(
-      "clip-path:inset(0 calc(100% - calc(4px + (100% - 8px) * 0.875)) 0 calc(4px + (100% - 8px) * 0.5))",
+      "clip-path:inset(0 calc(100% - calc(87.5% + -4.5px)) 0 calc(50% + 0px))",
     );
   });
 });
