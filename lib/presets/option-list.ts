@@ -130,7 +130,7 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
     generateExampleCode: generateOptionListCode,
   },
   receipt: {
-    description: "Confirmed selection (receipt state)",
+    description: "Chosen selection (receipt state)",
     data: {
       id: "option-list-preview-receipt",
       options: [
