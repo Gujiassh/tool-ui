@@ -68,7 +68,7 @@ function generateCitationCode(data: CitationData): string {
 
     return `${citationCode}
 <LocalActions
-  id="${citation.id}-local"
+  surfaceId="${citation.id}"
   actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

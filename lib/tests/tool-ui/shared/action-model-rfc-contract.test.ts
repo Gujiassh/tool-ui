@@ -45,4 +45,22 @@ describe("action model RFC contracts", () => {
       expect(content, relativePath).not.toMatch(forbidden);
     }
   });
+
+  it("binds action surfaces to a tool-ui surface and removes standalone titles", () => {
+    const localActions = readWorkspaceFile(
+      "components/tool-ui/shared/local-actions.tsx",
+    );
+    const decisionActions = readWorkspaceFile(
+      "components/tool-ui/shared/decision-actions.tsx",
+    );
+
+    expect(localActions).toContain("surfaceId: string");
+    expect(decisionActions).toContain("surfaceId: string");
+
+    expect(localActions).not.toContain("title?: string");
+    expect(decisionActions).not.toContain("title?: string");
+
+    expect(localActions).not.toContain("<h3");
+    expect(decisionActions).not.toContain("<h3");
+  });
 });

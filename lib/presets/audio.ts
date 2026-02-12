@@ -63,7 +63,7 @@ function generateAudioCode(data: AudioData): string {
 
   return `${audioCode}
 <LocalActions
-  id="${audio.id}-local"
+  surfaceId="${audio.id}"
   actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

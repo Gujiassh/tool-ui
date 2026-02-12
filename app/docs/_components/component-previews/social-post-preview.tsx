@@ -274,7 +274,9 @@ export function SocialPostPreview({
           xPostPresets[effectivePreset as XPostPresetName].data.localActions,
         ) ? (
           <LocalActions
-            id={`${xPostPresets[effectivePreset as XPostPresetName].data.post.id}-local`}
+            surfaceId={
+              xPostPresets[effectivePreset as XPostPresetName].data.post.id
+            }
             actions={
               resolveActions(
                 xPostPresets[effectivePreset as XPostPresetName].data
@@ -302,7 +304,11 @@ export function SocialPostPreview({
             .localActions,
         ) ? (
           <LocalActions
-            id={`${instagramPostPresets[effectivePreset as InstagramPostPresetName].data.post.id}-local`}
+            surfaceId={
+              instagramPostPresets[
+                effectivePreset as InstagramPostPresetName
+              ].data.post.id
+            }
             actions={
               resolveActions(
                 instagramPostPresets[
@@ -330,7 +336,11 @@ export function SocialPostPreview({
             .localActions,
         ) ? (
           <LocalActions
-            id={`${linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data.post.id}-local`}
+            surfaceId={
+              linkedInPostPresets[
+                effectivePreset as LinkedInPostPresetName
+              ].data.post.id
+            }
             actions={
               resolveActions(
                 linkedInPostPresets[

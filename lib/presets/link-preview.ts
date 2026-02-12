@@ -53,7 +53,7 @@ function generateLinkPreviewCode(data: LinkPreviewData): string {
 
   return `${linkPreviewCode}
 <LocalActions
-  id="${linkPreview.id}-local"
+  surfaceId="${linkPreview.id}"
   actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

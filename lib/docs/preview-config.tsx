@@ -395,11 +395,11 @@ export const previewConfigs: Record<
           <div className="mx-auto flex w-full max-w-md flex-col gap-3">
             <DynamicCitation {...citation} variant={variant} />
             {localActionItems ? (
-              <DynamicLocalActions
-                id={`${citation.id}-local`}
-                actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-                onAction={(actionId) => console.log("Local action:", actionId)}
-              />
+            <DynamicLocalActions
+              surfaceId={citation.id}
+              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
+              onAction={(actionId) => console.log("Local action:", actionId)}
+            />
             ) : null}
           </div>
         );
@@ -449,7 +449,7 @@ export const previewConfigs: Record<
           />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${tableData.id}-local`}
+              surfaceId={tableData.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -476,7 +476,7 @@ export const previewConfigs: Record<
           <DynamicImage {...image} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${image.id}-local`}
+              surfaceId={image.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -520,7 +520,7 @@ export const previewConfigs: Record<
           <DynamicVideo {...video} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${video.id}-local`}
+              surfaceId={video.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -548,7 +548,7 @@ export const previewConfigs: Record<
           <DynamicAudio {...audio} variant={variant} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${audio.id}-local`}
+              surfaceId={audio.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -575,7 +575,7 @@ export const previewConfigs: Record<
           <DynamicInstagramPost post={instagramData.post} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${instagramData.post.id}-local`}
+              surfaceId={instagramData.post.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -602,7 +602,7 @@ export const previewConfigs: Record<
           <DynamicLinkPreview {...linkPreview} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${linkPreview.id}-local`}
+              surfaceId={linkPreview.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -629,7 +629,7 @@ export const previewConfigs: Record<
           <DynamicLinkedInPost post={linkedInData.post} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${linkedInData.post.id}-local`}
+              surfaceId={linkedInData.post.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -708,8 +708,7 @@ export const previewConfigs: Record<
           <DynamicOrderSummary {...orderData} choice={orderData.choice ?? receiptChoice} />
           {orderData.choice ?? receiptChoice ? null : (
             <DynamicDecisionActions
-              id={`${orderData.id}-decision`}
-              title="Confirm order"
+              surfaceId={orderData.id}
               actions={decisionActions}
               onAction={(action) =>
                 createDecisionResult({
@@ -891,7 +890,7 @@ export const previewConfigs: Record<
           <DynamicTerminal {...terminalData} id="terminal-preview" />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${terminalData.id}-local`}
+              surfaceId={terminalData.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />
@@ -968,7 +967,7 @@ export const previewConfigs: Record<
           <DynamicXPost post={xPostData.post} />
           {localActionItems ? (
             <DynamicLocalActions
-              id={`${xPostData.post.id}-local`}
+              surfaceId={xPostData.post.id}
               actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
               onAction={(actionId) => console.log("Local action:", actionId)}
             />

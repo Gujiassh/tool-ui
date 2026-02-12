@@ -67,7 +67,7 @@ function generateImageCode(data: ImageData): string {
 
   return `${imageCode}
 <LocalActions
-  id="${image.id}-local"
+  surfaceId="${image.id}"
   actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

@@ -23,7 +23,7 @@ function generateXPostCode(data: XPostPresetData): string {
 
   return `${postCode}
 <LocalActions
-  id="${data.post.id}-local"
+  surfaceId="${data.post.id}"
   actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

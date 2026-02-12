@@ -62,7 +62,7 @@ function generateVideoCode(data: VideoData): string {
 
   return `${videoCode}
 <LocalActions
-  id="${video.id}-local"
+  surfaceId="${video.id}"
   actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

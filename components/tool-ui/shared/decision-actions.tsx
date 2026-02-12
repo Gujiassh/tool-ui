@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ActionButtons } from "./action-buttons";
 import {
   DecisionResultSchema,
@@ -9,11 +9,18 @@ import {
 } from "./schema";
 import { cn } from "./_adapter";
 
+function escapeForCssAttribute(value: string): string {
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+    return CSS.escape(value);
+  }
+
+  return value.replace(/[\\"]/g, "\\$&");
+}
+
 export interface DecisionActionsProps<
   TPayload extends Record<string, unknown> = Record<string, unknown>,
 > {
-  id: string;
-  title?: string;
+  surfaceId: string;
   actions: DecisionAction[];
   onAction: (
     action: { id: string; label: string },
@@ -30,8 +37,7 @@ export interface DecisionActionsProps<
 export function DecisionActions<
   TPayload extends Record<string, unknown> = Record<string, unknown>,
 >({
-  id,
-  title,
+  surfaceId,
   actions,
   onAction,
   onCommit,
@@ -40,6 +46,16 @@ export function DecisionActions<
   align = "right",
   className,
 }: DecisionActionsProps<TPayload>) {
+  const [hasSurface, setHasSurface] = useState(false);
+
+  useEffect(() => {
+    const escapedSurfaceId = escapeForCssAttribute(surfaceId);
+    const target = document.querySelector(
+      `[data-tool-ui-id="${escapedSurfaceId}"]`,
+    );
+    setHasSurface(Boolean(target));
+  }, [surfaceId]);
+
   const handleAction = useCallback(
     async (actionId: string) => {
       const action = actions.find((item) => item.id === actionId);
@@ -59,16 +75,16 @@ export function DecisionActions<
     [actions, onAction, onCommit],
   );
 
+  if (!hasSurface) {
+    return null;
+  }
+
   return (
-    <section
+    <div
       className={cn("@container/actions flex flex-col gap-2", className)}
       data-slot="decision-actions"
-      data-tool-ui-id={id}
-      aria-label={title}
+      data-tool-ui-surface-id={surfaceId}
     >
-      {title ? (
-        <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
-      ) : null}
       <ActionButtons
         actions={actions}
         onAction={handleAction}
@@ -76,6 +92,6 @@ export function DecisionActions<
         confirmTimeout={confirmTimeout}
         align={align}
       />
-    </section>
+    </div>
   );
 }

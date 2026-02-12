@@ -51,7 +51,7 @@ const noEmbeddedResponseActionsRule: Rule.RuleModule = {
       description:
         "Disallow legacy embedded response action props on display component surfaces.",
       recommended: true,
-      url: "https://tool-ui.com/docs/local-actions",
+      url: "https://tool-ui.com/docs/actions",
     },
     schema: [],
     messages: {
@@ -81,7 +81,7 @@ const noAddResultInLocalActionsRule: Rule.RuleModule = {
       description:
         "Disallow addResult(...) calls inside LocalActions onAction handlers.",
       recommended: true,
-      url: "https://tool-ui.com/docs/local-actions",
+      url: "https://tool-ui.com/docs/actions",
     },
     schema: [],
     messages: {
@@ -130,7 +130,7 @@ const decisionActionsRequireEnvelopeRule: Rule.RuleModule = {
       description:
         "Require DecisionActions onAction to return a createDecisionResult(...) envelope.",
       recommended: true,
-      url: "https://tool-ui.com/docs/local-actions",
+      url: "https://tool-ui.com/docs/actions",
     },
     schema: [],
     messages: {

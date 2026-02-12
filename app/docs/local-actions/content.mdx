@@ -32,7 +32,7 @@ import { createDecisionResult } from "@/components/tool-ui/shared/schema";
     ]}
   />
   <LocalActions
-    id="local-actions-table-local"
+    surfaceId="local-actions-table"
     actions={[
       { id: "export-csv", label: "Export CSV", variant: "secondary" },
       { id: "open-report", label: "Open Full Report", variant: "outline" },
@@ -62,8 +62,7 @@ import { createDecisionResult } from "@/components/tool-ui/shared/schema";
     }}
   />
   <DecisionActions
-    id="decision-actions-order-decision"
-    title="Confirm order"
+    surfaceId="decision-actions-order"
     actions={[
       { id: "cancel", label: "Cancel", variant: "outline" },
       { id: "confirm", label: "Purchase", variant: "default" },

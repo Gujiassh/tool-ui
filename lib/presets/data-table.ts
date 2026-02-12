@@ -58,7 +58,7 @@ function generateDataTableCode(data: DataTableData): string {
 
   return `${tableCode}
 <LocalActions
-  id="${data.id}-local"
+  surfaceId="${data.id}"
   actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
   onAction={(actionId) => console.log("Local action:", actionId)}
 />`;

@@ -1,12 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ActionButtons } from "./action-buttons";
 import type { LocalAction } from "./schema";
 import { cn } from "./_adapter";
 
+function escapeForCssAttribute(value: string): string {
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+    return CSS.escape(value);
+  }
+
+  return value.replace(/[\\"]/g, "\\$&");
+}
+
 export interface LocalActionsProps {
-  id: string;
-  title?: string;
+  surfaceId: string;
   actions: LocalAction[];
   onAction: (actionId: string) => void | Promise<void>;
   onBeforeAction?: (actionId: string) => boolean | Promise<boolean>;
@@ -16,8 +24,7 @@ export interface LocalActionsProps {
 }
 
 export function LocalActions({
-  id,
-  title,
+  surfaceId,
   actions,
   onAction,
   onBeforeAction,
@@ -25,16 +32,26 @@ export function LocalActions({
   align = "right",
   className,
 }: LocalActionsProps) {
+  const [hasSurface, setHasSurface] = useState(false);
+
+  useEffect(() => {
+    const escapedSurfaceId = escapeForCssAttribute(surfaceId);
+    const target = document.querySelector(
+      `[data-tool-ui-id="${escapedSurfaceId}"]`,
+    );
+    setHasSurface(Boolean(target));
+  }, [surfaceId]);
+
+  if (!hasSurface) {
+    return null;
+  }
+
   return (
-    <section
+    <div
       className={cn("@container/actions flex flex-col gap-2", className)}
       data-slot="local-actions"
-      data-tool-ui-id={id}
-      aria-label={title}
+      data-tool-ui-surface-id={surfaceId}
     >
-      {title ? (
-        <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
-      ) : null}
       <ActionButtons
         actions={actions}
         onAction={onAction}
@@ -42,6 +59,6 @@ export function LocalActions({
         confirmTimeout={confirmTimeout}
         align={align}
       />
-    </section>
+    </div>
   );
 }
