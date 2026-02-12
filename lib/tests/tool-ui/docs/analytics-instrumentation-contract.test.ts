@@ -28,6 +28,7 @@ const FILE_ASSERTIONS = [
     needles: [
       "analytics.component.tabSwitched(",
       "analytics.component.previewInteracted(",
+      "analytics.code.blockCopied(",
     ],
   },
   {
