@@ -10,7 +10,7 @@ describe("option-list receipt layout contract", () => {
     );
     const source = fs.readFileSync(sourcePath, "utf8");
 
-    expect(source).toContain('<Separator className="my-3" orientation="horizontal" />');
-    expect(source).toContain('className="flex items-start gap-3 py-2"');
+    expect(source).toContain('<Separator className="my-1.5" orientation="horizontal" />');
+    expect(source).toContain('className="flex items-start gap-3 py-1"');
   });
 });
