@@ -72,13 +72,17 @@ Register this renderer so tool results display as `ImageGallery`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import { ImageGallery } from "@/components/tool-ui/image-gallery";
+import {
+  ImageGallery,
+  safeParseSerializableImageGallery,
+} from "@/components/tool-ui/image-gallery";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showImageGallery: {
     type: "backend",
     render: createResultToolRenderer({
+      safeParse: safeParseSerializableImageGallery,
       render: (parsedResult) => <ImageGallery {...parsedResult} />,
     }),
   },
@@ -103,9 +107,6 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
   <Feature icon="Move" title="Smooth transitions">
     Shared layout animations between grid and lightbox
   </Feature>
-  <Feature icon="PlusCircle" title="Overflow indicator">
-    Cap visible images with a "+N more" overlay
-  </Feature>
 </FeatureGrid>
 
 ## Props
@@ -124,10 +125,6 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
     },
     title: { description: "Gallery header title", type: "string" },
     description: { description: "Gallery header description", type: "string" },
-    maxVisible: {
-      description: "Maximum images to show in grid (rest accessible via overflow)",
-      type: "number",
-    },
     onImageClick: { description: "Image click handler", type: "(imageId: string, image: ImageGalleryItem) => void" },
   }}
 />
@@ -169,17 +166,3 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
     },
   }}
 />
-
-## Limiting Visible Images
-
-Use `maxVisible` to cap the grid display while keeping all images accessible in the lightbox:
-
-```tsx
-<ImageGallery
-  id="limited-gallery"
-  images={/* 12 images */}
-  maxVisible={4}
-/>
-```
-
-The last visible thumbnail shows a "+N more" overlay that opens the lightbox at the first hidden image.

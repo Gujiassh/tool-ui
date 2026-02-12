@@ -328,7 +328,8 @@ export function ItemCarousel({
 
   return (
     <div
-      data-item-carousel-id={id}
+      data-tool-ui-id={id}
+      data-slot="item-carousel"
       className={cn(
         "bg-background @container relative isolate w-full gap-0 overflow-hidden rounded-2xl border p-0",
         className,
