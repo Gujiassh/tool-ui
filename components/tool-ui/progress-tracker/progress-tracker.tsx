@@ -94,6 +94,9 @@ export function ProgressTracker({
     const inProgressStep = steps.find((s) => s.status === "in-progress");
     if (inProgressStep) return inProgressStep.id;
 
+    const failedStep = steps.find((s) => s.status === "failed");
+    if (failedStep) return failedStep.id;
+
     const firstPendingStep = steps.find((s) => s.status === "pending");
     if (firstPendingStep) return firstPendingStep.id;
 
@@ -119,12 +122,12 @@ export function ProgressTracker({
   );
 
   const normalizedActions = React.useMemo(() => {
-    if (allCompleted || choice) return null;
+    if (choice) return null;
 
     const config = normalizeActionsConfig(responseActions);
     if (config) return config;
 
-    if (hasFailed) return null;
+    if (allCompleted || hasFailed) return null;
 
     return {
       items: defaultActions,
@@ -241,7 +244,9 @@ export function ProgressTracker({
               {steps.map((step, index) => {
                 const isCurrent = step.id === currentStepId;
                 const isActive = step.status === "in-progress";
+                const isFailed = step.status === "failed";
                 const hasDescription = !!step.description;
+                const shouldShowDescription = isActive || isFailed;
 
                 return (
                   <li
@@ -290,7 +295,7 @@ export function ProgressTracker({
                           <div
                             className={cn(
                               "grid motion-safe:transition-[grid-template-rows,opacity] motion-safe:duration-300 motion-safe:ease-out",
-                              isActive
+                              shouldShowDescription
                                 ? "grid-rows-[1fr] opacity-100"
                                 : "grid-rows-[0fr] opacity-0",
                             )}
