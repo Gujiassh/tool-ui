@@ -27,13 +27,22 @@ describe("plan render contract", () => {
       React.createElement(Plan.Compact, {
         id: "plan-compact-render-contract",
         title: "Compact Render Contract",
+        description: "This description should not render in compact mode",
         todos: [
           { id: "todo-1", label: "First", status: "completed" as const },
           { id: "todo-2", label: "Second", status: "pending" as const },
         ],
+        responseActions: [{ id: "approve", label: "Approve Plan" }],
       }),
     );
 
-    expect(html).not.toContain('class="mt-4 min-w-0 space-y-1"');
+    expect(html).toContain("First");
+    expect(html).toContain("Second");
+    expect(html).not.toContain('role="progressbar"');
+    expect(html).not.toContain('data-slot="card-header"');
+    expect(html).not.toContain("Compact Render Contract");
+    expect(html).not.toContain("This description should not render in compact mode");
+    expect(html).not.toContain("bg-muted/70");
+    expect(html).not.toContain("Approve Plan");
   });
 });

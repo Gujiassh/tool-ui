@@ -266,8 +266,8 @@ function PlanRoot({
   onResponseAction,
   onBeforeResponseAction,
   className,
-  showProgress = true,
-}: PlanProps & { showProgress?: boolean }) {
+  compact = false,
+}: PlanProps & { compact?: boolean }) {
   const seenTodoIds = useRef(new Set<string>());
   const [newTodoIds, setNewTodoIds] = useState<Set<string>>(new Set());
   const [isCelebrating, setIsCelebrating] = useState(false);
@@ -336,66 +336,70 @@ function PlanRoot({
     [responseActions],
   );
 
+  const todoList = (
+    <ul className={cn("min-w-0 space-y-1", compact ? "mt-0" : "mt-4")}>
+      <TodoList todos={visibleTodos} newTodoIds={newTodoIds} />
+
+      {hiddenTodos.length > 0 && (
+        <li className="mt-1">
+          <Accordion type="single" collapsible>
+            <AccordionItem value="more" className="border-0">
+              <AccordionTrigger className="text-muted-foreground hover:text-primary flex cursor-default items-start justify-start gap-2 py-1 text-sm font-normal [&>svg:last-child]:hidden">
+                <MoreHorizontal className="text-muted-foreground/70 mt-0.5 size-4 shrink-0" />
+                <span>{hiddenTodos.length} more</span>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-0">
+                <ul className="-mx-2 space-y-2 px-2">
+                  <TodoList todos={hiddenTodos} newTodoIds={newTodoIds} />
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </li>
+      )}
+    </ul>
+  );
+
   return (
     <Card
       className={cn("w-full max-w-xl min-w-80 gap-4 py-4", className)}
       data-tool-ui-id={id}
       data-slot="plan"
     >
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
-        <div className="space-y-1.5">
-          <CardTitle className="leading-5 font-medium text-pretty">
-            {title}
-          </CardTitle>
-          {description && <CardDescription>{description}</CardDescription>}
-        </div>
-        {allComplete && (
-          <Check className="mt-0.5 size-5 shrink-0 text-emerald-500" />
-        )}
-      </CardHeader>
+      {!compact && (
+        <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <div className="space-y-1.5">
+            <CardTitle className="leading-5 font-medium text-pretty">
+              {title}
+            </CardTitle>
+            {description && <CardDescription>{description}</CardDescription>}
+          </div>
+          {allComplete && (
+            <Check className="mt-0.5 size-5 shrink-0 text-emerald-500" />
+          )}
+        </CardHeader>
+      )}
 
       <CardContent className="min-w-0 px-4">
-        <div className="bg-muted/70 min-w-0 rounded-lg px-6 py-4">
-          {showProgress && (
+        <div
+          className={cn(
+            "min-w-0",
+            !compact && "bg-muted/70 rounded-lg px-6 py-4",
+          )}
+        >
+          {!compact && (
             <>
               <div className="text-muted-foreground mb-2 text-sm">
                 {completedCount} of {todos.length} complete
               </div>
-
               <ProgressBar progress={progress} isCelebrating={isCelebrating} />
             </>
           )}
-
-          <ul
-            className={cn(
-              "min-w-0 space-y-1",
-              showProgress ? "mt-4" : "mt-0",
-            )}
-          >
-            <TodoList todos={visibleTodos} newTodoIds={newTodoIds} />
-
-            {hiddenTodos.length > 0 && (
-              <li className="mt-1">
-                <Accordion type="single" collapsible>
-                  <AccordionItem value="more" className="border-0">
-                    <AccordionTrigger className="text-muted-foreground hover:text-primary flex cursor-default items-start justify-start gap-2 py-1 text-sm font-normal [&>svg:last-child]:hidden">
-                      <MoreHorizontal className="text-muted-foreground/70 mt-0.5 size-4 shrink-0" />
-                      <span>{hiddenTodos.length} more</span>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-2 pb-0">
-                      <ul className="-mx-2 space-y-2 px-2">
-                        <TodoList todos={hiddenTodos} newTodoIds={newTodoIds} />
-                      </ul>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </li>
-            )}
-          </ul>
+          {todoList}
         </div>
       </CardContent>
 
-      {resolvedFooterActions && (
+      {!compact && resolvedFooterActions && (
         <CardFooter className="@container/actions">
           <ActionButtons
             actions={resolvedFooterActions.items}
@@ -412,7 +416,7 @@ function PlanRoot({
 }
 
 export function PlanCompact(props: PlanProps) {
-  return <PlanRoot {...props} showProgress={false} />;
+  return <PlanRoot {...props} compact />;
 }
 
 type PlanComponent = typeof PlanRoot & {
