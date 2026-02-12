@@ -475,7 +475,7 @@ function SliderRow({
             "squircle relative h-12 w-full grow overflow-hidden rounded-sm",
             "ring-border ring-1 ring-inset",
             "dark:ring-white/10",
-            resolvedTrackClassName ?? "bg-muted dark:bg-black/40",
+            resolvedTrackClassName ?? "bg-muted",
           )}
         >
           <div
