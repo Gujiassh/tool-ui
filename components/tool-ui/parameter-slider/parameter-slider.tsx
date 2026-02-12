@@ -9,7 +9,12 @@ import {
   useState,
 } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
-import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";import { ActionButtons } from "../shared/action-buttons";
+import type {
+  ParameterSliderProps,
+  SliderConfig,
+  SliderValue,
+} from "./schema";
+import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import { useControllableState } from "../shared/use-controllable-state";
 import { useSignatureReset } from "../shared/use-signature-reset";
@@ -68,10 +73,16 @@ const TRACK_EDGE_INSET = 4; // px from track edge - keeps elements visible at ex
 // Positive = raised, negative = lowered
 const TEXT_VERTICAL_OFFSET = 0.5;
 
+function clampPercent(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
 // Convert a percentage (0-100) to an inset position string
 // At 0%: 4px from left edge; at 100%: 4px from right edge
 function toInsetPosition(percent: number): string {
-  return `calc(${TRACK_EDGE_INSET}px + (100% - ${TRACK_EDGE_INSET * 2}px) * ${percent / 100})`;
+  const safePercent = clampPercent(percent);
+  return `calc(${TRACK_EDGE_INSET}px + (100% - ${TRACK_EDGE_INSET * 2}px) * ${safePercent / 100})`;
 }
 
 function signedDistanceToRoundedRect(
@@ -202,7 +213,6 @@ interface SliderRowProps {
   config: SliderConfig;
   value: number;
   onChange: (value: number) => void;
-  disabled?: boolean;
   trackClassName?: string;
   fillClassName?: string;
   handleClassName?: string;
@@ -212,12 +222,11 @@ function SliderRow({
   config,
   value,
   onChange,
-  disabled,
   trackClassName,
   fillClassName,
   handleClassName,
 }: SliderRowProps) {
-  const { id, label, min, max, step = 1, unit, precision } = config;
+  const { id, label, min, max, step = 1, unit, precision, disabled } = config;
   // Per-slider theming overrides component-level theming
   const resolvedTrackClassName = config.trackClassName ?? trackClassName;
   const resolvedFillClassName = config.fillClassName ?? fillClassName;
@@ -233,6 +242,7 @@ function SliderRow({
   const [dragGap, setDragGap] = useState(0);
   const [fullGap, setFullGap] = useState(0);
   const [intersectsText, setIntersectsText] = useState(false);
+  const [layoutVersion, setLayoutVersion] = useState(0);
 
   useEffect(() => {
     if (!isDragging) return;
@@ -240,6 +250,28 @@ function SliderRow({
     document.addEventListener("pointerup", handlePointerUp);
     return () => document.removeEventListener("pointerup", handlePointerUp);
   }, [isDragging]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const labelEl = labelRef.current;
+    const valueEl = valueRef.current;
+    if (!track || !labelEl || !valueEl) return;
+
+    const bumpLayoutVersion = () => setLayoutVersion((v) => v + 1);
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => {
+        bumpLayoutVersion();
+      });
+      observer.observe(track);
+      observer.observe(labelEl);
+      observer.observe(valueEl);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener("resize", bumpLayoutVersion);
+    return () => window.removeEventListener("resize", bumpLayoutVersion);
+  }, []);
 
   useLayoutEffect(() => {
     const track = trackRef.current;
@@ -315,7 +347,7 @@ function SliderRow({
             ? valueFullGap
             : 0;
     setFullGap(releaseGap);
-  }, [value, min, max]);
+  }, [value, min, max, layoutVersion]);
 
   // While dragging: gradual separation based on distance
   // On release: fully open if intersecting text, fully closed otherwise
@@ -354,8 +386,10 @@ function SliderRow({
     return result;
   }, [crossesZero]);
 
-  const zeroPercent = crossesZero ? ((0 - min) / (max - min)) * 100 : 0;
-  const valuePercent = ((value - min) / (max - min)) * 100;
+  const zeroPercent = crossesZero
+    ? sliderRangeToPercent({ value: 0, min, max })
+    : 0;
+  const valuePercent = sliderRangeToPercent({ value, min, max });
 
   // Fill clip-path - uses percentage-based inset for Safari compatibility
   // Safari has issues with complex calc() inside clip-path inset()

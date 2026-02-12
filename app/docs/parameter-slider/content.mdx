@@ -137,7 +137,7 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
     },
     responseActions: {
       description: "Action buttons (defaults to Reset/Apply)",
-      type: "Action[]",
+      type: "Action[] | ActionsConfig",
     },
     onResponseAction: {
       description: "Called when an action button is clicked",
@@ -194,6 +194,10 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
     precision: {
       description: "Decimal places to display (default: auto)",
       type: "number",
+    },
+    disabled: {
+      description: "Disable interaction for this slider",
+      type: "boolean",
     },
   }}
 />
