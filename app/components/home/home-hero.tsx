@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { HomeHexnutScene } from "./home-hexnut-scene";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { analytics } from "@/lib/analytics";
 
 const smoothSpring = {
   type: "spring" as const,
@@ -50,7 +51,7 @@ export function HomeHero() {
             >
               <Badge
                 variant="outline"
-                className="text-muted-foreground mt-1 cursor-default bg-background/50 font-mono text-xs font-light backdrop-blur-md select-none md:mt-0 md:mb-1"
+                className="text-muted-foreground bg-background/50 mt-1 cursor-default font-mono text-xs font-light backdrop-blur-md select-none md:mt-0 md:mb-1"
               >
                 research preview
               </Badge>
@@ -81,11 +82,16 @@ export function HomeHero() {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ ...smoothSpring, delay: 0.5 }}
       >
-        <Button asChild className="group font-medium tracking-wide" size="homeCTA">
+        <Button
+          asChild
+          className="group font-medium tracking-wide"
+          size="homeCTA"
+        >
           <Link
             href="/docs/gallery"
             onMouseEnter={preloadGallery}
             onFocus={preloadGallery}
+            onClick={() => analytics.cta.clicked("see_components", "home_hero")}
           >
             See the Components
             <ArrowRight className="size-5 shrink-0 transition-transform group-hover:translate-x-1" />

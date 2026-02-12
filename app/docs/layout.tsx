@@ -6,6 +6,7 @@ import { HeaderFrame } from "@/app/components/layout/app-shell";
 import { ThemeToggle } from "@/app/components/builder/theme-toggle";
 import { DocsNav } from "./_components/docs-nav";
 import { DocsTocProvider } from "./_components/docs-toc-context";
+import { DocsSearch } from "./_components/docs-search.client";
 
 export const metadata: Metadata = {
   title: {
@@ -18,7 +19,14 @@ export const metadata: Metadata = {
 export default function DocsLayout({ children }: { children: ReactNode }) {
   return (
     <NuqsAdapter>
-      <HeaderFrame rightContent={<ThemeToggle />}>
+      <HeaderFrame
+        rightContent={
+          <div className="flex items-center gap-2">
+            <DocsSearch />
+            <ThemeToggle />
+          </div>
+        }
+      >
         <DocsTocProvider>
           <ContentLayout sidebar={<DocsNav />}>{children}</ContentLayout>
         </DocsTocProvider>
