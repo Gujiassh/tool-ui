@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";import { defineToolUiContract } from "../shared/contract";
+import { defineToolUiContract } from "../shared/contract";
+import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
 
 export const OrderItemSchema = z.object({
   id: z.string(),
@@ -40,7 +41,7 @@ export const SerializableOrderSummarySchema = z.object({
   items: z.array(OrderItemSchema).min(1),
   pricing: PricingSchema,
   choice: OrderDecisionSchema.optional(),
-});
+}).strict();
 
 export type SerializableOrderSummary = z.infer<
   typeof SerializableOrderSummarySchema
@@ -59,6 +60,7 @@ export const safeParseSerializableOrderSummary: (
   input: unknown,
 ) => SerializableOrderSummary | null =
   SerializableOrderSummarySchemaContract.safeParse;
+
 export interface OrderSummaryProps extends SerializableOrderSummary {
   className?: string;
 }

@@ -1,6 +1,3 @@
-"use client";
-
-import * as React from "react";
 import { CheckCircle, Package } from "lucide-react";
 import { cn, Separator } from "./_adapter";
 import type { OrderSummaryProps, OrderItem, Pricing } from "./schema";
@@ -21,9 +18,7 @@ function formatQuantity(quantity: number): string {
 }
 
 function ItemImage({ src }: { src?: string }) {
-  const [hasError, setHasError] = React.useState(false);
-
-  if (!src || hasError) {
+  if (!src) {
     return (
       <div className="bg-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-md">
         <Package className="text-muted-foreground h-5 w-5" />
@@ -39,7 +34,6 @@ function ItemImage({ src }: { src?: string }) {
       width={48}
       height={48}
       className="h-12 w-12 shrink-0 rounded-md object-cover"
-      onError={() => setHasError(true)}
     />
   );
 }
@@ -192,7 +186,10 @@ export function OrderSummary({
       >
         <div className={cn("space-y-4 p-4", isReceipt && "opacity-95")}>
           <div>
-            <h2 id={titleId} className="flex items-center gap-2 text-base font-semibold">
+            <h2
+              id={titleId}
+              className="flex items-center gap-2 text-base font-semibold"
+            >
               {isReceipt && (
                 <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500" />
               )}
@@ -221,7 +218,6 @@ export function OrderSummary({
           <PricingBreakdown pricing={pricing} />
         </div>
       </div>
-
     </article>
   );
 }
