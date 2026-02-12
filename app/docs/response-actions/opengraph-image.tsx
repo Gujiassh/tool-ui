@@ -5,10 +5,13 @@ import {
 } from "@/lib/og/og-image";
 
 export const runtime = "nodejs";
-export const alt = "Tool UI - Response Actions";
+export const alt = "Tool UI - Actions";
 export const size = ogSize;
 export const contentType = ogContentType;
 
 export default async function Image() {
-  return generateOgImage("Response Actions", "Handle user interactions gracefully");
+  return generateOgImage(
+    "Actions",
+    "External local and decision action surfaces for Tool UI",
+  );
 }

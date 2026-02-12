@@ -1,19 +1,7 @@
-import type { Metadata } from "next";
-import Content from "./content.mdx";
-import { DocsArticle } from "../_components/docs-article";
-
-export const metadata: Metadata = {
-  title: "Local Actions",
-  description:
-    "Use LocalActions for non-receipt interactions and DecisionActions for consequential commits.",
-};
+import { redirect } from "next/navigation";
 
 export const revalidate = 3600;
 
-export default function LocalActionsPage() {
-  return (
-    <DocsArticle>
-      <Content />
-    </DocsArticle>
-  );
+export default function LocalActionsRedirectPage() {
+  redirect("/docs/actions");
 }

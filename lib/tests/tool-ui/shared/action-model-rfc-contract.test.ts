@@ -13,10 +13,11 @@ function readWorkspaceFile(relativePath: string): string {
 }
 
 describe("action model RFC contracts", () => {
-  it("uses /docs/local-actions in docs navigation", () => {
+  it("uses /docs/actions in docs navigation", () => {
     const docsPages = readWorkspaceFile("app/docs/_components/docs-pages.ts");
 
-    expect(docsPages).toContain('/docs/local-actions');
+    expect(docsPages).toContain('/docs/actions');
+    expect(docsPages).not.toContain('/docs/local-actions');
     expect(docsPages).not.toContain('/docs/response-actions');
   });
 
