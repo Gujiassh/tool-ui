@@ -48,15 +48,13 @@ export function HeaderFrame(props: HeaderFrameProps) {
 }
 
 export function AnimatedHeaderFrame(props: HeaderFrameProps) {
-  // Start with false to match server render, then update after hydration
-  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const [shouldAnimate] = useState(() => !hasPlayedIntroAnimation);
 
   useEffect(() => {
-    if (!hasPlayedIntroAnimation) {
+    if (shouldAnimate) {
       hasPlayedIntroAnimation = true;
-      setShouldAnimate(true);
     }
-  }, []);
+  }, [shouldAnimate]);
 
   return <HeaderFrameBase {...props} shouldAnimate={shouldAnimate} />;
 }
