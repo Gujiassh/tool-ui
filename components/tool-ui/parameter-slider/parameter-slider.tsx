@@ -60,7 +60,13 @@ function getAriaValueText(
 }
 
 const TICK_COUNT = 16;
+const TEXT_PADDING_X = 4;
+const TEXT_PADDING_X_OUTER = 0; // Less inset on outer-facing side (near edges)
 const TEXT_PADDING_Y = 2;
+const DETECTION_MARGIN_X = 12;
+const DETECTION_MARGIN_X_OUTER = 4; // Small margin at edges for steep falloff - segments fully close at terminal positions
+const DETECTION_MARGIN_Y = 12;
+const TRACK_HEIGHT = 48;
 const TEXT_RELEASE_INSET = 8;
 const TRACK_EDGE_INSET = 4; // px from track edge - keeps elements visible at extremes
 const THUMB_WIDTH = 12; // w-3
@@ -94,6 +100,129 @@ function toRadixThumbPosition(percent: number): string {
   return `calc(${safePercent}% + ${offsetPx}px)`;
 }
 
+function signedDistanceToRoundedRect(
+  px: number,
+  py: number,
+  left: number,
+  right: number,
+  top: number,
+  bottom: number,
+  radiusLeft: number,
+  radiusRight: number,
+): number {
+  const innerLeft = left + radiusLeft;
+  const innerRight = right - radiusRight;
+  const innerTop = top + Math.max(radiusLeft, radiusRight);
+  const innerBottom = bottom - Math.max(radiusLeft, radiusRight);
+
+  const inLeftCorner = px < innerLeft;
+  const inRightCorner = px > innerRight;
+  const inCornerY = py < innerTop || py > innerBottom;
+
+  if ((inLeftCorner || inRightCorner) && inCornerY) {
+    const radius = inLeftCorner ? radiusLeft : radiusRight;
+    const cornerX = inLeftCorner ? innerLeft : innerRight;
+    const cornerY = py < innerTop ? top + radius : bottom - radius;
+    const distToCornerCenter = Math.hypot(px - cornerX, py - cornerY);
+    return distToCornerCenter - radius;
+  }
+
+  const dx = Math.max(left - px, px - right, 0);
+  const dy = Math.max(top - py, py - bottom, 0);
+
+  if (dx === 0 && dy === 0) {
+    return -Math.min(px - left, right - px, py - top, bottom - py);
+  }
+
+  return Math.max(dx, dy);
+}
+
+const OUTER_EDGE_RADIUS_FACTOR = 0.3; // Reduced radius on outer-facing sides for steeper falloff
+
+function calculateGap(
+  thumbCenterX: number,
+  textRect: { left: number; right: number; height: number; centerY: number },
+  isLeftAligned: boolean,
+): number {
+  const { left, right, height, centerY } = textRect;
+  // Asymmetric padding/margin: outer-facing side has less padding, more margin
+  const paddingLeft = isLeftAligned ? TEXT_PADDING_X_OUTER : TEXT_PADDING_X;
+  const paddingRight = isLeftAligned ? TEXT_PADDING_X : TEXT_PADDING_X_OUTER;
+  const marginLeft = isLeftAligned
+    ? DETECTION_MARGIN_X_OUTER
+    : DETECTION_MARGIN_X;
+  const marginRight = isLeftAligned
+    ? DETECTION_MARGIN_X
+    : DETECTION_MARGIN_X_OUTER;
+  const paddingY = TEXT_PADDING_Y;
+  const marginY = DETECTION_MARGIN_Y;
+  const thumbCenterY = centerY;
+
+  // Inner boundary (where max gap occurs)
+  const innerLeft = left - paddingLeft;
+  const innerRight = right + paddingRight;
+  const innerTop = centerY - height / 2 - paddingY;
+  const innerBottom = centerY + height / 2 + paddingY;
+  const innerHeight = height + paddingY * 2;
+  const innerRadius = innerHeight / 2;
+  // Smaller radius on outer-facing side (left for label, right for value)
+  const innerRadiusLeft = isLeftAligned
+    ? innerRadius * OUTER_EDGE_RADIUS_FACTOR
+    : innerRadius;
+  const innerRadiusRight = isLeftAligned
+    ? innerRadius
+    : innerRadius * OUTER_EDGE_RADIUS_FACTOR;
+
+  // Outer boundary (where effect starts) - proportionally larger
+  const outerLeft = left - paddingLeft - marginLeft;
+  const outerRight = right + paddingRight + marginRight;
+  const outerTop = centerY - height / 2 - paddingY - marginY;
+  const outerBottom = centerY + height / 2 + paddingY + marginY;
+  const outerHeight = height + paddingY * 2 + marginY * 2;
+  const outerRadius = outerHeight / 2;
+  const outerRadiusLeft = isLeftAligned
+    ? outerRadius * OUTER_EDGE_RADIUS_FACTOR
+    : outerRadius;
+  const outerRadiusRight = isLeftAligned
+    ? outerRadius
+    : outerRadius * OUTER_EDGE_RADIUS_FACTOR;
+
+  const outerDist = signedDistanceToRoundedRect(
+    thumbCenterX,
+    thumbCenterY,
+    outerLeft,
+    outerRight,
+    outerTop,
+    outerBottom,
+    outerRadiusLeft,
+    outerRadiusRight,
+  );
+
+  // Outside outer boundary - no gap
+  if (outerDist > 0) return 0;
+
+  const innerDist = signedDistanceToRoundedRect(
+    thumbCenterX,
+    thumbCenterY,
+    innerLeft,
+    innerRight,
+    innerTop,
+    innerBottom,
+    innerRadiusLeft,
+    innerRadiusRight,
+  );
+
+  // Inside inner boundary - max gap
+  const maxGap = height + paddingY * 2;
+  if (innerDist <= 0) return maxGap;
+
+  // Between boundaries - linear interpolation
+  // outerDist is negative (inside outer), innerDist is positive (outside inner)
+  const totalDist = Math.abs(outerDist) + innerDist;
+  const t = Math.abs(outerDist) / totalDist;
+
+  return maxGap * t;
+}
 
 interface SliderRowProps {
   config: SliderConfig;
@@ -125,6 +254,7 @@ function SliderRow({
   const labelRef = useRef<HTMLSpanElement>(null);
   const valueRef = useRef<HTMLSpanElement>(null);
 
+  const [dragGap, setDragGap] = useState(0);
   const [fullGap, setFullGap] = useState(0);
   const [intersectsText, setIntersectsText] = useState(false);
   const [layoutVersion, setLayoutVersion] = useState(0);
@@ -164,7 +294,6 @@ function SliderRow({
     const valueEl = valueRef.current;
 
     if (!track || !labelEl || !valueEl) return;
-    if (isDragging) return;
 
     const trackRect = track.getBoundingClientRect();
     const labelRect = labelEl.getBoundingClientRect();
@@ -177,6 +306,33 @@ function SliderRow({
       (trackWidth * clampPercent(valuePercent)) / 100 +
       getRadixThumbInBoundsOffsetPx(valuePercent);
     const thumbHalfWidth = THUMB_WIDTH / 2;
+
+    // Text is raised by TEXT_VERTICAL_OFFSET from center
+    const trackCenterY = TRACK_HEIGHT / 2 - TEXT_VERTICAL_OFFSET;
+
+    const labelGap = calculateGap(
+      thumbCenterPx,
+      {
+        left: labelRect.left - trackRect.left,
+        right: labelRect.right - trackRect.left,
+        height: labelRect.height,
+        centerY: trackCenterY,
+      },
+      true,
+    ); // label is left-aligned
+
+    const valueGap = calculateGap(
+      thumbCenterPx,
+      {
+        left: valueRect.left - trackRect.left,
+        right: valueRect.right - trackRect.left,
+        height: valueRect.height,
+        centerY: trackCenterY,
+      },
+      false,
+    ); // value is right-aligned
+
+    setDragGap(Math.max(labelGap, valueGap));
 
     // Tight intersection check for release state
     // Inset by px-2 (8px) padding to check against actual text, not padded container
@@ -206,10 +362,15 @@ function SliderRow({
             ? valueFullGap
             : 0;
     setFullGap(releaseGap);
-  }, [value, min, max, layoutVersion, isDragging]);
+  }, [value, min, max, layoutVersion]);
 
-  // Keep drag path lightweight; only apply split gap after release.
-  const gap = isDragging ? 0 : intersectsText ? fullGap : 0;
+  // While dragging: use distance-based separation, but never collapse below
+  // the release split when the thumb still intersects text.
+  const gap = isDragging
+    ? Math.max(dragGap, intersectsText ? fullGap : 0)
+    : intersectsText
+      ? fullGap
+      : 0;
 
   const ticks = useMemo(() => {
     // Generate equidistant ticks regardless of step value
@@ -343,7 +504,7 @@ function SliderRow({
           "group/slider relative flex w-full touch-none items-center select-none",
           "isolate h-12",
           isDragging
-            ? "[&>span]:transition-none"
+            ? "[&>span]:transition-[left,transform] [&>span]:duration-45 [&>span]:ease-linear"
             : "[&>span]:transition-[left,transform] [&>span]:duration-90 [&>span]:ease-[cubic-bezier(0.22,1,0.36,1)]",
           "[&>span]:will-change-[left,transform]",
           "motion-reduce:[&>span]:transition-none",
@@ -374,7 +535,7 @@ function SliderRow({
             className={cn(
               "absolute inset-0 will-change-[clip-path]",
               isDragging
-                ? "transition-none"
+                ? "transition-[clip-path] duration-45 ease-linear"
                 : "transition-[clip-path] duration-90 ease-[cubic-bezier(0.22,1,0.36,1)]",
               "motion-reduce:transition-none",
               resolvedFillClassName ?? "bg-primary/30 dark:bg-primary/40",
@@ -417,7 +578,7 @@ function SliderRow({
           className={cn(
             "squircle pointer-events-none absolute inset-0 rounded-sm",
             isDragging
-              ? "transition-none"
+              ? "transition-[opacity,background] duration-45 ease-linear"
               : "transition-[opacity,background] duration-90 ease-[cubic-bezier(0.22,1,0.36,1)]",
             "motion-reduce:transition-none",
           )}
