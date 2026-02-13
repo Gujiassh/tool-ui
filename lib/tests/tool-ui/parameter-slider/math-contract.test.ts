@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 
 import {
-  advanceEasedSliderPercent,
   createSliderSignature,
   sliderRangeToPercent,
 } from "@/components/tool-ui/parameter-slider/math";
@@ -24,41 +23,5 @@ describe("parameter-slider math contract", () => {
     ]);
 
     expect(a).not.toBe(b);
-  });
-
-  test("easing step moves toward target without overshoot", () => {
-    const next = advanceEasedSliderPercent({
-      current: 20,
-      target: 80,
-      isDragging: false,
-    });
-
-    expect(next).toBeGreaterThan(20);
-    expect(next).toBeLessThan(80);
-  });
-
-  test("dragging uses a stronger easing step than idle", () => {
-    const idleNext = advanceEasedSliderPercent({
-      current: 20,
-      target: 80,
-      isDragging: false,
-    });
-    const dragNext = advanceEasedSliderPercent({
-      current: 20,
-      target: 80,
-      isDragging: true,
-    });
-
-    expect(dragNext).toBeGreaterThan(idleNext);
-  });
-
-  test("easing snaps to target when close enough", () => {
-    const next = advanceEasedSliderPercent({
-      current: 49.99,
-      target: 50,
-      isDragging: false,
-    });
-
-    expect(next).toBe(50);
   });
 });

@@ -143,4 +143,24 @@ describe("parameter-slider visual alignment contract", () => {
     expect(html).not.toContain("[text-shadow:");
     expect(html).not.toContain("text-shadow:");
   });
+
+  test("uses CSS transitions for fill and thumb movement smoothing", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-css-easing-test",
+        sliders: [
+          {
+            id: "s",
+            label: "S",
+            min: 0,
+            max: 100,
+            value: 42,
+          },
+        ],
+      }),
+    );
+
+    expect(html).toContain("transition-[clip-path]");
+    expect(html).toContain("[&amp;&gt;span]:transition-[left,transform]");
+  });
 });
