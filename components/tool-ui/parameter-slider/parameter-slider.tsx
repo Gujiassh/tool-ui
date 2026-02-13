@@ -413,7 +413,6 @@ function SliderRow({
       `calc(100% - ${toRadixThumbPosition(percent)})`;
     const toClipFromLeftInset = (percent: number) =>
       toRadixThumbPosition(percent);
-    const minInset = toRadixThumbPosition(0);
 
     if (crossesZero) {
       if (valuePercent >= zeroPercent) {
@@ -424,8 +423,8 @@ function SliderRow({
         return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
       }
     }
-    // Non-crossing: fill from min inset to value inset
-    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${minInset})`;
+    // Non-crossing: fill should start at the track border to avoid a left-edge gap.
+    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 0)`;
   }, [crossesZero, zeroPercent, valuePercent]);
 
   const fillMaskImage = crossesZero

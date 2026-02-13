@@ -26,4 +26,25 @@ describe("parameter-slider visual alignment contract", () => {
     );
     expect(html).toContain("white calc(87.5% + -4.5px)");
   });
+
+  test("does not leave a fill gap at the track border for non-crossing sliders", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-border-gap-test",
+        sliders: [
+          {
+            id: "s",
+            label: "S",
+            min: 0,
+            max: 100,
+            value: 50,
+          },
+        ],
+      }),
+    );
+
+    expect(html).toContain(
+      "clip-path:inset(0 calc(100% - calc(50% + 0px)) 0 0)",
+    );
+  });
 });
