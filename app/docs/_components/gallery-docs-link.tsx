@@ -6,26 +6,29 @@ import { analytics } from "@/lib/analytics";
 
 interface GalleryDocsLinkProps {
   componentId: string;
-  componentName: string;
+  label: string;
   href: string;
   className?: string;
 }
 
 export function GalleryDocsLink({
   componentId,
-  componentName,
+  label,
   href,
   className,
 }: GalleryDocsLinkProps) {
   const handleClick = () => {
     analytics.gallery.componentClicked(componentId);
-    analytics.docs.navigationClicked(componentName, href);
+    analytics.docs.navigationClicked(label, href);
   };
 
   return (
     <Link href={href} className={className} onClick={handleClick}>
-      <span>View Docs</span>
-      <ArrowRight className="size-3" aria-hidden="true" />
+      <span className="whitespace-nowrap text-sm font-semibold">{label}</span>
+      <span className="inline-flex items-center gap-1 whitespace-nowrap text-xs">
+        <span>View Docs</span>
+        <ArrowRight className="size-3" aria-hidden="true" />
+      </span>
     </Link>
   );
 }

@@ -119,14 +119,12 @@ function GalleryPreviewCard({
 
   return (
     <div className={cn("group/gallery-card relative pt-8", className)}>
-      <div className="pointer-events-none absolute top-0 left-1/2 z-20 -translate-x-1/2 -translate-y-1 rounded-full border border-neutral-700/70 bg-neutral-900/90 px-3 py-1 text-[11px] font-medium tracking-wide text-neutral-100 opacity-0 shadow-sm backdrop-blur-sm transition-all duration-200 group-focus-within/gallery-card:translate-y-0 group-focus-within/gallery-card:opacity-100 group-hover/gallery-card:translate-y-0 group-hover/gallery-card:opacity-100 dark:border-neutral-300/80 dark:bg-neutral-100/90 dark:text-neutral-900">
-        <span className="text-sm font-semibold">{componentMeta.name}</span>
-        <span className="mx-1 text-neutral-400 dark:text-neutral-500">•</span>
+      <div className="pointer-events-none absolute top-0 left-1/2 z-20 -translate-x-1/2 -translate-y-1 rounded-xl border border-neutral-700/70 bg-neutral-900/90 px-3 py-2 text-[11px] font-medium tracking-wide text-neutral-100 opacity-0 shadow-sm backdrop-blur-sm transition-all duration-200 group-focus-within/gallery-card:translate-y-0 group-focus-within/gallery-card:opacity-100 group-hover/gallery-card:translate-y-0 group-hover/gallery-card:opacity-100 dark:border-neutral-300/80 dark:bg-neutral-100/90 dark:text-neutral-900">
         <GalleryDocsLink
           componentId={componentId}
-          componentName={componentMeta.name}
+          label={componentMeta.name}
           href={componentMeta.docsHref}
-          className="pointer-events-auto inline-flex items-center gap-1 text-xs text-neutral-200/90 underline-offset-2 hover:text-white hover:underline focus-visible:underline focus-visible:outline-none dark:text-neutral-700 dark:hover:text-neutral-950"
+          className="pointer-events-auto flex flex-col items-center text-center text-neutral-200/90 underline-offset-2 hover:text-white hover:underline focus-visible:underline focus-visible:outline-none dark:text-neutral-700 dark:hover:text-neutral-950"
         />
       </div>
       {children}
