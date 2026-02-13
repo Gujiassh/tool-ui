@@ -9,6 +9,8 @@ import { ApprovalCard } from "@/components/tool-ui/approval-card";
   mdxPath="app/docs/receipts/content.mdx"
 />
 
+When a user makes a consequential decision in chat — approving a deploy, selecting a plan, confirming a purchase — the interactive UI needs to become a permanent record of what happened. Without this transition, scrolling back through the conversation shows a clickable button for a decision that was already made. Receipts solve this by replacing the interactive state with a confirmation of the choice.
+
 When a user takes an action with consequences, the tool UI should transition to a **receipt state** that confirms what happened. This gives the user proof of their decision and something the assistant can reference later.
 
 ## Why Receipts Matter
