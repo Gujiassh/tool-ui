@@ -118,7 +118,7 @@ function GalleryPreviewCard({
   const componentMeta = galleryComponentDocs[componentId];
 
   return (
-    <div className={cn("group/gallery-card relative pt-10", className)}>
+    <div className={cn("group/gallery-card relative pt-[44px]", className)}>
       <div className="pointer-events-none absolute top-0 left-1/2 z-20 w-fit -translate-x-1/2 -translate-y-1 whitespace-nowrap rounded-xl border border-neutral-700/70 bg-neutral-900/90 px-3 py-2 text-[11px] font-medium tracking-wide text-neutral-100 opacity-0 shadow-sm backdrop-blur-sm transition-all duration-200 group-focus-within/gallery-card:translate-y-0 group-focus-within/gallery-card:opacity-100 group-hover/gallery-card:translate-y-0 group-hover/gallery-card:opacity-100 dark:border-neutral-300/80 dark:bg-neutral-100/90 dark:text-neutral-900">
         <GalleryDocsLink
           componentId={componentId}

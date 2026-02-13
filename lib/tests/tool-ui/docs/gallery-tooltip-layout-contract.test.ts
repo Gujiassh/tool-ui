@@ -3,11 +3,11 @@ import path from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe("gallery tooltip layout contract", () => {
-  test("gallery cards keep a single-row clickable tooltip with spacing buffer", () => {
+  test("gallery cards keep a single-row clickable tooltip with extended spacing buffer", () => {
     const galleryPagePath = path.join(process.cwd(), "app/docs/gallery/page.tsx");
     const content = fs.readFileSync(galleryPagePath, "utf8");
 
-    expect(content).toContain("group/gallery-card relative pt-10");
+    expect(content).toContain("group/gallery-card relative pt-[44px]");
     expect(content).toContain("label={componentMeta.name}");
     expect(content).toContain("pointer-events-auto inline-flex items-center");
   });
