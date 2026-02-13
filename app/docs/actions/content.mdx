@@ -1,16 +1,140 @@
 import { DocsHeader } from "../_components/docs-header";
-import { ActionsExamples } from "./actions-examples";
+import {
+  ActionFlowCommitVisual,
+  ActionFlowRenderVisual,
+  ActionFlowRuntimeHandleVisual,
+  ActionFlowToolCallVisual,
+  ActionFlowUserActionVisual,
+  ActionCentricExceptionsExample,
+  DecisionSurfaceExample,
+  DisplaySurfaceLocalActionsExample,
+} from "./actions-examples";
 
 <DocsHeader
   title="Actions"
-  description="Display surfaces stay display-only. Render LocalActions and DecisionActions as siblings."
+  description="Action model basics."
   mdxPath="app/docs/actions/content.mdx"
 />
 
-## Model
+Tool UI actions are how a user turns a rendered tool UI into behavior. If you're new to tool calling, this page gives you the mental model first, then the implementation patterns.
 
-- `LocalActions`: runtime side effects only, no `addResult(...)`.
-- `DecisionActions`: consequential actions that commit a typed decision envelope.
-- Display components: render data only, plus intrinsic controls.
+## Start Here
 
-<ActionsExamples />
+<Steps>
+
+<Step title="The model calls a tool">
+
+The model chooses a tool and sends structured arguments.
+
+<ActionFlowToolCallVisual />
+
+```ts
+tools: {
+  getExpenses: tool({
+    description: "Return travel expenses for a month",
+    execute: async ({ month }) => ({ id: "expenses-jan", month }),
+  }),
+}
+```
+
+</Step>
+
+<Step title="Your app renders a Tool UI surface">
+
+The returned args are parsed and rendered as a display surface.
+
+<ActionFlowRenderVisual />
+
+```tsx
+render: createResultToolRenderer({
+  safeParse: safeParseSerializableDataTable,
+  render: (parsed) => <DataTable {...parsed} />,
+})
+```
+
+</Step>
+
+<Step title="The user triggers an action">
+
+The user clicks an action control associated with the surface.
+
+<ActionFlowUserActionVisual />
+
+```tsx
+const localActions = [{ id: "export-csv", label: "Export CSV" }];
+
+async function handleLocalAction(actionId: string) {
+  // side effects only
+}
+```
+
+</Step>
+
+<Step title="The runtime handles the action">
+
+Your action handler runs side effects (navigation, export, API call, etc.).
+
+<ActionFlowRuntimeHandleVisual />
+
+```ts
+async function handleLocalAction(actionId: string) {
+  if (actionId === "export-csv") await exportCsv();
+  if (actionId === "open-report") router.push("/reports/monthly");
+}
+```
+
+</Step>
+
+<Step title="For consequential actions, commit decision outcome">
+
+If the action is consequential, commit a durable outcome (typically via `addResult(...)` in your renderer runtime).
+
+<ActionFlowCommitVisual />
+
+```tsx
+const decision = createDecisionResult({
+  decisionId: "order-123",
+  action: { id: "confirm", label: "Purchase" },
+});
+
+await addResult?.(decision);
+```
+
+</Step>
+
+</Steps>
+
+## Action Surfaces
+
+The standard split is:
+
+- `ToolUI.LocalActions`: non-consequential runtime side effects.
+- `ToolUI.DecisionActions`: consequential choices that produce commit-ready decision envelopes.
+
+### Display Components + LocalActions
+
+For display-first components, keep rendering and actions separate: the display component goes inside `ToolUI.Surface`, and local actions go inside sibling `ToolUI.Actions`.
+
+<DisplaySurfaceLocalActionsExample />
+
+`LocalActions` handlers should not commit durable result state.
+
+### Decision Components + DecisionActions
+
+When user intent is consequential (approve, confirm, purchase, publish, delete), use `DecisionActions`. This makes decision payload shape explicit and commit behavior auditable.
+
+<DecisionSurfaceExample />
+
+`DecisionActions` handlers should return a typed envelope, then commit in the commit phase.
+
+## Action-Centric Components (Intentional Exception)
+
+Some components are action-centric by design. Their action handling is part of component semantics, so they keep dedicated action props instead of sibling surfaces.
+
+| Component | Dedicated action props |
+|---|---|
+| `OptionList` | `selectionActions`, `onSelectionAction`, `onBeforeSelectionAction` |
+| `ParameterSlider` | `adjustmentActions`, `onAdjustmentAction`, `onBeforeAdjustmentAction` |
+| `PreferencesPanel` | `formActions`, `onFormAction`, `onBeforeFormAction` |
+
+<ActionCentricExceptionsExample />

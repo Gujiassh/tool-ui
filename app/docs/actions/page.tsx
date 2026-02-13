@@ -4,8 +4,7 @@ import { DocsArticle } from "../_components/docs-article";
 
 export const metadata: Metadata = {
   title: "Actions",
-  description:
-    "Use LocalActions for non-receipt interactions and DecisionActions for consequential commits.",
+  description: "Action model basics.",
 };
 
 export const revalidate = 3600;
