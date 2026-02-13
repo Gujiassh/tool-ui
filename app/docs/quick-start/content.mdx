@@ -19,7 +19,7 @@ import { Bot } from "lucide-react";
   </AlertDescription>
 </Alert>
 
-This guide walks you through adding a Tool UI component to a chat app. By the end you'll have an assistant that renders a rich link preview card instead of dumping raw JSON into the conversation.
+Add a Tool UI component to a chat app. By the end you'll have an assistant that renders a rich link preview card instead of raw JSON.
 
 **What you'll build:** A backend tool that fetches link metadata, and a frontend renderer that turns the JSON response into an interactive LinkPreview card — all wired together through [assistant-ui](https://www.assistant-ui.com/).
 
@@ -80,7 +80,7 @@ This copies `components/tool-ui/link-preview/` and `components/tool-ui/shared/` 
 
 ## Wire it up
 
-Now that you have the runtime and the component, connect them: define a backend tool that returns structured data, then register a renderer that turns that data into the LinkPreview component.
+With the runtime and component in place, define a backend tool that returns structured data, then register a renderer that turns that data into the LinkPreview component.
 
 <Steps>
 
@@ -127,13 +127,13 @@ export async function POST(req: Request) {
 }
 ```
 
-When a user asks the assistant about a link, the LLM calls `previewLink` with a URL. The `execute` function runs on your server and returns the structured data. In a real app, you'd fetch actual metadata here (Open Graph tags, screenshots, etc.).
+In a real app, you'd fetch actual metadata here (Open Graph tags, screenshots, etc.).
 
 </Step>
 
 <Step title="Register the renderer">
 
-On the client, tell assistant-ui how to render the tool's output. When the LLM calls `previewLink`, the runtime receives the JSON result and passes it to the renderer you register here.
+On the client, register a renderer so assistant-ui knows how to display `previewLink` results.
 
 ```tsx title="app/page.tsx"
 "use client";
@@ -191,7 +191,7 @@ Run `pnpm dev`, then ask the assistant to "preview https://example.com." Instead
 
 ## Add more components
 
-To install another component, repeat the same pattern:
+Same pattern for any component:
 
 1. Install from the registry:
 
@@ -202,7 +202,7 @@ npx shadcn@latest add @tool-ui/approval-card
 2. Define a backend tool that returns data matching the component's schema.
 3. Register a renderer in your toolkit that maps the tool name to the component.
 
-Every Tool UI component ships with a colocated `schema.ts` that exports a Zod schema and a `safeParseSerializable{ComponentName}` function. Use these to validate tool output on both server and client.
+Every component ships with a colocated `schema.ts` exporting a Zod schema and a `safeParseSerializable{ComponentName}` function for validating tool output on both server and client.
 
 Browse all available components in the [Gallery](/docs/gallery).
 
@@ -210,7 +210,7 @@ Browse all available components in the [Gallery](/docs/gallery).
 
 [assistant-ui](https://www.assistant-ui.com/) supports multiple runtimes beyond AI SDK: [LangGraph](https://langchain-ai.github.io/langgraphjs/), LangServe, [Mastra](https://mastra.dev/), or custom backends. The examples above use AI SDK v6.
 
-Tool UI components also work without assistant-ui — you'd parse tool outputs and render components manually. For the best experience, we recommend assistant-ui.
+Tool UI components also work without assistant-ui — parse tool outputs and render components yourself. assistant-ui handles the wiring for you.
 
 ## Next steps
 

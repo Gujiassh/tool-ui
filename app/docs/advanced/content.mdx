@@ -8,7 +8,7 @@ import { DocsHeader } from "../_components/docs-header";
 
 ## Tool Type Inference
 
-With `InferUITools` in AI SDK 6, you can infer tool input/output types from your tool set and get fully typed `message.parts` in the UI.
+`InferUITools` (AI SDK 6) infers tool input/output types from your tool set and gives you fully typed `message.parts` in the UI.
 
 - [**InferUITools reference**](https://ai-sdk.dev/docs/reference/ai-sdk-ui/infer-ui-tools)
 
@@ -126,7 +126,7 @@ Export only types from `lib/tools.ts` to the client; never import server code in
 
 ### Single-tool helpers
 
-For a single tool, `InferUITool` works the same way as `InferUITools` but for one tool definition.
+`InferUITool` (singular) does the same thing for a single tool definition.
 
 ### End-to-end validation
 
@@ -151,7 +151,7 @@ return <X {...parsed} />;
 
 ## Frontend tools (interactive Tool UIs)
 
-Some Tool UIs — especially decision surfaces like OptionList — are best modeled as **frontend tools**: the model calls a tool whose arguments are the component props, and your UI calls `addResult(...)` after the user confirms a choice. The result feeds back into the conversation as a tool result.
+Decision surfaces like OptionList are best modeled as **frontend tools**: the model calls a tool whose arguments are the component props, and your UI calls `addResult(...)` after the user confirms. The result feeds back into the conversation as a tool result.
 
 If you're using `AssistantChatTransport`, it forwards **system instructions** and **registered tools** in the request body. Your `/api/chat` route needs to read and forward them, otherwise the model won't see your frontend tools.
 
@@ -203,7 +203,7 @@ export async function POST(req: Request) {
 
 ### Register a frontend tool
 
-Register the tool on the client so it gets forwarded by `AssistantChatTransport`, and render a Tool UI when it's called.
+Register the tool on the client so `AssistantChatTransport` forwards it to the model.
 
 ```tsx
 "use client";
@@ -246,11 +246,11 @@ export const toolkit: Toolkit = {
 };
 ```
 
-Register this toolkit with `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so the tool definition and renderer are both forwarded by `AssistantChatTransport`.
+Pass this toolkit to `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so the definition and renderer are forwarded by `AssistantChatTransport`.
 
 ### Auto-continue after `addResult(...)`
 
-If you want the assistant to continue automatically after the user confirms (instead of waiting for the next user message), enable AI SDK's auto-resubmit behavior:
+To have the assistant continue automatically after the user confirms, enable auto-resubmit:
 
 ```tsx
 import {
