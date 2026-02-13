@@ -28,16 +28,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-background flex h-screen flex-col overscroll-none">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
-          {children}
-          <MobileNavSheet />
-          <PostHogInit />
-        </ThemeProvider>
+      <body className="bg-background overscroll-none">
+        <div id="app-root" className="flex h-screen h-svh flex-col">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            disableTransitionOnChange
+          >
+            {children}
+            <MobileNavSheet />
+            <PostHogInit />
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );

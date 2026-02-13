@@ -19,6 +19,19 @@ export function MobileNavSheet() {
   const pathname = usePathname();
   const [presented, setPresented] = React.useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = React.useState(true);
+  const [isMobileViewport, setIsMobileViewport] = React.useState(false);
+
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const updateViewportMatch = () => setIsMobileViewport(mediaQuery.matches);
+
+    updateViewportMatch();
+    mediaQuery.addEventListener("change", updateViewportMatch);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateViewportMatch);
+    };
+  }, []);
 
   const isDocs = pathname.startsWith("/docs") && pathname !== "/docs/gallery";
   const isGallery = pathname === "/docs/gallery";
@@ -27,6 +40,10 @@ export function MobileNavSheet() {
     { href: "/docs/overview", label: "Docs", isActive: isDocs },
     { href: "/docs/gallery", label: "Gallery", isActive: isGallery },
   ];
+
+  if (!isMobileViewport) {
+    return null;
+  }
 
   return (
     <Sheet.Root

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 
 interface MermaidProps {
@@ -21,6 +21,7 @@ export function Mermaid({ chart }: MermaidProps) {
   const { resolvedTheme } = useTheme();
   const [svg, setSvg] = useState<string>("");
   const [mounted, setMounted] = useState(false);
+  const renderHostRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -28,6 +29,8 @@ export function Mermaid({ chart }: MermaidProps) {
 
   useEffect(() => {
     if (!mounted) return;
+    const renderHost = renderHostRef.current;
+    if (!renderHost) return;
 
     const render = async () => {
       const mermaid = await getMermaid();
@@ -62,7 +65,8 @@ export function Mermaid({ chart }: MermaidProps) {
 
       const { svg: renderedSvg } = await mermaid.default.render(
         `mermaid-${id.replace(/:/g, "")}`,
-        chart
+        chart,
+        renderHost,
       );
 
       // Post-process SVG to add padding to edge labels
@@ -91,18 +95,25 @@ export function Mermaid({ chart }: MermaidProps) {
     render();
   }, [chart, id, mounted, resolvedTheme]);
 
-  if (!mounted) {
-    return (
-      <div className="flex items-center justify-center rounded-lg border border-border bg-muted/50 p-8">
-        <span className="text-sm text-muted-foreground">Loading diagram...</span>
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="my-4 flex justify-center overflow-x-auto [&_svg]:max-w-full"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <div className="relative">
+      <div
+        ref={renderHostRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute -z-10 h-0 w-0 overflow-hidden opacity-0"
+      />
+      {!mounted ? (
+        <div className="flex items-center justify-center rounded-lg border border-border bg-muted/50 p-8">
+          <span className="text-sm text-muted-foreground">
+            Loading diagram...
+          </span>
+        </div>
+      ) : (
+        <div
+          className="my-4 flex justify-center overflow-x-auto [&_svg]:max-w-full"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      )}
+    </div>
   );
 }
