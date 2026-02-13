@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { analytics } from "@/lib/analytics";
+import { cn } from "@/lib/ui/cn";
 
 interface GalleryDocsLinkProps {
   componentId: string;
@@ -23,10 +24,19 @@ export function GalleryDocsLink({
   };
 
   return (
-    <Link href={href} className={className} onClick={handleClick}>
+    <Link
+      href={href}
+      className={cn(
+        "group inline-flex items-center gap-1 whitespace-nowrap hover:no-underline focus-visible:no-underline",
+        className,
+      )}
+      onClick={handleClick}
+    >
       <span className="whitespace-nowrap text-sm font-semibold">{label}</span>
       <span className="inline-flex items-center gap-1 whitespace-nowrap text-xs">
-        <span>View Docs</span>
+        <span className="underline-offset-2 group-hover:underline group-focus-visible:underline">
+          View Docs
+        </span>
         <ArrowRight className="size-3" aria-hidden="true" />
       </span>
     </Link>
