@@ -139,7 +139,7 @@ export const serializableDataSchema = z.record(
  * - data: Data rows (primitives only - no functions or class instances)
  * - optional presentation props: rowIdKey, sort/defaultSort, locale, etc.
  *
- * Non-serializable props like `onSortChange`, `className`, and response actions
+ * Non-serializable props like `onSortChange`, `className`, and sibling action surfaces
  * must be provided separately in your React component.
  *
  * @example

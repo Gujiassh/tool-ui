@@ -55,7 +55,7 @@ const noEmbeddedResponseActionsRule: Rule.RuleModule = {
     type: "problem",
     docs: {
       description:
-        "Disallow legacy embedded response action props on display component surfaces.",
+        "Disallow legacy embedded action props on display component surfaces.",
       recommended: true,
       url: "https://tool-ui.com/docs/actions",
     },

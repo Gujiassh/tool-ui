@@ -47,7 +47,7 @@ Interconnected registries:
 - **Tailwind for layout**: No `maxWidth`/`padding` props—users customize via `className`
 - **Standard widths**: Cards use `min-w-80 max-w-md`, compact components use `max-w-sm`
 - **Flat props**: Avoid nested config objects
-- **Semantic action IDs**: Use `id: "confirm"` / `id: "cancel"` for response actions
+- **Semantic action IDs**: Use `id: "confirm"` / `id: "cancel"` for local and decision actions
 - **Receipt state**: Use `choice` prop to render confirmed state (e.g., `<OptionList choice="option-a" />`)
 
 ### Main Component Structure
@@ -56,7 +56,7 @@ Reference: `components/tool-ui/approval-card/approval-card.tsx:183`
 
 - Outer `<article>` with `data-slot`, `data-tool-ui-id`, `lang="en"`, `aria-busy`
 - Loading skeleton via `isLoading` prop
-- Optional `responseActions` via `ActionButtons`
+- Optional sibling `ToolUI.LocalActions` / `ToolUI.DecisionActions` surfaces
 
 ## Discovery
 

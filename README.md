@@ -47,7 +47,7 @@ For detailed maintainer workflow see `CONTRIBUTING.md`.
 - Image Gallery — Grid layout for browsing image collections
 - Item Carousel — Horizontal carousel for browsing collections
 - Link Preview — Rich link previews with OG data
-- Option List — Single/multi-select choices with response actions
+- Option List — Single/multi-select choices with external local/decision actions
 - Order Summary — Itemized purchase confirmation with pricing
 - Parameter Slider — Numeric parameter adjustment controls
 - Plan — Display step-by-step task workflows

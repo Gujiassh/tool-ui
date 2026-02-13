@@ -3,6 +3,10 @@ import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
 import { describe, expect, it } from "vitest";
 
+const FORBIDDEN_EMBEDDED_ACTION_IDENTIFIERS =
+  /\b(responseActions|onResponseAction|onBeforeResponseAction)\b/;
+const FORBIDDEN_LEGACY_ACTION_PHRASE = /\bresponse actions?\b/i;
+
 function getProjectRoot(): string {
   const currentFile = fileURLToPath(import.meta.url);
   return path.resolve(path.dirname(currentFile), "../../../..");
@@ -10,6 +14,13 @@ function getProjectRoot(): string {
 
 function readWorkspaceFile(relativePath: string): string {
   return readFileSync(path.join(getProjectRoot(), relativePath), "utf8");
+}
+
+function expectFilesNotToMatch(relativePaths: string[], pattern: RegExp) {
+  for (const relativePath of relativePaths) {
+    const content = readWorkspaceFile(relativePath);
+    expect(content, relativePath).not.toMatch(pattern);
+  }
 }
 
 describe("action model RFC contracts", () => {
@@ -38,12 +49,10 @@ describe("action model RFC contracts", () => {
       "components/tool-ui/x-post/x-post.tsx",
     ];
 
-    const forbidden = /\b(responseActions|onResponseAction|onBeforeResponseAction)\b/;
-
-    for (const relativePath of displayComponentFiles) {
-      const content = readWorkspaceFile(relativePath);
-      expect(content, relativePath).not.toMatch(forbidden);
-    }
+    expectFilesNotToMatch(
+      displayComponentFiles,
+      FORBIDDEN_EMBEDDED_ACTION_IDENTIFIERS,
+    );
   });
 
   it("removes embedded response action APIs from migrated display docs", () => {
@@ -63,11 +72,54 @@ describe("action model RFC contracts", () => {
       "app/docs/x-post/content.mdx",
     ];
 
-    const forbidden = /\b(responseActions|onResponseAction|onBeforeResponseAction)\b/;
+    expectFilesNotToMatch(
+      displayDocsFiles,
+      FORBIDDEN_EMBEDDED_ACTION_IDENTIFIERS,
+    );
+  });
 
-    for (const relativePath of displayDocsFiles) {
+  it("keeps legacy action doc routes as redirects to /docs/actions", () => {
+    const legacyRoutePages = [
+      "app/docs/local-actions/page.tsx",
+      "app/docs/response-actions/page.tsx",
+    ];
+
+    for (const relativePath of legacyRoutePages) {
       const content = readWorkspaceFile(relativePath);
-      expect(content, relativePath).not.toMatch(forbidden);
+      expect(content, relativePath).toContain('redirect("/docs/actions")');
     }
+  });
+
+  it("keeps legacy action doc content as deprecation stubs", () => {
+    const legacyContentFiles = [
+      "app/docs/local-actions/content.mdx",
+      "app/docs/response-actions/content.mdx",
+    ];
+
+    for (const relativePath of legacyContentFiles) {
+      const content = readWorkspaceFile(relativePath);
+      expect(content, relativePath).toContain("deprecated");
+      expect(content, relativePath).toContain("/docs/actions");
+      expect(content, relativePath).not.toContain("<ToolUI");
+      expect(content, relativePath).not.toContain("Local Action Example");
+      expect(content, relativePath).not.toContain("Decision Action Example");
+    }
+  });
+
+  it("removes legacy response action terminology from maintainer docs and comments", () => {
+    const maintainerDocsAndComments = [
+      "README.md",
+      "CLAUDE.md",
+      "app/docs/actions/content.mdx",
+      "app/docs/local-actions/content.mdx",
+      "app/docs/response-actions/content.mdx",
+      "components/tool-ui/data-table/schema.ts",
+      "lib/playground/prototypes/waymo/wip-tool-uis/ux.md",
+    ];
+
+    expectFilesNotToMatch(
+      maintainerDocsAndComments,
+      FORBIDDEN_LEGACY_ACTION_PHRASE,
+    );
   });
 });
