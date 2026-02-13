@@ -12,6 +12,14 @@ export type ReleaseGitContext = {
   changedFiles: string[];
 };
 
+function isDocsSitePath(filePath: string): boolean {
+  return filePath.startsWith("app/docs/") || filePath.startsWith("docs/");
+}
+
+function filterDocsSiteFiles(files: string[]): string[] {
+  return files.filter((filePath) => !isDocsSitePath(filePath));
+}
+
 function runGit(projectRoot: string, args: string[]): string {
   return execFileSync("git", ["-C", projectRoot, ...args], {
     encoding: "utf8",
@@ -43,7 +51,16 @@ function collectCommitFiles(projectRoot: string, hash: string): string[] {
 
 export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext {
   const lastTag = tryRunGit(projectRoot, ["describe", "--tags", "--abbrev=0"]);
-  const range = lastTag ? `${lastTag}..HEAD` : "HEAD";
+  if (!lastTag) {
+    throw new Error(
+      [
+        "No git release tag found. Changelog generation requires a tagged baseline.",
+        "Create and push an annotated tag first (example: git tag -a v2026.2.13 -m \"Release v2026.2.13\" && git push origin v2026.2.13).",
+      ].join("\n"),
+    );
+  }
+
+  const range = `${lastTag}..HEAD`;
   const rawCommits = runGit(projectRoot, [
     "log",
     "--no-merges",
@@ -57,18 +74,22 @@ export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext
     .filter(Boolean)
     .map((entry) => {
       const [hash, subject, body] = entry.split("\x1f");
-      const files = collectCommitFiles(projectRoot, hash);
+      const files = filterDocsSiteFiles(collectCommitFiles(projectRoot, hash));
       return {
         hash,
         subject: subject?.trim() ?? "",
         body: body?.trim() ?? "",
         files,
       };
-    });
+    })
+    .filter((commit) => commit.files.length > 0);
 
   if (commits.length === 0) {
     throw new Error(
-      `No commits found for release range "${range}". Cannot infer changelog.`,
+      [
+        `No non-doc commits found for release range "${range}".`,
+        "Changelog inference ignores docs-site paths under app/docs/ and docs/.",
+      ].join(" "),
     );
   }
 

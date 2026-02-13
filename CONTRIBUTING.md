@@ -11,7 +11,7 @@ pnpm dev
 
 Open:
 
-- `http://localhost:3000/docs/contributing`
+- `http://localhost:3000/docs/changelog`
 - `http://localhost:3000/playground`
 
 ## Component workflow
