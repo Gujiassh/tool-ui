@@ -18,7 +18,7 @@ import {
 
 Tool UI actions are how a user turns a rendered tool UI into behavior. If you're new to tool calling, this page gives you the mental model first, then the implementation patterns.
 
-## Start Here
+## Mental Model
 
 <Steps>
 
@@ -129,12 +129,24 @@ When user intent is consequential (approve, confirm, purchase, publish, delete),
 
 ## Action-Centric Components (Intentional Exception)
 
-Some components are action-centric by design. Their action handling is part of component semantics, so they keep dedicated action props instead of sibling surfaces.
+Some components are action-centric by design. Their action handling is part of component semantics, so actions stay embedded on the component rather than using sibling `ToolUI.Actions` surfaces.
 
-| Component | Dedicated action props |
-|---|---|
-| `OptionList` | `selectionActions`, `onSelectionAction`, `onBeforeSelectionAction` |
-| `ParameterSlider` | `adjustmentActions`, `onAdjustmentAction`, `onBeforeAdjustmentAction` |
-| `PreferencesPanel` | `formActions`, `onFormAction`, `onBeforeFormAction` |
+### Shared Embedded Contract
+
+All three action-centric components use the same embedded action interface:
+
+- `actions`: action buttons rendered by the component.
+- `onAction(actionId, state)`: runs after the action behavior and receives post-action state.
+- `onBeforeAction(actionId, state)`: guard evaluated before an action runs.
+
+Only the `state` type changes by component:
+
+- `OptionList`: `OptionListSelection`
+- `ParameterSlider`: `SliderValue[]`
+- `PreferencesPanel`: `PreferencesValue`
+
+### Component Examples + Mock Outputs
+
+Each example below shows the live component on the left and the corresponding mock runtime output on the right.
 
 <ActionCentricExceptionsExample />

@@ -37,15 +37,15 @@ function generateOptionListCode(data: SerializableOptionList): string {
     props.push(`  choice={${choiceValue}}`);
   }
 
-  if (data.selectionActions) {
+  if (data.actions) {
     props.push(
-      `  selectionActions={${JSON.stringify(data.selectionActions, null, 4).replace(/\n/g, "\n  ")}}`,
+      `  actions={${JSON.stringify(data.actions, null, 4).replace(/\n/g, "\n  ")}}`,
     );
   }
 
   if (!hasChoice) {
     props.push(
-      `  onConfirm={(selection) => {\n    console.log("Selection:", selection);\n  }}`,
+      `  onAction={(actionId, selection) => {\n    if (actionId === "confirm") {\n      console.log("Selection:", selection);\n    }\n  }}`,
     );
   }
 
@@ -65,7 +65,7 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
       selectionMode: "multi",
       minSelections: 1,
       maxSelections: 2,
-      selectionActions: [
+      actions: [
         { id: "cancel", label: "Reset" },
         { id: "confirm", label: "Confirm", variant: "default" },
       ],
@@ -90,7 +90,7 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
         },
       ],
       selectionMode: "single",
-      selectionActions: [
+      actions: [
         { id: "cancel", label: "Reset" },
         { id: "confirm", label: "Continue", variant: "default" },
       ],
@@ -125,7 +125,7 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
       ],
       selectionMode: "multi",
       minSelections: 4,
-      selectionActions: [
+      actions: [
         { id: "cancel", label: "Cancel" },
         {
           id: "confirm",
@@ -216,7 +216,7 @@ export const optionListPresets: Record<OptionListPresetName, PresetWithCodeGen<S
         },
       ],
       selectionMode: "single",
-      selectionActions: [
+      actions: [
         { id: "cancel", label: "Cancel" },
         {
           id: "confirm",

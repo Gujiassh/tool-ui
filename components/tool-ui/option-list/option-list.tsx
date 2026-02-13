@@ -223,11 +223,9 @@ export function OptionList({
   defaultValue,
   choice,
   onChange,
-  onConfirm,
-  onCancel,
-  selectionActions,
-  onSelectionAction,
-  onBeforeSelectionAction,
+  actions,
+  onAction,
+  onBeforeAction,
   className,
 }: OptionListProps) {
   if (process.env["NODE_ENV"] !== "production") {
@@ -391,40 +389,35 @@ export function OptionList({
     [effectiveMaxSelections, selectedIds, selectionMode, updateSelection],
   );
 
-  const handleConfirm = useCallback(async () => {
-    if (!onConfirm) return;
-    if (selectedCount === 0 || selectedCount < minSelections) return;
-    await onConfirm(convertIdSetToSelection(selectedIds, selectionMode));
-  }, [minSelections, onConfirm, selectedCount, selectedIds, selectionMode]);
+  const toSelectionState = useCallback(
+    (selected: Set<string>): OptionListSelection =>
+      convertIdSetToSelection(selected, selectionMode),
+    [selectionMode],
+  );
 
-  const handleCancel = useCallback(() => {
+  const handleCancel = useCallback((): OptionListSelection => {
     const empty = new Set<string>();
     updateSelection(empty);
-    onCancel?.();
-  }, [onCancel, updateSelection]);
+    return toSelectionState(empty);
+  }, [toSelectionState, updateSelection]);
 
-  const customResponseActions = useMemo(
-    () => normalizeActionsConfig(selectionActions),
-    [selectionActions],
-  );
-  const hasCustomResponseActions = customResponseActions !== null;
+  const customActions = useMemo(() => normalizeActionsConfig(actions), [actions]);
 
   const handleFooterAction = useCallback(
     async (actionId: string) => {
-      if (actionId === "confirm") {
-        await handleConfirm();
-      } else if (actionId === "cancel") {
-        handleCancel();
+      let nextState = toSelectionState(selectedIds);
+
+      if (actionId === "cancel") {
+        nextState = handleCancel();
       }
-      if (hasCustomResponseActions) {
-        await onSelectionAction?.(actionId);
-      }
+
+      await onAction?.(actionId, nextState);
     },
-    [handleConfirm, handleCancel, hasCustomResponseActions, onSelectionAction],
+    [handleCancel, onAction, selectedIds, toSelectionState],
   );
 
   const normalizedFooterActions = useMemo(() => {
-    if (customResponseActions) return customResponseActions;
+    if (customActions) return customActions;
     return {
       items: [
         { id: "cancel", label: "Clear", variant: "ghost" as const },
@@ -432,7 +425,7 @@ export function OptionList({
       ],
       align: "right" as const,
     } satisfies ReturnType<typeof normalizeActionsConfig>;
-  }, [customResponseActions]);
+  }, [customActions]);
 
   const isConfirmDisabled =
     selectedCount < minSelections || selectedCount === 0;
@@ -627,7 +620,13 @@ export function OptionList({
               confirmTimeout={normalizedFooterActions.confirmTimeout}
               onAction={handleFooterAction}
               onBeforeAction={
-                hasCustomResponseActions ? onBeforeSelectionAction : undefined
+                onBeforeAction
+                  ? (actionId) =>
+                      onBeforeAction(
+                        actionId,
+                        toSelectionState(selectedIds),
+                      )
+                  : undefined
               }
             />
           </div>

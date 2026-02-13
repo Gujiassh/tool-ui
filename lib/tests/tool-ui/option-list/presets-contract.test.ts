@@ -35,4 +35,13 @@ describe("option-list presets contract", () => {
     expect(receiptCode).not.toContain("onConfirm=");
     expect(receiptMultiCode).not.toContain("onConfirm=");
   });
+
+  test("uses unified action callback in interactive examples", () => {
+    const interactiveCode = optionListPresets.travel.generateExampleCode(
+      optionListPresets.travel.data,
+    );
+
+    expect(interactiveCode).toContain("onAction=");
+    expect(interactiveCode).not.toContain("onConfirm=");
+  });
 });

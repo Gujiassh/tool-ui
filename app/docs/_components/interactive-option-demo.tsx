@@ -36,11 +36,14 @@ const FOLLOW_UP: Record<string, string> = {
 export function InteractiveOptionDemo() {
   const [choice, setChoice] = useState<string | null>(null);
 
-  const handleConfirm = useCallback((value: string | string[] | null) => {
-    if (typeof value === "string") {
-      setChoice(value);
-    }
-  }, []);
+  const handleAction = useCallback(
+    (actionId: string, selection: string | string[] | null) => {
+      if (actionId === "confirm" && typeof selection === "string") {
+        setChoice(selection);
+      }
+    },
+    [],
+  );
 
   const handleReset = useCallback(() => {
     setChoice(null);
@@ -62,7 +65,7 @@ export function InteractiveOptionDemo() {
               selectionMode="single"
               options={OPTIONS}
               choice={choice ?? undefined}
-              onConfirm={handleConfirm}
+              onAction={handleAction}
             />
           </div>
         </MockMessage>

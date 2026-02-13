@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { type ActionsProp } from "../shared/actions-config";
+import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import { defineToolUiContract } from "../shared/contract";
 import {
   SerializableActionSchema,
@@ -45,7 +46,7 @@ export const SerializableParameterSliderSchema = z.object({
   id: ToolUIIdSchema,
   role: ToolUIRoleSchema.optional(),
   sliders: z.array(SliderConfigSchema).min(1),
-  adjustmentActions: z
+  actions: z
     .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
     .optional(),
 }).strict().superRefine((payload, ctx) => {
@@ -91,17 +92,14 @@ export interface SliderValue {
 
 export interface ParameterSliderProps extends Omit<
   SerializableParameterSlider,
-  "adjustmentActions"
+  "actions"
 > {
   className?: string;
   values?: SliderValue[];
   onChange?: (values: SliderValue[]) => void;
-  adjustmentActions?: ActionsProp;
-  onAdjustmentAction?: (
-    actionId: string,
-    values: SliderValue[],
-  ) => void | Promise<void>;
-  onBeforeAdjustmentAction?: (actionId: string) => boolean | Promise<boolean>;
+  actions?: ActionsProp;
+  onAction?: EmbeddedActionsProps<SliderValue[]>["onAction"];
+  onBeforeAction?: EmbeddedActionsProps<SliderValue[]>["onBeforeAction"];
   trackClassName?: string;
   fillClassName?: string;
   handleClassName?: string;

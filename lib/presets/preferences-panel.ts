@@ -39,17 +39,14 @@ function generatePreferencesPanelCode(
     return `<PreferencesPanel.Receipt\n${props.join("\n")}\n/>`;
   }
 
-  if (data.formActions) {
+  if (data.actions) {
     props.push(
-      `  formActions={${JSON.stringify(data.formActions, null, 4).replace(/\n/g, "\n  ")}}`,
+      `  actions={${JSON.stringify(data.actions, null, 4).replace(/\n/g, "\n  ")}}`,
     );
   }
 
   props.push(
-    `  onSave={(values) => {\n    console.log("Saved:", values);\n  }}`,
-  );
-  props.push(
-    `  onCancel={() => {\n    console.log("Cancelled");\n  }}`,
+    `  onAction={(actionId, values) => {\n    console.log(actionId, values);\n  }}`,
   );
 
   return `<PreferencesPanel\n${props.join("\n")}\n/>`;
