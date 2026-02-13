@@ -7,14 +7,15 @@ vi.mock("@/app/components/layout/app-header.server", () => ({
 }));
 
 describe("docs shell viewport height contract", () => {
-  it("uses stable viewport height units to avoid initial load resize jank", async () => {
+  it("inherits viewport height from root layout to avoid first-load reflow", async () => {
     const { HeaderFrame } = await import("@/app/components/layout/app-shell");
 
     const html = renderToStaticMarkup(
       createElement(HeaderFrame, null, createElement("main", null, "content")),
     );
 
-    expect(html).toContain("h-svh");
+    expect(html).toContain("h-full");
     expect(html).not.toContain("h-dvh");
+    expect(html).not.toContain("h-svh");
   });
 });

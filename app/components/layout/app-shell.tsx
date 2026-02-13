@@ -22,7 +22,7 @@ function HeaderFrameBase({
   shouldAnimate = false,
 }: HeaderFrameProps & { shouldAnimate?: boolean }) {
   return (
-    <div className="relative flex h-svh flex-col items-center overflow-hidden">
+    <div className="relative flex h-full flex-col items-center overflow-hidden">
       {background ? (
         <div className="pointer-events-none absolute inset-0 z-0">
           {background}

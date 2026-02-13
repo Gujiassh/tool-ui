@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-background flex h-screen flex-col overscroll-none">
+      <body className="bg-background flex h-screen h-svh flex-col overscroll-none">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
