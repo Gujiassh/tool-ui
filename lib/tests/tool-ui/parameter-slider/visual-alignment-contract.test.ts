@@ -83,4 +83,44 @@ describe("parameter-slider visual alignment contract", () => {
     // Max: no visible gap at the right edge.
     expect(maxHtml).toContain("clip-path:inset(0 0 0 0)");
   });
+
+  test("snaps cross-zero fill to exact borders at terminal values (audio-eq path)", () => {
+    const minHtml = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-audio-eq-min",
+        sliders: [
+          {
+            id: "bass",
+            label: "Bass",
+            min: -12,
+            max: 12,
+            value: -12,
+            fillClassName: "bg-fuchsia-500/30 dark:bg-fuchsia-400/35",
+          },
+        ],
+      }),
+    );
+    const maxHtml = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-audio-eq-max",
+        sliders: [
+          {
+            id: "treble",
+            label: "Treble",
+            min: -12,
+            max: 12,
+            value: 12,
+            fillClassName: "bg-violet-500/30 dark:bg-violet-400/35",
+          },
+        ],
+      }),
+    );
+
+    // At minimum: left segment should start flush at left border.
+    expect(minHtml).toContain(
+      "clip-path:inset(0 calc(100% - calc(50% + 0px)) 0 0)",
+    );
+    // At maximum: right segment should end flush at right border.
+    expect(maxHtml).toContain("clip-path:inset(0 0 0 calc(50% + 0px))");
+  });
 });

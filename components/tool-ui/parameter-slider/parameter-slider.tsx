@@ -416,6 +416,14 @@ function SliderRow({
     const TERMINAL_EPSILON = 1e-6;
 
     if (crossesZero) {
+      // Keep interior fill aligned to Radix thumb math, but snap to exact
+      // track borders at terminal values to avoid edge gaps.
+      if (valuePercent <= TERMINAL_EPSILON) {
+        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 0)`;
+      }
+      if (valuePercent >= 100 - TERMINAL_EPSILON) {
+        return `inset(0 0 0 ${toClipFromLeftInset(zeroPercent)})`;
+      }
       if (valuePercent >= zeroPercent) {
         // Positive: clip from zero on left, value on right
         return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
