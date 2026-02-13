@@ -160,10 +160,11 @@ describe("parameter-slider visual alignment contract", () => {
       }),
     );
 
-    expect(html).toContain("transition-[clip-path] duration-180");
+    expect(html).toContain("transition-[clip-path] duration-120");
     expect(html).toContain(
-      "[&amp;&gt;span]:transition-[left,transform] [&amp;&gt;span]:duration-180",
+      "[&amp;&gt;span]:transition-[left,transform] [&amp;&gt;span]:duration-120",
     );
     expect(html).toContain("ease-[cubic-bezier(0.22,1,0.36,1)]");
+    expect(html).not.toContain("duration-180");
   });
 });

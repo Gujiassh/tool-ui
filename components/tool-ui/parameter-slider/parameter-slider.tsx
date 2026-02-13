@@ -414,32 +414,26 @@ function SliderRow({
     const toClipFromLeftInset = (percent: number) =>
       toRadixThumbPosition(percent);
     const TERMINAL_EPSILON = 1e-6;
+    const snapLeftInset = (percent: number) => {
+      if (percent <= TERMINAL_EPSILON) return "0";
+      if (percent >= 100 - TERMINAL_EPSILON) return "100%";
+      return toClipFromLeftInset(percent);
+    };
+    const snapRightInset = (percent: number) => {
+      if (percent <= TERMINAL_EPSILON) return "100%";
+      if (percent >= 100 - TERMINAL_EPSILON) return "0";
+      return toClipFromRightInset(percent);
+    };
 
     if (crossesZero) {
-      // Keep interior fill aligned to Radix thumb math, but snap to exact
-      // track borders at terminal values to avoid edge gaps.
-      if (valuePercent <= TERMINAL_EPSILON) {
-        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 0)`;
-      }
-      if (valuePercent >= 100 - TERMINAL_EPSILON) {
-        return `inset(0 0 0 ${toClipFromLeftInset(zeroPercent)})`;
-      }
-      if (valuePercent >= zeroPercent) {
-        // Positive: clip from zero on left, value on right
-        return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
-      } else {
-        // Negative: clip from value on left, zero on right
-        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
-      }
+      // Keep center anchor stable by always clipping the low/high pair,
+      // independent of sign branch, then snapping at terminal edges.
+      const lowPercent = Math.min(valuePercent, zeroPercent);
+      const highPercent = Math.max(valuePercent, zeroPercent);
+      return `inset(0 ${snapRightInset(highPercent)} 0 ${snapLeftInset(lowPercent)})`;
     }
-    // Non-crossing: keep Radix alignment internally, but snap to exact borders at terminals.
-    if (valuePercent <= TERMINAL_EPSILON) {
-      return "inset(0 100% 0 0)";
-    }
-    if (valuePercent >= 100 - TERMINAL_EPSILON) {
-      return "inset(0 0 0 0)";
-    }
-    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 0)`;
+    // Non-crossing: fill starts at left edge; snap right inset at terminals.
+    return `inset(0 ${snapRightInset(valuePercent)} 0 0)`;
   }, [crossesZero, zeroPercent, valuePercent]);
 
   const fillMaskImage = crossesZero
@@ -505,10 +499,9 @@ function SliderRow({
         className={cn(
           "group/slider relative flex w-full touch-none items-center select-none",
           "isolate h-12",
-          "[&>span]:transition-[left,transform]",
           isDragging
-            ? "[&>span]:duration-75 [&>span]:ease-linear"
-            : "[&>span]:duration-180 [&>span]:ease-[cubic-bezier(0.22,1,0.36,1)]",
+            ? "[&>span]:transition-none"
+            : "[&>span]:transition-[left,transform] [&>span]:duration-120 [&>span]:ease-[cubic-bezier(0.22,1,0.36,1)]",
           "[&>span]:will-change-[left,transform]",
           "motion-reduce:[&>span]:transition-none",
           disabled && "pointer-events-none opacity-50",
@@ -538,8 +531,8 @@ function SliderRow({
             className={cn(
               "absolute inset-0 will-change-[clip-path]",
               isDragging
-                ? "transition-[clip-path] duration-75 ease-linear"
-                : "transition-[clip-path] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                ? "transition-none"
+                : "transition-[clip-path] duration-120 ease-[cubic-bezier(0.22,1,0.36,1)]",
               "motion-reduce:transition-none",
               resolvedFillClassName ?? "bg-primary/30 dark:bg-primary/40",
             )}
@@ -581,8 +574,8 @@ function SliderRow({
           className={cn(
             "squircle pointer-events-none absolute inset-0 rounded-sm",
             isDragging
-              ? "transition-[opacity,background] duration-75 ease-linear"
-              : "transition-[opacity,background] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              ? "transition-none"
+              : "transition-[opacity,background] duration-120 ease-[cubic-bezier(0.22,1,0.36,1)]",
             "motion-reduce:transition-none",
           )}
           style={{
