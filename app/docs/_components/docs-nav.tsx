@@ -13,7 +13,10 @@ import {
   type ComponentCategory,
 } from "@/lib/docs/component-registry";
 import { cn } from "@/lib/ui/cn";
-import { BASE_DOCS_PAGES } from "./docs-pages";
+import {
+  CONCEPTS_DOCS_PAGES,
+  GET_STARTED_DOCS_PAGES,
+} from "./docs-pages";
 
 const STORAGE_KEY = "tool-ui-components-nav-collapsed:v1";
 
@@ -125,7 +128,34 @@ export function DocsNav() {
               Get Started
             </div>
           )}
-          {BASE_DOCS_PAGES.map((page) => {
+          {GET_STARTED_DOCS_PAGES.map((page) => {
+            const isActive = pathname === page.path;
+            return (
+              <Link
+                key={page.path}
+                href={page.path}
+                className={buildLinkClasses(isActive)}
+                title={collapsed ? page.label : undefined}
+                onMouseDown={handleLinkMouseDown}
+                onClick={() => analytics.docs.navigationClicked(page.label, page.path)}
+              >
+                {!collapsed && (
+                  <div className="overflow-hidden">
+                    <span className="truncate">{page.label}</span>
+                  </div>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-1 px-4 pt-8">
+          {!collapsed && (
+            <div className="text-primary/60 mb-3 cursor-default px-4 text-xs tracking-widest uppercase select-none">
+              Concepts
+            </div>
+          )}
+          {CONCEPTS_DOCS_PAGES.map((page) => {
             const isActive = pathname === page.path;
             return (
               <Link
