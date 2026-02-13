@@ -13,7 +13,7 @@ export const BASE_DOCS_PAGES: DocsPageLink[] = [
   { path: "/docs/receipts", label: "Receipts" },
   { path: "/docs/advanced", label: "Advanced" },
   { path: "/docs/design-guidelines", label: "UI Guidelines" },
-  { path: "/docs/contributing", label: "Maintainer Guide" },
+  { path: "/docs/changelog", label: "Changelog" },
 ];
 
 export function getAllDocsPageLinks(): DocsPageLink[] {
