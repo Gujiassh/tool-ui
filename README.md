@@ -33,7 +33,7 @@ pnpm registry:check
 4. Iterate on the matching component under `components/tool-ui/<component>/`.
 5. Rebuild registry artifacts with `pnpm registry:build`.
 
-For detailed maintainer workflow see `CONTRIBUTING.md`.
+For detailed maintainer workflow see `docs/tests.md` and `docs/playground.md`.
 
 ## Components
 
@@ -68,7 +68,6 @@ Tool UI is maintained by assistant-ui. This repository is optimized for direct m
 
 - [UI Guidelines](https://tool-ui.com/docs/design-guidelines) — design philosophy and principles
 - [Changelog](https://tool-ui.com/docs/changelog) — release notes and migration guidance
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — local maintainer workflow, tests, and component checklist
 
 ## License
 

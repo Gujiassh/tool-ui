@@ -12,12 +12,19 @@ export type ReleaseGitContext = {
   changedFiles: string[];
 };
 
-function isDocsSitePath(filePath: string): boolean {
-  return filePath.startsWith("app/docs/") || filePath.startsWith("docs/");
+export type ReleaseGitContextOptions = {
+  fromRef?: string;
+  fromDate?: string;
+  toRef?: string;
+  fromChangelogPath?: string;
+};
+
+function isToolUiComponentPath(filePath: string): boolean {
+  return filePath.startsWith("components/tool-ui/");
 }
 
-function filterDocsSiteFiles(files: string[]): string[] {
-  return files.filter((filePath) => !isDocsSitePath(filePath));
+function filterToolUiComponentFiles(files: string[]): string[] {
+  return files.filter((filePath) => isToolUiComponentPath(filePath));
 }
 
 function runGit(projectRoot: string, args: string[]): string {
@@ -49,7 +56,87 @@ function collectCommitFiles(projectRoot: string, hash: string): string[] {
     .filter(Boolean);
 }
 
-export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext {
+function resolveReleaseRange(
+  projectRoot: string,
+  options: ReleaseGitContextOptions,
+): { lastTag: string | null; range: string } {
+  const normalizedFromRef = options.fromRef?.trim();
+  const normalizedFromDate = options.fromDate?.trim();
+  const normalizedToRef = options.toRef?.trim() || "HEAD";
+  const normalizedFromChangelogPath = options.fromChangelogPath?.trim();
+
+  const baselineOptionsCount = [
+    normalizedFromRef,
+    normalizedFromDate,
+    normalizedFromChangelogPath,
+  ].filter(Boolean).length;
+
+  if (baselineOptionsCount > 1) {
+    throw new Error(
+      "Invalid changelog range options. Provide only one baseline selector: fromRef, fromDate, or fromChangelogPath.",
+    );
+  }
+
+  if (normalizedFromRef) {
+    return {
+      lastTag: null,
+      range: `${normalizedFromRef}..${normalizedToRef}`,
+    };
+  }
+
+  if (normalizedFromDate) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedFromDate)) {
+      throw new Error(
+        `Invalid fromDate "${normalizedFromDate}". Use YYYY-MM-DD.`,
+      );
+    }
+
+    const baselineCommit = tryRunGit(projectRoot, [
+      "rev-list",
+      "-n",
+      "1",
+      `--before=${normalizedFromDate}T23:59:59`,
+      normalizedToRef,
+    ]);
+
+    if (!baselineCommit) {
+      return {
+        lastTag: null,
+        range: normalizedToRef,
+      };
+    }
+
+    return {
+      lastTag: null,
+      range: `${baselineCommit}..${normalizedToRef}`,
+    };
+  }
+
+  if (normalizedFromChangelogPath) {
+    const changelogBaselineCommit = tryRunGit(projectRoot, [
+      "log",
+      "-n",
+      "1",
+      "--pretty=format:%H",
+      "--",
+      normalizedFromChangelogPath,
+    ]);
+
+    if (!changelogBaselineCommit) {
+      throw new Error(
+        [
+          `No git history found for changelog path "${normalizedFromChangelogPath}".`,
+          "Ensure the changelog file exists and has been committed at least once.",
+        ].join(" "),
+      );
+    }
+
+    return {
+      lastTag: null,
+      range: `${changelogBaselineCommit}..${normalizedToRef}`,
+    };
+  }
+
   const lastTag = tryRunGit(projectRoot, ["describe", "--tags", "--abbrev=0"]);
   if (!lastTag) {
     throw new Error(
@@ -60,7 +147,17 @@ export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext
     );
   }
 
-  const range = `${lastTag}..HEAD`;
+  return {
+    lastTag,
+    range: `${lastTag}..HEAD`,
+  };
+}
+
+export function collectReleaseGitContext(
+  projectRoot: string,
+  options: ReleaseGitContextOptions = {},
+): ReleaseGitContext {
+  const { lastTag, range } = resolveReleaseRange(projectRoot, options);
   const rawCommits = runGit(projectRoot, [
     "log",
     "--no-merges",
@@ -74,7 +171,9 @@ export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext
     .filter(Boolean)
     .map((entry) => {
       const [hash, subject, body] = entry.split("\x1f");
-      const files = filterDocsSiteFiles(collectCommitFiles(projectRoot, hash));
+      const files = filterToolUiComponentFiles(
+        collectCommitFiles(projectRoot, hash),
+      );
       return {
         hash,
         subject: subject?.trim() ?? "",
@@ -87,8 +186,8 @@ export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext
   if (commits.length === 0) {
     throw new Error(
       [
-        `No non-doc commits found for release range "${range}".`,
-        "Changelog inference ignores docs-site paths under app/docs/ and docs/.",
+        `No tool-ui component commits found for release range "${range}".`,
+        "Changelog inference only includes component source changes under components/tool-ui/.",
       ].join(" "),
     );
   }

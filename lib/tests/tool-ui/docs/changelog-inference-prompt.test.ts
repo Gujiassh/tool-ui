@@ -14,6 +14,9 @@ describe("changelog inference prompt", () => {
       "Avoid over-indexing on a seed component (for example DataTable) when scope is cross-component.",
     );
     expect(prompt).toContain(
+      "Include markdown links to relevant docs routes when confidence is high (for example [Actions](/docs/actions) for action-model changes).",
+    );
+    expect(prompt).toContain(
       "Cross-component schema migration (global wording)",
     );
     expect(prompt).toContain('Bad breakingChanges example: ["DataTable moved to /schema entrypoint."]');

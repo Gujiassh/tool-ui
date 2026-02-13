@@ -153,6 +153,7 @@ export function buildInferencePrompt(input: InferReleaseNotesInput): string {
     "- Only include a migrationPrompt when breakingChanges is non-empty.",
     "- Keep migrationPrompt as an imperative migration checklist for coding agents.",
     "- Keep entries concise and user-facing.",
+    "- Include markdown links to relevant docs routes when confidence is high (for example [Actions](/docs/actions) for action-model changes).",
     "- Do not include markdown code fences in field values.",
     "- If a change has propagated across Tool UI components, use repo-wide wording.",
     "- Avoid over-indexing on a seed component (for example DataTable) when scope is cross-component.",

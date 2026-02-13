@@ -10,6 +10,7 @@ export type InferredReleaseNotes = {
 type RenderReleaseSectionInput = {
   date: string;
   notes: InferredReleaseNotes;
+  generatedToRef?: string | null;
 };
 
 type UpsertReleaseSectionInput = {
@@ -73,6 +74,28 @@ function parseSubsectionHeadings(sectionContent: string): string[] {
     .filter(Boolean);
 }
 
+function extractGeneratedToRef(content: string): string | null {
+  const markerMatch = content.match(
+    /<!--\s*changelog-generated-to:\s*([^\s>][^>]*)\s*-->/,
+  );
+  const marker = markerMatch?.[1]?.trim();
+  return marker && marker.length > 0 ? marker : null;
+}
+
+function extractReleaseDateFromHeading(heading: string): string | null {
+  const normalizedHeading = heading.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedHeading)) {
+    return null;
+  }
+
+  return normalizedHeading;
+}
+
+function introAreaContainsOnlyAllowedComments(introArea: string): boolean {
+  const stripped = introArea.replace(/<!--[\s\S]*?-->/g, "").trim();
+  return stripped.length === 0;
+}
+
 export function createInitialChangelogContent(): string {
   return `import { DocsHeader } from "../_components/docs-header";
 
@@ -94,16 +117,25 @@ export function ensureChangelogFileExists(filePath: string): void {
 export function renderReleaseSection({
   date,
   notes,
+  generatedToRef,
 }: RenderReleaseSectionInput): string {
   const breakingChanges = normalizeItemList(notes.breakingChanges);
   const changes = normalizeItemList(notes.changes);
   const migrationPrompt = notes.migrationPrompt?.trim() ?? null;
+  const normalizedGeneratedToRef = generatedToRef?.trim() ?? null;
 
   if (changes.length === 0) {
     throw new Error("Changelog rendering requires at least one change.");
   }
 
   const lines: string[] = [`## ${date}`, ""];
+
+  if (normalizedGeneratedToRef) {
+    lines.push(
+      `<!-- changelog-generated-to: ${normalizedGeneratedToRef} -->`,
+      "",
+    );
+  }
 
   if (breakingChanges.length > 0) {
     lines.push("### Breaking changes", "", listToBullets(breakingChanges), "");
@@ -183,7 +215,10 @@ export function validateChangelogStructure(
       )
       .trim();
 
-    if (introArea.length > 0) {
+    if (
+      introArea.length > 0 &&
+      !introAreaContainsOnlyAllowedComments(introArea)
+    ) {
       errors.push(
         `Release "${section.heading}" contains prose before the first subsection heading.`,
       );
@@ -241,4 +276,29 @@ export function validateChangelogStructure(
   }
 
   return { ok: errors.length === 0, errors };
+}
+
+export function readLatestReleaseGeneratedToRef(content: string): string | null {
+  const sections = parseReleaseSectionBounds(content);
+  const latestSection = sections[0];
+  if (!latestSection) {
+    return null;
+  }
+
+  const latestSectionContent = content.slice(latestSection.start, latestSection.end);
+  const firstSubheadingMatch = latestSectionContent.match(/^###\s+[^\n]+$/m);
+  const markerSearchContent = firstSubheadingMatch
+    ? latestSectionContent.slice(0, firstSubheadingMatch.index)
+    : latestSectionContent;
+  return extractGeneratedToRef(markerSearchContent);
+}
+
+export function readLatestReleaseDate(content: string): string | null {
+  const sections = parseReleaseSectionBounds(content);
+  const latestSection = sections[0];
+  if (!latestSection) {
+    return null;
+  }
+
+  return extractReleaseDateFromHeading(latestSection.heading);
 }

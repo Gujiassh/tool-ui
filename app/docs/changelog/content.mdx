@@ -11,6 +11,7 @@ import { DocsHeader } from "../_components/docs-header";
 
 - Tool UI component entrypoints now enforce /schema boundaries; imports from non-schema entrypoints may break.
 - Removed the error boundary layer across Tool UI components; existing error handling may no longer apply.
+- Tool UI action model migrated to bound compound action surfaces. Legacy inline response-action patterns were removed in favor of `LocalActions` / `DecisionActions`, and outlier components now use dedicated action configs. See [Actions](/docs/actions).
 
 ### Migration prompt
 
@@ -21,25 +22,31 @@ import { DocsHeader } from "../_components/docs-header";
 Goals:
 1) Move all schema helper imports to dedicated /schema entrypoints per component.
 2) Keep public UI imports under their component paths; import schema only from /schema modules.
-3) Update tests and docs to reflect new entrypoints and boundary semantics.
-4) Regenerate artifacts (registry/public assets) and update docs accordingly.
-5) Validate UI rendering with updated imports and schema contracts.
+3) Migrate action handling to the bound compound model using LocalActions / DecisionActions.
+4) Replace legacy response-action usage on outlier components with their dedicated action configs.
+5) Update tests and docs to reflect new entrypoints and action model semantics.
+6) Regenerate artifacts (registry/public assets) and update docs accordingly.
+7) Validate UI rendering with updated imports and schema/action contracts.
 
 Steps:
 - Replace imports of Serializable*Schema, parseSerializable*, and safeParseSerializable* from non-schema tool-ui entrypoints with imports from the component's /schema module (e.g., @/components/tool-ui/<component>/schema).
 - For all affected components, update imports to reference /schema entrypoints; preserve existing UI imports.
-- Update relevant tests and docs to reflect new entrypoints and boundary semantics.
+- Migrate shared action composition to ToolUI-bound LocalActions / DecisionActions surfaces.
+- Remove legacy inline response-action usage and adopt dedicated outlier action configs (for example selection/adjustment/form action props) where applicable.
+- Update relevant tests and docs to reflect new entrypoints and action model semantics.
 - Run lint, typecheck, and tests; fix breakages.
 - Regenerate artifacts (registry/public assets) and update docs accordingly.
-- Validate UI rendering with updated imports and schema contracts.`}
+- Validate UI rendering with updated schema and action contracts.`}
   </pre>
 </div>
 
 ### Changes
 
 - Tool UI: repo-wide enforcement of /schema entrypoints.
-- Option List: receipt presets codegen updated to omit onConfirm; multi-receipt preset added; receipt spacing refined; related tests updated.
-- Progress Tracker: shipped v2 display with result-driven UI; tests updated.
-- Plan: compact variant steps-only mode implemented.
-- Image Gallery and Item Carousel: aligned tool-ui contracts.
-- Docs: clarified /schema entrypoints and boundary rules for Tool UI and data-table schemas; registry artifacts regenerated for updated components.
+- Tool UI action model refactor: migrated components to bound compound action surfaces via `LocalActions` and `DecisionActions`. See [Actions](/docs/actions).
+- Action-model cutover shipped across core components (including [Audio](/docs/audio), [Citation](/docs/citation), [Code Block](/docs/code-block), [Data Table](/docs/data-table), [Image](/docs/image), [Link Preview](/docs/link-preview), [Order Summary](/docs/order-summary), [Plan](/docs/plan), [Terminal](/docs/terminal), [Video](/docs/video), and social post renderers: [X Post](/docs/x-post), [Instagram Post](/docs/instagram-post), [LinkedIn Post](/docs/linkedin-post)).
+- Outlier workflows were split to component-specific action configs ([Option List](/docs/option-list), [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel)) with contracts tightened around supported action props. See [Actions](/docs/actions).
+- [Option List](/docs/option-list): receipt presets codegen updated to omit onConfirm; multi-receipt preset added; receipt spacing refined; related tests updated.
+- [Progress Tracker](/docs/progress-tracker): shipped v2 display with result-driven UI; tests updated.
+- [Plan](/docs/plan): compact variant steps-only mode implemented.
+- [Image Gallery](/docs/image-gallery) and [Item Carousel](/docs/item-carousel): aligned tool-ui contracts.

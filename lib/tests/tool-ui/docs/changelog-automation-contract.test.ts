@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
+  readLatestReleaseDate,
+  readLatestReleaseGeneratedToRef,
   renderReleaseSection,
   upsertReleaseSection,
   validateChangelogStructure,
@@ -116,5 +118,63 @@ This paragraph should not appear.
     expect(result.errors.join("\n")).toContain(
       "contains prose before the first subsection heading",
     );
+  });
+
+  test("allows machine metadata comments before the first subsection", () => {
+    const content = `## 2026-02-13
+
+<!-- changelog-generated-to: abcdef1234567890 -->
+
+### Changes
+
+- One`;
+
+    const result = validateChangelogStructure(content);
+
+    expect(result.ok).toBe(true);
+  });
+
+  test("reads the latest generated baseline ref from the top release section", () => {
+    const content = `import { DocsHeader } from "../_components/docs-header";
+
+<DocsHeader title="Changelog" mdxPath="app/docs/changelog/content.mdx" />
+
+## 2026-02-13
+
+<!-- changelog-generated-to: abcdef1234567890 -->
+
+### Changes
+
+- One
+
+## 2026-02-12
+
+<!-- changelog-generated-to: deadbeef -->
+
+### Changes
+
+- Older`;
+
+    expect(readLatestReleaseGeneratedToRef(content)).toBe("abcdef1234567890");
+  });
+
+  test("reads the latest release date from the top release section", () => {
+    const content = `import { DocsHeader } from "../_components/docs-header";
+
+<DocsHeader title="Changelog" mdxPath="app/docs/changelog/content.mdx" />
+
+## 2026-02-13
+
+### Changes
+
+- One
+
+## 2026-02-12
+
+### Changes
+
+- Older`;
+
+    expect(readLatestReleaseDate(content)).toBe("2026-02-13");
   });
 });
