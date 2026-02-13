@@ -413,6 +413,7 @@ function SliderRow({
       `calc(100% - ${toRadixThumbPosition(percent)})`;
     const toClipFromLeftInset = (percent: number) =>
       toRadixThumbPosition(percent);
+    const TERMINAL_EPSILON = 1e-6;
 
     if (crossesZero) {
       if (valuePercent >= zeroPercent) {
@@ -423,7 +424,13 @@ function SliderRow({
         return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
       }
     }
-    // Non-crossing: fill should start at the track border to avoid a left-edge gap.
+    // Non-crossing: keep Radix alignment internally, but snap to exact borders at terminals.
+    if (valuePercent <= TERMINAL_EPSILON) {
+      return "inset(0 100% 0 0)";
+    }
+    if (valuePercent >= 100 - TERMINAL_EPSILON) {
+      return "inset(0 0 0 0)";
+    }
     return `inset(0 ${toClipFromRightInset(valuePercent)} 0 0)`;
   }, [crossesZero, zeroPercent, valuePercent]);
 

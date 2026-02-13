@@ -47,4 +47,40 @@ describe("parameter-slider visual alignment contract", () => {
       "clip-path:inset(0 calc(100% - calc(50% + 0px)) 0 0)",
     );
   });
+
+  test("snaps non-crossing fill to exact borders at terminal values", () => {
+    const minHtml = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-border-min-test",
+        sliders: [
+          {
+            id: "s",
+            label: "S",
+            min: 0,
+            max: 100,
+            value: 0,
+          },
+        ],
+      }),
+    );
+    const maxHtml = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-border-max-test",
+        sliders: [
+          {
+            id: "s",
+            label: "S",
+            min: 0,
+            max: 100,
+            value: 100,
+          },
+        ],
+      }),
+    );
+
+    // Min: no visible fill strip at the left edge.
+    expect(minHtml).toContain("clip-path:inset(0 100% 0 0)");
+    // Max: no visible gap at the right edge.
+    expect(maxHtml).toContain("clip-path:inset(0 0 0 0)");
+  });
 });
