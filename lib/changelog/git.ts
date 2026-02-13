@@ -43,7 +43,16 @@ function collectCommitFiles(projectRoot: string, hash: string): string[] {
 
 export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext {
   const lastTag = tryRunGit(projectRoot, ["describe", "--tags", "--abbrev=0"]);
-  const range = lastTag ? `${lastTag}..HEAD` : "HEAD";
+  if (!lastTag) {
+    throw new Error(
+      [
+        "No git release tag found. Changelog generation requires a tagged baseline.",
+        "Create and push an annotated tag first (example: git tag -a v2026.2.13 -m \"Release v2026.2.13\" && git push origin v2026.2.13).",
+      ].join("\n"),
+    );
+  }
+
+  const range = `${lastTag}..HEAD`;
   const rawCommits = runGit(projectRoot, [
     "log",
     "--no-merges",

@@ -14,7 +14,7 @@ pnpm dev
 Open:
 
 - `http://localhost:3000/docs/quick-start` for integration walkthrough
-- `http://localhost:3000/docs/contributing` for maintainer implementation standards
+- `http://localhost:3000/docs/changelog` for release notes and migration prompts
 - `http://localhost:3000/playground` for interactive prototype testing
 
 ## Quality checks
@@ -67,7 +67,7 @@ For detailed maintainer workflow see `CONTRIBUTING.md`.
 Tool UI is maintained by assistant-ui. This repository is optimized for direct maintenance rather than open-ended external contribution flow.
 
 - [UI Guidelines](https://tool-ui.com/docs/design-guidelines) — design philosophy and principles
-- [Maintainer Guide](https://tool-ui.com/docs/contributing) — implementation checklist and repo standards
+- [Changelog](https://tool-ui.com/docs/changelog) — release notes and migration guidance
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — local maintainer workflow, tests, and component checklist
 
 ## License
