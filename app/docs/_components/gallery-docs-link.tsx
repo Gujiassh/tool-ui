@@ -33,6 +33,12 @@ export function GalleryDocsLink({
       onClick={handleClick}
     >
       <span className="whitespace-nowrap text-sm font-semibold">{label}</span>
+      <span
+        className="text-neutral-400 dark:text-neutral-500"
+        aria-hidden="true"
+      >
+        •
+      </span>
       <span className="inline-flex items-center gap-1 whitespace-nowrap text-xs">
         <span className="underline-offset-2 group-hover:underline group-focus-visible:underline">
           View Docs
