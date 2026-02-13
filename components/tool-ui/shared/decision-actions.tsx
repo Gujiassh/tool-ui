@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { ActionButtons } from "./action-buttons";
 import {
   DecisionResultSchema,
@@ -8,19 +8,12 @@ import {
   type DecisionResult,
 } from "./schema";
 import { cn } from "./_adapter";
-
-function escapeForCssAttribute(value: string): string {
-  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
-    return CSS.escape(value);
-  }
-
-  return value.replace(/[\\"]/g, "\\$&");
-}
+import { useOptionalToolUI } from "./tool-ui-context";
 
 export interface DecisionActionsProps<
   TPayload extends Record<string, unknown> = Record<string, unknown>,
 > {
-  surfaceId: string;
+  id?: string;
   actions: DecisionAction[];
   onAction: (
     action: { id: string; label: string },
@@ -31,30 +24,31 @@ export interface DecisionActionsProps<
   onBeforeAction?: (actionId: string) => boolean | Promise<boolean>;
   confirmTimeout?: number;
   align?: "left" | "center" | "right";
+  ariaLabel?: string;
   className?: string;
 }
 
 export function DecisionActions<
   TPayload extends Record<string, unknown> = Record<string, unknown>,
 >({
-  surfaceId,
+  id: explicitId,
   actions,
   onAction,
   onCommit,
   onBeforeAction,
   confirmTimeout,
   align = "right",
+  ariaLabel,
   className,
 }: DecisionActionsProps<TPayload>) {
-  const [hasSurface, setHasSurface] = useState(false);
+  const context = useOptionalToolUI();
+  const id = context?.id ?? explicitId;
 
-  useEffect(() => {
-    const escapedSurfaceId = escapeForCssAttribute(surfaceId);
-    const target = document.querySelector(
-      `[data-tool-ui-id="${escapedSurfaceId}"]`,
+  if (!id) {
+    throw new Error(
+      "DecisionActions requires a ToolUI provider or an explicit id prop.",
     );
-    setHasSurface(Boolean(target));
-  }, [surfaceId]);
+  }
 
   const handleAction = useCallback(
     async (actionId: string) => {
@@ -75,15 +69,12 @@ export function DecisionActions<
     [actions, onAction, onCommit],
   );
 
-  if (!hasSurface) {
-    return null;
-  }
-
   return (
     <div
       className={cn("@container/actions flex flex-col gap-2", className)}
       data-slot="decision-actions"
-      data-tool-ui-surface-id={surfaceId}
+      data-tool-ui-id={id}
+      aria-label={ariaLabel ?? "Decision actions"}
     >
       <ActionButtons
         actions={actions}

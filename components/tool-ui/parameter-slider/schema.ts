@@ -45,10 +45,10 @@ export const SerializableParameterSliderSchema = z.object({
   id: ToolUIIdSchema,
   role: ToolUIRoleSchema.optional(),
   sliders: z.array(SliderConfigSchema).min(1),
-  responseActions: z
+  adjustmentActions: z
     .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
     .optional(),
-}).superRefine((payload, ctx) => {
+}).strict().superRefine((payload, ctx) => {
   const seenIds = new Map<string, number>();
 
   payload.sliders.forEach((slider, index) => {
@@ -91,17 +91,17 @@ export interface SliderValue {
 
 export interface ParameterSliderProps extends Omit<
   SerializableParameterSlider,
-  "responseActions"
+  "adjustmentActions"
 > {
   className?: string;
   values?: SliderValue[];
   onChange?: (values: SliderValue[]) => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (
+  adjustmentActions?: ActionsProp;
+  onAdjustmentAction?: (
     actionId: string,
     values: SliderValue[],
   ) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
+  onBeforeAdjustmentAction?: (actionId: string) => boolean | Promise<boolean>;
   trackClassName?: string;
   fillClassName?: string;
   handleClassName?: string;

@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { ComponentPreviewShell } from "../component-preview-shell";
 import { ChatContextPreview } from "../chat-context-preview";
 import { XPost } from "@/components/tool-ui/x-post";
 import { InstagramPost } from "@/components/tool-ui/instagram-post";
 import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
-import { LocalActions, type Action } from "@/components/tool-ui/shared";
+import { ToolUI, type Action } from "@/components/tool-ui/shared";
 import { xPostPresets, type XPostPresetName } from "@/lib/presets/x-post";
 import {
   instagramPostPresets,
@@ -263,32 +263,46 @@ export function SocialPostPreview({
     | InstagramPostPresetName
     | LinkedInPostPresetName;
 
+  const renderWithLocalActions = (
+    id: string,
+    surface: ReactNode,
+    actions: Action[] | null,
+  ) => {
+    if (!actions || actions.length === 0) {
+      return <div className="flex flex-col gap-3">{surface}</div>;
+    }
+
+    return (
+      <ToolUI id={id}>
+        <div className="flex flex-col gap-3">
+          <ToolUI.Surface>{surface}</ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.LocalActions
+              actions={actions}
+              onAction={(actionId) => alert(`Local action: ${actionId}`)}
+            />
+          </ToolUI.Actions>
+        </div>
+      </ToolUI>
+    );
+  };
+
   const renderedPost =
     currentPlatform === "x" ? (
-      <div className="flex flex-col gap-3">
+      renderWithLocalActions(
+        xPostPresets[effectivePreset as XPostPresetName].data.post.id,
         <XPost
           post={xPostPresets[effectivePreset as XPostPresetName].data.post}
           onAction={(action, post) => console.log("X action:", action, post.id)}
-        />
-        {resolveActions(
+        />,
+        resolveActions(
           xPostPresets[effectivePreset as XPostPresetName].data.localActions,
-        ) ? (
-          <LocalActions
-            surfaceId={
-              xPostPresets[effectivePreset as XPostPresetName].data.post.id
-            }
-            actions={
-              resolveActions(
-                xPostPresets[effectivePreset as XPostPresetName].data
-                  .localActions,
-              ) as Action[]
-            }
-            onAction={(id) => alert(`Local action: ${id}`)}
-          />
-        ) : null}
-      </div>
+        ),
+      )
     ) : currentPlatform === "instagram" ? (
-      <div className="flex flex-col gap-3">
+      renderWithLocalActions(
+        instagramPostPresets[effectivePreset as InstagramPostPresetName].data
+          .post.id,
         <InstagramPost
           post={
             instagramPostPresets[
@@ -298,30 +312,16 @@ export function SocialPostPreview({
           onAction={(action, post) =>
             console.log("Instagram action:", action, post.id)
           }
-        />
-        {resolveActions(
+        />,
+        resolveActions(
           instagramPostPresets[effectivePreset as InstagramPostPresetName].data
             .localActions,
-        ) ? (
-          <LocalActions
-            surfaceId={
-              instagramPostPresets[
-                effectivePreset as InstagramPostPresetName
-              ].data.post.id
-            }
-            actions={
-              resolveActions(
-                instagramPostPresets[
-                  effectivePreset as InstagramPostPresetName
-                ].data.localActions,
-              ) as Action[]
-            }
-            onAction={(id) => alert(`Local action: ${id}`)}
-          />
-        ) : null}
-      </div>
+        ),
+      )
     ) : (
-      <div className="flex flex-col gap-3">
+      renderWithLocalActions(
+        linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data.post
+          .id,
         <LinkedInPost
           post={
             linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
@@ -330,28 +330,12 @@ export function SocialPostPreview({
           onAction={(action, post) =>
             console.log("LinkedIn action:", action, post.id)
           }
-        />
-        {resolveActions(
+        />,
+        resolveActions(
           linkedInPostPresets[effectivePreset as LinkedInPostPresetName].data
             .localActions,
-        ) ? (
-          <LocalActions
-            surfaceId={
-              linkedInPostPresets[
-                effectivePreset as LinkedInPostPresetName
-              ].data.post.id
-            }
-            actions={
-              resolveActions(
-                linkedInPostPresets[
-                  effectivePreset as LinkedInPostPresetName
-                ].data.localActions,
-              ) as Action[]
-            }
-            onAction={(id) => alert(`Local action: ${id}`)}
-          />
-        ) : null}
-      </div>
+        ),
+      )
     );
 
   const previewContent = (

@@ -97,8 +97,8 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
   <Feature icon="Images" title="Media-first layout">
     Supports single-image and carousel-style media content
   </Feature>
-  <Feature icon="MousePointerClick" title="Response actions">
-    Add custom actions below each post
+  <Feature icon="MousePointerClick" title="External actions">
+    Compose custom actions with ToolUI action surfaces
   </Feature>
   <Feature icon="BadgeCheck" title="Verified identity">
     Supports verified author badges and creator context
@@ -122,17 +122,7 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       description: "Fires when the user triggers a built-in post action",
       type: "(action: string, post: InstagramPostData) => void",
     },
-    responseActions: {
-      description: "Optional custom response actions",
-      type: "Action[]",
-    },
-    onResponseAction: {
-      description: "Fires when a response action is selected",
-      type: "(actionId: string) => void | Promise<void>",
-    },
-    onBeforeResponseAction: {
-      description: "Optional preflight guard before a response action runs",
-      type: "(actionId: string) => boolean | Promise<boolean>",
-    },
   }}
 />
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `InstagramPost`.

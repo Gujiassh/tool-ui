@@ -86,8 +86,8 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
   <Feature icon="AspectRatio" title="Flexible aspect ratios">
     Support for auto, 1:1, 4:3, 16:9, and 9:16 image formats
   </Feature>
-  <Feature icon="MousePointerClick" title="Response actions">
-    Add custom action buttons below the preview card
+  <Feature icon="MousePointerClick" title="External actions">
+    Compose custom action buttons below the preview card
   </Feature>
 </FeatureGrid>
 
@@ -116,7 +116,7 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       default: "'16:9'",
     },
     createdAt: { description: "Creation timestamp (ISO 8601)", type: "string" },
-    responseActions: { description: "Response action buttons", type: "Action[]" },
-    onResponseAction: { description: "Response action handler", type: "(actionId: string) => void" },
   }}
 />
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `LinkPreview`.

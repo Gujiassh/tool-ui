@@ -39,9 +39,9 @@ function generatePreferencesPanelCode(
     return `<PreferencesPanel.Receipt\n${props.join("\n")}\n/>`;
   }
 
-  if (data.responseActions) {
+  if (data.formActions) {
     props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
+      `  formActions={${JSON.stringify(data.formActions, null, 4).replace(/\n/g, "\n  ")}}`,
     );
   }
 

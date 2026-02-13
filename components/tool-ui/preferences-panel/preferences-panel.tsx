@@ -526,9 +526,9 @@ function PreferencesPanelRoot({
   onChange,
   onSave,
   onCancel,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
+  formActions,
+  onFormAction,
+  onBeforeFormAction,
   className,
 }: PreferencesPanelProps) {
   const initialValues = useMemo(
@@ -585,13 +585,13 @@ function PreferencesPanelRoot({
       } else if (actionId === "cancel") {
         handleCancel();
       }
-      await onResponseAction?.(actionId, currentValue);
+      await onFormAction?.(actionId, currentValue);
     },
-    [handleSave, handleCancel, onResponseAction, currentValue],
+    [handleSave, handleCancel, onFormAction, currentValue],
   );
 
   const normalizedActions = useMemo(() => {
-    const normalized = normalizeActionsConfig(responseActions);
+    const normalized = normalizeActionsConfig(formActions);
     if (normalized) {
       return {
         ...normalized,
@@ -608,7 +608,7 @@ function PreferencesPanelRoot({
       items: defaultActions,
       align: "right" as const,
     };
-  }, [responseActions]);
+  }, [formActions]);
 
   const actionsWithState = useMemo((): Action[] => {
     return normalizedActions.items.map((action) => {
@@ -665,7 +665,7 @@ function PreferencesPanelRoot({
           align={normalizedActions.align}
           confirmTimeout={normalizedActions.confirmTimeout}
           onAction={handleAction}
-          onBeforeAction={onBeforeResponseAction}
+          onBeforeAction={onBeforeFormAction}
         />
       </div>
     </article>

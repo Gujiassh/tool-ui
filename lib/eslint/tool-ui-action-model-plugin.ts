@@ -6,6 +6,12 @@ const RESPONSE_ACTION_IDENTIFIERS = new Set([
   "onBeforeResponseAction",
 ]);
 
+const LOCAL_ACTION_ELEMENTS = new Set(["LocalActions", "ToolUI.LocalActions"]);
+const DECISION_ACTION_ELEMENTS = new Set([
+  "DecisionActions",
+  "ToolUI.DecisionActions",
+]);
+
 function jsxNameToString(
   name:
     | {
@@ -99,7 +105,7 @@ const noAddResultInLocalActionsRule: Rule.RuleModule = {
         if (
           !openingElement ||
           openingElement.type !== "JSXOpeningElement" ||
-          jsxNameToString(openingElement.name) !== "LocalActions"
+          !LOCAL_ACTION_ELEMENTS.has(jsxNameToString(openingElement.name))
         ) {
           return;
         }
@@ -148,7 +154,7 @@ const decisionActionsRequireEnvelopeRule: Rule.RuleModule = {
         if (
           !openingElement ||
           openingElement.type !== "JSXOpeningElement" ||
-          jsxNameToString(openingElement.name) !== "DecisionActions"
+          !DECISION_ACTION_ELEMENTS.has(jsxNameToString(openingElement.name))
         ) {
           return;
         }

@@ -194,14 +194,14 @@ import { PreferencesPanel } from "@/components/tool-ui/preferences-panel";
         "Handler called when Cancel button is clicked. Resets to initial values.",
       type: "() => void",
     },
-    responseActions: {
+    formActions: {
       description:
         "Custom action buttons. Defaults to Cancel (ghost) and Save Changes (default).",
       type: "Action[] | ActionsConfig",
     },
-    onResponseAction: {
+    onFormAction: {
       description:
-        "Handler for custom response actions. Receives actionId and current values.",
+        "Handler for custom form actions. Receives actionId and current values.",
       type: "(actionId: string, value: PreferencesValue) => void | Promise<void>",
     },
     className: {

@@ -46,21 +46,28 @@ describe("action model RFC contracts", () => {
     }
   });
 
-  it("binds action surfaces to a tool-ui surface and removes standalone titles", () => {
-    const localActions = readWorkspaceFile(
-      "components/tool-ui/shared/local-actions.tsx",
-    );
-    const decisionActions = readWorkspaceFile(
-      "components/tool-ui/shared/decision-actions.tsx",
-    );
+  it("removes embedded response action APIs from migrated display docs", () => {
+    const displayDocsFiles = [
+      "app/docs/audio/content.mdx",
+      "app/docs/citation/content.mdx",
+      "app/docs/code-block/content.mdx",
+      "app/docs/data-table/content.mdx",
+      "app/docs/image/content.mdx",
+      "app/docs/instagram-post/content.mdx",
+      "app/docs/link-preview/content.mdx",
+      "app/docs/linkedin-post/content.mdx",
+      "app/docs/order-summary/content.mdx",
+      "app/docs/plan/content.mdx",
+      "app/docs/terminal/content.mdx",
+      "app/docs/video/content.mdx",
+      "app/docs/x-post/content.mdx",
+    ];
 
-    expect(localActions).toContain("surfaceId: string");
-    expect(decisionActions).toContain("surfaceId: string");
+    const forbidden = /\b(responseActions|onResponseAction|onBeforeResponseAction)\b/;
 
-    expect(localActions).not.toContain("title?: string");
-    expect(decisionActions).not.toContain("title?: string");
-
-    expect(localActions).not.toContain("<h3");
-    expect(decisionActions).not.toContain("<h3");
+    for (const relativePath of displayDocsFiles) {
+      const content = readWorkspaceFile(relativePath);
+      expect(content, relativePath).not.toMatch(forbidden);
+    }
   });
 });

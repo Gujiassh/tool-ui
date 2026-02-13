@@ -133,7 +133,7 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
     },
     createdAt: { description: "Creation timestamp (ISO 8601)", type: "string" },
     fileSizeBytes: { description: "File size in bytes", type: "number" },
-    responseActions: { description: "Response action buttons", type: "Action[]" },
-    onResponseAction: { description: "Response action handler", type: "(actionId: string) => void" },
   }}
 />
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `Image`.

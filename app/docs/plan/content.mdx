@@ -65,7 +65,7 @@ Drop this into your runtime provider so tool results render as `Plan`.
 import { type Toolkit } from "@assistant-ui/react";
 import { Plan } from "@/components/tool-ui/plan";
 import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
+import { ToolUI, createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showPlan: {
@@ -73,13 +73,20 @@ export const toolkit: Toolkit = {
     render: createResultToolRenderer({
       safeParse: safeParseSerializablePlan,
       render: (parsedResult) => (
-        <Plan
-          {...parsedResult}
-          responseActions={[
-            { id: "approve", label: "Approve Plan" },
-            { id: "revise", label: "Request Changes", variant: "secondary" },
-          ]}
-        />
+        <ToolUI id={parsedResult.id}>
+          <ToolUI.Surface>
+            <Plan {...parsedResult} />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.LocalActions
+              actions={[
+                { id: "approve", label: "Approve Plan" },
+                { id: "revise", label: "Request Changes", variant: "secondary" },
+              ]}
+              onAction={(actionId) => console.log(actionId)}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
       ),
     }),
   },
@@ -137,21 +144,11 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       type: "number",
       default: "4",
     },
-    responseActions: {
-      description: "Footer action buttons",
-      type: "Action[] | ActionsConfig",
-    },
     className: { description: "Additional CSS classes", type: "string" },
-    onResponseAction: {
-      description: "Callback when action button clicked",
-      type: "(actionId: string) => void",
-    },
-    onBeforeResponseAction: {
-      description: "Validation before action executes",
-      type: "(actionId: string) => boolean",
-    },
   }}
 />
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions below `Plan`.
 
 ### Compact Variant
 
@@ -160,7 +157,7 @@ Use `Plan.Compact` for a steps-only card body:
 - No title/description header
 - No progress summary or progress bar
 - No muted inner container
-- No footer action buttons
+- No embedded footer actions
 
 ## Todo Item Schema
 

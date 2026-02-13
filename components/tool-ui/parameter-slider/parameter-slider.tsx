@@ -673,9 +673,9 @@ export function ParameterSlider({
   sliders,
   values: controlledValues,
   onChange,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
+  adjustmentActions,
+  onAdjustmentAction,
+  onBeforeAdjustmentAction,
   className,
   trackClassName,
   fillClassName,
@@ -733,13 +733,13 @@ export function ParameterSlider({
         handleReset();
         return;
       }
-      await onResponseAction?.(actionId, currentValues);
+      await onAdjustmentAction?.(actionId, currentValues);
     },
-    [handleReset, onResponseAction, currentValues],
+    [handleReset, onAdjustmentAction, currentValues],
   );
 
   const normalizedActions = useMemo(() => {
-    const normalized = normalizeActionsConfig(responseActions);
+    const normalized = normalizeActionsConfig(adjustmentActions);
     if (normalized) return normalized;
     return {
       items: [
@@ -748,7 +748,7 @@ export function ParameterSlider({
       ],
       align: "right" as const,
     };
-  }, [responseActions]);
+  }, [adjustmentActions]);
 
   return (
     <article
@@ -784,7 +784,7 @@ export function ParameterSlider({
           align={normalizedActions.align}
           confirmTimeout={normalizedActions.confirmTimeout}
           onAction={handleAction}
-          onBeforeAction={onBeforeResponseAction}
+          onBeforeAction={onBeforeAdjustmentAction}
         />
       </div>
     </article>

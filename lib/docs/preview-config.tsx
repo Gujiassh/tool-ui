@@ -34,8 +34,12 @@ import type { Terminal } from "@/components/tool-ui/terminal";
 import type { QuestionFlow } from "@/components/tool-ui/question-flow";
 import type { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
 import type { XPost } from "@/components/tool-ui/x-post";
-import type { DecisionActions, LocalActions } from "@/components/tool-ui/shared";
-import { createDecisionResult, type Action } from "@/components/tool-ui/shared/schema";
+import {
+  ToolUI,
+  createDecisionResult,
+  type Action,
+  type DecisionAction,
+} from "@/components/tool-ui/shared";
 
 import {
   approvalCardPresets,
@@ -216,12 +220,6 @@ const DynamicWeatherWidget = dynamic(() =>
 const DynamicXPost = dynamic(() =>
   import("@/components/tool-ui/x-post").then((m) => m.XPost),
 );
-const DynamicLocalActions = dynamic(() =>
-  import("@/components/tool-ui/shared").then((m) => m.LocalActions),
-);
-const DynamicDecisionActions = dynamic(() =>
-  import("@/components/tool-ui/shared").then((m) => m.DecisionActions),
-);
 
 function QuestionFlowUpfrontWithReceipt({
   data,
@@ -313,7 +311,29 @@ function resolveActionItems(actions: unknown): Action[] | null {
 function resolveLocalActionItems(data: unknown): Action[] | null {
   const record = toRecord(data);
   if (!record) return null;
-  return resolveActionItems(record["localActions"] ?? record["responseActions"]);
+  return resolveActionItems(record["localActions"]);
+}
+
+function renderWithLocalActions(
+  id: string,
+  surface: ReactNode,
+  localActions: Action[] | null,
+) {
+  if (!localActions || localActions.length === 0) {
+    return surface;
+  }
+
+  return (
+    <ToolUI id={id}>
+      <ToolUI.Surface>{surface}</ToolUI.Surface>
+      <ToolUI.Actions>
+        <ToolUI.LocalActions
+          actions={localActions}
+          onAction={(actionId) => console.log("Local action:", actionId)}
+        />
+      </ToolUI.Actions>
+    </ToolUI>
+  );
 }
 
 function MaxWidthWrapper({ children }: { children: ReactNode }) {
@@ -391,17 +411,12 @@ export const previewConfigs: Record<
       if (citations.length === 1 && !maxVisible) {
         const citation = citations[0];
 
-        return (
+        return renderWithLocalActions(
+          citation.id,
           <div className="mx-auto flex w-full max-w-md flex-col gap-3">
             <DynamicCitation {...citation} variant={variant} />
-            {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={citation.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-            ) : null}
-          </div>
+          </div>,
+          localActionItems,
         );
       }
 
@@ -440,21 +455,16 @@ export const previewConfigs: Record<
     renderComponent: ({ data, state, setState }) => {
       const tableData = data as Parameters<typeof DataTable>[0];
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        tableData.id,
         <div className="flex flex-col gap-4">
           <DynamicDataTable
             {...tableData}
             sort={state.sort as Parameters<typeof DataTable>[0]["sort"]}
             onSortChange={(sort) => setState({ sort })}
           />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={tableData.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -471,17 +481,12 @@ export const previewConfigs: Record<
         image: Parameters<typeof Image>[0];
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        image.id,
         <div className="flex flex-col gap-3">
           <DynamicImage {...image} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={image.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -515,17 +520,12 @@ export const previewConfigs: Record<
         video: Parameters<typeof Video>[0];
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        video.id,
         <div className="flex flex-col gap-3">
           <DynamicVideo {...video} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={video.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -543,17 +543,12 @@ export const previewConfigs: Record<
         variant?: "full" | "compact";
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        audio.id,
         <div className="flex flex-col gap-3">
           <DynamicAudio {...audio} variant={variant} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={audio.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -570,17 +565,12 @@ export const previewConfigs: Record<
         post: Parameters<typeof InstagramPost>[0]["post"];
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        instagramData.post.id,
         <div className="flex flex-col gap-3">
           <DynamicInstagramPost post={instagramData.post} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={instagramData.post.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -597,17 +587,12 @@ export const previewConfigs: Record<
         linkPreview: Parameters<typeof LinkPreview>[0];
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        linkPreview.id,
         <div className="flex flex-col gap-3">
           <DynamicLinkPreview {...linkPreview} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={linkPreview.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -624,17 +609,12 @@ export const previewConfigs: Record<
         post: Parameters<typeof LinkedInPost>[0]["post"];
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        linkedInData.post.id,
         <div className="flex flex-col gap-3">
           <DynamicLinkedInPost post={linkedInData.post} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={linkedInData.post.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -694,8 +674,8 @@ export const previewConfigs: Record<
       const orderData = data as Parameters<typeof OrderSummary>[0];
       const decisionActions =
         (resolveActionItems(
-          toRecord(data)?.["decisionActions"] ?? toRecord(data)?.["responseActions"],
-        ) as ComponentProps<typeof DecisionActions>["actions"] | null) ?? [
+          toRecord(data)?.["decisionActions"],
+        ) as DecisionAction[] | null) ?? [
           { id: "cancel", label: "Cancel", variant: "outline" },
           { id: "confirm", label: "Purchase", variant: "default" },
         ];
@@ -703,12 +683,19 @@ export const previewConfigs: Record<
         (state.selection as Parameters<typeof OrderSummary>[0]["choice"] | undefined) ??
         undefined;
 
-      return (
-        <div className="flex flex-col gap-3">
+      if (orderData.choice ?? receiptChoice) {
+        return (
           <DynamicOrderSummary {...orderData} choice={orderData.choice ?? receiptChoice} />
-          {orderData.choice ?? receiptChoice ? null : (
-            <DynamicDecisionActions
-              surfaceId={orderData.id}
+        );
+      }
+
+      return (
+        <ToolUI id={orderData.id}>
+          <ToolUI.Surface>
+            <DynamicOrderSummary {...orderData} />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.DecisionActions
               actions={decisionActions}
               onAction={(action) =>
                 createDecisionResult({
@@ -731,8 +718,8 @@ export const previewConfigs: Record<
                 setState({ selection: null });
               }}
             />
-          )}
-        </div>
+          </ToolUI.Actions>
+        </ToolUI>
       );
     },
   },
@@ -770,7 +757,7 @@ export const previewConfigs: Record<
         <DynamicParameterSlider
           {...sliderData}
           sliders={themedSliders}
-          onResponseAction={(actionId, values) =>
+          onAdjustmentAction={(actionId, values) =>
             console.log("Action:", actionId, "Values:", values)
           }
         />
@@ -885,17 +872,12 @@ export const previewConfigs: Record<
       const terminalData = data as Parameters<typeof Terminal>[0];
       const localActionItems = resolveLocalActionItems(data);
 
-      return (
+      return renderWithLocalActions(
+        terminalData.id,
         <div className="flex flex-col gap-3">
-          <DynamicTerminal {...terminalData} id="terminal-preview" />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={terminalData.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+          <DynamicTerminal {...terminalData} />
+        </div>,
+        localActionItems,
       );
     },
   },
@@ -962,17 +944,12 @@ export const previewConfigs: Record<
         post: Parameters<typeof XPost>[0]["post"];
       };
       const localActionItems = resolveLocalActionItems(data);
-      return (
+      return renderWithLocalActions(
+        xPostData.post.id,
         <div className="flex flex-col gap-3">
           <DynamicXPost post={xPostData.post} />
-          {localActionItems ? (
-            <DynamicLocalActions
-              surfaceId={xPostData.post.id}
-              actions={localActionItems as ComponentProps<typeof LocalActions>["actions"]}
-              onAction={(actionId) => console.log("Local action:", actionId)}
-            />
-          ) : null}
-        </div>
+        </div>,
+        localActionItems,
       );
     },
   },

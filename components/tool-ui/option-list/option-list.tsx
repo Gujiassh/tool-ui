@@ -225,9 +225,9 @@ export function OptionList({
   onChange,
   onConfirm,
   onCancel,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
+  selectionActions,
+  onSelectionAction,
+  onBeforeSelectionAction,
   className,
 }: OptionListProps) {
   if (process.env["NODE_ENV"] !== "production") {
@@ -404,8 +404,8 @@ export function OptionList({
   }, [onCancel, updateSelection]);
 
   const customResponseActions = useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
+    () => normalizeActionsConfig(selectionActions),
+    [selectionActions],
   );
   const hasCustomResponseActions = customResponseActions !== null;
 
@@ -417,10 +417,10 @@ export function OptionList({
         handleCancel();
       }
       if (hasCustomResponseActions) {
-        await onResponseAction?.(actionId);
+        await onSelectionAction?.(actionId);
       }
     },
-    [handleConfirm, handleCancel, hasCustomResponseActions, onResponseAction],
+    [handleConfirm, handleCancel, hasCustomResponseActions, onSelectionAction],
   );
 
   const normalizedFooterActions = useMemo(() => {
@@ -627,7 +627,7 @@ export function OptionList({
               confirmTimeout={normalizedFooterActions.confirmTimeout}
               onAction={handleFooterAction}
               onBeforeAction={
-                hasCustomResponseActions ? onBeforeResponseAction : undefined
+                hasCustomResponseActions ? onBeforeSelectionAction : undefined
               }
             />
           </div>

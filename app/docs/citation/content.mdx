@@ -140,20 +140,14 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       type: "'webpage' | 'document' | 'article' | 'api' | 'code' | 'other'",
       default: "'webpage'",
     },
-    responseActions: {
-      description: "Response action buttons (default variant only)",
-      type: "Action[]",
-    },
-    onResponseAction: {
-      description: "Response action handler",
-      type: "(actionId: string) => void",
-    },
     onNavigate: {
       description: "Custom navigation handler",
       type: "(href: string, citation: SerializableCitation) => void",
     },
   }}
 />
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to citations.
 
 ## Accessibility
 
