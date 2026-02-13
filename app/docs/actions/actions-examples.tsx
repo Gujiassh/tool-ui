@@ -390,7 +390,7 @@ export function ActionCentricExceptionsExample() {
     <div className="not-prose grid gap-6">
       <div className="flex flex-col gap-2">
         <h4 className="text-base font-semibold">
-          OptionList uses <code>selectionActions</code>
+          OptionList uses <code>actions</code>
         </h4>
         <OptionList
           id="action-centric-option-list"
@@ -413,15 +413,20 @@ export function ActionCentricExceptionsExample() {
             },
           ]}
           choice={optionChoice}
-          selectionActions={[
+          actions={[
             { id: "cancel", label: "Clear", variant: "ghost" },
             { id: "confirm", label: "Confirm Selection", variant: "default" },
           ]}
-          onConfirm={(selection) => {
-            setOptionChoice(selection);
-            setOptionEvent(`Selection committed: ${formatSelection(selection)}`);
-          }}
-          onSelectionAction={(actionId) => {
+          onAction={(actionId, selection) => {
+            if (actionId === "confirm") {
+              setOptionChoice(selection);
+              setOptionEvent(`Selection committed: ${formatSelection(selection)}`);
+              return;
+            }
+
+            if (actionId === "cancel") {
+              setOptionChoice(undefined);
+            }
             setOptionEvent(`OptionList action fired: ${actionId}`);
           }}
         />
@@ -444,7 +449,7 @@ export function ActionCentricExceptionsExample() {
 
       <div className="flex flex-col gap-2">
         <h4 className="text-base font-semibold">
-          ParameterSlider uses <code>adjustmentActions</code>
+          ParameterSlider uses <code>actions</code>
         </h4>
         <ParameterSlider
           id="action-centric-parameter-slider"
@@ -471,11 +476,11 @@ export function ActionCentricExceptionsExample() {
           ]}
           values={sliderValues}
           onChange={setSliderValues}
-          adjustmentActions={[
+          actions={[
             { id: "reset", label: "Reset", variant: "ghost" },
             { id: "apply", label: "Apply Adjustments", variant: "default" },
           ]}
-          onAdjustmentAction={(actionId, values) => {
+          onAction={(actionId, values) => {
             if (actionId !== "apply") return;
             const summary = values
               .map((value) => `${value.id}: ${value.value}`)
@@ -488,17 +493,17 @@ export function ActionCentricExceptionsExample() {
 
       <div className="flex flex-col gap-2">
         <h4 className="text-base font-semibold">
-          PreferencesPanel uses <code>formActions</code>
+          PreferencesPanel uses <code>actions</code>
         </h4>
         <PreferencesPanel
           id="action-centric-preferences-panel"
           title="Notification Preferences"
           sections={preferencesSections}
-          formActions={[
+          actions={[
             { id: "cancel", label: "Cancel", variant: "ghost" },
             { id: "save", label: "Save Preferences", variant: "default" },
           ]}
-          onFormAction={(actionId, value) => {
+          onAction={(actionId, value) => {
             if (actionId === "save") {
               setSavedPreferences(value);
               setPreferencesEvent("Preferences saved.");

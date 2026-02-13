@@ -700,9 +700,9 @@ export function ParameterSlider({
   sliders,
   values: controlledValues,
   onChange,
-  adjustmentActions,
-  onAdjustmentAction,
-  onBeforeAdjustmentAction,
+  actions,
+  onAction,
+  onBeforeAction,
   className,
   trackClassName,
   fillClassName,
@@ -756,17 +756,19 @@ export function ParameterSlider({
 
   const handleAction = useCallback(
     async (actionId: string) => {
+      let nextValues = currentValues;
       if (actionId === "reset") {
         handleReset();
-        return;
+        nextValues = sliderSnapshot;
       }
-      await onAdjustmentAction?.(actionId, currentValues);
+
+      await onAction?.(actionId, nextValues);
     },
-    [handleReset, onAdjustmentAction, currentValues],
+    [currentValues, handleReset, onAction, sliderSnapshot],
   );
 
   const normalizedActions = useMemo(() => {
-    const normalized = normalizeActionsConfig(adjustmentActions);
+    const normalized = normalizeActionsConfig(actions);
     if (normalized) return normalized;
     return {
       items: [
@@ -775,7 +777,7 @@ export function ParameterSlider({
       ],
       align: "right" as const,
     };
-  }, [adjustmentActions]);
+  }, [actions]);
 
   return (
     <article
@@ -811,7 +813,11 @@ export function ParameterSlider({
           align={normalizedActions.align}
           confirmTimeout={normalizedActions.confirmTimeout}
           onAction={handleAction}
-          onBeforeAction={onBeforeAdjustmentAction}
+          onBeforeAction={
+            onBeforeAction
+              ? (actionId) => onBeforeAction(actionId, currentValues)
+              : undefined
+          }
         />
       </div>
     </article>

@@ -12,6 +12,11 @@ export type {
 } from "./tool-ui";
 export { useToolUI } from "./tool-ui-context";
 export { normalizeActionsConfig, type ActionsProp } from "./actions-config";
+export type {
+  EmbeddedActionHandler,
+  EmbeddedBeforeActionHandler,
+  EmbeddedActionsProps,
+} from "./embedded-actions";
 export * from "./contract";
 export * from "./parse";
 export * from "./schema";

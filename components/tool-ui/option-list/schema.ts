@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ReactNode } from "react";
 import type { ActionsProp } from "../shared/actions-config";
+import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import {
   ActionSchema,
   SerializableActionSchema,
@@ -132,7 +133,7 @@ const OptionListPropsSchemaBase = z.object({
    *
    * In receipt state:
    * - Only the chosen option(s) are shown
-   * - Selection actions are hidden
+   * - Actions are hidden
    * - The component is read-only
    *
    * Use this with assistant-ui's `addResult` to show the outcome of a decision.
@@ -146,7 +147,7 @@ const OptionListPropsSchemaBase = z.object({
    * ```
    */
   choice: OptionListSelectionSchema,
-  selectionActions: z
+  actions: z
     .union([z.array(ActionSchema), SerializableActionsConfigSchema])
     .optional(),
   minSelections: z.number().min(0).optional(),
@@ -161,7 +162,7 @@ export type OptionListOption = z.infer<typeof OptionListOptionSchema>;
 
 export type OptionListProps = Omit<
   z.infer<typeof OptionListPropsSchema>,
-  "value" | "defaultValue" | "choice"
+  "value" | "defaultValue" | "choice" | "actions"
 > & {
   /** @see OptionListPropsSchema.id */
   id: string;
@@ -170,11 +171,9 @@ export type OptionListProps = Omit<
   /** @see OptionListPropsSchema.choice */
   choice?: OptionListSelection;
   onChange?: (value: OptionListSelection) => void;
-  onConfirm?: (value: OptionListSelection) => void | Promise<void>;
-  onCancel?: () => void;
-  selectionActions?: ActionsProp;
-  onSelectionAction?: (actionId: string) => void | Promise<void>;
-  onBeforeSelectionAction?: (actionId: string) => boolean | Promise<boolean>;
+  actions?: ActionsProp;
+  onAction?: EmbeddedActionsProps<OptionListSelection>["onAction"];
+  onBeforeAction?: EmbeddedActionsProps<OptionListSelection>["onBeforeAction"];
   className?: string;
 };
 
@@ -184,7 +183,7 @@ export const SerializableOptionListSchema = OptionListPropsSchemaBase.omit({
 })
   .extend({
     options: z.array(OptionListOptionSchema.omit({ icon: true })),
-    selectionActions: z
+    actions: z
       .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
       .optional(),
   })
