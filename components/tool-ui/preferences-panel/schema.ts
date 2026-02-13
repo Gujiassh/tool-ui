@@ -1,6 +1,13 @@
-import { z } from "zod";import { type ActionsProp } from "../shared/actions-config";
+import { z } from "zod";
+import { type ActionsProp } from "../shared/actions-config";
 import { defineToolUiContract } from "../shared/contract";
-import { SerializableActionSchema, SerializableActionsConfigSchema, ToolUIIdSchema, ToolUIReceiptSchema, ToolUIRoleSchema } from "../shared/schema";
+import {
+  SerializableActionSchema,
+  SerializableActionsConfigSchema,
+  ToolUIIdSchema,
+  ToolUIReceiptSchema,
+  ToolUIRoleSchema,
+} from "../shared/schema";
 
 const PreferenceItemBaseSchema = z.object({
   id: z.string().min(1),
@@ -58,21 +65,23 @@ const PreferencesPanelBaseSchema = z.object({
   sections: z.array(PreferenceSectionSchema).min(1),
 });
 
-export const SerializablePreferencesPanelSchema =
-  PreferencesPanelBaseSchema.extend({
-    responseActions: z
+export const SerializablePreferencesPanelSchema = PreferencesPanelBaseSchema
+  .extend({
+    formActions: z
       .union([
         z.array(SerializableActionSchema),
         SerializableActionsConfigSchema,
       ])
       .optional(),
-  });
+  })
+  .strict();
 
-export const SerializablePreferencesPanelReceiptSchema =
-  PreferencesPanelBaseSchema.extend({
+export const SerializablePreferencesPanelReceiptSchema = PreferencesPanelBaseSchema
+  .extend({
     choice: z.record(z.string(), z.union([z.string(), z.boolean()])),
     error: z.record(z.string(), z.string()).optional(),
-  });
+  })
+  .strict();
 
 export type SerializablePreferencesPanel = z.infer<
   typeof SerializablePreferencesPanelSchema
@@ -118,22 +127,23 @@ export interface PreferencesValue {
 
 export interface PreferencesPanelProps extends Omit<
   SerializablePreferencesPanel,
-  "responseActions"
+  "formActions"
 > {
   className?: string;
   value?: PreferencesValue;
   onChange?: (value: PreferencesValue) => void;
   onSave?: (value: PreferencesValue) => void | Promise<void>;
   onCancel?: () => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (
+  formActions?: ActionsProp;
+  onFormAction?: (
     actionId: string,
     value: PreferencesValue,
   ) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
+  onBeforeFormAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
-export interface PreferencesPanelReceiptProps extends SerializablePreferencesPanelReceipt {
+export interface PreferencesPanelReceiptProps
+  extends SerializablePreferencesPanelReceipt {
   className?: string;
 }
 

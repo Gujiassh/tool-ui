@@ -4,7 +4,7 @@ import type { PresetWithCodeGen } from "./types";
 
 interface LinkPreviewData {
   linkPreview: SerializableLinkPreview;
-  responseActions?: SerializableAction[];
+  localActions?: SerializableAction[];
 }
 
 function escape(value: string): string {
@@ -12,7 +12,7 @@ function escape(value: string): string {
 }
 
 function generateLinkPreviewCode(data: LinkPreviewData): string {
-  const { linkPreview, responseActions } = data;
+  const { linkPreview, localActions } = data;
   const props: string[] = [];
 
   props.push(`  id="${linkPreview.id}"`);
@@ -46,16 +46,17 @@ function generateLinkPreviewCode(data: LinkPreviewData): string {
     props.push(`  createdAt="${linkPreview.createdAt}"`);
   }
 
-  if (responseActions && responseActions.length > 0) {
-    props.push(
-      `  responseActions={${JSON.stringify(responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(
-      `  onResponseAction={(actionId) => console.log("Action:", actionId)}`,
-    );
+  const linkPreviewCode = `<LinkPreview\n${props.join("\n")}\n/>`;
+  if (!localActions || localActions.length === 0) {
+    return linkPreviewCode;
   }
 
-  return `<LinkPreview\n${props.join("\n")}\n/>`;
+  return `${linkPreviewCode}
+<LocalActions
+  surfaceId="${linkPreview.id}"
+  actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export type LinkPreviewPresetName = "basic" | "with-image" | "with-actions";
@@ -90,7 +91,7 @@ export const linkPreviewPresets: Record<LinkPreviewPresetName, PresetWithCodeGen
     generateExampleCode: generateLinkPreviewCode,
   },
   "with-actions": {
-    description: "Link preview with response action buttons",
+    description: "Link preview with external local actions",
     data: {
       linkPreview: {
         id: "link-preview-actions",
@@ -102,7 +103,7 @@ export const linkPreviewPresets: Record<LinkPreviewPresetName, PresetWithCodeGen
         favicon: "https://developer.mozilla.org/favicon.ico",
         ratio: "16:9",
       },
-      responseActions: [
+      localActions: [
         { id: "open", label: "Open", variant: "default" },
         { id: "copy", label: "Copy link", variant: "secondary" },
       ],

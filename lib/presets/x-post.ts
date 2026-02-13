@@ -4,7 +4,7 @@ import type { PresetWithCodeGen } from "./types";
 
 interface XPostPresetData {
   post: XPostData;
-  responseActions?: ActionsProp;
+  localActions?: ActionsProp;
 }
 
 export type XPostPresetName = "basic" | "quoted" | "media" | "link" | "footer-actions";
@@ -16,13 +16,17 @@ function generateXPostCode(data: XPostPresetData): string {
     `  post={${JSON.stringify(data.post, null, 2).replace(/\n/g, "\n  ")}}`,
   );
 
-  if (data.responseActions) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 2).replace(/\n/g, "\n  ")}}`,
-    );
+  const postCode = `<XPost\n${props.join("\n")}\n/>`;
+  if (!data.localActions) {
+    return postCode;
   }
 
-  return `<XPost\n${props.join("\n")}\n/>`;
+  return `${postCode}
+<LocalActions
+  surfaceId="${data.post.id}"
+  actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export const xPostPresets: Record<
@@ -125,7 +129,7 @@ export const xPostPresets: Record<
     generateExampleCode: generateXPostCode,
   },
   "footer-actions": {
-    description: "Post with custom response actions",
+    description: "Post with external local actions",
     data: {
       post: {
         id: "x-post-footer",
@@ -139,7 +143,7 @@ export const xPostPresets: Record<
         stats: { likes: 128 },
         createdAt: "2025-11-24T16:30:00.000Z",
       },
-      responseActions: [
+      localActions: [
         { id: "report", label: "Report", variant: "destructive" },
         { id: "view-templates", label: "View Templates", variant: "default" },
       ],

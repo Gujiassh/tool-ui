@@ -522,7 +522,7 @@ function createSceneConfigs(reducedMotion: boolean): SceneConfig[] {
               handleClassName: "bg-violet-500 dark:bg-violet-400"
             },
           ]}
-          responseActions={PARAMETER_SLIDER_DATA.responseActions}
+          adjustmentActions={PARAMETER_SLIDER_DATA.adjustmentActions}
           className="w-full max-w-[480px]"
         />
       ),

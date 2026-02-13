@@ -89,8 +89,8 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
   <Feature icon="FileText" title="Long-form post support">
     Optimized layout for professional and text-heavy content
   </Feature>
-  <Feature icon="MousePointerClick" title="Response actions">
-    Add custom actions below each post
+  <Feature icon="MousePointerClick" title="External actions">
+    Compose custom actions below each post
   </Feature>
   <Feature icon="Link" title="Link previews">
     Supports rich previews with title, image, and domain metadata
@@ -114,17 +114,7 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       description: "Fires when the user triggers a built-in post action",
       type: "(action: string, post: LinkedInPostData) => void",
     },
-    responseActions: {
-      description: "Optional custom response actions",
-      type: "Action[]",
-    },
-    onResponseAction: {
-      description: "Fires when a response action is selected",
-      type: "(actionId: string) => void | Promise<void>",
-    },
-    onBeforeResponseAction: {
-      description: "Optional preflight guard before a response action runs",
-      type: "(actionId: string) => boolean | Promise<boolean>",
-    },
   }}
 />
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `LinkedInPost`.

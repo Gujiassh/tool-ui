@@ -4,7 +4,7 @@ import type { PresetWithCodeGen } from "./types";
 
 interface VideoData {
   video: SerializableVideo;
-  responseActions?: SerializableAction[];
+  localActions?: SerializableAction[];
 }
 
 function escape(value: string): string {
@@ -16,7 +16,7 @@ function formatObject(value: Record<string, unknown>): string {
 }
 
 function generateVideoCode(data: VideoData): string {
-  const { video, responseActions } = data;
+  const { video, localActions } = data;
   const props: string[] = [];
 
   props.push(`  id="${video.id}"`);
@@ -55,16 +55,17 @@ function generateVideoCode(data: VideoData): string {
     props.push(`  source={${formatObject(video.source as Record<string, unknown>)}}`);
   }
 
-  if (responseActions && responseActions.length > 0) {
-    props.push(
-      `  responseActions={${JSON.stringify(responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
-    );
-    props.push(
-      `  onResponseAction={(actionId) => console.log("Action:", actionId)}`,
-    );
+  const videoCode = `<Video\n${props.join("\n")}\n/>`;
+  if (!localActions || localActions.length === 0) {
+    return videoCode;
   }
 
-  return `<Video\n${props.join("\n")}\n/>`;
+  return `${videoCode}
+<LocalActions
+  surfaceId="${video.id}"
+  actions={${JSON.stringify(localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export type VideoPresetName = "basic" | "with-poster" | "with-actions";
@@ -106,7 +107,7 @@ export const videoPresets: Record<VideoPresetName, PresetWithCodeGen<VideoData>>
     generateExampleCode: generateVideoCode,
   },
   "with-actions": {
-    description: "Video with response action buttons",
+    description: "Video with external local actions",
     data: {
       video: {
         id: "video-preview-actions",
@@ -117,7 +118,7 @@ export const videoPresets: Record<VideoPresetName, PresetWithCodeGen<VideoData>>
         ratio: "16:9",
         durationMs: 8000,
       },
-      responseActions: [
+      localActions: [
         { id: "share", label: "Share", variant: "default" },
         { id: "download", label: "Download", variant: "secondary" },
       ],

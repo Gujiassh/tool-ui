@@ -1,4 +1,5 @@
 import type { SerializableCodeBlock } from "@/components/tool-ui/code-block";
+import type { SerializableAction } from "@/components/tool-ui/shared";
 import type { PresetWithCodeGen } from "./types";
 
 export type CodeBlockPresetName =
@@ -14,7 +15,11 @@ function escape(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/`/g, "\\`");
 }
 
-function generateCodeBlockCode(data: SerializableCodeBlock): string {
+interface CodeBlockPresetData extends SerializableCodeBlock {
+  localActions?: SerializableAction[];
+}
+
+function generateCodeBlockCode(data: CodeBlockPresetData): string {
   const props: string[] = [];
 
   props.push(`  code={\`${escape(data.code)}\`}`);
@@ -36,12 +41,22 @@ function generateCodeBlockCode(data: SerializableCodeBlock): string {
     props.push(`  maxCollapsedLines={${data.maxCollapsedLines}}`);
   }
 
-  return `<CodeBlock\n${props.join("\n")}\n/>`;
+  const codeBlock = `<CodeBlock\n${props.join("\n")}\n/>`;
+  if (!data.localActions || data.localActions.length === 0) {
+    return codeBlock;
+  }
+
+  return `${codeBlock}
+<LocalActions
+  surfaceId="${data.id}"
+  actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export const codeBlockPresets: Record<
   CodeBlockPresetName,
-  PresetWithCodeGen<SerializableCodeBlock>
+  PresetWithCodeGen<CodeBlockPresetData>
 > = {
   typescript: {
     description: "TypeScript with filename header",
@@ -61,7 +76,7 @@ export function Counter() {
       language: "typescript",
       filename: "Counter.tsx",
       showLineNumbers: true,
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
   python: {
@@ -86,7 +101,7 @@ print(fibonacci(10))`,
       language: "python",
       filename: "fibonacci.py",
       showLineNumbers: true,
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
   json: {
@@ -105,7 +120,7 @@ print(fibonacci(10))`,
       language: "json",
       filename: "package.json",
       showLineNumbers: true,
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
   bash: {
@@ -128,7 +143,7 @@ echo "Done!"`,
       language: "bash",
       filename: "deploy.sh",
       showLineNumbers: true,
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
   highlighted: {
@@ -149,7 +164,7 @@ echo "Done!"`,
       filename: "processor.ts",
       showLineNumbers: true,
       highlightLines: [5, 6],
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
   collapsible: {
@@ -196,11 +211,11 @@ export type CreateUser = z.infer<typeof CreateUserSchema>;`,
       filename: "user-schema.ts",
       showLineNumbers: true,
       maxCollapsedLines: 10,
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
   "with-actions": {
-    description: "Code with response action buttons",
+    description: "Code with external local actions",
     data: {
       id: "code-block-preview-with-actions",
       code: `# Install dependencies
@@ -211,11 +226,11 @@ pnpm dev`,
       language: "bash",
       filename: "setup.sh",
       showLineNumbers: true,
-      responseActions: [
+      localActions: [
         { id: "copy", label: "Copy to clipboard", variant: "outline" },
         { id: "run", label: "Run in terminal", variant: "default" },
       ],
-    } satisfies SerializableCodeBlock,
+    } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
 };

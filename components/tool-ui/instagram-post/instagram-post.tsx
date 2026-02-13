@@ -9,8 +9,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+} from "./_adapter";
 import { formatRelativeTime } from "../shared/utils";
 
 import type { InstagramPostData, InstagramPostMedia } from "./schema";
@@ -19,9 +18,6 @@ export interface InstagramPostProps {
   post: InstagramPostData;
   className?: string;
   onAction?: (action: string, post: InstagramPostData) => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 function InstagramLogo({ className }: { className?: string }) {
@@ -277,15 +273,7 @@ export function InstagramPost({
   post,
   className,
   onAction,
-  responseActions,
-  onResponseAction,
-  onBeforeResponseAction,
 }: InstagramPostProps) {
-  const normalizedFooterActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
-
   return (
     <div
       className={cn("flex max-w-xl flex-col gap-3", className)}
@@ -315,17 +303,6 @@ export function InstagramPost({
         </div>
       </article>
 
-      {normalizedFooterActions && (
-        <div className="@container/actions">
-          <ActionButtons
-            actions={normalizedFooterActions.items}
-            align={normalizedFooterActions.align}
-            confirmTimeout={normalizedFooterActions.confirmTimeout}
-            onAction={(id) => onResponseAction?.(id)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </div>
   );
 }

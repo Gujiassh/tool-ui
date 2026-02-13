@@ -32,7 +32,6 @@ describe("plan render contract", () => {
           { id: "todo-1", label: "First", status: "completed" as const },
           { id: "todo-2", label: "Second", status: "pending" as const },
         ],
-        responseActions: [{ id: "approve", label: "Approve Plan" }],
       }),
     );
 
@@ -43,6 +42,5 @@ describe("plan render contract", () => {
     expect(html).not.toContain("Compact Render Contract");
     expect(html).not.toContain("This description should not render in compact mode");
     expect(html).not.toContain("bg-muted/70");
-    expect(html).not.toContain("Approve Plan");
   });
 });

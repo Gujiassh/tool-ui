@@ -132,7 +132,7 @@ const OptionListPropsSchemaBase = z.object({
    *
    * In receipt state:
    * - Only the chosen option(s) are shown
-   * - Response actions are hidden
+   * - Selection actions are hidden
    * - The component is read-only
    *
    * Use this with assistant-ui's `addResult` to show the outcome of a decision.
@@ -146,7 +146,7 @@ const OptionListPropsSchemaBase = z.object({
    * ```
    */
   choice: OptionListSelectionSchema,
-  responseActions: z
+  selectionActions: z
     .union([z.array(ActionSchema), SerializableActionsConfigSchema])
     .optional(),
   minSelections: z.number().min(0).optional(),
@@ -172,9 +172,9 @@ export type OptionListProps = Omit<
   onChange?: (value: OptionListSelection) => void;
   onConfirm?: (value: OptionListSelection) => void | Promise<void>;
   onCancel?: () => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
+  selectionActions?: ActionsProp;
+  onSelectionAction?: (actionId: string) => void | Promise<void>;
+  onBeforeSelectionAction?: (actionId: string) => boolean | Promise<boolean>;
   className?: string;
 };
 
@@ -184,10 +184,11 @@ export const SerializableOptionListSchema = OptionListPropsSchemaBase.omit({
 })
   .extend({
     options: z.array(OptionListOptionSchema.omit({ icon: true })),
-    responseActions: z
+    selectionActions: z
       .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
       .optional(),
   })
+  .strict()
   .superRefine(validateOptionListInvariants);
 
 export type SerializableOptionList = z.infer<

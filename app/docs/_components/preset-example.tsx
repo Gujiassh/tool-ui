@@ -62,14 +62,14 @@ function generateOptionListCode(preset: OptionListPresetName): string {
     props.push(`  choice={${choiceValue}}`);
   }
 
-  if (list.responseActions) {
-    const hasActions = Array.isArray(list.responseActions)
-      ? list.responseActions.length > 0
-      : list.responseActions.items.length > 0;
+  if (list.selectionActions) {
+    const hasActions = Array.isArray(list.selectionActions)
+      ? list.selectionActions.length > 0
+      : list.selectionActions.items.length > 0;
 
     if (hasActions) {
       props.push(
-        `  responseActions={${JSON.stringify(list.responseActions, null, 4).replace(/\n/g, "\n  ")}}`,
+        `  selectionActions={${JSON.stringify(list.selectionActions, null, 4).replace(/\n/g, "\n  ")}}`,
       );
     }
   }

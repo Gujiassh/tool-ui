@@ -109,7 +109,7 @@ When `choice` is set, the component renders in a read-only receipt state showing
 The receipt state:
 
 - Shows only the chosen option(s) with a checkmark
-- Hides unselected options and response actions
+- Hides unselected options and selection actions
 - Is read-only (no interaction)
 
 ## Props
@@ -148,8 +148,8 @@ The receipt state:
       description: "Maximum allowed selections",
       type: "number",
     },
-    responseActions: {
-      description: "Response action buttons",
+    selectionActions: {
+      description: "Selection action buttons",
       type: "Action[] | ActionsConfig",
     },
     onChange: {

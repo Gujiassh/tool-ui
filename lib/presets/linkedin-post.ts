@@ -4,7 +4,7 @@ import type { PresetWithCodeGen } from "./types";
 
 interface LinkedInPostPresetData {
   post: LinkedInPostData;
-  responseActions?: ActionsProp;
+  localActions?: ActionsProp;
 }
 
 export type LinkedInPostPresetName = "basic" | "link" | "media" | "footer-actions";
@@ -16,13 +16,17 @@ function generateLinkedInPostCode(data: LinkedInPostPresetData): string {
     `  post={${JSON.stringify(data.post, null, 2).replace(/\n/g, "\n  ")}}`,
   );
 
-  if (data.responseActions) {
-    props.push(
-      `  responseActions={${JSON.stringify(data.responseActions, null, 2).replace(/\n/g, "\n  ")}}`,
-    );
+  const postCode = `<LinkedInPost\n${props.join("\n")}\n/>`;
+  if (!data.localActions) {
+    return postCode;
   }
 
-  return `<LinkedInPost\n${props.join("\n")}\n/>`;
+  return `${postCode}
+<LocalActions
+  surfaceId="${data.post.id}"
+  actions={${JSON.stringify(data.localActions, null, 2).replace(/\n/g, "\n  ")}}
+  onAction={(actionId) => console.log("Local action:", actionId)}
+/>`;
 }
 
 export const linkedInPostPresets: Record<
@@ -93,7 +97,7 @@ export const linkedInPostPresets: Record<
     generateExampleCode: generateLinkedInPostCode,
   },
   "footer-actions": {
-    description: "Post with custom response actions",
+    description: "Post with external local actions",
     data: {
       post: {
         id: "li-post-footer",
@@ -106,7 +110,7 @@ export const linkedInPostPresets: Record<
         stats: { likes: 456 },
         createdAt: "2025-11-24T10:00:00.000Z",
       },
-      responseActions: [
+      localActions: [
         { id: "view-jobs", label: "View Open Positions", variant: "secondary" },
         { id: "apply", label: "Apply Now", variant: "default" },
       ],

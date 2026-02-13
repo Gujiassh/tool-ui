@@ -241,7 +241,7 @@ export const PARAMETER_SLIDER_DATA: Omit<SerializableParameterSlider, "id"> = {
     { id: "mid", label: "Mid", min: -12, max: 12, step: 1, value: -1, unit: "dB" },
     { id: "treble", label: "Treble", min: -12, max: 12, step: 1, value: 3, unit: "dB" },
   ],
-  responseActions: [
+  adjustmentActions: [
     { id: "reset", label: "Flat", variant: "ghost" },
     { id: "apply", label: "Apply", variant: "default" },
   ],

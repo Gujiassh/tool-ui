@@ -1,5 +1,10 @@
-import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
-import { SerializableActionSchema, SerializableActionsConfigSchema, ToolUIIdSchema, ToolUIReceiptSchema, ToolUIRoleSchema } from "../shared/schema";
+import { z } from "zod";
+import { defineToolUiContract } from "../shared/contract";
+import {
+  ToolUIIdSchema,
+  ToolUIReceiptSchema,
+  ToolUIRoleSchema,
+} from "../shared/schema";
 
 export const CodeBlockPropsSchema = z.object({
   id: ToolUIIdSchema,
@@ -11,16 +16,10 @@ export const CodeBlockPropsSchema = z.object({
   showLineNumbers: z.boolean().default(true),
   highlightLines: z.array(z.number()).optional(),
   maxCollapsedLines: z.number().min(1).optional(),
-  responseActions: z
-    .union([z.array(SerializableActionSchema), SerializableActionsConfigSchema])
-    .optional(),
   className: z.string().optional(),
 });
 
-export type CodeBlockProps = z.infer<typeof CodeBlockPropsSchema> & {
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
-};
+export type CodeBlockProps = z.infer<typeof CodeBlockPropsSchema>;
 
 export const SerializableCodeBlockSchema = CodeBlockPropsSchema.omit({
   className: true,

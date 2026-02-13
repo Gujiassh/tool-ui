@@ -58,9 +58,6 @@ export function Example() {
         total: 206.59,
         currency: "USD",
       }}
-      onResponseAction={(actionId) => {
-        console.log("Action:", actionId);
-      }}
     />
   );
 }
@@ -83,7 +80,11 @@ import {
   safeParseSerializableOrderSummary,
   SerializableOrderSummarySchema,
 } from "@/components/tool-ui/order-summary/schema";
-import { createArgsToolRenderer } from "@/components/tool-ui/shared";
+import {
+  ToolUI,
+  createArgsToolRenderer,
+  createDecisionResult,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   createOrder: {
@@ -93,22 +94,50 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableOrderSummary,
       idPrefix: "order",
       render: (parsedArgs, { result, addResult }) =>
-        result ? (
-            <OrderSummary {...parsedArgs} choice={result} />
-          ) : (
-            <OrderSummary
-              {...parsedArgs}
-              onResponseAction={(actionId) => {
-                if (actionId === "confirm") {
-                  void addResult?.({
-                    action: "confirm",
-                    orderId: `ORD-${Date.now()}`,
-                    confirmedAt: new Date().toISOString(),
-                  });
+        result ? <OrderSummary {...parsedArgs} choice={result} /> : (
+          <ToolUI id={parsedArgs.id}>
+            <ToolUI.Surface>
+              <OrderSummary {...parsedArgs} />
+            </ToolUI.Surface>
+            <ToolUI.Actions>
+              <ToolUI.DecisionActions
+                actions={[
+                  { id: "cancel", label: "Cancel", variant: "outline" },
+                  { id: "confirm", label: "Purchase", variant: "default" },
+                ]}
+                onAction={(action) =>
+                  createDecisionResult({
+                    decisionId: `${parsedArgs.id}-decision`,
+                    action,
+                    payload:
+                      action.id === "confirm"
+                        ? {
+                            orderId: `ORD-${Date.now()}`,
+                            confirmedAt: new Date().toISOString(),
+                          }
+                        : undefined,
+                  })
                 }
-              }}
-            />
-          ),
+                onCommit={async (decision) => {
+                  if (decision.actionId !== "confirm") return;
+                  const orderId =
+                    typeof decision.payload?.orderId === "string"
+                      ? decision.payload.orderId
+                      : `ORD-${Date.now()}`;
+                  const confirmedAt =
+                    typeof decision.payload?.confirmedAt === "string"
+                      ? decision.payload.confirmedAt
+                      : new Date().toISOString();
+                  await addResult?.({
+                    action: "confirm",
+                    orderId,
+                    confirmedAt,
+                  });
+                }}
+              />
+            </ToolUI.Actions>
+          </ToolUI>
+        ),
     }),
   },
 };
@@ -139,7 +168,7 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
 
 ## Receipt State
 
-When `decision` is set, the component renders in a dimmed receipt state showing the confirmed order with order ID and timestamp.
+When `choice` is set, the component renders in a dimmed receipt state showing the confirmed order with order ID and timestamp.
 
 
 ## With Discount
@@ -171,7 +200,7 @@ Use the `discount` and `discountLabel` fields in pricing to show promotional sav
       type: "Pricing",
       required: true,
     },
-    decision: {
+    choice: {
       description: "When set, renders the receipt state",
       type: "OrderDecision",
     },
@@ -179,16 +208,10 @@ Use the `discount` and `discountLabel` fields in pricing to show promotional sav
       description: "Additional CSS classes",
       type: "string",
     },
-    responseActions: {
-      description: "Custom action buttons (defaults to Purchase/Cancel)",
-      type: "ResponseAction[]",
-    },
-    onResponseAction: {
-      description: "Handler when user clicks an action button",
-      type: "(actionId: string) => void",
-    },
   }}
 />
+
+Use [`ToolUI.DecisionActions`](/docs/actions) to compose consequential actions next to `OrderSummary`.
 
 ## OrderItem Schema
 

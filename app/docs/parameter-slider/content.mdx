@@ -39,7 +39,7 @@ export function Example() {
         { id: "contrast", label: "Contrast", min: -100, max: 100, step: 5, value: 15, unit: "%" },
         { id: "highlights", label: "Highlights", min: -100, max: 100, step: 5, value: -20, unit: "%" },
       ]}
-      onResponseAction={(actionId, values) => {
+      onAdjustmentAction={(actionId, values) => {
         console.log(actionId, values);
       }}
     />
@@ -76,7 +76,7 @@ export const toolkit: Toolkit = {
       render: (parsedArgs, { addResult }) => (
           <ParameterSlider
             {...parsedArgs}
-            onResponseAction={(actionId, values) => {
+            onAdjustmentAction={(actionId, values) => {
               if (actionId === "apply") {
                 void addResult?.({ values });
               }
@@ -135,15 +135,15 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       description: "Called when any slider value changes",
       type: "(values: SliderValue[]) => void",
     },
-    responseActions: {
+    adjustmentActions: {
       description: "Action buttons (defaults to Reset/Apply)",
       type: "Action[] | ActionsConfig",
     },
-    onResponseAction: {
+    onAdjustmentAction: {
       description: "Called when an action button is clicked",
       type: "(actionId: string, values: SliderValue[]) => void",
     },
-    onBeforeResponseAction: {
+    onBeforeAdjustmentAction: {
       description: "Called before action, return false to cancel",
       type: "(actionId: string) => boolean | Promise<boolean>",
     },

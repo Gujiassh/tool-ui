@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import { toolUiActionModelPlugin } from "./lib/eslint/tool-ui-action-model-plugin";
 
 const eslintConfig = defineConfig([
   // Global ignores first
@@ -88,6 +89,39 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
+    },
+  },
+  {
+    files: [
+      "components/tool-ui/audio/**/*.{ts,tsx}",
+      "components/tool-ui/citation/**/*.{ts,tsx}",
+      "components/tool-ui/code-block/**/*.{ts,tsx}",
+      "components/tool-ui/data-table/**/*.{ts,tsx}",
+      "components/tool-ui/image/**/*.{ts,tsx}",
+      "components/tool-ui/instagram-post/**/*.{ts,tsx}",
+      "components/tool-ui/link-preview/**/*.{ts,tsx}",
+      "components/tool-ui/linkedin-post/**/*.{ts,tsx}",
+      "components/tool-ui/order-summary/**/*.{ts,tsx}",
+      "components/tool-ui/plan/**/*.{ts,tsx}",
+      "components/tool-ui/terminal/**/*.{ts,tsx}",
+      "components/tool-ui/video/**/*.{ts,tsx}",
+      "components/tool-ui/x-post/**/*.{ts,tsx}",
+    ],
+    plugins: {
+      "tool-ui": toolUiActionModelPlugin,
+    },
+    rules: {
+      "tool-ui/no-embedded-response-actions": "error",
+    },
+  },
+  {
+    files: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}", "lib/**/*.{ts,tsx}"],
+    plugins: {
+      "tool-ui": toolUiActionModelPlugin,
+    },
+    rules: {
+      "tool-ui/no-add-result-in-local-actions": "error",
+      "tool-ui/decision-actions-require-envelope": "error",
     },
   },
 ]);

@@ -3,8 +3,7 @@
 
 import * as React from "react";
 import { Globe } from "lucide-react";
-import { cn } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+import { cn } from "./_adapter";
 
 import {
   RATIO_CLASS_MAP,
@@ -20,18 +19,12 @@ const CONTENT_SPACING = "px-5 py-4 gap-2";
 export interface LinkPreviewProps extends SerializableLinkPreview {
   className?: string;
   onNavigate?: (href: string, preview: SerializableLinkPreview) => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 export function LinkPreview(props: LinkPreviewProps) {
   const {
     className,
     onNavigate,
-    responseActions,
-    onResponseAction,
-    onBeforeResponseAction,
     ...serializable
   } = props;
 
@@ -56,11 +49,6 @@ export function LinkPreview(props: LinkPreviewProps) {
     href: sanitizedHref ?? rawHref,
     locale,
   };
-
-  const normalizedActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
 
   const handleClick = () => {
     if (!sanitizedHref) return;
@@ -154,17 +142,6 @@ export function LinkPreview(props: LinkPreviewProps) {
           </div>
         </div>
       </div>
-      {normalizedActions && (
-        <div className="@container/actions mt-3">
-          <ActionButtons
-            actions={normalizedActions.items}
-            align={normalizedActions.align}
-            confirmTimeout={normalizedActions.confirmTimeout}
-            onAction={(actionId: string) => onResponseAction?.(actionId)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </article>
   );
 }

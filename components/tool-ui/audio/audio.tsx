@@ -3,8 +3,7 @@
 
 import * as React from "react";
 import { Pause, Play } from "lucide-react";
-import { cn, Button, Slider } from "./_adapter";import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig, type ActionsProp } from "../shared/actions-config";
+import { cn, Button, Slider } from "./_adapter";
 
 import { AudioProvider, useAudio } from "./context";
 import type { SerializableAudio, AudioVariant } from "./schema";
@@ -22,9 +21,6 @@ export interface AudioProps extends SerializableAudio {
   variant?: AudioVariant;
   className?: string;
   onMediaEvent?: (type: "play" | "pause" | "mute" | "unmute") => void;
-  responseActions?: ActionsProp;
-  onResponseAction?: (actionId: string) => void | Promise<void>;
-  onBeforeResponseAction?: (actionId: string) => boolean | Promise<boolean>;
 }
 
 export function Audio(props: AudioProps) {
@@ -202,9 +198,6 @@ function AudioInner(props: AudioProps) {
     variant = "full",
     className,
     onMediaEvent,
-    responseActions,
-    onResponseAction,
-    onBeforeResponseAction,
     ...serializable
   } = props;
 
@@ -239,11 +232,6 @@ function AudioInner(props: AudioProps) {
       audio.pause();
     }
   }, [state.playing]);
-
-  const normalizedActions = React.useMemo(
-    () => normalizeActionsConfig(responseActions),
-    [responseActions],
-  );
 
   const handlePlayPause = () => {
     const audio = audioRef.current;
@@ -343,17 +331,6 @@ function AudioInner(props: AudioProps) {
           }}
         />
       </div>
-      {normalizedActions && (
-        <div className="@container/actions mt-3">
-          <ActionButtons
-            actions={normalizedActions.items}
-            align={normalizedActions.align}
-            confirmTimeout={normalizedActions.confirmTimeout}
-            onAction={(actionId: string) => onResponseAction?.(actionId)}
-            onBeforeAction={onBeforeResponseAction}
-          />
-        </div>
-      )}
     </article>
   );
 }

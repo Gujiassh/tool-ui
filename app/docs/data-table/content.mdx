@@ -203,8 +203,8 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
   <Feature icon="Table2" title="Declarative formatting">
     Currency, dates, links, badges, and more via config
   </Feature>
-  <Feature icon="MousePointerClick" title="Response actions">
-    Add actionable buttons below the table
+  <Feature icon="MousePointerClick" title="External actions">
+    Compose actionable buttons below the table
   </Feature>
 </FeatureGrid>
 
@@ -286,24 +286,9 @@ import { DataTable } from "@/components/tool-ui/data-table";
   }}
 />
 
-### Response Actions
+### External Actions
 
-<TypeTable
-  type={{
-    responseActions: {
-      description: "Surface-level actions below the table",
-      type: "Action[] | ActionsConfig",
-    },
-    onResponseAction: {
-      description: "Click handler",
-      type: "(actionId: string) => void",
-    },
-    onBeforeResponseAction: {
-      description: "Gate actions (return false to cancel)",
-      type: "(actionId: string) => boolean | Promise<boolean>",
-    },
-  }}
-/>
+Use [`ToolUI.LocalActions`](/docs/actions) to compose surface-level actions below `DataTable`.
 
 ## Formatting
 
