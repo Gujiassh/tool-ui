@@ -13,14 +13,6 @@ import { ToolUI, createDecisionResult } from "@/components/tool-ui/shared";
 import { Button } from "@/components/ui/button";
 import { MockMessage, MockThread } from "../_components/mock-thread";
 
-function formatSelection(value: OptionListSelection): string {
-  if (value === null) return "No selection";
-  if (Array.isArray(value)) {
-    return value.length > 0 ? value.join(", ") : "No selection";
-  }
-  return value;
-}
-
 const tableRows = [
   { id: "1", merchant: "Delta Airlines", amount: 847 },
   { id: "2", merchant: "Acme Hotel", amount: 312 },
@@ -373,7 +365,6 @@ export function DecisionSurfaceExample() {
 
 export function ActionCentricExceptionsExample() {
   const [optionChoice, setOptionChoice] = useState<OptionListSelection>();
-  const [optionEvent, setOptionEvent] = useState("No selection confirmed yet.");
   const [optionOutput, setOptionOutput] = useState<{
     actionId: string;
     state: OptionListSelection;
@@ -381,18 +372,12 @@ export function ActionCentricExceptionsExample() {
   const [sliderValues, setSliderValues] = useState<SliderValue[]>(
     initialSliderValues,
   );
-  const [sliderEvent, setSliderEvent] = useState(
-    "Move sliders, then press Apply.",
-  );
   const [sliderOutput, setSliderOutput] = useState<{
     actionId: string;
     state: SliderValue[];
   } | null>(null);
   const [savedPreferences, setSavedPreferences] =
     useState<PreferencesValue | null>(null);
-  const [preferencesEvent, setPreferencesEvent] = useState(
-    "No save action yet.",
-  );
   const [preferencesOutput, setPreferencesOutput] = useState<{
     actionId: string;
     state: PreferencesValue;
@@ -433,18 +418,15 @@ export function ActionCentricExceptionsExample() {
 
               if (actionId === "confirm") {
                 setOptionChoice(selection);
-                setOptionEvent(`Selection committed: ${formatSelection(selection)}`);
                 return;
               }
 
               if (actionId === "cancel") {
                 setOptionChoice(undefined);
               }
-              setOptionEvent(`OptionList action fired: ${actionId}`);
             }}
           />
           <div className="flex items-center gap-2">
-            <p className="text-muted-foreground text-xs">{optionEvent}</p>
             {optionChoice !== undefined && (
               <Button
                 size="sm"
@@ -452,7 +434,6 @@ export function ActionCentricExceptionsExample() {
                 onClick={() => {
                   setOptionChoice(undefined);
                   setOptionOutput(null);
-                  setOptionEvent("Selection reset for demo.");
                 }}
               >
                 Reset
@@ -510,19 +491,8 @@ export function ActionCentricExceptionsExample() {
             ]}
             onAction={(actionId, values) => {
               setSliderOutput({ actionId, state: values });
-
-              if (actionId !== "apply") {
-                setSliderEvent(`ParameterSlider action fired: ${actionId}`);
-                return;
-              }
-
-              const summary = values
-                .map((value) => `${value.id}: ${value.value}`)
-                .join(", ");
-              setSliderEvent(`Applied values: ${summary}`);
             }}
           />
-          <p className="text-muted-foreground text-xs">{sliderEvent}</p>
         </div>
         <div className="border-border bg-card rounded-xl border p-3">
           <p className="text-sm font-medium">Mock output</p>
@@ -559,16 +529,13 @@ export function ActionCentricExceptionsExample() {
 
               if (actionId === "save") {
                 setSavedPreferences(value);
-                setPreferencesEvent("Preferences saved.");
                 return;
               }
               if (actionId === "cancel") {
                 setSavedPreferences(null);
-                setPreferencesEvent("Edit cancelled.");
               }
             }}
           />
-          <p className="text-muted-foreground text-xs">{preferencesEvent}</p>
         </div>
         <div className="border-border bg-card rounded-xl border p-3">
           <p className="text-sm font-medium">Mock output</p>
