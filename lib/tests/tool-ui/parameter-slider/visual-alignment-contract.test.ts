@@ -123,4 +123,24 @@ describe("parameter-slider visual alignment contract", () => {
     // At maximum: right segment should end flush at right border.
     expect(maxHtml).toContain("clip-path:inset(0 0 0 calc(50% + 0px))");
   });
+
+  test("renders labels and values without text shadows", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ParameterSlider, {
+        id: "parameter-slider-no-text-shadow-test",
+        sliders: [
+          {
+            id: "s",
+            label: "S",
+            min: 0,
+            max: 100,
+            value: 42,
+          },
+        ],
+      }),
+    );
+
+    expect(html).not.toContain("[text-shadow:");
+    expect(html).not.toContain("text-shadow:");
+  });
 });

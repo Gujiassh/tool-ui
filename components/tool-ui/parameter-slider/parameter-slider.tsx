@@ -666,13 +666,13 @@ function SliderRow({
         >
           <span
             ref={labelRef}
-            className="text-primary -mt-px rounded-full px-2 py-px text-sm font-normal tracking-wide [text-shadow:0.5px_0.5px_0_rgba(0,0,0,0.35)]"
+            className="text-primary -mt-px rounded-full px-2 py-px text-sm font-normal tracking-wide"
           >
             {label}
           </span>
           <span
             ref={valueRef}
-            className="text-foreground -mt-px -mb-0.5 flex h-6 items-center rounded-full px-2 font-mono text-xs tabular-nums [text-shadow:0.5px_0.5px_0_rgba(0,0,0,0.35)]"
+            className="text-foreground -mt-px -mb-0.5 flex h-6 items-center rounded-full px-2 font-mono text-xs tabular-nums"
           >
             {formatSignedValue(value, min, max, precision, unit)}
           </span>
