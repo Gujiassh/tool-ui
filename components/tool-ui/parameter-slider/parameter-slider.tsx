@@ -505,8 +505,12 @@ function SliderRow({
         className={cn(
           "group/slider relative flex w-full touch-none items-center select-none",
           "isolate h-12",
-          "[&>span]:transition-[left,transform] [&>span]:duration-150 [&>span]:ease-[var(--cubic-ease-in-out)]",
+          "[&>span]:transition-[left,transform]",
+          isDragging
+            ? "[&>span]:duration-75 [&>span]:ease-linear"
+            : "[&>span]:duration-180 [&>span]:ease-[cubic-bezier(0.22,1,0.36,1)]",
           "[&>span]:will-change-[left,transform]",
+          "motion-reduce:[&>span]:transition-none",
           disabled && "pointer-events-none opacity-50",
         )}
         value={[value]}
@@ -532,7 +536,11 @@ function SliderRow({
         >
           <div
             className={cn(
-              "absolute inset-0 transition-[clip-path] duration-150 ease-[var(--cubic-ease-in-out)] will-change-[clip-path]",
+              "absolute inset-0 will-change-[clip-path]",
+              isDragging
+                ? "transition-[clip-path] duration-75 ease-linear"
+                : "transition-[clip-path] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "motion-reduce:transition-none",
               resolvedFillClassName ?? "bg-primary/30 dark:bg-primary/40",
             )}
             style={{
@@ -570,7 +578,13 @@ function SliderRow({
 
         {/* Metallic reflection overlay - follows handle, brightness scales with interaction */}
         <div
-          className="squircle pointer-events-none absolute inset-0 rounded-sm transition-[opacity,background] duration-150 ease-[var(--cubic-ease-in-out)]"
+          className={cn(
+            "squircle pointer-events-none absolute inset-0 rounded-sm",
+            isDragging
+              ? "transition-[opacity,background] duration-75 ease-linear"
+              : "transition-[opacity,background] duration-180 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            "motion-reduce:transition-none",
+          )}
           style={{
             ...reflectionStyle,
             opacity: reflectionOpacity,
