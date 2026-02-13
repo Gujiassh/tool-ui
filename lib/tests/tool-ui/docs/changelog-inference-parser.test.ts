@@ -126,8 +126,27 @@ describe("changelog inference parser", () => {
     expect(covered.breakingChanges.join("\n")).toContain("LocalActions");
     expect(covered.changes.join("\n")).toContain("DecisionActions");
     expect(covered.migrationPrompt).toContain(
-      "Migrate action handling to the bound compound model using LocalActions / DecisionActions.",
+      "Migrate action handling to `ToolUI.LocalActions` / `ToolUI.DecisionActions` for consequential workflows.",
     );
+    expect(covered.migrationPrompt).not.toContain("outlier action configs");
+  });
+
+  test("adds action-model change coverage without forcing breaking migration when signals are non-breaking", () => {
+    const covered = ensureCriticalMigrationCoverage(
+      {
+        breakingChanges: [],
+        changes: ["Small docs polish."],
+        migrationPrompt: null,
+      },
+      {
+        changedFiles: ["components/tool-ui/shared/local-actions.tsx"],
+        commitSummary: "- abc1234 refactor: polish LocalActions labels",
+      },
+    );
+
+    expect(covered.changes.join("\n")).toContain("LocalActions");
+    expect(covered.breakingChanges).toEqual([]);
+    expect(covered.migrationPrompt).toBeNull();
   });
 
   test("does not add action-model migration coverage without action-model signals", () => {
