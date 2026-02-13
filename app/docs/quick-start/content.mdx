@@ -21,7 +21,7 @@ import { Bot } from "lucide-react";
 
 Add a Tool UI component to a chat app. By the end you'll have an assistant that renders a rich link preview card instead of raw JSON.
 
-**What you'll build:** A backend tool that fetches link metadata, and a frontend renderer that turns the JSON response into an interactive LinkPreview card — all wired together through [assistant-ui](https://www.assistant-ui.com/).
+**What you'll build:** A backend tool that fetches link metadata, and a frontend renderer that turns the JSON response into an interactive LinkPreview card, all wired together through [assistant-ui](https://www.assistant-ui.com/).
 
 ## Install
 
@@ -55,7 +55,7 @@ Run `pnpm dev` and confirm you see a working chat interface before continuing.
 
 <Step title="Add a Tool UI component">
 
-Install the LinkPreview component from the Tool UI registry. This works exactly like installing any shadcn component — the CLI copies the source files into your project.
+Install the LinkPreview component from the Tool UI registry. This works exactly like installing any shadcn component. The CLI copies the source files into your project.
 
 First, make sure your `components.json` includes the `@tool-ui` registry. You may already have this if you used `assistant-ui init`:
 
@@ -72,7 +72,7 @@ Then install:
 npx shadcn@latest add @tool-ui/link-preview
 ```
 
-This copies `components/tool-ui/link-preview/` and `components/tool-ui/shared/` into your project. You own the code — modify it however you like.
+This copies `components/tool-ui/link-preview/` and `components/tool-ui/shared/` into your project. You own the code. Modify it however you like.
 
 </Step>
 
@@ -210,11 +210,11 @@ Browse all available components in the [Gallery](/docs/gallery).
 
 [assistant-ui](https://www.assistant-ui.com/) supports multiple runtimes beyond AI SDK: [LangGraph](https://langchain-ai.github.io/langgraphjs/), LangServe, [Mastra](https://mastra.dev/), or custom backends. The examples above use AI SDK v6.
 
-Tool UI components also work without assistant-ui — parse tool outputs and render components yourself. assistant-ui handles the wiring for you.
+Tool UI components also work without assistant-ui. Parse tool outputs and render components yourself. assistant-ui handles the wiring for you.
 
 ## Next steps
 
-- [**Actions**](/docs/actions): Learn how Tool UIs handle user interaction — clicks, selections, and decisions that feed back into the conversation.
+- [**Actions**](/docs/actions): Learn how Tool UIs handle user interaction: clicks, selections, and decisions that feed back into the conversation.
 - [**UI Guidelines**](/docs/design-guidelines): Design principles for building effective conversation-native UIs.
 - [**Advanced**](/docs/advanced): Typed tools with `InferUITools`, frontend tools for interactive UIs, and auto-continue patterns.
 - [**Gallery**](/docs/gallery): Browse all components with live previews.
