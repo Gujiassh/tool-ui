@@ -12,6 +12,14 @@ export type ReleaseGitContext = {
   changedFiles: string[];
 };
 
+function isDocsSitePath(filePath: string): boolean {
+  return filePath.startsWith("app/docs/") || filePath.startsWith("docs/");
+}
+
+function filterDocsSiteFiles(files: string[]): string[] {
+  return files.filter((filePath) => !isDocsSitePath(filePath));
+}
+
 function runGit(projectRoot: string, args: string[]): string {
   return execFileSync("git", ["-C", projectRoot, ...args], {
     encoding: "utf8",
@@ -66,18 +74,22 @@ export function collectReleaseGitContext(projectRoot: string): ReleaseGitContext
     .filter(Boolean)
     .map((entry) => {
       const [hash, subject, body] = entry.split("\x1f");
-      const files = collectCommitFiles(projectRoot, hash);
+      const files = filterDocsSiteFiles(collectCommitFiles(projectRoot, hash));
       return {
         hash,
         subject: subject?.trim() ?? "",
         body: body?.trim() ?? "",
         files,
       };
-    });
+    })
+    .filter((commit) => commit.files.length > 0);
 
   if (commits.length === 0) {
     throw new Error(
-      `No commits found for release range "${range}". Cannot infer changelog.`,
+      [
+        `No non-doc commits found for release range "${range}".`,
+        "Changelog inference ignores docs-site paths under app/docs/ and docs/.",
+      ].join(" "),
     );
   }
 

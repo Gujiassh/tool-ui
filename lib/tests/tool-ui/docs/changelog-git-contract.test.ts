@@ -64,4 +64,66 @@ describe("changelog git contract", () => {
       "scripts/generate-changelog.ts",
     ]);
   });
+
+  test("excludes docs-site-only commits and docs paths from context", () => {
+    execFileSyncMock.mockImplementation((_command, args) => {
+      const gitArgs = getGitArgs(args).slice(2);
+
+      if (gitArgs[0] === "describe") {
+        return "v2026.02.12";
+      }
+
+      if (gitArgs[0] === "log") {
+        return [
+          "aaa1111\x1fdocs: polish actions page\x1fcopy only\x1e",
+          "bbb2222\x1ffeat: harden action model\x1fcore + docs\x1e",
+        ].join("");
+      }
+
+      if (gitArgs[0] === "show" && gitArgs[3] === "aaa1111") {
+        return "app/docs/actions/content.mdx\ndocs/rfcs/action-model.md\n";
+      }
+
+      if (gitArgs[0] === "show" && gitArgs[3] === "bbb2222") {
+        return "app/docs/actions/content.mdx\ncomponents/tool-ui/shared/schema.ts\n";
+      }
+
+      throw new Error(`Unexpected git command: ${gitArgs.join(" ")}`);
+    });
+
+    const context = collectReleaseGitContext("/tmp/tool-ui");
+
+    expect(context.commits).toHaveLength(1);
+    expect(context.commits[0]?.hash).toBe("bbb2222");
+    expect(context.commits[0]?.files).toEqual([
+      "components/tool-ui/shared/schema.ts",
+    ]);
+    expect(context.changedFiles).toEqual([
+      "components/tool-ui/shared/schema.ts",
+    ]);
+  });
+
+  test("throws when release range contains only docs-site changes", () => {
+    execFileSyncMock.mockImplementation((_command, args) => {
+      const gitArgs = getGitArgs(args).slice(2);
+
+      if (gitArgs[0] === "describe") {
+        return "v2026.02.12";
+      }
+
+      if (gitArgs[0] === "log") {
+        return "ccc3333\x1fdocs: update changelog page\x1fcopy updates\x1e";
+      }
+
+      if (gitArgs[0] === "show" && gitArgs[3] === "ccc3333") {
+        return "app/docs/changelog/content.mdx\ndocs/changelog-guidelines.md\n";
+      }
+
+      throw new Error(`Unexpected git command: ${gitArgs.join(" ")}`);
+    });
+
+    expect(() => collectReleaseGitContext("/tmp/tool-ui")).toThrow(
+      /No non-doc commits found/i,
+    );
+  });
 });
