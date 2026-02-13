@@ -374,153 +374,224 @@ export function DecisionSurfaceExample() {
 export function ActionCentricExceptionsExample() {
   const [optionChoice, setOptionChoice] = useState<OptionListSelection>();
   const [optionEvent, setOptionEvent] = useState("No selection confirmed yet.");
+  const [optionOutput, setOptionOutput] = useState<{
+    actionId: string;
+    state: OptionListSelection;
+  } | null>(null);
   const [sliderValues, setSliderValues] = useState<SliderValue[]>(
     initialSliderValues,
   );
   const [sliderEvent, setSliderEvent] = useState(
     "Move sliders, then press Apply.",
   );
+  const [sliderOutput, setSliderOutput] = useState<{
+    actionId: string;
+    state: SliderValue[];
+  } | null>(null);
   const [savedPreferences, setSavedPreferences] =
     useState<PreferencesValue | null>(null);
   const [preferencesEvent, setPreferencesEvent] = useState(
     "No save action yet.",
   );
+  const [preferencesOutput, setPreferencesOutput] = useState<{
+    actionId: string;
+    state: PreferencesValue;
+  } | null>(null);
 
   return (
-    <div className="not-prose grid gap-6">
-      <div className="flex flex-col gap-2">
-        <h4 className="text-base font-semibold">
-          OptionList uses <code>actions</code>
-        </h4>
-        <OptionList
-          id="action-centric-option-list"
-          selectionMode="single"
-          options={[
-            {
-              id: "merge",
-              label: "Merge duplicates",
-              description: "Combine records and preserve all unique fields.",
-            },
-            {
-              id: "keep",
-              label: "Keep separate",
-              description: "Leave both records untouched.",
-            },
-            {
-              id: "review",
-              label: "Review manually",
-              description: "Open each pair for manual confirmation.",
-            },
-          ]}
-          choice={optionChoice}
-          actions={[
-            { id: "cancel", label: "Clear", variant: "ghost" },
-            { id: "confirm", label: "Confirm Selection", variant: "default" },
-          ]}
-          onAction={(actionId, selection) => {
-            if (actionId === "confirm") {
-              setOptionChoice(selection);
-              setOptionEvent(`Selection committed: ${formatSelection(selection)}`);
-              return;
-            }
+    <div className="not-prose grid gap-8">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+        <div className="flex flex-col gap-2">
+          <h4 className="text-base font-semibold">OptionList</h4>
+          <OptionList
+            id="action-centric-option-list"
+            selectionMode="single"
+            options={[
+              {
+                id: "merge",
+                label: "Merge duplicates",
+                description: "Combine records and preserve all unique fields.",
+              },
+              {
+                id: "keep",
+                label: "Keep separate",
+                description: "Leave both records untouched.",
+              },
+              {
+                id: "review",
+                label: "Review manually",
+                description: "Open each pair for manual confirmation.",
+              },
+            ]}
+            choice={optionChoice}
+            actions={[
+              { id: "cancel", label: "Clear", variant: "ghost" },
+              { id: "confirm", label: "Confirm Selection", variant: "default" },
+            ]}
+            onAction={(actionId, selection) => {
+              setOptionOutput({ actionId, state: selection });
 
-            if (actionId === "cancel") {
-              setOptionChoice(undefined);
-            }
-            setOptionEvent(`OptionList action fired: ${actionId}`);
-          }}
-        />
-        <div className="flex items-center gap-2">
-          <p className="text-muted-foreground text-xs">{optionEvent}</p>
-          {optionChoice !== undefined && (
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => {
+              if (actionId === "confirm") {
+                setOptionChoice(selection);
+                setOptionEvent(`Selection committed: ${formatSelection(selection)}`);
+                return;
+              }
+
+              if (actionId === "cancel") {
                 setOptionChoice(undefined);
-                setOptionEvent("Selection reset for demo.");
-              }}
-            >
-              Reset
-            </Button>
-          )}
+              }
+              setOptionEvent(`OptionList action fired: ${actionId}`);
+            }}
+          />
+          <div className="flex items-center gap-2">
+            <p className="text-muted-foreground text-xs">{optionEvent}</p>
+            {optionChoice !== undefined && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => {
+                  setOptionChoice(undefined);
+                  setOptionOutput(null);
+                  setOptionEvent("Selection reset for demo.");
+                }}
+              >
+                Reset
+              </Button>
+            )}
+          </div>
+        </div>
+        <div className="border-border bg-card rounded-xl border p-3">
+          <p className="text-sm font-medium">Mock output</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            <code>onAction(actionId, state)</code>
+          </p>
+          <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs leading-relaxed">
+            {optionOutput
+              ? JSON.stringify(optionOutput, null, 2)
+              : `{
+  "actionId": "confirm",
+  "state": "merge"
+}`}
+          </pre>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <h4 className="text-base font-semibold">
-          ParameterSlider uses <code>actions</code>
-        </h4>
-        <ParameterSlider
-          id="action-centric-parameter-slider"
-          sliders={[
-            {
-              id: "exposure",
-              label: "Exposure",
-              min: -2,
-              max: 2,
-              step: 0.1,
-              value: 0.2,
-              unit: " EV",
-              precision: 1,
-            },
-            {
-              id: "contrast",
-              label: "Contrast",
-              min: -50,
-              max: 50,
-              step: 1,
-              value: 12,
-              unit: "%",
-            },
-          ]}
-          values={sliderValues}
-          onChange={setSliderValues}
-          actions={[
-            { id: "reset", label: "Reset", variant: "ghost" },
-            { id: "apply", label: "Apply Adjustments", variant: "default" },
-          ]}
-          onAction={(actionId, values) => {
-            if (actionId !== "apply") return;
-            const summary = values
-              .map((value) => `${value.id}: ${value.value}`)
-              .join(", ");
-            setSliderEvent(`Applied values: ${summary}`);
-          }}
-        />
-        <p className="text-muted-foreground text-xs">{sliderEvent}</p>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+        <div className="flex flex-col gap-2">
+          <h4 className="text-base font-semibold">ParameterSlider</h4>
+          <ParameterSlider
+            id="action-centric-parameter-slider"
+            sliders={[
+              {
+                id: "exposure",
+                label: "Exposure",
+                min: -2,
+                max: 2,
+                step: 0.1,
+                value: 0.2,
+                unit: " EV",
+                precision: 1,
+              },
+              {
+                id: "contrast",
+                label: "Contrast",
+                min: -50,
+                max: 50,
+                step: 1,
+                value: 12,
+                unit: "%",
+              },
+            ]}
+            values={sliderValues}
+            onChange={setSliderValues}
+            actions={[
+              { id: "reset", label: "Reset", variant: "ghost" },
+              { id: "apply", label: "Apply Adjustments", variant: "default" },
+            ]}
+            onAction={(actionId, values) => {
+              setSliderOutput({ actionId, state: values });
+
+              if (actionId !== "apply") {
+                setSliderEvent(`ParameterSlider action fired: ${actionId}`);
+                return;
+              }
+
+              const summary = values
+                .map((value) => `${value.id}: ${value.value}`)
+                .join(", ");
+              setSliderEvent(`Applied values: ${summary}`);
+            }}
+          />
+          <p className="text-muted-foreground text-xs">{sliderEvent}</p>
+        </div>
+        <div className="border-border bg-card rounded-xl border p-3">
+          <p className="text-sm font-medium">Mock output</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            <code>onAction(actionId, state)</code>
+          </p>
+          <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs leading-relaxed">
+            {sliderOutput
+              ? JSON.stringify(sliderOutput, null, 2)
+              : `{
+  "actionId": "apply",
+  "state": [
+    { "id": "exposure", "value": 0.2 },
+    { "id": "contrast", "value": 12 }
+  ]
+}`}
+          </pre>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <h4 className="text-base font-semibold">
-          PreferencesPanel uses <code>actions</code>
-        </h4>
-        <PreferencesPanel
-          id="action-centric-preferences-panel"
-          title="Notification Preferences"
-          sections={preferencesSections}
-          actions={[
-            { id: "cancel", label: "Cancel", variant: "ghost" },
-            { id: "save", label: "Save Preferences", variant: "default" },
-          ]}
-          onAction={(actionId, value) => {
-            if (actionId === "save") {
-              setSavedPreferences(value);
-              setPreferencesEvent("Preferences saved.");
-              return;
-            }
-            if (actionId === "cancel") {
-              setSavedPreferences(null);
-              setPreferencesEvent("Edit cancelled.");
-            }
-          }}
-        />
-        <p className="text-muted-foreground text-xs">{preferencesEvent}</p>
-        <pre className="bg-muted overflow-auto rounded-md p-3 text-xs leading-relaxed">
-          {savedPreferences
-            ? JSON.stringify(savedPreferences, null, 2)
-            : "No saved preferences yet."}
-        </pre>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+        <div className="flex flex-col gap-2">
+          <h4 className="text-base font-semibold">PreferencesPanel</h4>
+          <PreferencesPanel
+            id="action-centric-preferences-panel"
+            title="Notification Preferences"
+            sections={preferencesSections}
+            actions={[
+              { id: "cancel", label: "Cancel", variant: "ghost" },
+              { id: "save", label: "Save Preferences", variant: "default" },
+            ]}
+            onAction={(actionId, value) => {
+              setPreferencesOutput({ actionId, state: value });
+
+              if (actionId === "save") {
+                setSavedPreferences(value);
+                setPreferencesEvent("Preferences saved.");
+                return;
+              }
+              if (actionId === "cancel") {
+                setSavedPreferences(null);
+                setPreferencesEvent("Edit cancelled.");
+              }
+            }}
+          />
+          <p className="text-muted-foreground text-xs">{preferencesEvent}</p>
+        </div>
+        <div className="border-border bg-card rounded-xl border p-3">
+          <p className="text-sm font-medium">Mock output</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            <code>onAction(actionId, state)</code>
+          </p>
+          <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs leading-relaxed">
+            {preferencesOutput
+              ? JSON.stringify(preferencesOutput, null, 2)
+              : `{
+  "actionId": "save",
+  "state": {
+    "marketing-email": true,
+    "digest-frequency": "weekly"
+  }
+}`}
+          </pre>
+          {savedPreferences && (
+            <p className="text-muted-foreground mt-2 text-xs">
+              Last saved values are shown in the callback payload.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
