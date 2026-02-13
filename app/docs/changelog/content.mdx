@@ -15,9 +15,8 @@ import { DocsHeader } from "../_components/docs-header";
 
 ### Migration prompt
 
-<div className="not-prose max-h-[300px] overflow-auto rounded-lg border border-border">
-  <pre className="m-0 whitespace-pre-wrap p-4 text-sm leading-6">
-{`Migrate codebase to adopt explicit /schema entrypoints for Tool UI schemas.
+```text
+Migrate codebase to adopt explicit /schema entrypoints for Tool UI schemas.
 
 Goals:
 1) Move all schema helper imports to dedicated /schema entrypoints per component.
@@ -36,9 +35,8 @@ Steps:
 - Update relevant tests and docs to reflect new entrypoints and action model semantics.
 - Run lint, typecheck, and tests; fix breakages.
 - Regenerate artifacts (registry/public assets) and update docs accordingly.
-- Validate UI rendering with updated schema and action contracts.`}
-  </pre>
-</div>
+- Validate UI rendering with updated schema and action contracts.
+```
 
 ### Changes
 

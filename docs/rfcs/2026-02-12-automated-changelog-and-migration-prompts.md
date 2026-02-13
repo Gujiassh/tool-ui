@@ -104,7 +104,7 @@ It validates structure only:
 
 1. release section order is valid,
 2. at most one `### Migration prompt` per release section,
-3. migration prompt block (if present) keeps required max-height style,
+3. migration prompt block (if present) uses a Fumadocs-rendered code block with copy support,
 4. no unexpected heading format regressions.
 
 CI does not re-infer content in v1.
