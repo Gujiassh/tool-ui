@@ -4,7 +4,7 @@ import { Bot } from "lucide-react";
 
 <DocsHeader
   title="Quick Start"
-  description="Get Tool UI working in your app in minutes."
+  description="Add your first Tool UI to a chat app."
   mdxPath="app/docs/quick-start/content.mdx"
 />
 
@@ -19,55 +19,76 @@ import { Bot } from "lucide-react";
   </AlertDescription>
 </Alert>
 
-## Setup
+Add a Tool UI component to a chat app. By the end you'll have an assistant that renders a rich link preview card instead of raw JSON.
+
+**What you'll build:** A backend tool that fetches link metadata, and a frontend renderer that turns the JSON response into an interactive LinkPreview card, all wired together through [assistant-ui](https://www.assistant-ui.com/).
+
+## Install
 
 <Steps>
 
-<Step title="Initialize assistant-ui">
+<Step title="Set up assistant-ui">
 
-Set up the assistant-ui runtime provider that manages the connection between your frontend and backend. This handles message streaming, tool execution, and state management.
+[assistant-ui](https://www.assistant-ui.com/) is the React runtime that manages chat state, message streaming, and tool rendering. If you already have it set up, skip to [Step 2](#add-a-tool-ui-component).
 
-**What this demonstrates:**
+The fastest way to start is with the CLI, which scaffolds a working chat app in a Next.js project:
 
-- `useChatRuntime` creates a runtime that connects to your backend API
-- `AssistantChatTransport` handles the communication protocol with your `/api/chat` endpoint
-- `AssistantRuntimeProvider` makes the runtime available to all child components
-
-```tsx
-"use client";
-import { AssistantRuntimeProvider } from "@assistant-ui/react";
-import {
-  useChatRuntime,
-  AssistantChatTransport,
-} from "@assistant-ui/react-ai-sdk";
-
-function App() {
-  const runtime = useChatRuntime({
-    transport: new AssistantChatTransport({ api: "/api/chat" }),
-  });
-
-  return (
-    <AssistantRuntimeProvider runtime={runtime}>
-      {/* Your chat UI */}
-    </AssistantRuntimeProvider>
-  );
-}
+```sh
+npx assistant-ui@latest init
 ```
+
+Or install packages manually into an existing project:
+
+```sh
+pnpm add @assistant-ui/react @assistant-ui/react-ai-sdk ai @ai-sdk/openai zod
+```
+
+Add your OpenAI API key to `.env.local`:
+
+```env
+OPENAI_API_KEY=sk-...
+```
+
+Run `pnpm dev` and confirm you see a working chat interface before continuing.
 
 </Step>
 
+<Step title="Add a Tool UI component">
+
+Install the LinkPreview component from the Tool UI registry. This works exactly like installing any shadcn component. The CLI copies the source files into your project.
+
+First, make sure your `components.json` includes the `@tool-ui` registry. You may already have this if you used `assistant-ui init`:
+
+```json
+"registries": {
+  "@assistant-ui": "https://r.assistant-ui.com/{name}.json",
+  "@tool-ui": "https://tool-ui.com/r/{name}.json"
+}
+```
+
+Then install:
+
+```bash
+npx shadcn@latest add @tool-ui/link-preview
+```
+
+This copies `components/tool-ui/link-preview/` and `components/tool-ui/shared/` into your project. You own the code. Modify it however you like.
+
+</Step>
+
+</Steps>
+
+## Wire it up
+
+With the runtime and component in place, define a backend tool that returns structured data, then register a renderer that turns that data into the LinkPreview component.
+
+<Steps>
+
 <Step title="Define a backend tool">
 
-Create a tool on your server that the LLM can call. The tool returns structured JSON that matches a Tool UI component schema. Here we're creating a link preview tool that returns data for the LinkPreview component.
+Create (or update) your API route to include a tool the LLM can call. This tool accepts a URL, fetches metadata, and returns JSON matching the LinkPreview schema.
 
-**What this demonstrates:**
-
-- `SerializableLinkPreviewSchema` ensures your tool output matches the LinkPreview component's expected format
-- `id` identifies this rendering in the conversation
-- `safeParseSerializableLinkPreview` on the frontend gates rendering until the payload is complete
-- Your tool can fetch real data (APIs, databases) and return it in the component schema format
-
-```ts
+```ts title="app/api/chat/route.ts"
 import { streamText, tool, convertToModelMessages, jsonSchema } from "ai";
 import { openai } from "@ai-sdk/openai";
 
@@ -78,6 +99,7 @@ export async function POST(req: Request) {
     model: openai("gpt-4o"),
     messages: await convertToModelMessages(messages),
     tools: {
+      // The LLM decides when to call this tool based on the description.
       previewLink: tool({
         description: "Show a preview card for a URL",
         inputSchema: jsonSchema<{ url: string }>({
@@ -86,8 +108,9 @@ export async function POST(req: Request) {
           required: ["url"],
           additionalProperties: false,
         }),
+        // execute() runs on the server when the LLM calls the tool.
+        // It returns JSON that matches the LinkPreview component's schema.
         async execute({ url }) {
-          // In production, you'd fetch real metadata here
           return {
             id: "link-preview-1",
             href: url,
@@ -104,20 +127,17 @@ export async function POST(req: Request) {
 }
 ```
 
+In a real app, you'd fetch actual metadata here (Open Graph tags, screenshots, etc.).
+
 </Step>
 
-<Step title="Register the Tool UI">
+<Step title="Register the renderer">
 
-Connect your backend tool to a frontend component. When the LLM calls the `previewLink` tool, assistant-ui will automatically render the LinkPreview component with the returned data.
+On the client, register a renderer so assistant-ui knows how to display `previewLink` results.
 
-**What this demonstrates:**
+```tsx title="app/page.tsx"
+"use client";
 
-- `Tools({ toolkit })` registers tool renderers in one place
-- `safeParseSerializableLinkPreview` is the render gate: no payload, no render (`return null`)
-- The toolkit key (`previewLink`) must match your backend tool name
-- `useAui({ tools: ... })` wires tool rendering into `AssistantRuntimeProvider`
-
-```tsx
 import {
   AssistantRuntimeProvider,
   Tools,
@@ -125,92 +145,66 @@ import {
   type Toolkit,
 } from "@assistant-ui/react";
 import {
-  LinkPreview,
-} from "@/components/tool-ui/link-preview";
-import { safeParseSerializableLinkPreview } from "@/components/tool-ui/link-preview/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
-import {
   useChatRuntime,
   AssistantChatTransport,
 } from "@assistant-ui/react-ai-sdk";
+import { LinkPreview } from "@/components/tool-ui/link-preview";
+import { safeParseSerializableLinkPreview } from "@/components/tool-ui/link-preview/schema";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
+// Map backend tool names to frontend renderers.
+// The key "previewLink" must match the tool name in your API route.
 const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
     render: createResultToolRenderer({
+      // Only render when the full payload is valid.
+      // While the LLM is still streaming, safeParse returns null → nothing renders.
       safeParse: safeParseSerializableLinkPreview,
-      render: (parsedResult) => (
-        <>
-            <LinkPreview {...parsedResult} maxWidth="420px" />
-        </>
-      ),
+      render: (parsed) => <LinkPreview {...parsed} />,
     }),
   },
 };
 
-function App() {
+export default function Page() {
+  // Connect to your /api/chat route.
   const runtime = useChatRuntime({
     transport: new AssistantChatTransport({ api: "/api/chat" }),
   });
+
+  // Register the toolkit so the runtime knows how to render tool results.
   const aui = useAui({ tools: Tools({ toolkit }) });
 
   return (
     <AssistantRuntimeProvider runtime={runtime} aui={aui}>
-      <Thread />
+      {/* Your chat thread component */}
     </AssistantRuntimeProvider>
   );
 }
 ```
 
-That's it! When a user asks the assistant to preview a link, it will call your tool and render the LinkPreview component.
+Run `pnpm dev`, then ask the assistant to "preview https://example.com." Instead of raw JSON, you'll see a styled LinkPreview card in the conversation.
 
 </Step>
 
 </Steps>
 
-## Installation
+## Add more components
 
-The fastest way to get started is with the assistant-ui CLI:
+Same pattern for any component:
 
-```sh
-npx assistant-ui@latest init
-```
-
-Or install packages manually if you prefer to configure yourself:
-
-```sh
-pnpm add @assistant-ui/react @assistant-ui/react-ai-sdk ai @ai-sdk/openai zod
-```
-
-Add your OpenAI API key to your environment variables:
-
-```env
-OPENAI_API_KEY=sk-...
-```
-
-### Install Tool UI components via the shadcn registry
-
-Tool UI publishes every component as a shadcn registry entry under `https://tool-ui.com/r/<component>.json`. Each JSON snippet bundles component code plus the shared helpers from `components/tool-ui/shared`, and expects your app's existing shadcn `@/lib/utils` helper.
-
-1. Make sure your `components.json` lists the `@tool-ui` registry alongside the default `@assistant-ui` registry so the CLI knows where to fetch the files. This repo already has the necessary entry:
-
-```json
-"registries": {
-  "@assistant-ui": "https://r.assistant-ui.com/{name}.json",
-  "@tool-ui": "https://tool-ui.com/r/{name}.json"
-}
-```
-
-2. Run the shadcn CLI with the `@tool-ui/<component>` namespace for the component you want. For example:
+1. Install from the registry:
 
 ```bash
-npx shadcn@latest add @tool-ui/plan
+npx shadcn@latest add @tool-ui/approval-card
 ```
 
+2. Define a backend tool that returns data matching the component's schema.
+3. Register a renderer in your toolkit that maps the tool name to the component.
 
-The CLI will copy `components/tool-ui/plan`, `components/tool-ui/shared` into your project and wire up the right Tailwind styles, just like any other shadcn block.
+Every component ships with a colocated `schema.ts` exporting a Zod schema and a `safeParseSerializable{ComponentName}` function for validating tool output on both server and client.
 
-3. Repeat the command (or rerun the CLI) for additional Tool UI surfaces; the registry automatically lists every surface we ship, and each artifact brings along the `shared` helpers it needs.
+Browse all available components in the [Gallery](/docs/gallery).
 
 ## Frontend tools (interactive Tool UIs)
 
@@ -340,7 +334,7 @@ Tool UI components are installed from registry entries, and each entry includes 
 
 [assistant-ui](https://www.assistant-ui.com/) supports multiple runtimes: [AI SDK](https://ai-sdk.dev/), [LangGraph](https://langchain-ai.github.io/langgraphjs/), LangServe, [Mastra](https://mastra.dev/), or custom backends. The examples above use AI SDK v6.
 
-## Next Steps
+## Next steps
 
 - [**Explore Components**](/docs/data-table): Data Table, Image, Video, Link Preview, Option List, X Post, Instagram Post, LinkedIn Post
 - [**UI Guidelines**](/docs/design-guidelines): Learn the interaction patterns

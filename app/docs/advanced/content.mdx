@@ -8,7 +8,7 @@ import { DocsHeader } from "../_components/docs-header";
 
 ## Tool Type Inference
 
-With `InferUITools` in AI SDK 6, you can infer tool input/output types from your tool set and get fully typed `message.parts` in the UI.
+`InferUITools` (AI SDK 6) infers tool input/output types from your tool set and gives you fully typed `message.parts` in the UI.
 
 - [**InferUITools reference**](https://ai-sdk.dev/docs/reference/ai-sdk-ui/infer-ui-tools)
 
@@ -126,7 +126,7 @@ Export only types from `lib/tools.ts` to the client; never import server code in
 
 ### Single-tool helpers
 
-For a single tool, `InferUITool` works the same way as `InferUITools` but for one tool definition.
+`InferUITool` (singular) does the same thing for a single tool definition.
 
 ### End-to-end validation
 
@@ -147,4 +147,120 @@ Inside Tool UI toolkit renderers, use a strict gate:
 const parsed = safeParseSerializableX(resultOrArgs);
 if (!parsed) return null;
 return <X {...parsed} />;
+```
+
+## Frontend tools (interactive Tool UIs)
+
+Decision surfaces like OptionList are best modeled as **frontend tools**: the model calls a tool whose arguments are the component props, and your UI calls `addResult(...)` after the user confirms. The result feeds back into the conversation as a tool result.
+
+If you're using `AssistantChatTransport`, it forwards **system instructions** and **registered tools** in the request body. Your `/api/chat` route needs to read and forward them, otherwise the model won't see your frontend tools.
+
+```ts title="app/api/chat/route.ts"
+import { openai } from "@ai-sdk/openai";
+import {
+  streamText,
+  convertToModelMessages,
+  jsonSchema,
+  type UIMessage,
+  type JSONSchema7,
+} from "ai";
+
+type ForwardedTools = Record<
+  string,
+  { description?: string; parameters: JSONSchema7 }
+>;
+
+function toStreamTextTools(tools?: ForwardedTools) {
+  if (!tools) return undefined;
+  return Object.fromEntries(
+    Object.entries(tools).map(([name, tool]) => [
+      name,
+      {
+        ...(tool.description ? { description: tool.description } : {}),
+        inputSchema: jsonSchema(tool.parameters),
+      },
+    ]),
+  );
+}
+
+export async function POST(req: Request) {
+  const body = (await req.json()) as {
+    messages: UIMessage[];
+    system?: string;
+    tools?: ForwardedTools;
+  };
+
+  const result = streamText({
+    model: openai("gpt-4o"),
+    messages: await convertToModelMessages(body.messages),
+    system: body.system,
+    tools: toStreamTextTools(body.tools),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+### Register a frontend tool
+
+Register the tool on the client so `AssistantChatTransport` forwards it to the model.
+
+```tsx
+"use client";
+
+import { type Toolkit } from "@assistant-ui/react";
+import { OptionList } from "@/components/tool-ui/option-list";
+import {
+  safeParseSerializableOptionList,
+  SerializableOptionListSchema,
+} from "@/components/tool-ui/option-list/schema";
+import { createArgsToolRenderer } from "@/components/tool-ui/shared";
+
+export const toolkit: Toolkit = {
+  selectFormat: {
+    // description and parameters are forwarded to the model.
+    description: "Ask the user to choose an output format.",
+    parameters: SerializableOptionListSchema,
+    // For frontend tools, use createArgsToolRenderer (parses args, not result).
+    render: createArgsToolRenderer({
+      safeParse: safeParseSerializableOptionList,
+      idPrefix: "format-selection",
+      render: (parsedArgs, { result, addResult }) => {
+        if (result) {
+          // After the user confirms, render the receipt state.
+          return (
+            <OptionList {...parsedArgs} value={undefined} choice={result} />
+          );
+        }
+
+        return (
+          <OptionList
+            {...parsedArgs}
+            value={undefined}
+            onConfirm={(selection) => addResult?.(selection)}
+          />
+        );
+      },
+    }),
+  },
+};
+```
+
+Pass this toolkit to `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so the definition and renderer are forwarded by `AssistantChatTransport`.
+
+### Auto-continue after `addResult(...)`
+
+To have the assistant continue automatically after the user confirms, enable auto-resubmit:
+
+```tsx
+import {
+  useChatRuntime,
+  AssistantChatTransport,
+} from "@assistant-ui/react-ai-sdk";
+import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+
+const runtime = useChatRuntime({
+  transport: new AssistantChatTransport({ api: "/api/chat" }),
+  sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+});
 ```
