@@ -21,6 +21,7 @@ import { useSignatureReset } from "../shared/use-signature-reset";
 
 import { cn } from "./_adapter";
 import {
+  advanceEasedSliderPercent,
   createSliderSignature,
   createSliderValueSnapshot,
   sliderRangeToPercent,
@@ -405,6 +406,39 @@ function SliderRow({
     ? sliderRangeToPercent({ value: 0, min, max })
     : 0;
   const valuePercent = sliderRangeToPercent({ value, min, max });
+  const [easedValuePercent, setEasedValuePercent] = useState(valuePercent);
+  const easedValuePercentRef = useRef(valuePercent);
+
+  useEffect(() => {
+    let animationFrameId = 0;
+
+    const tick = () => {
+      const next = advanceEasedSliderPercent({
+        current: easedValuePercentRef.current,
+        target: valuePercent,
+        isDragging,
+      });
+
+      easedValuePercentRef.current = next;
+      setEasedValuePercent(next);
+
+      if (next !== valuePercent) {
+        animationFrameId = window.requestAnimationFrame(tick);
+      }
+    };
+
+    animationFrameId = window.requestAnimationFrame(tick);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [valuePercent, isDragging]);
+
+  const handleAlignmentOffset = useMemo(
+    () =>
+      `calc(${toRadixThumbPosition(easedValuePercent)} - ${toRadixThumbPosition(valuePercent)})`,
+    [easedValuePercent, valuePercent],
+  );
 
   // Fill clip-path uses the same inset coordinate system as the handle.
   // This keeps the collapsed stroke aligned with the fill edge near extremes.
@@ -414,33 +448,34 @@ function SliderRow({
     const toClipFromLeftInset = (percent: number) =>
       toRadixThumbPosition(percent);
     const TERMINAL_EPSILON = 1e-6;
+    const fillPercent = easedValuePercent;
 
     if (crossesZero) {
       // Keep interior fill aligned to Radix thumb math, but snap to exact
       // track borders at terminal values to avoid edge gaps.
-      if (valuePercent <= TERMINAL_EPSILON) {
+      if (fillPercent <= TERMINAL_EPSILON) {
         return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 0)`;
       }
-      if (valuePercent >= 100 - TERMINAL_EPSILON) {
+      if (fillPercent >= 100 - TERMINAL_EPSILON) {
         return `inset(0 0 0 ${toClipFromLeftInset(zeroPercent)})`;
       }
-      if (valuePercent >= zeroPercent) {
+      if (fillPercent >= zeroPercent) {
         // Positive: clip from zero on left, value on right
-        return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
+        return `inset(0 ${toClipFromRightInset(fillPercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
       } else {
         // Negative: clip from value on left, zero on right
-        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
+        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(fillPercent)})`;
       }
     }
     // Non-crossing: keep Radix alignment internally, but snap to exact borders at terminals.
-    if (valuePercent <= TERMINAL_EPSILON) {
+    if (fillPercent <= TERMINAL_EPSILON) {
       return "inset(0 100% 0 0)";
     }
-    if (valuePercent >= 100 - TERMINAL_EPSILON) {
+    if (fillPercent >= 100 - TERMINAL_EPSILON) {
       return "inset(0 0 0 0)";
     }
-    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 0)`;
-  }, [crossesZero, zeroPercent, valuePercent]);
+    return `inset(0 ${toClipFromRightInset(fillPercent)} 0 0)`;
+  }, [crossesZero, easedValuePercent, zeroPercent]);
 
   const fillMaskImage = crossesZero
     ? "linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.7) 100%)"
@@ -451,11 +486,12 @@ function SliderRow({
   const reflectionStyle = useMemo(() => {
     const edgeThreshold = 3;
     const nearEdge =
-      valuePercent <= edgeThreshold || valuePercent >= 100 - edgeThreshold;
+      easedValuePercent <= edgeThreshold ||
+      easedValuePercent >= 100 - edgeThreshold;
 
     // Narrower spread when stationary at edges (~35% narrower)
     const spreadPercent = nearEdge && !isDragging ? 6.5 : 10;
-    const handlePos = toRadixThumbPosition(valuePercent);
+    const handlePos = toRadixThumbPosition(easedValuePercent);
     const start = `clamp(0%, calc(${handlePos} - ${spreadPercent}%), 100%)`;
     const end = `clamp(0%, calc(${handlePos} + ${spreadPercent}%), 100%)`;
 
@@ -472,13 +508,14 @@ function SliderRow({
       maskComposite: "exclude",
       padding: "1px",
     };
-  }, [valuePercent, isDragging]);
+  }, [easedValuePercent, isDragging]);
 
   // Opacity scales with handle size: rest → hover → drag
   const reflectionOpacity = useMemo(() => {
     const edgeThreshold = 3;
     const atEdge =
-      valuePercent <= edgeThreshold || valuePercent >= 100 - edgeThreshold;
+      easedValuePercent <= edgeThreshold ||
+      easedValuePercent >= 100 - edgeThreshold;
 
     if (isDragging || atEdge) {
       return 1;
@@ -487,7 +524,7 @@ function SliderRow({
       return 0.6;
     }
     return 0;
-  }, [valuePercent, isDragging, isHovered]);
+  }, [easedValuePercent, isDragging, isHovered]);
 
   const handleValueChange = useCallback(
     (values: number[]) => {
@@ -593,15 +630,15 @@ function SliderRow({
             // Calculate morph state
             const isActive = isHovered || isDragging;
 
-            // Simple fixed offset - fill now uses same coordinate system as thumb
-            // Indicator sits at thumb center, which aligns with fill edge
-            const fillEdgeOffset = 0;
+            // Move the visual handle toward the eased position so handle and fill
+            // animate together while preserving Radix hit-target behavior.
+            const fillEdgeOffset = handleAlignmentOffset;
 
             // Hide rest-state indicator at edges (0% or 100%) - the reflection gradient handles this
             const edgeThreshold = 3;
             const atEdge =
-              valuePercent <= edgeThreshold ||
-              valuePercent >= 100 - edgeThreshold;
+              easedValuePercent <= edgeThreshold ||
+              easedValuePercent >= 100 - edgeThreshold;
             const restOpacity = atEdge ? 0 : 0.25;
 
             // Asymmetric segment heights: gap is shifted up to match raised text position
@@ -630,7 +667,7 @@ function SliderRow({
                     resolvedHandleClassName ?? "bg-primary",
                   )}
                   style={{
-                    transform: `translateX(calc(-50% + ${fillEdgeOffset}px))`,
+                    transform: `translateX(calc(-50% + ${fillEdgeOffset}))`,
                     height: topHeight,
                     opacity: isActive ? 1 : restOpacity,
                   }}
@@ -648,7 +685,7 @@ function SliderRow({
                     resolvedHandleClassName ?? "bg-primary",
                   )}
                   style={{
-                    transform: `translateX(calc(-50% + ${fillEdgeOffset}px))`,
+                    transform: `translateX(calc(-50% + ${fillEdgeOffset}))`,
                     height: bottomHeight,
                     opacity: isActive ? 1 : restOpacity,
                   }}
