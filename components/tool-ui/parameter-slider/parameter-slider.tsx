@@ -364,9 +364,13 @@ function SliderRow({
     setFullGap(releaseGap);
   }, [value, min, max, layoutVersion]);
 
-  // While dragging: gradual separation based on distance
-  // On release: fully open if intersecting text, fully closed otherwise
-  const gap = isDragging ? dragGap : intersectsText ? fullGap : 0;
+  // While dragging: use distance-based separation, but never collapse below
+  // the release split when the thumb still intersects text.
+  const gap = isDragging
+    ? Math.max(dragGap, intersectsText ? fullGap : 0)
+    : intersectsText
+      ? fullGap
+      : 0;
 
   const ticks = useMemo(() => {
     // Generate equidistant ticks regardless of step value
@@ -413,19 +417,27 @@ function SliderRow({
       `calc(100% - ${toRadixThumbPosition(percent)})`;
     const toClipFromLeftInset = (percent: number) =>
       toRadixThumbPosition(percent);
-    const minInset = toRadixThumbPosition(0);
+    const TERMINAL_EPSILON = 1e-6;
+    const snapLeftInset = (percent: number) => {
+      if (percent <= TERMINAL_EPSILON) return "0";
+      if (percent >= 100 - TERMINAL_EPSILON) return "100%";
+      return toClipFromLeftInset(percent);
+    };
+    const snapRightInset = (percent: number) => {
+      if (percent <= TERMINAL_EPSILON) return "100%";
+      if (percent >= 100 - TERMINAL_EPSILON) return "0";
+      return toClipFromRightInset(percent);
+    };
 
     if (crossesZero) {
-      if (valuePercent >= zeroPercent) {
-        // Positive: clip from zero on left, value on right
-        return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${toClipFromLeftInset(zeroPercent)})`;
-      } else {
-        // Negative: clip from value on left, zero on right
-        return `inset(0 ${toClipFromRightInset(zeroPercent)} 0 ${toClipFromLeftInset(valuePercent)})`;
-      }
+      // Keep center anchor stable by always clipping the low/high pair,
+      // independent of sign branch, then snapping at terminal edges.
+      const lowPercent = Math.min(valuePercent, zeroPercent);
+      const highPercent = Math.max(valuePercent, zeroPercent);
+      return `inset(0 ${snapRightInset(highPercent)} 0 ${snapLeftInset(lowPercent)})`;
     }
-    // Non-crossing: fill from min inset to value inset
-    return `inset(0 ${toClipFromRightInset(valuePercent)} 0 ${minInset})`;
+    // Non-crossing: fill starts at left edge; snap right inset at terminals.
+    return `inset(0 ${snapRightInset(valuePercent)} 0 0)`;
   }, [crossesZero, zeroPercent, valuePercent]);
 
   const fillMaskImage = crossesZero
@@ -491,6 +503,11 @@ function SliderRow({
         className={cn(
           "group/slider relative flex w-full touch-none items-center select-none",
           "isolate h-12",
+          isDragging
+            ? "[&>span]:transition-[left,transform] [&>span]:duration-45 [&>span]:ease-linear"
+            : "[&>span]:transition-[left,transform] [&>span]:duration-90 [&>span]:ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "[&>span]:will-change-[left,transform]",
+          "motion-reduce:[&>span]:transition-none",
           disabled && "pointer-events-none opacity-50",
         )}
         value={[value]}
@@ -516,7 +533,11 @@ function SliderRow({
         >
           <div
             className={cn(
-              "absolute inset-0",
+              "absolute inset-0 will-change-[clip-path]",
+              isDragging
+                ? "transition-[clip-path] duration-45 ease-linear"
+                : "transition-[clip-path] duration-90 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "motion-reduce:transition-none",
               resolvedFillClassName ?? "bg-primary/30 dark:bg-primary/40",
             )}
             style={{
@@ -554,7 +575,13 @@ function SliderRow({
 
         {/* Metallic reflection overlay - follows handle, brightness scales with interaction */}
         <div
-          className="squircle pointer-events-none absolute inset-0 rounded-sm transition-[opacity] duration-200 ease-[var(--cubic-ease-in-out)]"
+          className={cn(
+            "squircle pointer-events-none absolute inset-0 rounded-sm",
+            isDragging
+              ? "transition-[opacity,background] duration-45 ease-linear"
+              : "transition-[opacity,background] duration-90 ease-[cubic-bezier(0.22,1,0.36,1)]",
+            "motion-reduce:transition-none",
+          )}
           style={{
             ...reflectionStyle,
             opacity: reflectionOpacity,
@@ -579,8 +606,8 @@ function SliderRow({
             // Calculate morph state
             const isActive = isHovered || isDragging;
 
-            // Simple fixed offset - fill now uses same coordinate system as thumb
-            // Indicator sits at thumb center, which aligns with fill edge
+            // Indicator stays centered on the real thumb while CSS transitions
+            // smooth thumb wrapper and fill movement together.
             const fillEdgeOffset = 0;
 
             // Hide rest-state indicator at edges (0% or 100%) - the reflection gradient handles this
@@ -652,13 +679,13 @@ function SliderRow({
         >
           <span
             ref={labelRef}
-            className="text-primary -mt-px rounded-full px-2 py-px text-sm font-normal tracking-wide [text-shadow:0.5px_0.5px_0_rgba(0,0,0,0.35)]"
+            className="text-primary -mt-px rounded-full px-2 py-px text-sm font-normal tracking-wide"
           >
             {label}
           </span>
           <span
             ref={valueRef}
-            className="text-foreground -mt-px -mb-0.5 flex h-6 items-center rounded-full px-2 font-mono text-xs tabular-nums [text-shadow:0.5px_0.5px_0_rgba(0,0,0,0.35)]"
+            className="text-foreground -mt-px -mb-0.5 flex h-6 items-center rounded-full px-2 font-mono text-xs tabular-nums"
           >
             {formatSignedValue(value, min, max, precision, unit)}
           </span>
