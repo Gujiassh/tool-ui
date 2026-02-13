@@ -1,5 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { parseInferredReleaseNotes } from "@/lib/changelog/inference";
+import {
+  ensureCriticalMigrationCoverage,
+  parseInferredReleaseNotes,
+} from "@/lib/changelog/inference";
 
 describe("changelog inference parser", () => {
   test("parses fenced JSON output", () => {
@@ -99,5 +102,49 @@ describe("changelog inference parser", () => {
     expect(parsed.migrationPrompt).toBe(
       "Migrate codebase to adopt explicit /schema entrypoints for Tool UI schemas.",
     );
+  });
+
+  test("adds action-model migration coverage when action-model signals are present", () => {
+    const covered = ensureCriticalMigrationCoverage(
+      {
+        breakingChanges: [
+          "Tool UI component entrypoints now enforce /schema boundaries.",
+        ],
+        changes: ["Tool UI: repo-wide enforcement of /schema entrypoints."],
+        migrationPrompt:
+          "Migrate codebase to adopt explicit /schema entrypoints for Tool UI schemas.",
+      },
+      {
+        changedFiles: [
+          "components/tool-ui/shared/local-actions.tsx",
+          "components/tool-ui/shared/decision-actions.tsx",
+        ],
+        commitSummary: "- abc1234 feat: action model cutover",
+      },
+    );
+
+    expect(covered.breakingChanges.join("\n")).toContain("LocalActions");
+    expect(covered.changes.join("\n")).toContain("DecisionActions");
+    expect(covered.migrationPrompt).toContain(
+      "Migrate action handling to the bound compound model using LocalActions / DecisionActions.",
+    );
+  });
+
+  test("does not add action-model migration coverage without action-model signals", () => {
+    const source = {
+      breakingChanges: [
+        "Tool UI component entrypoints now enforce /schema boundaries.",
+      ],
+      changes: ["Tool UI: repo-wide enforcement of /schema entrypoints."],
+      migrationPrompt:
+        "Migrate codebase to adopt explicit /schema entrypoints for Tool UI schemas.",
+    };
+
+    const covered = ensureCriticalMigrationCoverage(source, {
+      changedFiles: ["components/tool-ui/data-table/schema.ts"],
+      commitSummary: "- def5678 feat: schema boundary hardening",
+    });
+
+    expect(covered).toEqual(source);
   });
 });

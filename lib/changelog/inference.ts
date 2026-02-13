@@ -17,8 +17,23 @@ type InferReleaseNotesInput = {
   changelogTemplateContext: string;
 };
 
+type CriticalMigrationEvidence = Pick<
+  InferReleaseNotesInput,
+  "commitSummary" | "changedFiles"
+>;
+
 const RELEASE_NOTES_SYSTEM_PROMPT =
   "You are generating release notes for a public changelog. Return strict JSON only.";
+
+const ACTION_MODEL_BREAKING_CHANGE =
+  "Tool UI action model migrated to bound compound action surfaces. Legacy inline response-action patterns were removed in favor of `LocalActions` / `DecisionActions`, and outlier components now use dedicated action configs. See [Actions](/docs/actions).";
+const ACTION_MODEL_CHANGE =
+  "Tool UI action model refactor: migrated components to bound compound action surfaces via `LocalActions` and `DecisionActions`. See [Actions](/docs/actions).";
+const ACTION_MODEL_PROMPT_STEPS = [
+  "Migrate action handling to the bound compound model using LocalActions / DecisionActions.",
+  "Remove legacy inline response-action usage and adopt dedicated outlier action configs where applicable.",
+  "Update tests and docs to reflect action model semantics.",
+];
 
 function extractJsonPayload(text: string): string {
   const fencedMatch = text.match(/```json\s*([\s\S]*?)```/i);
@@ -105,6 +120,75 @@ function normalizeInferredNotes(notes: InferredReleaseNotes): InferredReleaseNot
       normalizedBreakingChanges.length > 0
         ? normalizedMigrationPrompt
         : null,
+  };
+}
+
+function containsActionModelSignal(text: string): boolean {
+  return /action model|localactions|decisionactions|response-action|toolui\.(localactions|decisionactions)/i.test(
+    text,
+  );
+}
+
+function hasActionModelEvidence(evidence: CriticalMigrationEvidence): boolean {
+  if (containsActionModelSignal(evidence.commitSummary)) {
+    return true;
+  }
+
+  return evidence.changedFiles.some((filePath) =>
+    /components\/tool-ui\/shared\/(local-actions|decision-actions|tool-ui|tool-ui-context|schema)\.tsx?$|components\/tool-ui\/(option-list|parameter-slider|preferences-panel)\//i.test(
+      filePath,
+    ),
+  );
+}
+
+function appendActionModelMigrationSteps(prompt: string | null): string {
+  if (!prompt || prompt.trim().length === 0) {
+    return [
+      ACTION_MODEL_PROMPT_STEPS[0],
+      "",
+      "Steps:",
+      `- ${ACTION_MODEL_PROMPT_STEPS[1]}`,
+      `- ${ACTION_MODEL_PROMPT_STEPS[2]}`,
+    ].join("\n");
+  }
+
+  if (containsActionModelSignal(prompt)) {
+    return prompt;
+  }
+
+  return [
+    prompt.trimEnd(),
+    "",
+    "Action model steps:",
+    `- ${ACTION_MODEL_PROMPT_STEPS[0]}`,
+    `- ${ACTION_MODEL_PROMPT_STEPS[1]}`,
+    `- ${ACTION_MODEL_PROMPT_STEPS[2]}`,
+  ].join("\n");
+}
+
+export function ensureCriticalMigrationCoverage(
+  notes: InferredReleaseNotes,
+  evidence: CriticalMigrationEvidence,
+): InferredReleaseNotes {
+  if (!hasActionModelEvidence(evidence)) {
+    return notes;
+  }
+
+  const breakingChanges = [...notes.breakingChanges];
+  const changes = [...notes.changes];
+
+  if (!breakingChanges.some((item) => containsActionModelSignal(item))) {
+    breakingChanges.push(ACTION_MODEL_BREAKING_CHANGE);
+  }
+
+  if (!changes.some((item) => containsActionModelSignal(item))) {
+    changes.push(ACTION_MODEL_CHANGE);
+  }
+
+  return {
+    breakingChanges,
+    changes,
+    migrationPrompt: appendActionModelMigrationSteps(notes.migrationPrompt),
   };
 }
 
@@ -197,5 +281,9 @@ export async function inferReleaseNotes(
     prompt: buildInferencePrompt(input),
   });
 
-  return parseInferredReleaseNotes(text);
+  const parsedNotes = parseInferredReleaseNotes(text);
+  return ensureCriticalMigrationCoverage(parsedNotes, {
+    commitSummary: input.commitSummary,
+    changedFiles: input.changedFiles,
+  });
 }
