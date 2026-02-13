@@ -20,6 +20,25 @@ function makePayload(): SerializableOptionList {
 }
 
 describe("option-list schema contract", () => {
+  test("accepts unified actions payload key", () => {
+    const payload = {
+      ...makePayload(),
+      actions: [{ id: "confirm", label: "Confirm" }],
+    };
+
+    expect(() => parseSerializableOptionList(payload)).not.toThrow();
+  });
+
+  test("rejects legacy selectionActions payload key", () => {
+    const payload = {
+      ...makePayload(),
+      selectionActions: [{ id: "confirm", label: "Confirm" }],
+    };
+
+    expect(() => parseSerializableOptionList(payload)).toThrow();
+    expect(safeParseSerializableOptionList(payload)).toBeNull();
+  });
+
   test("rejects minSelections greater than maxSelections", () => {
     const payload = {
       ...makePayload(),

@@ -19,7 +19,7 @@ describe("option-list selection contract", () => {
     expect(Array.from(next)).toEqual(["alpha", "beta"]);
   });
 
-  test("treats empty selectionActions arrays as not configured", () => {
+  test("treats empty actions arrays as not configured", () => {
     expect(normalizeActionsConfig([])).toBeNull();
   });
 });

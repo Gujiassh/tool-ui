@@ -298,7 +298,11 @@ export const toolkit: Toolkit = {
             {...parsedArgs}
             // Avoid controlled selection in LLM-driven payloads.
             value={undefined}
-            onConfirm={(selection) => addResult?.(selection)}
+            onAction={(actionId, selection) => {
+              if (actionId === "confirm") {
+                void addResult?.(selection);
+              }
+            }}
           />
         );
       },

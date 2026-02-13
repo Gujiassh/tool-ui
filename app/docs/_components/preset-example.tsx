@@ -62,20 +62,22 @@ function generateOptionListCode(preset: OptionListPresetName): string {
     props.push(`  choice={${choiceValue}}`);
   }
 
-  if (list.selectionActions) {
-    const hasActions = Array.isArray(list.selectionActions)
-      ? list.selectionActions.length > 0
-      : list.selectionActions.items.length > 0;
+  if (list.actions) {
+    const hasActions = Array.isArray(list.actions)
+      ? list.actions.length > 0
+      : list.actions.items.length > 0;
 
     if (hasActions) {
       props.push(
-        `  selectionActions={${JSON.stringify(list.selectionActions, null, 4).replace(/\n/g, "\n  ")}}`,
+        `  actions={${JSON.stringify(list.actions, null, 4).replace(/\n/g, "\n  ")}}`,
       );
     }
   }
 
   if (!list.choice) {
-    props.push(`  onConfirm={(selection) => console.log(selection)}`);
+    props.push(
+      `  onAction={(actionId, selection) => {\n    if (actionId === "confirm") {\n      console.log(selection);\n    }\n  }}`,
+    );
   }
 
   return `<OptionList\n${props.join("\n")}\n/>`;

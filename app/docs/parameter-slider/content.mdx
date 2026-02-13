@@ -39,7 +39,7 @@ export function Example() {
         { id: "contrast", label: "Contrast", min: -100, max: 100, step: 5, value: 15, unit: "%" },
         { id: "highlights", label: "Highlights", min: -100, max: 100, step: 5, value: -20, unit: "%" },
       ]}
-      onAdjustmentAction={(actionId, values) => {
+      onAction={(actionId, values) => {
         console.log(actionId, values);
       }}
     />
@@ -76,7 +76,7 @@ export const toolkit: Toolkit = {
       render: (parsedArgs, { addResult }) => (
           <ParameterSlider
             {...parsedArgs}
-            onAdjustmentAction={(actionId, values) => {
+            onAction={(actionId, values) => {
               if (actionId === "apply") {
                 void addResult?.({ values });
               }
@@ -135,17 +135,17 @@ These snippets use [assistant-ui](https://assistant-ui.com) for end-to-end wirin
       description: "Called when any slider value changes",
       type: "(values: SliderValue[]) => void",
     },
-    adjustmentActions: {
+    actions: {
       description: "Action buttons (defaults to Reset/Apply)",
       type: "Action[] | ActionsConfig",
     },
-    onAdjustmentAction: {
-      description: "Called when an action button is clicked",
-      type: "(actionId: string, values: SliderValue[]) => void",
+    onAction: {
+      description: "Called when an action button is clicked with post-action values",
+      type: "(actionId: string, values: SliderValue[]) => void | Promise<void>",
     },
-    onBeforeAdjustmentAction: {
-      description: "Called before action, return false to cancel",
-      type: "(actionId: string) => boolean | Promise<boolean>",
+    onBeforeAction: {
+      description: "Called before action with current values, return false to cancel",
+      type: "(actionId: string, values: SliderValue[]) => boolean | Promise<boolean>",
     },
     className: {
       description: "Additional CSS classes",

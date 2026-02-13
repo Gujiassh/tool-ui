@@ -24,6 +24,24 @@ function makePayload(): SerializableParameterSlider {
 }
 
 describe("parameter-slider schema contract", () => {
+  test("accepts unified actions payload key", () => {
+    const payload = makePayload();
+    payload.actions = [{ id: "apply", label: "Apply" }];
+
+    const result = SerializableParameterSliderSchema.safeParse(payload);
+    expect(result.success).toBe(true);
+  });
+
+  test("rejects legacy adjustmentActions payload key", () => {
+    const payload = {
+      ...makePayload(),
+      adjustmentActions: [{ id: "apply", label: "Apply" }],
+    };
+
+    const result = SerializableParameterSliderSchema.safeParse(payload);
+    expect(result.success).toBe(false);
+  });
+
   test("rejects non-increasing ranges", () => {
     const payload = makePayload();
     payload.sliders[0] = { ...payload.sliders[0], min: 10, max: 10 };

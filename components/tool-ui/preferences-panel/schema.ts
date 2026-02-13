@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { type ActionsProp } from "../shared/actions-config";
+import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import { defineToolUiContract } from "../shared/contract";
 import {
   SerializableActionSchema,
@@ -67,7 +68,7 @@ const PreferencesPanelBaseSchema = z.object({
 
 export const SerializablePreferencesPanelSchema = PreferencesPanelBaseSchema
   .extend({
-    formActions: z
+    actions: z
       .union([
         z.array(SerializableActionSchema),
         SerializableActionsConfigSchema,
@@ -127,19 +128,14 @@ export interface PreferencesValue {
 
 export interface PreferencesPanelProps extends Omit<
   SerializablePreferencesPanel,
-  "formActions"
+  "actions"
 > {
   className?: string;
   value?: PreferencesValue;
   onChange?: (value: PreferencesValue) => void;
-  onSave?: (value: PreferencesValue) => void | Promise<void>;
-  onCancel?: () => void;
-  formActions?: ActionsProp;
-  onFormAction?: (
-    actionId: string,
-    value: PreferencesValue,
-  ) => void | Promise<void>;
-  onBeforeFormAction?: (actionId: string) => boolean | Promise<boolean>;
+  actions?: ActionsProp;
+  onAction?: EmbeddedActionsProps<PreferencesValue>["onAction"];
+  onBeforeAction?: EmbeddedActionsProps<PreferencesValue>["onBeforeAction"];
 }
 
 export interface PreferencesPanelReceiptProps
