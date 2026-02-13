@@ -27,6 +27,7 @@ describe("mermaid render container contract", () => {
   let root: Root | null = null;
 
   beforeEach(() => {
+    vi.resetModules();
     container = document.createElement("div");
     document.body.appendChild(container);
     initializeMock.mockClear();
@@ -53,10 +54,10 @@ describe("mermaid render container contract", () => {
     });
 
     await act(async () => {
-      await Promise.resolve();
-      await Promise.resolve();
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      await Promise.resolve();
+      for (let i = 0; i < 50 && renderMock.mock.calls.length === 0; i += 1) {
+        await Promise.resolve();
+        await new Promise((resolve) => setTimeout(resolve, 5));
+      }
     });
 
     expect(renderMock).toHaveBeenCalled();
