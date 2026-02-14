@@ -5,9 +5,9 @@ import { z } from "zod";
 import type { InferredReleaseNotes } from "./changelog";
 
 const InferredReleaseNotesSchema = z.object({
-  breakingChanges: z.array(z.string().min(1)).default([]),
+  breakingChanges: z.array(z.string().min(1)),
   changes: z.array(z.string().min(1)).min(1),
-  migrationPrompt: z.string().min(1).nullable().default(null),
+  migrationPrompt: z.string().min(1).nullable(),
 });
 
 type InferReleaseNotesInput = {
