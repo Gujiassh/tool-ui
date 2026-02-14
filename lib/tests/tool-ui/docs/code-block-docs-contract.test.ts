@@ -18,4 +18,21 @@ describe("code-block docs contract", () => {
     expect(content).toContain("maxCollapsedLines");
     expect(content).not.toContain("long snippets auto-collapse");
   });
+
+  test("uses CodeBlock.Standard consistently in usage snippets", () => {
+    const docsContent = readFileSync(
+      path.join(getProjectRoot(), "app/docs/code-block/content.mdx"),
+      "utf8",
+    );
+    const presetExampleContent = readFileSync(
+      path.join(getProjectRoot(), "app/docs/_components/preset-example.tsx"),
+      "utf8",
+    );
+
+    expect(docsContent).toContain("<CodeBlock.Standard");
+    expect(docsContent).not.toContain("<CodeBlock.Root");
+
+    expect(presetExampleContent).toContain("return `<CodeBlock.Standard");
+    expect(presetExampleContent).not.toContain("return `<CodeBlock.Root");
+  });
 });

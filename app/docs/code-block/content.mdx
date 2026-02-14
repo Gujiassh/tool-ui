@@ -33,7 +33,7 @@ import { CodeBlock } from "@/components/tool-ui/code-block";
 
 export function MyComponent() {
   return (
-    <CodeBlock.Root
+    <CodeBlock.Standard
       id="my-code-example"
       code={`function hello(name: string) {
   return \`Hello, \${name}!\`;
@@ -41,11 +41,7 @@ export function MyComponent() {
       language="typescript"
       lineNumbers="visible"
       filename="hello.ts"
-    >
-      <CodeBlock.Header />
-      <CodeBlock.Content />
-      <CodeBlock.CollapseToggle />
-    </CodeBlock.Root>
+    />
   );
 }
 ```

@@ -10,8 +10,10 @@ describe("component docs tabs lazy preview contract", () => {
     );
     const content = fs.readFileSync(tabsPath, "utf8");
 
-    expect(content).toContain('dynamic(() => import("./component-preview")');
+    expect(content).toContain('import("./component-preview")');
     expect(content).toContain('activeTab === "examples"');
+    expect(content).toContain('loading: () => (');
+    expect(content).toContain("Loading examples");
   });
 
   test("component doc pages avoid direct component preview imports", () => {

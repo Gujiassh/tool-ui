@@ -7,7 +7,7 @@ import { OrderSummary } from "@/components/tool-ui/order-summary";
   mdxPath="app/docs/order-summary/content.mdx"
 />
 
-Shopping experiences need a clear receipt before the user commits. OrderSummary renders line items with images, quantities, and an itemized price breakdown. Pass `choice` after confirmation to switch it into a read-only receipt.
+Shopping experiences need a clear receipt before the user commits. OrderSummary renders line items with images, quantities, and an itemized price breakdown. Use `OrderSummary.Display` during confirmation and `OrderSummary.Receipt` after a confirmed decision.
 
 ## Getting Started
 
@@ -168,7 +168,12 @@ export const toolkit: Toolkit = {
 
 ## Receipt State
 
-Pass `choice` to render a dimmed receipt with the order ID and timestamp.
+Render `OrderSummary.Receipt` with a `choice` payload to show the confirmed order metadata.
+
+When parsing tool payloads with `SerializableOrderSummarySchema`, keep variant semantics aligned:
+
+- `variant: "summary"` must not include `choice`
+- `variant: "receipt"` must include `choice`
 
 
 ## With Discount
@@ -176,7 +181,7 @@ Pass `choice` to render a dimmed receipt with the order ID and timestamp.
 Add `discount` and `discountLabel` to `pricing` to show promotional savings.
 
 
-## Props
+## Shared Props
 
 <TypeTable
   type={{
@@ -200,13 +205,21 @@ Add `discount` and `discountLabel` to `pricing` to show promotional savings.
       type: "Pricing",
       required: true,
     },
-    choice: {
-      description: "When set, renders the receipt state",
-      type: "OrderDecision",
-    },
     className: {
       description: "Additional CSS classes",
       type: "string",
+    },
+  }}
+/>
+
+## Receipt Props
+
+<TypeTable
+  type={{
+    choice: {
+      description: "Confirmed decision metadata rendered in receipt mode",
+      type: "OrderDecision",
+      required: true,
     },
   }}
 />

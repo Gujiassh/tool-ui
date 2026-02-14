@@ -22,7 +22,16 @@ interface ComponentDocsTabsProps {
   examples?: ReactNode;
 }
 
-const LazyComponentPreview = dynamic(() => import("./component-preview").then((m) => m.ComponentPreview));
+const LazyComponentPreview = dynamic(
+  () => import("./component-preview").then((m) => m.ComponentPreview),
+  {
+    loading: () => (
+      <div className="text-muted-foreground flex h-full w-full items-center justify-center text-sm">
+        Loading examples...
+      </div>
+    ),
+  },
+);
 
 export const ComponentDocsTabs = memo(function ComponentDocsTabs({
   docs,

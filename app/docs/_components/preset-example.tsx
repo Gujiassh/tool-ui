@@ -104,7 +104,7 @@ function generateCodeBlockCode(preset: CodeBlockPresetName): string {
     props.push(`  maxCollapsedLines={${block.maxCollapsedLines}}`);
   }
 
-  return `<CodeBlock.Root\n${props.join("\n")}\n>\n  <CodeBlock.Header />\n  <CodeBlock.Content />\n  <CodeBlock.CollapseToggle />\n</CodeBlock.Root>`;
+  return `<CodeBlock.Standard\n${props.join("\n")}\n/>`;
 }
 
 function generateTerminalCode(preset: TerminalPresetName): string {
