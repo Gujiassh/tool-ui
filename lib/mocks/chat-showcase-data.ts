@@ -153,6 +153,7 @@ Time: 1.24s`,
 
 export const CODE_BLOCK_DATA: Omit<SerializableCodeBlock, "id"> = {
   language: "typescript",
+  lineNumbers: "visible",
   filename: "use-debounce.ts",
   code: `import { useEffect, useState } from "react";
 
@@ -178,7 +179,6 @@ export function useDebounce<T>(value: T, delay = 250): T {
 
   return debounced;
 }`,
-  showLineNumbers: true,
 };
 
 export const OPTION_LIST_OPTIONS: OptionListOption[] = [
