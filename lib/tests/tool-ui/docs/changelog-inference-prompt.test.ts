@@ -18,5 +18,8 @@ describe("changelog inference prompt", () => {
     expect(prompt).toContain("- components/tool-ui/plan/plan.tsx");
     expect(prompt).toContain("Commit evidence:");
     expect(prompt).toContain("- abc1234 feat(plan): add compact mode");
+    expect(prompt).toContain(
+      "If commit evidence shows a major architectural or cross-component system refactor, include one explicit bullet that names that refactor and its scope.",
+    );
   });
 });

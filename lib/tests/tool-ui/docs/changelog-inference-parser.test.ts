@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
   ensureComponentCoverage,
-  ensureActionSystemCoverage,
   normalizeReleaseNoteWording,
   sanitizeInferredReleaseNotes,
 } from "@/lib/changelog/inference";
@@ -106,23 +105,5 @@ describe("changelog inference normalization", () => {
     expect(normalized.changes[0]).toBe(
       "Unified embedded action props across action-centric components.",
     );
-  });
-
-  test("adds an action-system refactor line when action-surface evidence exists", () => {
-    const covered = ensureActionSystemCoverage(
-      {
-        breakingChanges: [],
-        changes: ["Unified props across components."],
-        migrationPrompt: null,
-      },
-      [
-        "components/tool-ui/shared/embedded-actions.ts",
-        "components/tool-ui/shared/index.ts",
-        "components/tool-ui/option-list/schema.ts",
-      ],
-      "- 7af7084 feat(actions): unify embedded action props across action-centric components",
-    );
-
-    expect(covered.changes.join("\n")).toMatch(/actions? system/i);
   });
 });

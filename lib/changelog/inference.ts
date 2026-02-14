@@ -105,68 +105,6 @@ function formatBreadthList(items: string[]): string {
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1] ?? ""}`;
 }
 
-const ACTION_SYSTEM_FILE_SIGNALS = [
-  /components\/tool-ui\/shared\/embedded-actions\.ts$/i,
-  /components\/tool-ui\/shared\/local-actions\.tsx$/i,
-  /components\/tool-ui\/shared\/decision-actions\.tsx$/i,
-  /components\/tool-ui\/shared\/tool-ui(?:-context)?\.tsx$/i,
-];
-
-const ACTION_SYSTEM_TEXT_SIGNALS = [
-  /feat\(actions\)/i,
-  /action model/i,
-  /actions? system/i,
-  /embedded action props/i,
-  /local\s*actions?/i,
-  /decision\s*actions?/i,
-  /action[- ]centric/i,
-];
-
-const ACTION_SYSTEM_COVERAGE_SIGNALS = [
-  /action model/i,
-  /actions? system/i,
-  /global refactor/i,
-  /compound action/i,
-  /action[- ]surface/i,
-  /local\s*actions?/i,
-  /decision\s*actions?/i,
-];
-
-const ACTION_SYSTEM_COVERAGE_LINE =
-  "Refactored the actions system to a unified embedded action-props model across action-centric components.";
-
-export function ensureActionSystemCoverage(
-  notes: InferredReleaseNotes,
-  changedFiles: string[],
-  commitSummary: string,
-): InferredReleaseNotes {
-  const hasActionEvidence =
-    changedFiles.some((file) =>
-      ACTION_SYSTEM_FILE_SIGNALS.some((signal) => signal.test(file)),
-    ) ||
-    ACTION_SYSTEM_TEXT_SIGNALS.some((signal) => signal.test(commitSummary));
-
-  if (!hasActionEvidence) {
-    return notes;
-  }
-
-  const normalizedCombined = normalizeForMatch(
-    [...notes.breakingChanges, ...notes.changes].join(" "),
-  );
-  const alreadyCovered = ACTION_SYSTEM_COVERAGE_SIGNALS.some((signal) =>
-    signal.test(normalizedCombined),
-  );
-
-  if (alreadyCovered) {
-    return notes;
-  }
-
-  return {
-    ...notes,
-    changes: [...notes.changes, ACTION_SYSTEM_COVERAGE_LINE],
-  };
-}
-
 export function ensureComponentCoverage(
   notes: InferredReleaseNotes,
   changedFiles: string[],
@@ -244,6 +182,8 @@ export function buildInferencePrompt(input: InferReleaseNotesInput): string {
     "- Keep each bullet compact (roughly one sentence).",
     "- Do not invent details not present in evidence.",
     "- Keep migrationPrompt as plain text (no markdown fences).",
+    "- If commit evidence shows a major architectural or cross-component system refactor, include one explicit bullet that names that refactor and its scope.",
+    "- Mention key changed components directly when they are central to understanding impact.",
     "",
     "Existing changelog style sample:",
     input.changelogTemplateContext,
@@ -269,10 +209,5 @@ export async function inferReleaseNotes(
 
   const sanitized = sanitizeInferredReleaseNotes(object);
   const normalized = normalizeReleaseNoteWording(sanitized);
-  const actionCovered = ensureActionSystemCoverage(
-    normalized,
-    input.changedFiles,
-    input.commitSummary,
-  );
-  return ensureComponentCoverage(actionCovered, input.changedFiles);
+  return ensureComponentCoverage(normalized, input.changedFiles);
 }
