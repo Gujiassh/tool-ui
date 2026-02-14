@@ -173,13 +173,22 @@ export function ActionFlowCommitVisual() {
     <div className="not-prose flex max-w-md flex-col gap-3">
       <ToolUI id="flow-decision">
         <ToolUI.Surface>
-          <OrderSummary
-            id="flow-decision"
-            title="Order Summary"
-            items={orderItems}
-            pricing={orderPricing}
-            choice={orderChoice}
-          />
+          {orderChoice ? (
+            <OrderSummary.Receipt
+              id="flow-decision"
+              title="Order Summary"
+              items={orderItems}
+              pricing={orderPricing}
+              choice={orderChoice}
+            />
+          ) : (
+            <OrderSummary.Display
+              id="flow-decision"
+              title="Order Summary"
+              items={orderItems}
+              pricing={orderPricing}
+            />
+          )}
         </ToolUI.Surface>
         {!orderChoice && (
           <ToolUI.Actions>
@@ -290,13 +299,22 @@ export function DecisionSurfaceExample() {
     <div className="not-prose flex max-w-md flex-col gap-3">
       <ToolUI id="decision-actions-order">
         <ToolUI.Surface>
-          <OrderSummary
-            id="decision-actions-order"
-            title="Order Summary"
-            items={orderItems}
-            pricing={orderPricing}
-            choice={orderChoice}
-          />
+          {orderChoice ? (
+            <OrderSummary.Receipt
+              id="decision-actions-order"
+              title="Order Summary"
+              items={orderItems}
+              pricing={orderPricing}
+              choice={orderChoice}
+            />
+          ) : (
+            <OrderSummary.Display
+              id="decision-actions-order"
+              title="Order Summary"
+              items={orderItems}
+              pricing={orderPricing}
+            />
+          )}
         </ToolUI.Surface>
         {!orderChoice && (
           <ToolUI.Actions>

@@ -34,7 +34,7 @@ import { OrderSummary } from "@/components/tool-ui/order-summary";
 
 export function Example() {
   return (
-    <OrderSummary
+    <OrderSummary.Display
       id="order-summary-example"
       items={[
         {
@@ -96,10 +96,10 @@ export const toolkit: Toolkit = {
       safeParse: safeParseSerializableOrderSummary,
       idPrefix: "order",
       render: (parsedArgs, { result, addResult }) =>
-        result ? <OrderSummary {...parsedArgs} choice={result} /> : (
+        result ? <OrderSummary.Receipt {...parsedArgs} choice={result} /> : (
           <ToolUI id={parsedArgs.id}>
             <ToolUI.Surface>
-              <OrderSummary {...parsedArgs} />
+              <OrderSummary.Display {...parsedArgs} />
             </ToolUI.Surface>
             <ToolUI.Actions>
               <ToolUI.DecisionActions

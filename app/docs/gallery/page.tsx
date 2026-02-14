@@ -11,6 +11,7 @@ import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import {
   galleryComponentDocs,
@@ -72,9 +73,6 @@ const OptionList = dynamic(() =>
 );
 const ParameterSlider = dynamic(() =>
   import("@/components/tool-ui/parameter-slider").then((m) => m.ParameterSlider),
-);
-const OrderSummary = dynamic(() =>
-  import("@/components/tool-ui/order-summary").then((m) => m.OrderSummary),
 );
 const Plan = dynamic(() =>
   import("@/components/tool-ui/plan").then((m) => m.Plan),
@@ -239,7 +237,10 @@ export default function ComponentsGalleryPage() {
       componentId: "order-summary",
       className: "mb-5 break-inside-avoid 2xl:mb-5",
       render: () => (
-        <OrderSummary {...orderSummaryPresets.default.data} className="max-w-none" />
+        <OrderSummary.Display
+          {...orderSummaryPresets.default.data}
+          className="max-w-none"
+        />
       ),
     },
     {
