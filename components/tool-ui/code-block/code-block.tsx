@@ -8,6 +8,7 @@ import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
 
 import { Button, cn, Collapsible, CollapsibleTrigger } from "./_adapter";
 const COPY_ID = "codeblock-code";
+const MAX_HTML_CACHE_ENTRIES = 64;
 
 let highlighterPromise: Promise<Highlighter> | null = null;
 
@@ -30,7 +31,29 @@ function getCacheKey(
   showLineNumbers: boolean,
   highlightLines?: number[],
 ): string {
-  return `${code}::${language}::${theme}::${showLineNumbers}::${highlightLines?.join(",") ?? ""}`;
+  return JSON.stringify({
+    code,
+    language,
+    theme,
+    showLineNumbers,
+    highlightLines: highlightLines ?? null,
+  });
+}
+
+function setCachedHtml(cacheKey: string, html: string): void {
+  if (htmlCache.has(cacheKey)) {
+    htmlCache.set(cacheKey, html);
+    return;
+  }
+
+  if (htmlCache.size >= MAX_HTML_CACHE_ENTRIES) {
+    const oldestKey = htmlCache.keys().next().value;
+    if (typeof oldestKey === "string") {
+      htmlCache.delete(oldestKey);
+    }
+  }
+
+  htmlCache.set(cacheKey, html);
 }
 
 const LANGUAGE_DISPLAY_NAMES: Record<string, string> = {
@@ -66,6 +89,9 @@ function getSystemTheme(): "light" | "dark" {
 function getDocumentTheme(): "light" | "dark" | null {
   if (typeof document === "undefined") return null;
   const root = document.documentElement;
+  const dataTheme = root.getAttribute("data-theme")?.toLowerCase();
+  if (dataTheme === "dark") return "dark";
+  if (dataTheme === "light") return "light";
   if (root.classList.contains("dark")) return "dark";
   if (root.classList.contains("light")) return "light";
   return null;
@@ -89,7 +115,7 @@ function useResolvedTheme(): "light" | "dark" {
     const observer = new MutationObserver(update);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["class", "data-theme"],
     });
 
     return () => {
@@ -187,7 +213,7 @@ export function CodeBlock({
           ],
         });
         if (!cancelled) {
-          htmlCache.set(cacheKey, html);
+          setCachedHtml(cacheKey, html);
           setHighlightedHtml(html);
         }
       } catch {

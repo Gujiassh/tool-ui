@@ -11,10 +11,10 @@ export const CodeBlockPropsSchema = z.object({
   role: ToolUIRoleSchema.optional(),
   receipt: ToolUIReceiptSchema.optional(),
   code: z.string(),
-  language: z.string().default("text"),
+  language: z.string().trim().min(1).default("text"),
   filename: z.string().optional(),
   showLineNumbers: z.boolean().default(true),
-  highlightLines: z.array(z.number()).optional(),
+  highlightLines: z.array(z.number().int().positive()).optional(),
   maxCollapsedLines: z.number().min(1).optional(),
   className: z.string().optional(),
 });

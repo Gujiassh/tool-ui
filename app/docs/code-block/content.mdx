@@ -6,7 +6,7 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/code-block/content.mdx"
 />
 
-CodeBlock renders agent-produced code with syntax highlighting, line numbers, and a copy button. You can highlight specific lines to draw attention to changes or bugs, and long snippets auto-collapse so they do not overwhelm the conversation. Without it, code appears as unstyled monospace text.
+CodeBlock renders agent-produced code with syntax highlighting, line numbers, and a copy button. You can highlight specific lines to draw attention to changes or bugs, and optionally collapse long snippets by setting `maxCollapsedLines` so conversations stay scannable. Without it, code appears as unstyled monospace text.
 
 ## Getting Started
 
@@ -111,7 +111,7 @@ export const toolkit: Toolkit = {
     Draw attention to specific lines for explanations or diffs
   </Feature>
   <Feature icon="FoldVertical" title="Collapsible mode">
-    Long snippets auto-collapse to keep conversations scannable
+    Opt-in collapse for long snippets via `maxCollapsedLines`
   </Feature>
   <Feature icon="FileCode" title="Filename header">
     Filename and language badge in the header
@@ -155,7 +155,7 @@ export const toolkit: Toolkit = {
       type: "number[]",
     },
     maxCollapsedLines: {
-      description: "Auto-collapse if code exceeds this many lines",
+      description: "Enable collapse when code exceeds this many lines (opt-in)",
       type: "number",
     },
   }}
