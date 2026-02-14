@@ -8,7 +8,8 @@ Use when tool results are returned by the backend. No actions needed.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import { Plan, safeParseSerializablePlan } from "@/components/tool-ui/plan";
+import { Plan } from "@/components/tool-ui/plan";
+import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
 import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
@@ -34,7 +35,8 @@ Use when the display component needs action buttons (export, copy, navigate) tha
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
-import { DataTable, safeParseSerializableDataTable } from "@/components/tool-ui/data-table";
+import { DataTable } from "@/components/tool-ui/data-table";
+import { safeParseSerializableDataTable } from "@/components/tool-ui/data-table/schema";
 import { ToolUI, createResultToolRenderer, type Action } from "@/components/tool-ui/shared";
 
 const localActions: Action[] = [
@@ -74,11 +76,11 @@ Use when user interaction is consequential (approve, purchase, delete) and must 
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
 import {
-  OrderSummary,
   SerializableOrderSummarySchema,
   safeParseSerializableOrderSummary,
-} from "@/components/tool-ui/order-summary";
+} from "@/components/tool-ui/order-summary/schema";
 import {
   ToolUI,
   createDecisionResult,
@@ -91,6 +93,7 @@ export const toolkit: Toolkit = {
     parameters: SerializableOrderSummarySchema,
     render: createArgsToolRenderer({
       safeParse: safeParseSerializableOrderSummary,
+      idPrefix: "order-summary",
       render: (parsedArgs, { result, addResult }) => {
         if (result) {
           return <OrderSummary {...parsedArgs} choice={result} />;
@@ -133,6 +136,7 @@ OptionList, ParameterSlider, and PreferencesPanel keep embedded action props (`a
 ```tsx
 render: createArgsToolRenderer({
   safeParse: safeParseSerializableOptionList,
+  idPrefix: "option-list",
   render: (parsedArgs, { result, addResult }) => {
     if (result) {
       return <OptionList {...parsedArgs} choice={result} />;
@@ -161,7 +165,8 @@ python scripts/tool_ui_scaffold.py --mode assistant-frontend --component option-
 Use when app already has a runtime stack.
 
 ```tsx
-import { Plan, safeParseSerializablePlan } from "@/components/tool-ui/plan";
+import { Plan } from "@/components/tool-ui/plan";
+import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
 
 function ToolResultView({ toolName, result }: { toolName: string; result: unknown }) {
   if (toolName !== "showPlan") return null;

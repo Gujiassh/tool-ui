@@ -52,7 +52,8 @@ def render_backend(component_id: str, tool_name: str, component_symbol: str, *, 
 
     if not with_actions:
         return f'''import {{ type Toolkit }} from "@assistant-ui/react";
-import {{ {component_symbol}, {parser_name} }} from "@/components/tool-ui/{component_id}";
+import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
+import {{ {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
 import {{ createResultToolRenderer }} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {{
@@ -67,7 +68,8 @@ export const toolkit: Toolkit = {{
 '''
 
     return f'''import {{ type Toolkit }} from "@assistant-ui/react";
-import {{ {component_symbol}, {parser_name} }} from "@/components/tool-ui/{component_id}";
+import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
+import {{ {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
 import {{ ToolUI, createResultToolRenderer, type Action }} from "@/components/tool-ui/shared";
 
 const localActions: Action[] = [
@@ -105,11 +107,8 @@ def render_frontend(component_id: str, tool_name: str, component_symbol: str) ->
     # Action-centric components wire actions directly, no ToolUI wrapper.
     if component_id in ACTION_CENTRIC_COMPONENTS:
         return f'''import {{ type Toolkit }} from "@assistant-ui/react";
-import {{
-  {component_symbol},
-  {schema_name},
-  {parser_name},
-}} from "@/components/tool-ui/{component_id}";
+import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
+import {{ {schema_name}, {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
 import {{ createArgsToolRenderer }} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {{
@@ -118,6 +117,7 @@ export const toolkit: Toolkit = {{
     parameters: {schema_name},
     render: createArgsToolRenderer({{
       safeParse: {parser_name},
+      idPrefix: "{component_id}",
       render: (parsedArgs, {{ result, addResult }}) => {{
         if (result) {{
           return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
@@ -139,11 +139,8 @@ export const toolkit: Toolkit = {{
 
     # Standard components use ToolUI compound with DecisionActions.
     return f'''import {{ type Toolkit }} from "@assistant-ui/react";
-import {{
-  {component_symbol},
-  {schema_name},
-  {parser_name},
-}} from "@/components/tool-ui/{component_id}";
+import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
+import {{ {schema_name}, {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
 import {{
   ToolUI,
   createDecisionResult,
@@ -156,6 +153,7 @@ export const toolkit: Toolkit = {{
     parameters: {schema_name},
     render: createArgsToolRenderer({{
       safeParse: {parser_name},
+      idPrefix: "{component_id}",
       render: (parsedArgs, {{ result, addResult }}) => {{
         if (result) {{
           return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
@@ -192,7 +190,8 @@ export const toolkit: Toolkit = {{
 
 def render_manual(component_id: str, tool_name: str, component_symbol: str) -> str:
     parser_name = parser_symbol(component_id, component_symbol)
-    return f'''import {{ {component_symbol}, {parser_name} }} from "@/components/tool-ui/{component_id}";
+    return f'''import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
+import {{ {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
 
 function ToolResultView({{ toolName, result }}: {{ toolName: string; result: unknown }}) {{
   if (toolName !== "{tool_name}") return null;
