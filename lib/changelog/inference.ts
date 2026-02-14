@@ -56,7 +56,7 @@ export function sanitizeInferredReleaseNotes(
 
 function selectModel() {
   if (process.env.OPENAI_API_KEY) {
-    return openai(process.env.CHANGELOG_OPENAI_MODEL ?? "gpt-5");
+    return openai(process.env.CHANGELOG_OPENAI_MODEL ?? "gpt-4.1-mini");
   }
 
   if (process.env.ANTHROPIC_API_KEY) {
