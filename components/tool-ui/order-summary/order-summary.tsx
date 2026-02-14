@@ -1,6 +1,13 @@
 import { CheckCircle, Package } from "lucide-react";
+import type { ReactElement } from "react";
 import { cn, Separator } from "./_adapter";
-import type { OrderSummaryProps, OrderItem, Pricing } from "./schema";
+import type {
+  OrderSummaryProps,
+  OrderItem,
+  Pricing,
+  OrderDecision,
+  OrderSummaryVariant,
+} from "./schema";
 
 function formatCurrency(amount: number, currency: string): string {
   try {
@@ -17,11 +24,15 @@ function formatQuantity(quantity: number): string {
   return quantity === 1 ? "" : `Qty: ${quantity}`;
 }
 
-function ItemImage({ src }: { src?: string }) {
+function ItemImage({ src, alt }: { src?: string; alt: string }) {
   if (!src) {
     return (
       <div className="bg-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-md">
-        <Package className="text-muted-foreground h-5 w-5" />
+        <Package
+          aria-hidden="true"
+          focusable="false"
+          className="text-muted-foreground h-5 w-5"
+        />
       </div>
     );
   }
@@ -30,7 +41,7 @@ function ItemImage({ src }: { src?: string }) {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
-      alt=""
+      alt={alt}
       width={48}
       height={48}
       className="h-12 w-12 shrink-0 rounded-md object-cover"
@@ -52,7 +63,7 @@ function OrderItemRow({
 
   return (
     <div className="flex gap-3">
-      <ItemImage src={item.imageUrl} />
+      <ItemImage src={item.imageUrl} alt={item.name} />
       <div className="flex min-w-0 flex-1 items-center justify-between">
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between">
@@ -160,16 +171,44 @@ function ReceiptBadge({
   );
 }
 
-export function OrderSummary({
+function OrderSummaryRoot({
   id,
   title = "Order Summary",
+  variant,
   items,
   pricing,
   choice,
   className,
 }: OrderSummaryProps) {
   const titleId = `${id}-title`;
-  const isReceipt = choice !== undefined;
+  const resolvedVariant: OrderSummaryVariant =
+    variant ?? (choice === undefined ? "summary" : "receipt");
+  const isReceipt = resolvedVariant === "receipt";
+  const isMalformedPayload =
+    !Array.isArray(items) ||
+    items.length === 0 ||
+    pricing == null ||
+    (isReceipt && choice === undefined);
+
+  if (isMalformedPayload) {
+    return (
+      <article
+        data-slot="order-summary"
+        data-tool-ui-id={id}
+        aria-labelledby={titleId}
+        className={cn("flex max-w-md min-w-80 flex-col gap-3", className)}
+      >
+        <div className="text-card-foreground rounded-lg border bg-card p-4 shadow-sm">
+          <h2 id={titleId} className="text-base font-semibold">
+            {title}
+          </h2>
+          <p className="text-muted-foreground mt-2 text-sm">
+            Unable to render order summary
+          </p>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article
@@ -191,11 +230,15 @@ export function OrderSummary({
               className="flex items-center gap-2 text-base font-semibold"
             >
               {isReceipt && (
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-500" />
+                <CheckCircle
+                  aria-hidden="true"
+                  focusable="false"
+                  className="h-5 w-5 text-green-600 dark:text-green-500"
+                />
               )}
               {title}
             </h2>
-            {isReceipt && (
+            {isReceipt && choice && (
               <ReceiptBadge
                 orderId={choice.orderId}
                 confirmedAt={choice.confirmedAt}
@@ -221,3 +264,32 @@ export function OrderSummary({
     </article>
   );
 }
+
+export type OrderSummaryDisplayProps = OrderSummaryProps;
+
+function OrderSummaryDisplay(props: OrderSummaryDisplayProps) {
+  return <OrderSummaryRoot {...props} variant="summary" />;
+}
+
+export interface OrderSummaryReceiptProps
+  extends Omit<OrderSummaryProps, "choice"> {
+  choice: OrderDecision;
+}
+
+function OrderSummaryReceipt(props: OrderSummaryReceiptProps) {
+  return <OrderSummaryRoot {...props} variant="receipt" />;
+}
+
+export interface OrderSummaryCompoundComponent {
+  (props: OrderSummaryProps): ReactElement;
+  Display: (props: OrderSummaryDisplayProps) => ReactElement;
+  Receipt: (props: OrderSummaryReceiptProps) => ReactElement;
+}
+
+export const OrderSummary: OrderSummaryCompoundComponent = Object.assign(
+  OrderSummaryRoot,
+  {
+    Display: OrderSummaryDisplay,
+    Receipt: OrderSummaryReceipt,
+  },
+);

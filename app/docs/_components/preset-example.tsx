@@ -1,7 +1,7 @@
 "use client";
 
-import { Tabs, Tab } from "fumadocs-ui/components/tabs";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { Tabs, Tab } from "fumadocs-ui/components/tabs";
 import { Chart } from "@/components/tool-ui/chart";
 import { chartPresets, ChartPresetName } from "@/lib/presets/chart";
 import { OptionList } from "@/components/tool-ui/option-list";
@@ -87,15 +87,13 @@ function generateCodeBlockCode(preset: CodeBlockPresetName): string {
   const block = codeBlockPresets[preset].data;
   const props: string[] = [];
 
+  props.push(`  id="${block.id}"`);
   props.push(`  code={\`${block.code.replace(/`/g, "\\`")}\`}`);
   props.push(`  language="${block.language}"`);
+  props.push(`  lineNumbers="${block.lineNumbers}"`);
 
   if (block.filename) {
     props.push(`  filename="${block.filename}"`);
-  }
-
-  if (block.showLineNumbers !== undefined) {
-    props.push(`  showLineNumbers={${block.showLineNumbers}}`);
   }
 
   if (block.highlightLines && block.highlightLines.length > 0) {
@@ -106,7 +104,7 @@ function generateCodeBlockCode(preset: CodeBlockPresetName): string {
     props.push(`  maxCollapsedLines={${block.maxCollapsedLines}}`);
   }
 
-  return `<CodeBlock\n${props.join("\n")}\n/>`;
+  return `<CodeBlock.Standard\n${props.join("\n")}\n/>`;
 }
 
 function generateTerminalCode(preset: TerminalPresetName): string {
@@ -238,7 +236,7 @@ export function CodeBlockPresetExample({
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose">
-          <CodeBlock {...data} />
+          <CodeBlock.Standard {...data} />
         </div>
       </Tab>
       <Tab value="Code">

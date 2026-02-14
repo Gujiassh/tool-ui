@@ -1,13 +1,25 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  createContext,
+  useContext,
+  type ReactNode,
+} from "react";
 import { createHighlighter, type Highlighter } from "shiki";
 import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
-import type { CodeBlockProps } from "./schema";
+import type {
+  CodeBlockLineNumbersMode,
+  CodeBlockProps,
+} from "./schema";
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
 
 import { Button, cn, Collapsible, CollapsibleTrigger } from "./_adapter";
+
 const COPY_ID = "codeblock-code";
+const MAX_HTML_CACHE_ENTRIES = 64;
 
 let highlighterPromise: Promise<Highlighter> | null = null;
 
@@ -27,10 +39,32 @@ function getCacheKey(
   code: string,
   language: string,
   theme: string,
-  showLineNumbers: boolean,
+  lineNumbers: CodeBlockLineNumbersMode,
   highlightLines?: number[],
 ): string {
-  return `${code}::${language}::${theme}::${showLineNumbers}::${highlightLines?.join(",") ?? ""}`;
+  return JSON.stringify({
+    code,
+    language,
+    theme,
+    lineNumbers,
+    highlightLines: highlightLines ?? null,
+  });
+}
+
+function setCachedHtml(cacheKey: string, html: string): void {
+  if (htmlCache.has(cacheKey)) {
+    htmlCache.set(cacheKey, html);
+    return;
+  }
+
+  if (htmlCache.size >= MAX_HTML_CACHE_ENTRIES) {
+    const oldestKey = htmlCache.keys().next().value;
+    if (typeof oldestKey === "string") {
+      htmlCache.delete(oldestKey);
+    }
+  }
+
+  htmlCache.set(cacheKey, html);
 }
 
 const LANGUAGE_DISPLAY_NAMES: Record<string, string> = {
@@ -66,6 +100,9 @@ function getSystemTheme(): "light" | "dark" {
 function getDocumentTheme(): "light" | "dark" | null {
   if (typeof document === "undefined") return null;
   const root = document.documentElement;
+  const dataTheme = root.getAttribute("data-theme")?.toLowerCase();
+  if (dataTheme === "dark") return "dark";
+  if (dataTheme === "light") return "light";
   if (root.classList.contains("dark")) return "dark";
   if (root.classList.contains("light")) return "light";
   return null;
@@ -89,7 +126,7 @@ function useResolvedTheme(): "light" | "dark" {
     const observer = new MutationObserver(update);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["class", "data-theme"],
     });
 
     return () => {
@@ -101,29 +138,69 @@ function useResolvedTheme(): "light" | "dark" {
   return theme;
 }
 
-export function CodeBlock({
+export type CodeBlockRootProps = CodeBlockProps & {
+  children: ReactNode;
+  expanded?: boolean;
+  defaultExpanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
+};
+
+type CodeBlockSharedState = {
+  id: string;
+  code: string;
+  language: string;
+  filename?: string;
+  highlightedHtml: string | null;
+  isCopied: boolean;
+  copyCode: () => void;
+  lineCount: number;
+  isCollapsed: boolean;
+  shouldCollapse: boolean;
+  toggleExpanded: () => void;
+};
+
+const CodeBlockContext = createContext<CodeBlockSharedState | null>(null);
+
+function useCodeBlock(): CodeBlockSharedState {
+  const context = useContext(CodeBlockContext);
+  if (!context) {
+    throw new Error("CodeBlock subcomponents must be used within <CodeBlock.Root>.");
+  }
+  return context;
+}
+
+function CodeBlockRoot({
   id,
   code,
   language = "text",
+  lineNumbers = "visible",
   filename,
-  showLineNumbers = true,
   highlightLines,
   maxCollapsedLines,
   className,
-}: CodeBlockProps) {
+  children,
+  expanded: expandedProp,
+  defaultExpanded = false,
+  onExpandedChange,
+}: CodeBlockRootProps) {
   const resolvedTheme = useResolvedTheme();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedState, setExpandedState] = useState(defaultExpanded);
   const { copiedId, copy } = useCopyToClipboard();
   const isCopied = copiedId === COPY_ID;
 
-  const theme = resolvedTheme === "dark" ? "github-dark" : "github-light";
-  const cacheKey = getCacheKey(
-    code,
-    language,
-    theme,
-    showLineNumbers,
-    highlightLines,
+  const expanded = expandedProp ?? expandedState;
+  const setExpanded = useCallback(
+    (nextExpanded: boolean) => {
+      if (expandedProp === undefined) {
+        setExpandedState(nextExpanded);
+      }
+      onExpandedChange?.(nextExpanded);
+    },
+    [expandedProp, onExpandedChange],
   );
+
+  const theme = resolvedTheme === "dark" ? "github-dark" : "github-light";
+  const cacheKey = getCacheKey(code, language, theme, lineNumbers, highlightLines);
 
   const [highlightedHtml, setHighlightedHtml] = useState<string | null>(
     () => htmlCache.get(cacheKey) ?? null,
@@ -137,6 +214,7 @@ export function CodeBlock({
     }
 
     let cancelled = false;
+    const showLineNumbers = lineNumbers === "visible";
 
     async function highlight() {
       if (!code) {
@@ -169,7 +247,7 @@ export function CodeBlock({
                     resolvedTheme === "dark"
                       ? "rgba(255,255,255,0.1)"
                       : "rgba(0,0,0,0.05)";
-                  node.properties["style"] = `background:${highlightBg};`;
+                  node.properties.style = `background:${highlightBg};`;
                 }
                 if (showLineNumbers) {
                   node.children.unshift({
@@ -187,7 +265,7 @@ export function CodeBlock({
           ],
         });
         if (!cancelled) {
-          htmlCache.set(cacheKey, html);
+          setCachedHtml(cacheKey, html);
           setHighlightedHtml(html);
         }
       } catch {
@@ -195,107 +273,169 @@ export function CodeBlock({
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
-        if (!cancelled)
+        if (!cancelled) {
           setHighlightedHtml(`<pre><code>${escaped}</code></pre>`);
+        }
       }
     }
     void highlight();
     return () => {
       cancelled = true;
     };
-  }, [
-    cacheKey,
-    code,
-    language,
-    theme,
-    highlightLines,
-    showLineNumbers,
-    resolvedTheme,
-  ]);
+  }, [cacheKey, code, language, lineNumbers, theme, highlightLines, resolvedTheme]);
 
   const lineCount = code.split("\n").length;
-  const shouldCollapse = maxCollapsedLines && lineCount > maxCollapsedLines;
-  const isCollapsed = shouldCollapse && !isExpanded;
+  const shouldCollapse = !!maxCollapsedLines && lineCount > maxCollapsedLines;
+  const isCollapsed = shouldCollapse && !expanded;
 
-  const handleCopy = useCallback(() => {
-    copy(code, COPY_ID);
+  const copyCode = useCallback(() => {
+    void copy(code, COPY_ID);
   }, [code, copy]);
 
+  const toggleExpanded = useCallback(() => {
+    setExpanded(!expanded);
+  }, [expanded, setExpanded]);
+
+  const state: CodeBlockSharedState = {
+    id,
+    code,
+    language,
+    filename,
+    highlightedHtml,
+    isCopied,
+    copyCode,
+    lineCount,
+    shouldCollapse,
+    isCollapsed,
+    toggleExpanded,
+  };
+
+  return (
+    <CodeBlockContext.Provider value={state}>
+      <div
+        className={cn("@container flex w-full min-w-80 flex-col gap-3", className)}
+        data-tool-ui-id={id}
+        data-slot="code-block"
+      >
+        <div className="border-border bg-card overflow-hidden rounded-lg border shadow-xs">
+          <Collapsible open={!isCollapsed}>{children}</Collapsible>
+        </div>
+      </div>
+    </CodeBlockContext.Provider>
+  );
+}
+
+export type CodeBlockSectionProps = {
+  className?: string;
+};
+
+function CodeBlockHeader({ className }: CodeBlockSectionProps) {
+  const { language, filename, isCopied, copyCode } = useCodeBlock();
   return (
     <div
       className={cn(
-        "@container flex w-full min-w-80 flex-col gap-3",
+        "bg-card flex items-center justify-between border-b px-4 py-2",
         className,
       )}
-      data-tool-ui-id={id}
-      data-slot="code-block"
     >
-      <div className="border-border bg-card overflow-hidden rounded-lg border shadow-xs">
-        <div className="bg-card flex items-center justify-between border-b px-4 py-2">
-          <div className="flex items-center gap-1">
-            <span className="text-muted-foreground text-sm">
-              {getLanguageDisplayName(language)}
-            </span>
-            {filename && (
-              <>
-                <span className="text-muted-foreground/50">•</span>
-                <span className="text-foreground text-sm font-medium">
-                  {filename}
-                </span>
-              </>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className="h-7 w-7 p-0"
-            aria-label={isCopied ? "Copied" : "Copy code"}
-          >
-            {isCopied ? (
-              <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
-            ) : (
-              <Copy className="text-muted-foreground h-4 w-4" />
-            )}
-          </Button>
-        </div>
-
-        <Collapsible open={!isCollapsed}>
-          <div
-            className={cn(
-              "overflow-x-auto overflow-y-clip text-sm [&_pre]:bg-transparent [&_pre]:py-4",
-              isCollapsed && "max-h-[200px]",
-            )}
-          >
-            {highlightedHtml && (
-              <div dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
-            )}
-          </div>
-
-          {shouldCollapse && (
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="text-muted-foreground w-full rounded-none border-t font-normal"
-              >
-                {isCollapsed ? (
-                  <>
-                    <ChevronDown className="mr-1 size-4" />
-                    Show all {lineCount} lines
-                  </>
-                ) : (
-                  <>
-                    <ChevronUp className="mr-2 h-4 w-4" />
-                    Collapse
-                  </>
-                )}
-              </Button>
-            </CollapsibleTrigger>
-          )}
-        </Collapsible>
+      <div className="flex items-center gap-1">
+        <span className="text-muted-foreground text-sm">
+          {getLanguageDisplayName(language)}
+        </span>
+        {filename && (
+          <>
+            <span className="text-muted-foreground/50">•</span>
+            <span className="text-foreground text-sm font-medium">{filename}</span>
+          </>
+        )}
       </div>
-
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={copyCode}
+        className="h-7 w-7 p-0"
+        aria-label={isCopied ? "Copied" : "Copy code"}
+      >
+        {isCopied ? (
+          <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
+        ) : (
+          <Copy className="text-muted-foreground h-4 w-4" />
+        )}
+      </Button>
     </div>
   );
 }
+
+function CodeBlockContent({ className }: CodeBlockSectionProps) {
+  const { highlightedHtml, isCollapsed } = useCodeBlock();
+  return (
+    <div
+      className={cn(
+        "overflow-x-auto overflow-y-clip text-sm [&_pre]:bg-transparent [&_pre]:py-4",
+        isCollapsed && "max-h-[200px]",
+        className,
+      )}
+    >
+      {highlightedHtml && <div dangerouslySetInnerHTML={{ __html: highlightedHtml }} />}
+    </div>
+  );
+}
+
+function CodeBlockCollapseToggle({ className }: CodeBlockSectionProps) {
+  const { shouldCollapse, isCollapsed, toggleExpanded, lineCount } = useCodeBlock();
+
+  if (!shouldCollapse) return null;
+
+  return (
+    <CollapsibleTrigger asChild>
+      <Button
+        variant="ghost"
+        onClick={toggleExpanded}
+        className={cn(
+          "text-muted-foreground w-full rounded-none border-t font-normal",
+          className,
+        )}
+      >
+        {isCollapsed ? (
+          <>
+            <ChevronDown className="mr-1 size-4" />
+            Show all {lineCount} lines
+          </>
+        ) : (
+          <>
+            <ChevronUp className="mr-2 h-4 w-4" />
+            Collapse
+          </>
+        )}
+      </Button>
+    </CollapsibleTrigger>
+  );
+}
+
+export type CodeBlockStandardProps = Omit<CodeBlockRootProps, "children">;
+
+export function CodeBlockStandard(props: CodeBlockStandardProps) {
+  return (
+    <CodeBlockRoot {...props}>
+      <CodeBlockHeader />
+      <CodeBlockContent />
+      <CodeBlockCollapseToggle />
+    </CodeBlockRoot>
+  );
+}
+
+type CodeBlockComponent = {
+  Root: typeof CodeBlockRoot;
+  Standard: typeof CodeBlockStandard;
+  Header: typeof CodeBlockHeader;
+  Content: typeof CodeBlockContent;
+  CollapseToggle: typeof CodeBlockCollapseToggle;
+};
+
+export const CodeBlock = {
+  Root: CodeBlockRoot,
+  Standard: CodeBlockStandard,
+  Header: CodeBlockHeader,
+  Content: CodeBlockContent,
+  CollapseToggle: CodeBlockCollapseToggle,
+} as CodeBlockComponent;

@@ -10,6 +10,7 @@ describe("gallery tooltip layout contract", () => {
     expect(content).toContain("group/gallery-card relative pt-[44px]");
     expect(content).toContain("label={componentMeta.name}");
     expect(content).toContain("pointer-events-auto inline-flex items-center");
+    expect(content).not.toContain("focus-visible:outline-none");
   });
 
   test("gallery docs link includes a bullet and keeps name unwrapped", () => {
@@ -24,8 +25,11 @@ describe("gallery tooltip layout contract", () => {
     expect(content).toContain("•");
     expect(content).toContain("group-hover:underline");
     expect(content).toContain("group-focus-visible:underline");
+    expect(content).toContain("focus-visible:ring-2");
     expect(content).toContain("hover:no-underline");
     expect(content).toContain("{label}");
     expect(content).toContain("View Docs");
+    expect(content).toContain("componentId: GalleryComponentDocId");
+    expect(content).toContain("href: `/docs/${string}`");
   });
 });

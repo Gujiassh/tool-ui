@@ -1,26 +1,19 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
 import { ResponsiveHeader } from "@/app/components/layout/app-header.server";
 import { cn } from "@/lib/ui/cn";
 
-type HeaderFrameProps = {
+export type HeaderFrameProps = {
   children: ReactNode;
   rightContent?: ReactNode;
   background?: ReactNode;
 };
 
-// Module-level flag that persists across client-side navigations
-// but resets on hard refresh (when the JS bundle reloads)
-let hasPlayedIntroAnimation = false;
-
 function HeaderFrameBase({
   children,
   rightContent,
   background,
-  shouldAnimate = false,
-}: HeaderFrameProps & { shouldAnimate?: boolean }) {
+  shouldAnimate,
+}: HeaderFrameProps & { shouldAnimate: boolean }) {
   return (
     <div className="relative flex h-full flex-col items-center overflow-hidden">
       {background ? (
@@ -44,17 +37,5 @@ function HeaderFrameBase({
 }
 
 export function HeaderFrame(props: HeaderFrameProps) {
-  return <HeaderFrameBase {...props} />;
-}
-
-export function AnimatedHeaderFrame(props: HeaderFrameProps) {
-  const [shouldAnimate] = useState(() => !hasPlayedIntroAnimation);
-
-  useEffect(() => {
-    if (shouldAnimate) {
-      hasPlayedIntroAnimation = true;
-    }
-  }, [shouldAnimate]);
-
-  return <HeaderFrameBase {...props} shouldAnimate={shouldAnimate} />;
+  return <HeaderFrameBase {...props} shouldAnimate={false} />;
 }

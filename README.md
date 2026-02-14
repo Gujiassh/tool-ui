@@ -46,6 +46,8 @@ pnpm install
 pnpm dev
 ```
 
+`pnpm install` runs `prepare`, which configures local Git hooks to use `.githooks/`.
+
 - `http://localhost:3000/docs/quick-start` for integration walkthrough
 - `http://localhost:3000/docs/changelog` for release notes
 - `http://localhost:3000/playground` for interactive prototype testing
@@ -53,9 +55,14 @@ pnpm dev
 ## Testing
 
 ```bash
-pnpm test
-pnpm lint:ci
-pnpm registry:check
+pnpm verify:ci
+```
+
+If `registry:check` fails, regenerate and stage artifacts:
+
+```bash
+pnpm registry:build
+git add public/r
 ```
 
 ## License

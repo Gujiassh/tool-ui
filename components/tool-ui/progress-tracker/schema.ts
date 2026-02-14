@@ -39,14 +39,18 @@ const ProgressStepsSchema = z
     }
   });
 
-export const SerializableProgressTrackerSchema = ToolUISurfaceSchema.extend({
-  steps: ProgressStepsSchema,
-  elapsedTime: z.number().finite().nonnegative().optional(),
-  /**
-   * When set, renders the component in receipt state showing the workflow outcome.
-   */
-  choice: ToolUIReceiptSchema.optional(),
-}).strict();
+export const SerializableProgressTrackerSchema = ToolUISurfaceSchema.omit({
+  receipt: true,
+})
+  .extend({
+    steps: ProgressStepsSchema,
+    elapsedTime: z.number().finite().nonnegative().optional(),
+    /**
+     * When set, renders the component in receipt state showing the workflow outcome.
+     */
+    choice: ToolUIReceiptSchema.optional(),
+  })
+  .strict();
 
 export type SerializableProgressTracker = z.infer<
   typeof SerializableProgressTrackerSchema

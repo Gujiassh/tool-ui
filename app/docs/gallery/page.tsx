@@ -2,11 +2,16 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 
+import {
+  GalleryPageAnalytics,
+  GalleryPreviewImpression,
+} from "@/app/docs/_components/gallery-analytics.client";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
 import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import {
   galleryComponentDocs,
@@ -19,6 +24,7 @@ import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
 import { dataTablePresets } from "@/lib/presets/data-table";
 import { imagePresets } from "@/lib/presets/image";
+import { instagramPostPresets } from "@/lib/presets/instagram-post";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
 import { itemCarouselPresets } from "@/lib/presets/item-carousel";
 import { linkPreviewPresets } from "@/lib/presets/link-preview";
@@ -26,6 +32,7 @@ import { linkedInPostPresets } from "@/lib/presets/linkedin-post";
 import { messageDraftPresets } from "@/lib/presets/message-draft";
 import { optionListPresets } from "@/lib/presets/option-list";
 import { orderSummaryPresets } from "@/lib/presets/order-summary";
+import { parameterSliderPresets } from "@/lib/presets/parameter-slider";
 import { planPresets } from "@/lib/presets/plan";
 import { preferencesPanelPresets } from "@/lib/presets/preferences-panel";
 import { progressTrackerPresets } from "@/lib/presets/progress-tracker";
@@ -34,6 +41,7 @@ import { statsDisplayPresets } from "@/lib/presets/stats-display";
 import { terminalPresets } from "@/lib/presets/terminal";
 import { videoPresets } from "@/lib/presets/video";
 import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
+import { xPostPresets } from "@/lib/presets/x-post";
 import { cn } from "@/lib/ui/cn";
 
 const ApprovalCard = dynamic(() =>
@@ -57,11 +65,14 @@ const LinkPreview = dynamic(() =>
 const LinkedInPost = dynamic(() =>
   import("@/components/tool-ui/linkedin-post").then((m) => m.LinkedInPost),
 );
+const InstagramPost = dynamic(() =>
+  import("@/components/tool-ui/instagram-post").then((m) => m.InstagramPost),
+);
 const OptionList = dynamic(() =>
   import("@/components/tool-ui/option-list").then((m) => m.OptionList),
 );
-const OrderSummary = dynamic(() =>
-  import("@/components/tool-ui/order-summary").then((m) => m.OrderSummary),
+const ParameterSlider = dynamic(() =>
+  import("@/components/tool-ui/parameter-slider").then((m) => m.ParameterSlider),
 );
 const Plan = dynamic(() =>
   import("@/components/tool-ui/plan").then((m) => m.Plan),
@@ -69,8 +80,8 @@ const Plan = dynamic(() =>
 const Terminal = dynamic(() =>
   import("@/components/tool-ui/terminal").then((m) => m.Terminal),
 );
-const CodeBlock = dynamic(() =>
-  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock),
+const CodeBlockStandard = dynamic(() =>
+  import("@/components/tool-ui/code-block").then((m) => m.CodeBlockStandard),
 );
 const Chart = dynamic(() =>
   import("@/components/tool-ui/chart").then((m) => m.Chart),
@@ -91,6 +102,9 @@ const QuestionFlow = dynamic(() =>
 const MessageDraft = dynamic(() =>
   import("@/components/tool-ui/message-draft").then((m) => m.MessageDraft),
 );
+const XPost = dynamic(() =>
+  import("@/components/tool-ui/x-post").then((m) => m.XPost),
+);
 const WeatherWidget = dynamic(() =>
   import("@/components/tool-ui/weather-widget/runtime").then(
     (m) => m.WeatherWidget,
@@ -110,6 +124,12 @@ interface GalleryPreviewCardProps {
   children: ReactNode;
 }
 
+interface GalleryCardConfig {
+  componentId: GalleryComponentDocId;
+  className: string;
+  render: () => ReactNode;
+}
+
 function GalleryPreviewCard({
   componentId,
   className,
@@ -124,9 +144,10 @@ function GalleryPreviewCard({
           componentId={componentId}
           label={componentMeta.name}
           href={componentMeta.docsHref}
-          className="pointer-events-auto inline-flex items-center gap-1 whitespace-nowrap text-neutral-200/90 hover:text-white focus-visible:outline-none dark:text-neutral-700 dark:hover:text-neutral-950"
+          className="pointer-events-auto inline-flex items-center gap-1 whitespace-nowrap text-neutral-200/90 hover:text-white dark:text-neutral-700 dark:hover:text-neutral-950"
         />
       </div>
+      <GalleryPreviewImpression componentId={componentId} />
       {children}
     </div>
   );
@@ -134,190 +155,183 @@ function GalleryPreviewCard({
 
 export default function ComponentsGalleryPage() {
   const galleryImage = imagePresets["with-source"].data.image;
+  const galleryCards: GalleryCardConfig[] = [
+    {
+      componentId: "item-carousel",
+      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
+      render: () => <ItemCarousel {...itemCarouselPresets.recommendations.data} />,
+    },
+    {
+      componentId: "data-table",
+      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
+      render: () => <DataTable {...dataTablePresets.stocks.data} />,
+    },
+    {
+      componentId: "stats-display",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <StatsDisplay {...statsDisplayPresets["business-metrics"].data} />
+      ),
+    },
+    {
+      componentId: "weather-widget",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <WeatherWidget
+          {...weatherWidgetPresets["sunny-forecast"].data}
+          current={{
+            temperature: 64,
+            tempMin: 58,
+            tempMax: 72,
+            conditionCode: "thunderstorm",
+          }}
+          updatedAt="2026-01-29T02:30:00Z"
+          effects={{ enabled: true, quality: "low" }}
+        />
+      ),
+    },
+    {
+      componentId: "image-gallery",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <ImageGallery {...imageGalleryPresets["search-results"].data} />,
+    },
+    {
+      componentId: "link-preview",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <LinkPreview {...linkPreviewPresets["with-image"].data.linkPreview} />
+      ),
+    },
+    {
+      componentId: "citation",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <CitationList
+          id="gallery-citations"
+          citations={citationPresets.stacked.data.citations}
+          variant="stacked"
+        />
+      ),
+    },
+    {
+      componentId: "audio",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <Audio {...audioPresets.full.data.audio} />,
+    },
+    {
+      componentId: "option-list",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <OptionList {...optionListPresets["max-selections"].data} />,
+    },
+    {
+      componentId: "approval-card",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <ApprovalCard {...approvalCardPresets["with-metadata"].data} />,
+    },
+    {
+      componentId: "message-draft",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <MessageDraft {...messageDraftPresets.email.data} />,
+    },
+    {
+      componentId: "order-summary",
+      className: "mb-5 break-inside-avoid 2xl:mb-5",
+      render: () => (
+        <OrderSummary.Display
+          {...orderSummaryPresets.default.data}
+          className="max-w-none"
+        />
+      ),
+    },
+    {
+      componentId: "plan",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <Plan {...planPresets.comprehensive.data} />,
+    },
+    {
+      componentId: "progress-tracker",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <ProgressTracker {...progressTrackerPresets["in-progress"].data} />
+      ),
+    },
+    {
+      componentId: "question-flow",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <QuestionFlow {...questionFlowPresets.upfront.data} />,
+    },
+    {
+      componentId: "parameter-slider",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <ParameterSlider {...parameterSliderPresets["photo-adjustments"].data} />
+      ),
+    },
+    {
+      componentId: "preferences-panel",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <PreferencesPanel {...preferencesPanelPresets.privacy.data} />,
+    },
+    {
+      componentId: "terminal",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <Terminal {...terminalPresets.success.data} />,
+    },
+    {
+      componentId: "code-block",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <CodeBlockStandard {...codeBlockPresets.typescript.data} />,
+    },
+    {
+      componentId: "chart",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <Chart id="gallery-chart" {...chartPresets.revenue.data} />,
+    },
+    {
+      componentId: "video",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <Video {...videoPresets["with-poster"].data.video} />,
+    },
+    {
+      componentId: "image",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <Image {...galleryImage} alt={galleryImage.alt} />,
+    },
+    {
+      componentId: "linkedin-post",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <LinkedInPost post={linkedInPostPresets.basic.data.post} />,
+    },
+    {
+      componentId: "instagram-post",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <InstagramPost post={instagramPostPresets.basic.data.post} />,
+    },
+    {
+      componentId: "x-post",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <XPost post={xPostPresets.basic.data.post} />,
+    },
+  ];
 
   return (
     <DocsBorderedShell>
-      <div className="scrollbar-subtle z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12">
+      <main
+        aria-label="Tool UI component gallery"
+        className="scrollbar-subtle z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12"
+      >
+        <h1 className="sr-only">Tool UI Component Gallery</h1>
+        <GalleryPageAnalytics />
         <div className="mx-auto columns-1 gap-5 pb-20 [column-fill:balance] md:columns-2 2xl:columns-3 2xl:gap-5">
-          <GalleryPreviewCard
-            componentId="item-carousel"
-            className="mb-5 flex justify-center [column-span:all] 2xl:mb-5"
-          >
-            <ItemCarousel {...itemCarouselPresets.recommendations.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="data-table"
-            className="mb-5 flex justify-center [column-span:all] 2xl:mb-5"
-          >
-            <DataTable {...dataTablePresets.stocks.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="stats-display"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <StatsDisplay {...statsDisplayPresets["business-metrics"].data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="weather-widget"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <WeatherWidget
-              {...weatherWidgetPresets["sunny-forecast"].data}
-              current={{
-                temperature: 64,
-                tempMin: 58,
-                tempMax: 72,
-                conditionCode: "thunderstorm",
-              }}
-              updatedAt="2026-01-29T02:30:00Z"
-              effects={{ enabled: true, quality: "low" }}
-            />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="image-gallery"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <ImageGallery {...imageGalleryPresets["search-results"].data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="link-preview"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <LinkPreview
-              {...linkPreviewPresets["with-image"].data.linkPreview}
-            />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="citation"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <CitationList
-              id="gallery-citations"
-              citations={citationPresets.stacked.data.citations}
-              variant="stacked"
-            />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="audio"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <Audio {...audioPresets["full"].data.audio} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="option-list"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <OptionList {...optionListPresets["max-selections"].data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="approval-card"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <ApprovalCard {...approvalCardPresets["with-metadata"].data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="message-draft"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <MessageDraft {...messageDraftPresets.email.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="order-summary"
-            className="mb-5 break-inside-avoid 2xl:mb-5"
-          >
-            <OrderSummary
-              {...orderSummaryPresets.default.data}
-              className="max-w-none"
-            />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="plan"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <Plan {...planPresets.comprehensive.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="progress-tracker"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <ProgressTracker {...progressTrackerPresets["in-progress"].data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="question-flow"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <QuestionFlow {...questionFlowPresets.upfront.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="option-list"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <OptionList {...optionListPresets.travel.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="preferences-panel"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <PreferencesPanel {...preferencesPanelPresets.privacy.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="terminal"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <Terminal {...terminalPresets.success.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="code-block"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <CodeBlock {...codeBlockPresets.typescript.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="chart"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <Chart id="gallery-chart" {...chartPresets.revenue.data} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="video"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <Video {...videoPresets["with-poster"].data.video} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="image"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <Image {...galleryImage} alt={galleryImage.alt} />
-          </GalleryPreviewCard>
-
-          <GalleryPreviewCard
-            componentId="linkedin-post"
-            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
-          >
-            <LinkedInPost post={linkedInPostPresets.basic.data.post} />
-          </GalleryPreviewCard>
+          {galleryCards.map((card) => (
+            <GalleryPreviewCard
+              key={card.componentId}
+              componentId={card.componentId}
+              className={card.className}
+            >
+              {card.render()}
+            </GalleryPreviewCard>
+          ))}
 
           {/* <div className="mb-5 flex justify-center break-inside-avoid 2xl:mb-5">
             <Link
@@ -331,7 +345,7 @@ export default function ComponentsGalleryPage() {
             </Link>
           </div> */}
         </div>
-      </div>
+      </main>
     </DocsBorderedShell>
   );
 }

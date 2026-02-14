@@ -33,6 +33,33 @@ describe("progress tracker render contract", () => {
     expect(html.indexOf("First")).toBeLessThan(html.indexOf("Second"));
   });
 
+  it("exposes compound variants on the root export", () => {
+    expect(typeof ProgressTracker.Live).toBe("function");
+    expect(typeof ProgressTracker.Receipt).toBe("function");
+
+    const liveHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker.Live, {
+        id: "progress-tracker-live-variant",
+        steps: [{ id: "step-1", label: "First", status: "in-progress" as const }],
+      }),
+    );
+
+    const receiptHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker.Receipt, {
+        id: "progress-tracker-receipt-variant",
+        steps: [{ id: "step-1", label: "First", status: "completed" as const }],
+        choice: {
+          outcome: "success",
+          summary: "Complete",
+          at: "2026-02-14T00:00:00.000Z",
+        },
+      }),
+    );
+
+    expect(liveHtml).toContain('data-slot="progress-tracker"');
+    expect(receiptHtml).toContain('data-receipt="true"');
+  });
+
   it("does not render action buttons in display-only v2", () => {
     const html = renderToStaticMarkup(
       React.createElement(ProgressTracker, {
@@ -93,6 +120,33 @@ describe("progress tracker render contract", () => {
     expect(html).toContain("Failed migration");
   });
 
+  it("hides inactive descriptions from assistive tech in interactive mode", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-description-a11y",
+        steps: [
+          {
+            id: "pending-step",
+            label: "Pending Step",
+            status: "pending" as const,
+            description: "This should stay hidden",
+          },
+          {
+            id: "active-step",
+            label: "Active Step",
+            status: "in-progress" as const,
+            description: "This should stay visible",
+          },
+        ],
+      }),
+    );
+
+    expect(html).toContain("This should stay hidden");
+    expect(html).toContain("This should stay visible");
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain('aria-hidden="false"');
+  });
+
   it("renders elapsed time using a semantic <time> with dateTime", () => {
     const html = renderToStaticMarkup(
       React.createElement(ProgressTracker, {
@@ -108,5 +162,51 @@ describe("progress tracker render contract", () => {
     expect(html).toContain("<time");
     expect(html).toContain('dateTime="PT43.2S"');
     expect(html).toContain("43.2s");
+  });
+
+  it("rounds sub-minute values consistently at boundary transitions", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-time-boundary",
+        steps: [{ id: "step-1", label: "First", status: "in-progress" as const }],
+        elapsedTime: 59999,
+      }),
+    );
+
+    expect(html).toContain("1m 0s");
+    expect(html).toContain('dateTime="PT1M"');
+    expect(html).not.toContain("60.0s");
+  });
+
+  it("renders receipt mode with explicit non-success outcome icons", () => {
+    const partialHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-receipt-partial",
+        steps: [{ id: "step-1", label: "First", status: "completed" as const }],
+        choice: {
+          outcome: "partial",
+          summary: "Partially complete",
+          at: "2026-02-14T00:00:00.000Z",
+        },
+      }),
+    );
+
+    const cancelledHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-receipt-cancelled",
+        steps: [{ id: "step-1", label: "First", status: "failed" as const }],
+        choice: {
+          outcome: "cancelled",
+          summary: "Cancelled by user",
+          at: "2026-02-14T00:00:00.000Z",
+        },
+      }),
+    );
+
+    expect(partialHtml).toContain('data-receipt="true"');
+    expect(partialHtml).toContain('aria-label="Partially complete"');
+    expect(partialHtml).toContain("lucide-circle-alert");
+
+    expect(cancelledHtml).toContain("lucide-x");
   });
 });

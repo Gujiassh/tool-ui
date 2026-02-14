@@ -1404,9 +1404,6 @@
         "lucide-react",
         "zod"
       ],
-      "registryDependencies": [
-        "button"
-      ],
       "files": [
         {
           "path": "components/tool-ui/progress-tracker/_adapter.tsx",
@@ -1709,6 +1706,11 @@
           "path": "components/tool-ui/video/schema.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/video/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/video/video-helpers.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/video/video-helpers.ts"
         },
         {
           "path": "components/tool-ui/video/video.tsx",

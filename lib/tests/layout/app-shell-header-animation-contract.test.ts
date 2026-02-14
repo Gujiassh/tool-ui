@@ -10,7 +10,9 @@ describe("app shell header animation contract", () => {
   it("includes the navbar entrance class on first render of AnimatedHeaderFrame", async () => {
     vi.resetModules();
 
-    const { AnimatedHeaderFrame } = await import("@/app/components/layout/app-shell");
+    const { AnimatedHeaderFrame } = await import(
+      "@/app/components/layout/app-shell-animated.client"
+    );
 
     const html = renderToStaticMarkup(
       createElement(AnimatedHeaderFrame, null, createElement("main", null, "content")),

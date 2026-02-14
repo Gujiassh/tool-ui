@@ -188,13 +188,12 @@ function CarouselNavButton({
   );
 }
 
-function ItemCarouselHeader({
-  title,
-  description,
-}: {
+interface ItemCarouselHeaderProps {
   title?: string;
   description?: string;
-}) {
+}
+
+function ItemCarouselHeader({ title, description }: ItemCarouselHeaderProps) {
   if (!title && !description) return null;
 
   return (
@@ -213,15 +212,24 @@ function ItemCarouselHeader({
   );
 }
 
-function EmptyState({ className }: { className?: string }) {
+interface EmptyStateProps {
+  id: string;
+  className?: string;
+}
+
+function EmptyState({ id, className }: EmptyStateProps) {
   return (
-    <Card className={cn("flex h-48 items-center justify-center", className)}>
+    <Card
+      data-tool-ui-id={id}
+      data-slot="item-carousel"
+      className={cn("flex h-48 items-center justify-center", className)}
+    >
       <p className="text-muted-foreground text-sm">No items to display</p>
     </Card>
   );
 }
 
-export function ItemCarousel({
+function ItemCarouselRoot({
   id,
   title,
   description,
@@ -323,7 +331,7 @@ export function ItemCarousel({
   const handleScrollRight = useCallback(() => scroll("right"), [scroll]);
 
   if (items.length === 0) {
-    return <EmptyState className={className} />;
+    return <EmptyState id={id} className={className} />;
   }
 
   return (
@@ -378,3 +386,19 @@ export function ItemCarousel({
     </div>
   );
 }
+
+type ItemCarouselComponent = typeof ItemCarouselRoot & {
+  Root: typeof ItemCarouselRoot;
+  Header: typeof ItemCarouselHeader;
+  EmptyState: typeof EmptyState;
+  NavButton: typeof CarouselNavButton;
+  Card: typeof ItemCard;
+};
+
+export const ItemCarousel = Object.assign(ItemCarouselRoot, {
+  Root: ItemCarouselRoot,
+  Header: ItemCarouselHeader,
+  EmptyState,
+  NavButton: CarouselNavButton,
+  Card: ItemCard,
+}) as ItemCarouselComponent;

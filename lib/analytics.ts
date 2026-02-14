@@ -1,16 +1,42 @@
-import posthog from "posthog-js";
-import { track as vercelTrack } from "@vercel/analytics";
+type AnalyticsProperties = Record<string, string | number | boolean>;
 
 const trackEvent = (
   event: string,
-  properties?: Record<string, string | number | boolean>,
+  properties?: AnalyticsProperties,
 ) => {
-  // PostHog
-  posthog.capture?.(event, properties);
+  if (typeof window === "undefined") {
+    return;
+  }
 
-  // Vercel Analytics
-  vercelTrack(event, properties);
+  void loadPostHog().then((posthog) => {
+    posthog?.capture?.(event, properties);
+  });
+
+  void loadVercelTrack().then((track) => {
+    track?.(event, properties);
+  });
 };
+
+let posthogLoader: Promise<
+  (typeof import("posthog-js"))["default"] | null
+> | null = null;
+let vercelTrackLoader: Promise<
+  (typeof import("@vercel/analytics"))["track"] | null
+> | null = null;
+
+function loadPostHog() {
+  posthogLoader ??= import("posthog-js")
+    .then((module) => module.default)
+    .catch(() => null);
+  return posthogLoader;
+}
+
+function loadVercelTrack() {
+  vercelTrackLoader ??= import("@vercel/analytics")
+    .then((module) => module.track)
+    .catch(() => null);
+  return vercelTrackLoader;
+}
 
 export const analytics = {
   // ============================================================
@@ -82,6 +108,13 @@ export const analytics = {
   },
 
   gallery: {
+    /** Gallery landing page view */
+    pageViewed: () => trackEvent("gallery_page_viewed"),
+
+    /** Which preview cards are shown in the gallery */
+    componentPreviewed: (componentName: string) =>
+      trackEvent("gallery_component_previewed", { component: componentName }),
+
     /** Which components get clicks from gallery overview */
     componentClicked: (componentName: string) =>
       trackEvent("gallery_component_clicked", { component: componentName }),
