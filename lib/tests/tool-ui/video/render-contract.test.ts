@@ -11,6 +11,16 @@ const BASE_VIDEO_PROPS = {
 } as const;
 
 describe("video render contract", () => {
+  test("supports compound root rendering via Video.Root", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(Video.Root, {
+        ...BASE_VIDEO_PROPS,
+      }),
+    );
+
+    expect(html).toContain('data-slot="video"');
+  });
+
   test("applies contain fit class when requested", () => {
     const html = renderToStaticMarkup(
       React.createElement(Video, {

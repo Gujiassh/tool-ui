@@ -30,7 +30,7 @@ export interface VideoProps extends SerializableVideo {
   onMediaEvent?: (type: "play" | "pause" | "mute" | "unmute") => void;
 }
 
-export function Video(props: VideoProps) {
+function VideoRoot(props: VideoProps) {
   const { defaultMuted = true, ...rest } = props;
 
   return (
@@ -268,3 +268,11 @@ function formatCreatedAt(createdAt: string, locale: string): string {
 
   return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
 }
+
+type VideoComponent = typeof VideoRoot & {
+  Root: typeof VideoRoot;
+};
+
+export const Video = Object.assign(VideoRoot, {
+  Root: VideoRoot,
+}) as VideoComponent;

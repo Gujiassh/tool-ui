@@ -7,4 +7,9 @@ describe("video public api contract", () => {
     expect(VideoUi).not.toHaveProperty("VideoProvider");
     expect(VideoUi).not.toHaveProperty("useVideo");
   });
+
+  test("exposes compound component root syntax", () => {
+    expect(VideoUi.Video).toHaveProperty("Root");
+    expect(typeof VideoUi.Video.Root).toBe("function");
+  });
 });
