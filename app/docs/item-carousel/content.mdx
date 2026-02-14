@@ -135,9 +135,9 @@ How the carousel handles common interaction patterns:
 
 **Smooth scroll animation:** Custom JavaScript scrolling with a cubic-bezier ease-out curve. Respects `prefers-reduced-motion` with an instant-scroll fallback. Snap positions are calculated dynamically from card offsets.
 
-**Image handling:** Accepts image URLs or hex color fallbacks. Images use `loading="lazy"` and `decoding="async"`. On hover, images scale up 5% with a 300ms transition.
+**Image handling:** Accepts image URLs or hex color fallbacks. Images use `loading="lazy"` and `decoding="async"`. On hover, images scale up 5% with a `duration-200` transform transition.
 
-**Click delegation:** Cards can be interactive (`onItemClick`) while containing action buttons. The handler checks if the event came from a button and delegates, preventing double-firing.
+**Overlay click target:** Interactive cards render a full-card overlay button (`absolute inset-0`, `z-10`) for `onItemClick`, while action buttons sit above it (`z-20`) so primary actions stay independently clickable.
 
 **Touch optimization:** `touch-manipulation` eliminates the 300ms tap delay on iOS. Navigation buttons appear only on hover/focus (desktop) with backdrop blur.
 

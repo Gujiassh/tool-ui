@@ -45,4 +45,16 @@ describe("item-carousel render contract", () => {
 
     expect(html).not.toContain('role="button"');
   });
+
+  test("keeps standard root attributes when empty", () => {
+    const html = renderToStaticMarkup(
+      createElement(ItemCarousel, {
+        id: "item-carousel-empty-contract",
+        items: [],
+      }),
+    );
+
+    expect(html).toContain('data-tool-ui-id="item-carousel-empty-contract"');
+    expect(html).toContain('data-slot="item-carousel"');
+  });
 });

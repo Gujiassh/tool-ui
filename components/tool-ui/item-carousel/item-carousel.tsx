@@ -213,9 +213,13 @@ function ItemCarouselHeader({
   );
 }
 
-function EmptyState({ className }: { className?: string }) {
+function EmptyState({ id, className }: { id: string; className?: string }) {
   return (
-    <Card className={cn("flex h-48 items-center justify-center", className)}>
+    <Card
+      data-tool-ui-id={id}
+      data-slot="item-carousel"
+      className={cn("flex h-48 items-center justify-center", className)}
+    >
       <p className="text-muted-foreground text-sm">No items to display</p>
     </Card>
   );
@@ -323,7 +327,7 @@ export function ItemCarousel({
   const handleScrollRight = useCallback(() => scroll("right"), [scroll]);
 
   if (items.length === 0) {
-    return <EmptyState className={className} />;
+    return <EmptyState id={id} className={className} />;
   }
 
   return (
