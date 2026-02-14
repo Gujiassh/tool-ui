@@ -654,9 +654,10 @@ export const previewConfigs: Record<
           id="option-list-preview"
           value={state.selection as Parameters<typeof OptionList>[0]["value"]}
           onChange={(selection) => setState({ selection })}
-          onConfirm={(sel) => {
-            console.log("OptionList confirmed:", sel);
-            alert(`Selection confirmed: ${JSON.stringify(sel)}`);
+          onAction={(actionId, selection) => {
+            if (actionId !== "confirm") return;
+            console.log("OptionList confirmed:", selection);
+            alert(`Selection confirmed: ${JSON.stringify(selection)}`);
           }}
         />
       );
@@ -757,7 +758,7 @@ export const previewConfigs: Record<
         <DynamicParameterSlider
           {...sliderData}
           sliders={themedSliders}
-          onAdjustmentAction={(actionId, values) =>
+          onAction={(actionId, values) =>
             console.log("Action:", actionId, "Values:", values)
           }
         />
@@ -810,8 +811,9 @@ export const previewConfigs: Record<
               selection: value as unknown as string[] | string | null,
             })
           }
-          onSave={async (values) => console.log("Saved:", values)}
-          onCancel={() => console.log("Cancelled")}
+          onAction={async (actionId, values) =>
+            console.log("Action:", actionId, "Values:", values)
+          }
         />
       );
     },

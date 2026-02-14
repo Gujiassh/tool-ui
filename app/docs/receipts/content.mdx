@@ -9,13 +9,13 @@ import { ApprovalCard } from "@/components/tool-ui/approval-card";
   mdxPath="app/docs/receipts/content.mdx"
 />
 
-When a user takes an action with consequences, the tool UI should transition to a **receipt state** that confirms what happened. This gives the user proof of their decision and something the assistant can reference later.
+When a user approves a deploy, selects a plan, or confirms a purchase, the interactive UI should become a permanent record of what happened. Otherwise, scrolling back shows a clickable button for a decision that was already made. A **receipt state** replaces the interactive controls with a confirmation of the choice, proof of the decision that the assistant can reference later.
 
 ## Why Receipts Matter
 
-Without receipts, consequential actions vanish into the conversation history. The user can't verify what they chose, and the assistant can't reference specific decisions.
+Without receipts, decisions vanish into the conversation history.
 
-<div className="mx-auto max-w-2xl">
+<div>
   <MockThread caption="A decision with receipt">
     <MockMessage role="assistant">
       <span className="text-foreground">
@@ -54,15 +54,15 @@ Without receipts, consequential actions vanish into the conversation history. Th
   </MockThread>
 </div>
 
-The receipt shows what the user chose. The assistant's follow-up confirms the outcome and offers a way to reverse it.
+The receipt shows what was chosen. The follow-up confirms the outcome and offers an undo path.
 
 ## Writing Receipt Copy
 
-Receipts describe a past decision. The copy should reflect this.
+Receipt copy describes a past decision.
 
 ### The Decision Label
 
-The decision label (e.g., "Approved", "Denied", "Selected") should be **past tense** because it describes what the user decided:
+Decision labels use **past tense**: they describe what the user decided.
 
 | Interactive State | Receipt State |
 |-------------------|---------------|
@@ -73,7 +73,7 @@ The decision label (e.g., "Approved", "Denied", "Selected") should be **past ten
 
 ### The Action Description
 
-The action description stays in **imperative form** because it describes the request that was approved or denied, not the outcome:
+Action descriptions stay in **imperative form**: they describe the request, not the outcome.
 
 <div className="not-prose grid gap-4 sm:grid-cols-2 my-6">
   <div>
@@ -94,7 +94,7 @@ The action description stays in **imperative form** because it describes the req
   </div>
 </div>
 
-The pattern is: **[Past-tense decision] — [Imperative action]**
+The pattern is: **[Past-tense decision] [Imperative action]**
 
 - "Approved — Back up database" (the request to back up was approved)
 - "Denied — Delete all project files" (the request to delete was denied)
@@ -102,7 +102,7 @@ The pattern is: **[Past-tense decision] — [Imperative action]**
 
 ## Components with Receipt States
 
-Several Tool UI components support receipt states:
+Components with built-in receipt states:
 
 | Component | Receipt Prop | What It Shows |
 |-----------|--------------|---------------|
@@ -114,16 +114,16 @@ Several Tool UI components support receipt states:
 
 ## When to Use Receipts
 
-Use receipts for **consequential decisions** that:
+Use receipts for decisions that:
 
 - Change state (approvals, deletions, submissions)
 - Can't be easily undone
 - The user or assistant might need to reference later
 
-Skip receipts for **reversible controls** like:
+Skip receipts for reversible controls like:
 
 - Sorting or filtering data
 - Adjusting parameters
 - Navigating between views
 
-The assistant's follow-up message should reference the receipt and, when appropriate, offer a way to undo or modify the decision.
+The assistant's follow-up should reference the receipt and, when appropriate, offer a way to undo or modify the decision.

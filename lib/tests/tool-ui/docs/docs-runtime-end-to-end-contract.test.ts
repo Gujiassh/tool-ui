@@ -272,7 +272,11 @@ describe("docs runtime end-to-end contracts", () => {
           : h(OptionList, {
               ...parsedArgs,
               value: undefined,
-              onConfirm: (selection) => addResult?.(selection),
+              onAction: (actionId, state) => {
+                if (actionId === "confirm") {
+                  void addResult?.(state);
+                }
+              },
             }),
     });
 
@@ -341,7 +345,7 @@ describe("docs runtime end-to-end contracts", () => {
       render: (parsedArgs, { addResult }) =>
         h(ParameterSlider, {
           ...parsedArgs,
-          onAdjustmentAction: (actionId, values) => {
+          onAction: (actionId, values) => {
             if (actionId === "apply") {
               void addResult?.({ values });
             }
@@ -394,11 +398,14 @@ describe("docs runtime end-to-end contracts", () => {
       render: (parsedArgs, { addResult }) =>
         h(PreferencesPanel, {
           ...parsedArgs,
-          onSave: async (values) => {
-            await addResult?.({ choice: values });
-          },
-          onCancel: () => {
-            void addResult?.({ choice: {} });
+          onAction: async (actionId, value) => {
+            if (actionId === "save") {
+              await addResult?.({ choice: value });
+              return;
+            }
+            if (actionId === "cancel") {
+              void addResult?.({ choice: value });
+            }
           },
         }),
     });
@@ -448,7 +455,127 @@ describe("docs runtime end-to-end contracts", () => {
     await click(cancelButton);
 
     expect(addResult).toHaveBeenCalledTimes(2);
-    expect(addResult).toHaveBeenLastCalledWith({ choice: {} });
+    expect(addResult).toHaveBeenLastCalledWith({
+      choice: { notifications: false },
+    });
+
+    await cleanupClientRender(root, container);
+  });
+
+  it("passes current and post-action state for option-list actions", async () => {
+    const onBeforeAction = vi.fn(async () => true);
+    const onAction = vi.fn(async () => undefined);
+
+    const { container, root } = await renderClient(
+      h(OptionList, {
+        id: "docs-option-list-actions",
+        options: [
+          { id: "json", label: "JSON" },
+          { id: "markdown", label: "Markdown" },
+        ],
+        selectionMode: "single",
+        onBeforeAction,
+        onAction,
+      }),
+    );
+
+    const jsonOption = container.querySelector(
+      'button[role="option"][data-id="json"]',
+    ) as HTMLButtonElement | null;
+    expect(jsonOption).not.toBeNull();
+    if (!jsonOption) {
+      throw new Error("Expected JSON option button to exist.");
+    }
+
+    await click(jsonOption);
+
+    const confirmButton = findButtonByText(container, "Confirm");
+    await click(confirmButton);
+    expect(onBeforeAction).toHaveBeenCalledWith("confirm", "json");
+    expect(onAction).toHaveBeenCalledWith("confirm", "json");
+
+    const clearButton = findButtonByText(container, "Clear");
+    await click(clearButton);
+    expect(onBeforeAction).toHaveBeenCalledWith("cancel", "json");
+    expect(onAction).toHaveBeenCalledWith("cancel", null);
+
+    await cleanupClientRender(root, container);
+  });
+
+  it("passes current values to parameter-slider action guards and handlers", async () => {
+    const onBeforeAction = vi.fn(async () => true);
+    const onAction = vi.fn(async () => undefined);
+
+    const { container, root } = await renderClient(
+      h(ParameterSlider, {
+        id: "docs-parameter-slider-actions",
+        sliders: [
+          {
+            id: "exposure",
+            label: "Exposure",
+            min: -3,
+            max: 3,
+            step: 0.1,
+            value: 0.3,
+            unit: "EV",
+            precision: 1,
+          },
+        ],
+        onBeforeAction,
+        onAction,
+      }),
+    );
+
+    const applyButton = findButtonByText(container, "Apply");
+    await click(applyButton);
+
+    expect(onBeforeAction).toHaveBeenCalledWith("apply", [
+      { id: "exposure", value: 0.3 },
+    ]);
+    expect(onAction).toHaveBeenCalledWith("apply", [
+      { id: "exposure", value: 0.3 },
+    ]);
+
+    await cleanupClientRender(root, container);
+  });
+
+  it("passes current and post-action values for preferences-panel actions", async () => {
+    const onBeforeAction = vi.fn(async () => true);
+    const onAction = vi.fn(async () => undefined);
+
+    const { container, root } = await renderClient(
+      h(PreferencesPanel, {
+        id: "docs-preferences-panel-actions",
+        sections: [
+          {
+            items: [
+              {
+                id: "notifications",
+                label: "Notifications",
+                description: "Receive push notifications",
+                type: "switch",
+                defaultChecked: false,
+              },
+            ],
+          },
+        ],
+        onBeforeAction,
+        onAction,
+      }),
+    );
+
+    const notificationsSwitch = findButtonByAriaLabel(container, "Notifications");
+    await click(notificationsSwitch);
+
+    const saveButton = findButtonByText(container, "Save Changes");
+    await click(saveButton);
+    expect(onBeforeAction).toHaveBeenCalledWith("save", { notifications: true });
+    expect(onAction).toHaveBeenCalledWith("save", { notifications: true });
+
+    const cancelButton = findButtonByText(container, "Cancel");
+    await click(cancelButton);
+    expect(onBeforeAction).toHaveBeenCalledWith("cancel", { notifications: true });
+    expect(onAction).toHaveBeenCalledWith("cancel", { notifications: false });
 
     await cleanupClientRender(root, container);
   });

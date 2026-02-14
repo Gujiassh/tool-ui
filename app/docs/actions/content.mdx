@@ -1,262 +1,152 @@
 import { DocsHeader } from "../_components/docs-header";
-import { DataTable } from "@/components/tool-ui/data-table";
-import { OptionList } from "@/components/tool-ui/option-list";
+import {
+  ActionFlowCommitVisual,
+  ActionFlowRenderVisual,
+  ActionFlowRuntimeHandleVisual,
+  ActionFlowToolCallVisual,
+  ActionFlowUserActionVisual,
+  ActionCentricExceptionsExample,
+  DecisionSurfaceExample,
+  DisplaySurfaceLocalActionsExample,
+} from "./actions-examples";
 
 <DocsHeader
   title="Actions"
-  description="The action model for Tool UI: follow-up vs decision, and how to implement each."
+  description="Action model basics."
   mdxPath="app/docs/actions/content.mdx"
 />
 
-Tool UI actions should answer one question clearly: **what can the user do next?**
+Tool UI actions are how a user turns a rendered tool UI into behavior. If you're new to tool calling, this page gives you the mental model first, then the implementation patterns.
 
-Start with this model:
+## Mental Model
 
-1. **Display surfaces** render tool output.
-2. **Follow-up actions** are lightweight next steps (open, copy, retry).
-3. **Decision actions** are consequential and should produce a durable result.
+<Steps>
 
-## Action Decision Matrix
+<Step title="The model calls a tool">
 
-| User interaction | Durable outcome required? | Surface | Call `addResult(...)`? |
-| --- | --- | --- | --- |
-| Open link, copy value, retry fetch | No | Follow-up actions | No |
-| Approve/reject, publish/cancel, confirm order | Yes | Decision actions | Yes |
-| View data only | N/A | Display surface only | No |
+The model chooses a tool and sends structured arguments.
 
-## Visual Examples
-
-### Display surface + follow-up actions
-
-<div className="not-prose">
-  <DataTable
-    id="actions-follow-up-example"
-    rowIdKey="id"
-    columns={[
-      { key: "task", label: "Task", priority: "primary" },
-      {
-        key: "status",
-        label: "Status",
-        format: {
-          kind: "status",
-          statusMap: {
-            blocked: { tone: "warning", label: "Blocked" },
-            ready: { tone: "success", label: "Ready" },
-          },
-        },
-      },
-    ]}
-    data={[
-      { id: "1", task: "Sync invoices to ERP", status: "blocked" },
-      { id: "2", task: "Export audit report", status: "ready" },
-    ]}
-    responseActions={[
-      { id: "open-details", label: "Open Details", variant: "secondary" },
-      { id: "retry-sync", label: "Retry", variant: "default" },
-    ]}
-  />
-</div>
-
-### Decision surface + receipt state
-
-<div className="not-prose grid gap-4 lg:grid-cols-2">
-  <div>
-    <p className="mb-2 text-sm text-muted-foreground">Interactive decision</p>
-    <OptionList
-      id="actions-decision-interactive"
-      selectionMode="single"
-      options={[
-        {
-          id: "approve",
-          label: "Approve change",
-          description: "Apply immediately",
-        },
-        {
-          id: "reject",
-          label: "Reject change",
-          description: "Keep current configuration",
-        },
-      ]}
-    />
-  </div>
-  <div>
-    <p className="mb-2 text-sm text-muted-foreground">Receipt state</p>
-    <OptionList
-      id="actions-decision-receipt"
-      selectionMode="single"
-      choice="approve"
-      options={[
-        {
-          id: "approve",
-          label: "Approve change",
-          description: "Apply immediately",
-        },
-        {
-          id: "reject",
-          label: "Reject change",
-          description: "Keep current configuration",
-        },
-      ]}
-    />
-  </div>
-</div>
-
-## Current API Mapping
-
-The model above is conceptual. In the current Tool UI component APIs, most surfaces still transport actions through:
-
-- `responseActions`
-- `onResponseAction`
-- `onBeforeResponseAction`
-
-Use those props according to intent:
-
-- **Follow-up action:** perform local/runtime side effects only.
-- **Decision action:** call `addResult(...)` and re-render the receipt state (`choice`, `decision`, or equivalent).
-
-Some decision-first components already expose dedicated callbacks (`onConfirm`, `onCancel`) instead of generic action callbacks.
-
-## Minimal Implementation
-
-### 1) Follow-up actions (no durable state)
-
-```tsx
-import { type Toolkit } from "@assistant-ui/react";
-import { LinkPreview } from "@/components/tool-ui/link-preview";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
-import { safeParseSerializableLinkPreview } from "@/components/tool-ui/link-preview/schema";
-
-const toolkit: Toolkit = {
-  previewLink: {
-    type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableLinkPreview,
-      render: (data) => (
-        <LinkPreview
-          {...data}
-          responseActions={[
-            { id: "open", label: "Open" },
-            { id: "copy", label: "Copy URL" },
-          ]}
-          onResponseAction={(actionId) => {
-            if (actionId === "open") window.open(data.href, "_blank");
-            if (actionId === "copy") navigator.clipboard.writeText(data.href);
-          }}
-        />
-      ),
-    }),
-  },
-};
-```
-
-### 2) Decision actions (durable result + receipt)
-
-```tsx
-import { type Toolkit } from "@assistant-ui/react";
-import { OptionList } from "@/components/tool-ui/option-list";
-import {
-  SerializableOptionListSchema,
-  safeParseSerializableOptionList,
-} from "@/components/tool-ui/option-list/schema";
-import { createArgsToolRenderer } from "@/components/tool-ui/shared";
-
-const toolkit: Toolkit = {
-  choosePlan: {
-    description: "User chooses a subscription plan",
-    parameters: SerializableOptionListSchema,
-    render: createArgsToolRenderer({
-      safeParse: safeParseSerializableOptionList,
-      idPrefix: "plan-choice",
-      render: (args, { result, addResult }) =>
-        result ? (
-          <OptionList {...args} value={undefined} choice={result} />
-        ) : (
-          <OptionList
-            {...args}
-            value={undefined}
-            onConfirm={(selection) => addResult?.(selection)}
-          />
-        ),
-    }),
-  },
-};
-```
-
-For receipt writing guidance and component-level receipt states, see [Receipts](/docs/receipts).
-
-## Optional Decision Envelope (App-Level Convention)
-
-When you want standardized analytics/auditing across decision surfaces, wrap decision outcomes in an envelope before calling `addResult(...)`.
+<ActionFlowToolCallVisual />
 
 ```ts
-type DecisionResult<TPayload extends Record<string, unknown> = {}> = {
-  kind: "decision";
-  version: 1;
-  decisionId: string;
-  actionId: string;
-  actionLabel: string;
-  at: string;
-  payload?: TPayload;
-};
-
-function createDecisionResult<TPayload extends Record<string, unknown> = {}>(
-  input: Omit<DecisionResult<TPayload>, "kind" | "version" | "at">,
-): DecisionResult<TPayload> {
-  return {
-    kind: "decision",
-    version: 1,
-    at: new Date().toISOString(),
-    ...input,
-  };
+tools: {
+  getExpenses: tool({
+    description: "Return travel expenses for a month",
+    execute: async ({ month }) => ({ id: "expenses-jan", month }),
+  }),
 }
 ```
 
-## How Actions Relate To Other Tool UI Components
+</Step>
 
-| Component group | Examples | Recommended action style |
-| --- | --- | --- |
-| Information/display surfaces | [Link Preview](/docs/link-preview), [Data Table](/docs/data-table), [Image](/docs/image), [Video](/docs/video), [Audio](/docs/audio), [Citation](/docs/citation) | Follow-up actions by default |
-| Decision surfaces | [Option List](/docs/option-list), [Approval Card](/docs/approval-card), [Order Summary](/docs/order-summary), [Preferences Panel](/docs/preferences-panel) | Decision actions + receipt state |
-| State/summary surfaces | [Progress Tracker](/docs/progress-tracker), [Plan](/docs/plan) | Usually render state/receipt; keep actions minimal |
+<Step title="Your app renders a Tool UI surface">
 
-## Shared Action Contract
+The returned args are parsed and rendered as a display surface.
 
-```ts
-type Action = {
-  id: string;
-  label: string;
-  sentence?: string;
-  confirmLabel?: string;
-  variant?: "default" | "destructive" | "secondary" | "ghost" | "outline";
-  disabled?: boolean;
-  loading?: boolean;
-  shortcut?: string;
-  icon?: ReactNode; // runtime only
-};
+<ActionFlowRenderVisual />
 
-type ActionsProp =
-  | Action[]
-  | {
-      items: Action[];
-      align?: "left" | "center" | "right";
-      confirmTimeout?: number;
-    };
+```tsx
+render: createResultToolRenderer({
+  safeParse: safeParseSerializableDataTable,
+  render: (parsed) => <DataTable {...parsed} />,
+})
 ```
 
-## Runtime Behavior (Current Implementation)
+</Step>
 
-Action execution is normalized by shared `ActionButtons` logic:
+<Step title="The user triggers an action">
 
-- `confirmLabel` enables two-step confirmation.
-- Confirmation expires after `confirmTimeout` (default `3000ms`).
-- Only one action can execute at a time (execution lock).
-- `Escape` clears a pending confirmation state.
-- If `variant` is omitted, common negative action IDs (`cancel`, `reject`, `dismiss`, etc.) infer `ghost`; others render as `default`.
+The user clicks an action control associated with the surface.
 
-## Practical Guidance
+<ActionFlowUserActionVisual />
 
-- Keep actions tight: usually 2 to 3 buttons.
-- Put consequential choices in decision surfaces and always produce a receipt.
-- Keep follow-up actions reversible and local.
-- Use `sentence` on actions when you want deterministic assistant narration.
-- For durable outcomes, align copy and behavior with [Receipts](/docs/receipts).
+```tsx
+const localActions = [{ id: "export-csv", label: "Export CSV" }];
+
+async function handleLocalAction(actionId: string) {
+  // side effects only
+}
+```
+
+</Step>
+
+<Step title="The runtime handles the action">
+
+Your action handler runs side effects (navigation, export, API call, etc.).
+
+<ActionFlowRuntimeHandleVisual />
+
+```ts
+async function handleLocalAction(actionId: string) {
+  if (actionId === "export-csv") await exportCsv();
+  if (actionId === "open-report") router.push("/reports/monthly");
+}
+```
+
+</Step>
+
+<Step title="For consequential actions, commit decision outcome">
+
+If the action is consequential, commit a durable outcome (typically via `addResult(...)` in your renderer runtime).
+
+<ActionFlowCommitVisual />
+
+```tsx
+const decision = createDecisionResult({
+  decisionId: "order-123",
+  action: { id: "confirm", label: "Purchase" },
+});
+
+await addResult?.(decision);
+```
+
+</Step>
+
+</Steps>
+
+## Action Surfaces
+
+The standard split is:
+
+- `ToolUI.LocalActions`: non-consequential runtime side effects.
+- `ToolUI.DecisionActions`: consequential choices that produce commit-ready decision envelopes.
+
+### Display Components + LocalActions
+
+For display-first components, keep rendering and actions separate: the display component goes inside `ToolUI.Surface`, and local actions go inside sibling `ToolUI.Actions`.
+
+<DisplaySurfaceLocalActionsExample />
+
+`LocalActions` handlers should not commit durable result state.
+
+### Decision Components + DecisionActions
+
+When user intent is consequential (approve, confirm, purchase, publish, delete), use `DecisionActions`. This makes decision payload shape explicit and commit behavior auditable.
+
+<DecisionSurfaceExample />
+
+`DecisionActions` handlers should return a typed envelope, then commit in the commit phase.
+
+## Action-Centric Components (Intentional Exception)
+
+Some components are action-centric by design. Their action handling is part of component semantics, so actions stay embedded on the component rather than using sibling `ToolUI.Actions` surfaces.
+
+### Shared Embedded Contract
+
+All three action-centric components use the same embedded action interface:
+
+- `actions`: action buttons rendered by the component.
+- `onAction(actionId, state)`: runs after the action behavior and receives post-action state.
+- `onBeforeAction(actionId, state)`: guard evaluated before an action runs.
+
+Only the `state` type changes by component:
+
+- `OptionList`: `OptionListSelection`
+- `ParameterSlider`: `SliderValue[]`
+- `PreferencesPanel`: `PreferencesValue`
+
+### Component Examples + Mock Outputs
+
+Each example below shows the live component on the left and the corresponding mock runtime output on the right.
+
+<ActionCentricExceptionsExample />

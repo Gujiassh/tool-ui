@@ -43,14 +43,14 @@ function generateParameterSliderCode(data: SerializableParameterSlider): string 
     .join(",\n");
   props.push(`  sliders={[\n${slidersStr},\n  ]}`);
 
-  if (data.adjustmentActions) {
+  if (data.actions) {
     props.push(
-      `  adjustmentActions={${JSON.stringify(data.adjustmentActions, null, 4).replace(/\n/g, "\n  ")}}`,
+      `  actions={${JSON.stringify(data.actions, null, 4).replace(/\n/g, "\n  ")}}`,
     );
   }
 
   props.push(
-    `  onAdjustmentAction={(actionId, values) => {\n    console.log(actionId, values);\n  }}`,
+    `  onAction={(actionId, values) => {\n    console.log(actionId, values);\n  }}`,
   );
 
   return `<ParameterSlider\n${props.join("\n")}\n/>`;
@@ -70,7 +70,7 @@ export const parameterSliderPresets: Record<
         { id: "highlights", label: "Highlights", min: -100, max: 100, step: 5, value: -20, unit: "%" },
         { id: "shadows", label: "Shadows", min: -100, max: 100, step: 5, value: 25, unit: "%" },
       ],
-      adjustmentActions: [
+      actions: [
         { id: "reset", label: "Reset", variant: "ghost" },
         { id: "apply", label: "Apply", variant: "default" },
       ],
@@ -87,7 +87,7 @@ export const parameterSliderPresets: Record<
         { id: "tint", label: "Tint", min: -100, max: 100, step: 5, value: -8 },
         { id: "saturation", label: "Saturation", min: -100, max: 100, step: 5, value: 12, unit: "%" },
       ],
-      adjustmentActions: [
+      actions: [
         { id: "reset", label: "Reset", variant: "ghost" },
         { id: "apply", label: "Apply", variant: "default" },
       ],
@@ -104,7 +104,7 @@ export const parameterSliderPresets: Record<
         { id: "mid", label: "Mid", min: -12, max: 12, step: 1, value: -2, unit: "dB" },
         { id: "treble", label: "Treble", min: -12, max: 12, step: 1, value: 4, unit: "dB" },
       ],
-      adjustmentActions: [
+      actions: [
         { id: "reset", label: "Flat", variant: "ghost" },
         { id: "apply", label: "Apply", variant: "default" },
       ],
@@ -119,7 +119,7 @@ export const parameterSliderPresets: Record<
       sliders: [
         { id: "blur", label: "Background Blur", min: 0, max: 100, step: 5, value: 35, unit: "%" },
       ],
-      adjustmentActions: [
+      actions: [
         { id: "reset", label: "Reset", variant: "ghost" },
         { id: "apply", label: "Apply", variant: "default" },
       ],
@@ -136,7 +136,7 @@ export const parameterSliderPresets: Record<
         { id: "keyframe", label: "Keyframe Interval", min: 1, max: 10, step: 1, value: 2, unit: "sec" },
         { id: "quality", label: "CRF Quality", min: 0, max: 51, step: 1, value: 18 },
       ],
-      adjustmentActions: [
+      actions: [
         { id: "reset", label: "Defaults", variant: "ghost" },
         { id: "apply", label: "Export", variant: "default" },
       ],

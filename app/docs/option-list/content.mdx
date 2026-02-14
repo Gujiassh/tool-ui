@@ -47,7 +47,7 @@ Register this renderer so tool results display as `OptionList`.
 
 // Frontend tool (recommended for decision surfaces like Option List):
 // - The model calls the tool with SerializableOptionList props as the args
-// - Your UI calls addResult(selection) when the user confirms
+// - Your UI calls addResult(selection) from onAction when actionId is "confirm"
 import { type Toolkit } from "@assistant-ui/react";
 import { OptionList } from "@/components/tool-ui/option-list";
 import {
@@ -71,7 +71,11 @@ export const toolkit: Toolkit = {
               {...parsedArgs}
               // Avoid controlled selection in LLM-driven payloads.
               value={undefined}
-              onConfirm={(selection) => addResult?.(selection)}
+              onAction={(actionId, selection) => {
+                if (actionId === "confirm") {
+                  void addResult?.(selection);
+                }
+              }}
             />
           ),
     }),
@@ -109,7 +113,7 @@ When `choice` is set, the component renders in a read-only receipt state showing
 The receipt state:
 
 - Shows only the chosen option(s) with a checkmark
-- Hides unselected options and selection actions
+- Hides unselected options and actions
 - Is read-only (no interaction)
 
 ## Props
@@ -148,19 +152,22 @@ The receipt state:
       description: "Maximum allowed selections",
       type: "number",
     },
-    selectionActions: {
-      description: "Selection action buttons",
+    actions: {
+      description: "Action buttons",
       type: "Action[] | ActionsConfig",
     },
     onChange: {
       description: "Selection change handler",
       type: "(value) => void",
     },
-    onConfirm: {
-      description: "Confirm button handler",
-      type: "(value) => void | Promise<void>",
+    onAction: {
+      description: "Action handler with post-action selection state",
+      type: "(actionId: string, value: string | string[] | null) => void | Promise<void>",
     },
-    onCancel: { description: "Cancel/clear handler", type: "() => void" },
+    onBeforeAction: {
+      description: "Action guard with current selection state",
+      type: "(actionId: string, value: string | string[] | null) => boolean | Promise<boolean>",
+    },
   }}
 />
 

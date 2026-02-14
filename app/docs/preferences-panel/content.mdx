@@ -100,11 +100,14 @@ export const toolkit: Toolkit = {
       render: (parsedArgs, { addResult }) => (
           <PreferencesPanel
             {...parsedArgs}
-            onSave={async (values) => {
-              await addResult({ choice: values });
-            }}
-            onCancel={() => {
-              addResult({ choice: {} });
+            onAction={async (actionId, values) => {
+              if (actionId === "save") {
+                await addResult({ choice: values });
+                return;
+              }
+              if (actionId === "cancel") {
+                await addResult({ choice: values });
+              }
             }}
           />
       ),
@@ -184,25 +187,20 @@ import { PreferencesPanel } from "@/components/tool-ui/preferences-panel";
       description: "Called when any preference value changes (before save)",
       type: "(value: PreferencesValue) => void",
     },
-    onSave: {
-      description:
-        "Handler called when Save button is clicked. Receives current preference values.",
-      type: "(value: PreferencesValue) => void | Promise<void>",
-    },
-    onCancel: {
-      description:
-        "Handler called when Cancel button is clicked. Resets to initial values.",
-      type: "() => void",
-    },
-    formActions: {
+    actions: {
       description:
         "Custom action buttons. Defaults to Cancel (ghost) and Save Changes (default).",
       type: "Action[] | ActionsConfig",
     },
-    onFormAction: {
+    onAction: {
       description:
-        "Handler for custom form actions. Receives actionId and current values.",
+        "Handler for actions. Receives actionId and post-action values.",
       type: "(actionId: string, value: PreferencesValue) => void | Promise<void>",
+    },
+    onBeforeAction: {
+      description:
+        "Action guard. Receives actionId and current values before the action runs.",
+      type: "(actionId: string, value: PreferencesValue) => boolean | Promise<boolean>",
     },
     className: {
       description: "Additional CSS classes for the root element",

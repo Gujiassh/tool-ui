@@ -524,11 +524,9 @@ function PreferencesPanelRoot({
   sections,
   value: controlledValue,
   onChange,
-  onSave,
-  onCancel,
-  formActions,
-  onFormAction,
-  onBeforeFormAction,
+  actions,
+  onAction,
+  onBeforeAction,
   className,
 }: PreferencesPanelProps) {
   const initialValues = useMemo(
@@ -569,29 +567,26 @@ function PreferencesPanelRoot({
     );
   }, [currentValue, initialValues]);
 
-  const handleSave = useCallback(async () => {
-    await onSave?.(currentValue);
-  }, [onSave, currentValue]);
-
-  const handleCancel = useCallback(() => {
+  const handleCancel = useCallback((): PreferencesValue => {
     setValue(initialValues);
-    onCancel?.();
-  }, [setValue, initialValues, onCancel]);
+    return initialValues;
+  }, [initialValues, setValue]);
 
   const handleAction = useCallback(
     async (actionId: string) => {
-      if (actionId === "save") {
-        await handleSave();
-      } else if (actionId === "cancel") {
-        handleCancel();
+      let nextValue = currentValue;
+
+      if (actionId === "cancel") {
+        nextValue = handleCancel();
       }
-      await onFormAction?.(actionId, currentValue);
+
+      await onAction?.(actionId, nextValue);
     },
-    [handleSave, handleCancel, onFormAction, currentValue],
+    [currentValue, handleCancel, onAction],
   );
 
   const normalizedActions = useMemo(() => {
-    const normalized = normalizeActionsConfig(formActions);
+    const normalized = normalizeActionsConfig(actions);
     if (normalized) {
       return {
         ...normalized,
@@ -608,7 +603,7 @@ function PreferencesPanelRoot({
       items: defaultActions,
       align: "right" as const,
     };
-  }, [formActions]);
+  }, [actions]);
 
   const actionsWithState = useMemo((): Action[] => {
     return normalizedActions.items.map((action) => {
@@ -665,7 +660,11 @@ function PreferencesPanelRoot({
           align={normalizedActions.align}
           confirmTimeout={normalizedActions.confirmTimeout}
           onAction={handleAction}
-          onBeforeAction={onBeforeFormAction}
+          onBeforeAction={
+            onBeforeAction
+              ? (actionId) => onBeforeAction(actionId, currentValue)
+              : undefined
+          }
         />
       </div>
     </article>
