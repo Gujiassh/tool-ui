@@ -54,6 +54,25 @@ export function sanitizeInferredReleaseNotes(
   };
 }
 
+function stripToolUiPrefix(line: string): string {
+  const stripped = line.replace(/^tool\s*ui\s*[:\-]\s*/i, "").trim();
+  if (!stripped) {
+    return line.trim();
+  }
+
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+}
+
+export function normalizeReleaseNoteWording(
+  notes: InferredReleaseNotes,
+): InferredReleaseNotes {
+  return {
+    ...notes,
+    breakingChanges: notes.breakingChanges.map((line) => stripToolUiPrefix(line)),
+    changes: notes.changes.map((line) => stripToolUiPrefix(line)),
+  };
+}
+
 function toTitleCaseComponentName(component: string): string {
   return component
     .split("-")
@@ -84,6 +103,68 @@ function formatBreadthList(items: string[]): string {
   }
 
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1] ?? ""}`;
+}
+
+const ACTION_SYSTEM_FILE_SIGNALS = [
+  /components\/tool-ui\/shared\/embedded-actions\.ts$/i,
+  /components\/tool-ui\/shared\/local-actions\.tsx$/i,
+  /components\/tool-ui\/shared\/decision-actions\.tsx$/i,
+  /components\/tool-ui\/shared\/tool-ui(?:-context)?\.tsx$/i,
+];
+
+const ACTION_SYSTEM_TEXT_SIGNALS = [
+  /feat\(actions\)/i,
+  /action model/i,
+  /actions? system/i,
+  /embedded action props/i,
+  /local\s*actions?/i,
+  /decision\s*actions?/i,
+  /action[- ]centric/i,
+];
+
+const ACTION_SYSTEM_COVERAGE_SIGNALS = [
+  /action model/i,
+  /actions? system/i,
+  /global refactor/i,
+  /compound action/i,
+  /action[- ]surface/i,
+  /local\s*actions?/i,
+  /decision\s*actions?/i,
+];
+
+const ACTION_SYSTEM_COVERAGE_LINE =
+  "Refactored the actions system to a unified embedded action-props model across action-centric components.";
+
+export function ensureActionSystemCoverage(
+  notes: InferredReleaseNotes,
+  changedFiles: string[],
+  commitSummary: string,
+): InferredReleaseNotes {
+  const hasActionEvidence =
+    changedFiles.some((file) =>
+      ACTION_SYSTEM_FILE_SIGNALS.some((signal) => signal.test(file)),
+    ) ||
+    ACTION_SYSTEM_TEXT_SIGNALS.some((signal) => signal.test(commitSummary));
+
+  if (!hasActionEvidence) {
+    return notes;
+  }
+
+  const normalizedCombined = normalizeForMatch(
+    [...notes.breakingChanges, ...notes.changes].join(" "),
+  );
+  const alreadyCovered = ACTION_SYSTEM_COVERAGE_SIGNALS.some((signal) =>
+    signal.test(normalizedCombined),
+  );
+
+  if (alreadyCovered) {
+    return notes;
+  }
+
+  return {
+    ...notes,
+    changes: [...notes.changes, ACTION_SYSTEM_COVERAGE_LINE],
+  };
 }
 
 export function ensureComponentCoverage(
@@ -124,7 +205,7 @@ export function ensureComponentCoverage(
   }
 
   const missingTitles = missingComponents.map((component) => component.title);
-  const breadthLine = `Updated ${missingTitles.length} Tool UI components: ${formatBreadthList(missingTitles)}.`;
+  const breadthLine = `Updated ${missingTitles.length} components: ${formatBreadthList(missingTitles)}.`;
 
   return {
     ...notes,
@@ -187,5 +268,11 @@ export async function inferReleaseNotes(
   });
 
   const sanitized = sanitizeInferredReleaseNotes(object);
-  return ensureComponentCoverage(sanitized, input.changedFiles);
+  const normalized = normalizeReleaseNoteWording(sanitized);
+  const actionCovered = ensureActionSystemCoverage(
+    normalized,
+    input.changedFiles,
+    input.commitSummary,
+  );
+  return ensureComponentCoverage(actionCovered, input.changedFiles);
 }

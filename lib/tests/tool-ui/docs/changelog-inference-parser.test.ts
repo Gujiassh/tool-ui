@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
 import {
   ensureComponentCoverage,
+  ensureActionSystemCoverage,
+  normalizeReleaseNoteWording,
   sanitizeInferredReleaseNotes,
 } from "@/lib/changelog/inference";
 
@@ -67,7 +69,7 @@ describe("changelog inference normalization", () => {
     );
 
     expect(
-      covered.changes.filter((line) => /Updated \d+ Tool UI components/i.test(line)),
+      covered.changes.filter((line) => /Updated \d+ components/i.test(line)),
     ).toHaveLength(0);
   });
 
@@ -87,5 +89,40 @@ describe("changelog inference normalization", () => {
     expect(
       covered.changes.filter((line) => /Updated \d+ Tool UI components/i.test(line)),
     ).toHaveLength(0);
+  });
+
+  test("removes redundant Tool UI prefixes from bullets", () => {
+    const normalized = normalizeReleaseNoteWording({
+      breakingChanges: ["Tool UI: moved schema helpers to /schema entrypoints."],
+      changes: [
+        "Tool UI: unified embedded action props across action-centric components.",
+      ],
+      migrationPrompt: null,
+    });
+
+    expect(normalized.breakingChanges[0]).toBe(
+      "Moved schema helpers to /schema entrypoints.",
+    );
+    expect(normalized.changes[0]).toBe(
+      "Unified embedded action props across action-centric components.",
+    );
+  });
+
+  test("adds an action-system refactor line when action-surface evidence exists", () => {
+    const covered = ensureActionSystemCoverage(
+      {
+        breakingChanges: [],
+        changes: ["Unified props across components."],
+        migrationPrompt: null,
+      },
+      [
+        "components/tool-ui/shared/embedded-actions.ts",
+        "components/tool-ui/shared/index.ts",
+        "components/tool-ui/option-list/schema.ts",
+      ],
+      "- 7af7084 feat(actions): unify embedded action props across action-centric components",
+    );
+
+    expect(covered.changes.join("\n")).toMatch(/actions? system/i);
   });
 });
