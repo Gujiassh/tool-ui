@@ -10,17 +10,20 @@ import {
   openSafeNavigationHref,
   OVERLAY_GRADIENT,
   RATIO_CLASS_MAP,
-  resolveSafeNavigationHref,
-  sanitizeHref,
 } from "../shared/media";
 import { VideoProvider, useVideo } from "./context";
 import type { SerializableVideo } from "./schema";
-import { getMuteMediaEvent } from "./video-helpers";
+import {
+  getMuteMediaEvent,
+  normalizeVideoDataForCallback,
+  resolveVideoNavigation,
+} from "./video-helpers";
 
 const FALLBACK_LOCALE = "en-US";
 
 export interface VideoProps extends SerializableVideo {
   className?: string;
+  // Keep behavior flags intentionally minimal; prefer explicit variants over more booleans.
   autoPlay?: boolean;
   defaultMuted?: boolean;
   onNavigate?: (href: string, video: SerializableVideo) => void;
@@ -63,17 +66,19 @@ function VideoInner(props: Omit<VideoProps, "defaultMuted">) {
   } = serializable;
 
   const locale = providedLocale ?? FALLBACK_LOCALE;
-  const sanitizedHref = sanitizeHref(rawHref);
-  const sanitizedSourceUrl = sanitizeHref(source?.url);
-  const primaryHref = resolveSafeNavigationHref(sanitizedHref, sanitizedSourceUrl);
+  const { sanitizedHref, sanitizedSourceUrl, primaryHref } =
+    resolveVideoNavigation(rawHref, source?.url);
 
-  const videoData: SerializableVideo = {
-    ...serializable,
-    fit,
-    href: sanitizedHref,
-    source: source ? { ...source, url: sanitizedSourceUrl } : undefined,
-    locale,
-  };
+  const videoData: SerializableVideo = normalizeVideoDataForCallback(
+    serializable,
+    {
+      ratio,
+      fit,
+      locale,
+      sanitizedHref,
+      sanitizedSourceUrl,
+    },
+  );
 
   const { state, setState, setVideoElement } = useVideo();
   const videoRef = React.useRef<HTMLVideoElement | null>(null);

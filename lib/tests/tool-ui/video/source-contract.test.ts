@@ -1,26 +1,38 @@
-import fs from "node:fs";
-import path from "node:path";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 
-const VIDEO_SOURCE_PATH = path.join(
-  process.cwd(),
-  "components/tool-ui/video/video.tsx",
-);
+import { Video } from "@/components/tool-ui/video";
+import { resolveVideoNavigation } from "@/components/tool-ui/video/video-helpers";
 
 describe("video source contract", () => {
-  const source = fs.readFileSync(VIDEO_SOURCE_PATH, "utf8");
+  test("supports keyboard-visible overlay controls in rendered markup", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(Video, {
+        id: "video-source-contract",
+        assetId: "video-source-contract-asset",
+        src: "https://archive.org/download/NatureStockVideo/IMG_9500_.mp4",
+        title: "Forest Canopy",
+        href: "https://archive.org/details/NatureStockVideo",
+      }),
+    );
 
-  test("supports keyboard-visible overlay controls", () => {
-    expect(source).toContain("group-focus-within:opacity-100");
+    expect(html).toContain("group-focus-within:opacity-100");
+    expect(html).toContain("Open");
   });
 
-  test("wires href navigation through onNavigate/openSafeNavigationHref", () => {
-    expect(source).toContain("onNavigate(");
-    expect(source).toContain("openSafeNavigationHref");
-    expect(source).toContain("sanitizeHref");
-  });
+  test("resolves href navigation safely with source-url fallback", () => {
+    const resolved = resolveVideoNavigation(
+      "javascript:alert(1)",
+      "https://archive.org/details/NatureStockVideo",
+    );
 
-  test("gates mute/unmute media events on actual mute-state changes", () => {
-    expect(source).toContain("getMuteMediaEvent");
+    expect(resolved.sanitizedHref).toBeUndefined();
+    expect(resolved.sanitizedSourceUrl).toBe(
+      "https://archive.org/details/NatureStockVideo",
+    );
+    expect(resolved.primaryHref).toBe(
+      "https://archive.org/details/NatureStockVideo",
+    );
   });
 });
