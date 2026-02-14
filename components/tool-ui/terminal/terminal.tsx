@@ -17,13 +17,25 @@ import { cn } from "./_adapter";
 
 const COPY_ID = "terminal-output";
 
+function formatDuration(durationMs?: number): string | null {
+  if (durationMs == null) return null;
+  if (durationMs < 1000) return `${Math.round(durationMs)}ms`;
+  return `${(durationMs / 1000).toFixed(1)}s`;
+}
+
+function countOutputLines(output: string): number {
+  const trimmedTrailingNewlines = output.replace(/\n+$/, "");
+  if (!trimmedTrailingNewlines) return 0;
+  return trimmedTrailingNewlines.split("\n").length;
+}
+
 export function Terminal({
   id,
   command,
   stdout,
   stderr,
   exitCode,
-  durationMs: _durationMs,
+  durationMs,
   cwd,
   truncated,
   maxCollapsedLines,
@@ -33,16 +45,18 @@ export function Terminal({
   const { copiedId, copy } = useCopyToClipboard();
 
   const isSuccess = exitCode === 0;
-  const hasOutput = stdout || stderr;
+  const hasOutput = Boolean(stdout || stderr);
   const fullOutput = [stdout, stderr].filter(Boolean).join("\n");
+  const formattedDuration = formatDuration(durationMs);
 
-  const lineCount = fullOutput.split("\n").length;
+  const lineCount = countOutputLines(fullOutput);
   const shouldCollapse = maxCollapsedLines && lineCount > maxCollapsedLines;
   const isCollapsed = shouldCollapse && !isExpanded;
 
   const handleCopy = useCallback(() => {
+    if (!hasOutput) return;
     copy(fullOutput, COPY_ID);
-  }, [fullOutput, copy]);
+  }, [hasOutput, fullOutput, copy]);
 
   return (
     <div
@@ -63,6 +77,11 @@ export function Terminal({
             </code>
           </div>
           <div className="flex items-center gap-3">
+            {formattedDuration && (
+              <span className="text-muted-foreground font-mono text-sm tabular-nums">
+                {formattedDuration}
+              </span>
+            )}
             <span
               className={cn(
                 "font-mono text-sm tabular-nums",
@@ -77,8 +96,15 @@ export function Terminal({
               variant="ghost"
               size="sm"
               onClick={handleCopy}
+              disabled={!hasOutput}
               className="h-7 w-7 p-0"
-              aria-label={copiedId === COPY_ID ? "Copied" : "Copy output"}
+              aria-label={
+                !hasOutput
+                  ? "No output to copy"
+                  : copiedId === COPY_ID
+                    ? "Copied"
+                    : "Copy output"
+              }
             >
               {copiedId === COPY_ID ? (
                 <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
