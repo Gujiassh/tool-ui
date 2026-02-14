@@ -170,7 +170,7 @@ function ReceiptBadge({
   );
 }
 
-export function OrderSummary({
+function OrderSummaryRoot({
   id,
   title = "Order Summary",
   variant,
@@ -270,8 +270,8 @@ export interface OrderSummaryDisplayProps
   choice?: never;
 }
 
-export function OrderSummaryDisplay(props: OrderSummaryDisplayProps) {
-  return <OrderSummary {...props} variant="summary" />;
+function OrderSummaryDisplay(props: OrderSummaryDisplayProps) {
+  return <OrderSummaryRoot {...props} variant="summary" />;
 }
 
 export interface OrderSummaryReceiptProps
@@ -280,6 +280,20 @@ export interface OrderSummaryReceiptProps
   choice: OrderDecision;
 }
 
-export function OrderSummaryReceipt(props: OrderSummaryReceiptProps) {
-  return <OrderSummary {...props} variant="receipt" />;
+function OrderSummaryReceipt(props: OrderSummaryReceiptProps) {
+  return <OrderSummaryRoot {...props} variant="receipt" />;
 }
+
+export interface OrderSummaryCompoundComponent {
+  (props: OrderSummaryProps): JSX.Element;
+  Display: (props: OrderSummaryDisplayProps) => JSX.Element;
+  Receipt: (props: OrderSummaryReceiptProps) => JSX.Element;
+}
+
+export const OrderSummary: OrderSummaryCompoundComponent = Object.assign(
+  OrderSummaryRoot,
+  {
+    Display: OrderSummaryDisplay,
+    Receipt: OrderSummaryReceipt,
+  },
+);

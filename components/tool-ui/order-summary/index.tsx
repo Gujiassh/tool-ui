@@ -1,11 +1,8 @@
-export {
-  OrderSummary,
-  OrderSummaryDisplay,
-  OrderSummaryReceipt,
-} from "./order-summary";
+export { OrderSummary } from "./order-summary";
 export type {
   OrderSummaryDisplayProps,
   OrderSummaryReceiptProps,
+  OrderSummaryCompoundComponent,
 } from "./order-summary";
 export {
   type SerializableOrderSummary,

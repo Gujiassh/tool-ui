@@ -236,7 +236,7 @@ export default function ComponentsGalleryPage() {
             componentId="order-summary"
             className="mb-5 break-inside-avoid 2xl:mb-5"
           >
-            <OrderSummary
+            <OrderSummary.Display
               {...orderSummaryPresets.default.data}
               className="max-w-none"
             />

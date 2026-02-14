@@ -1,11 +1,7 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import {
-  OrderSummary,
-  OrderSummaryDisplay,
-  OrderSummaryReceipt,
-} from "@/components/tool-ui/order-summary";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
 
 const baseOrderSummary = {
   id: "order-summary-render-contract",
@@ -74,7 +70,7 @@ describe("order summary render contract", () => {
 
   it("supports explicit display variant composition", () => {
     const html = renderToStaticMarkup(
-      React.createElement(OrderSummaryDisplay, baseOrderSummary),
+      React.createElement(OrderSummary.Display, baseOrderSummary),
     );
 
     expect(html).toContain("Wireless Keyboard");
@@ -83,7 +79,7 @@ describe("order summary render contract", () => {
 
   it("supports explicit receipt variant composition", () => {
     const html = renderToStaticMarkup(
-      React.createElement(OrderSummaryReceipt, {
+      React.createElement(OrderSummary.Receipt, {
         ...baseOrderSummary,
         choice: {
           action: "confirm" as const,
