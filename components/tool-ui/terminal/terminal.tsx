@@ -17,32 +17,27 @@ import { cn } from "./_adapter";
 
 const COPY_ID = "terminal-output";
 
-type TerminalComponentProps = TerminalProps & {
+type TerminalControlledProps = {
   expanded?: boolean;
   defaultExpanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
 };
 
-interface TerminalHeaderProps {
-  command: string;
-  cwd?: string;
-  exitCode: number;
+type TerminalRootProps = TerminalProps & TerminalControlledProps;
+
+type TerminalHeaderProps = Pick<TerminalProps, "command" | "cwd" | "exitCode"> & {
   formattedDuration: string | null;
   hasOutput: boolean;
   copiedId: string | null;
-  isSuccess: boolean;
   onCopy: () => void;
-}
+};
 
-interface TerminalOutputProps {
-  stdout?: string;
-  stderr?: string;
-  truncated?: boolean;
+type TerminalOutputProps = Pick<TerminalProps, "stdout" | "stderr" | "truncated"> & {
   isCollapsed: boolean;
   shouldCollapse: boolean;
   lineCount: number;
   onToggleCollapse: () => void;
-}
+};
 
 function formatDuration(durationMs?: number): string | null {
   if (durationMs == null) return null;
@@ -63,7 +58,6 @@ function TerminalHeader({
   formattedDuration,
   hasOutput,
   copiedId,
-  isSuccess,
   onCopy,
 }: TerminalHeaderProps) {
   return (
@@ -84,7 +78,9 @@ function TerminalHeader({
         <span
           className={cn(
             "font-mono text-sm tabular-nums",
-            isSuccess ? "text-muted-foreground" : "text-red-600 dark:text-red-400",
+            exitCode === 0
+              ? "text-muted-foreground"
+              : "text-red-600 dark:text-red-400",
           )}
         >
           {exitCode}
@@ -201,12 +197,11 @@ function TerminalRoot({
   expanded,
   defaultExpanded = false,
   onExpandedChange,
-}: TerminalComponentProps) {
+}: TerminalRootProps) {
   const [uncontrolledExpanded, setUncontrolledExpanded] = useState(defaultExpanded);
   const { copiedId, copy } = useCopyToClipboard();
 
   const isExpanded = expanded ?? uncontrolledExpanded;
-  const isSuccess = exitCode === 0;
   const hasOutput = Boolean(stdout || stderr);
   const fullOutput = [stdout, stderr].filter(Boolean).join("\n");
   const formattedDuration = formatDuration(durationMs);
@@ -247,7 +242,6 @@ function TerminalRoot({
           formattedDuration={formattedDuration}
           hasOutput={hasOutput}
           copiedId={copiedId}
-          isSuccess={isSuccess}
           onCopy={handleCopy}
         />
 
