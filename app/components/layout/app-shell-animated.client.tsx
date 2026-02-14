@@ -1,12 +1,18 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { ResponsiveHeader } from "@/app/components/layout/app-header.server";
 import { cn } from "@/lib/ui/cn";
 
-export type HeaderFrameProps = {
+type HeaderFrameProps = {
   children: ReactNode;
   rightContent?: ReactNode;
   background?: ReactNode;
 };
+
+// Persists for the life of the client bundle so the intro animation runs once.
+let hasPlayedIntroAnimation = false;
 
 function HeaderFrameBase({
   children,
@@ -24,7 +30,7 @@ function HeaderFrameBase({
       <div
         className={cn(
           "relative z-10 w-full max-w-[1440px] shrink-0 px-4 md:px-8",
-          shouldAnimate && "animate-navbar-fade-in"
+          shouldAnimate && "animate-navbar-fade-in",
         )}
       >
         <ResponsiveHeader rightContent={rightContent} />
@@ -36,6 +42,14 @@ function HeaderFrameBase({
   );
 }
 
-export function HeaderFrame(props: HeaderFrameProps) {
-  return <HeaderFrameBase {...props} shouldAnimate={false} />;
+export function AnimatedHeaderFrame(props: HeaderFrameProps) {
+  const [shouldAnimate] = useState(() => !hasPlayedIntroAnimation);
+
+  useEffect(() => {
+    if (shouldAnimate) {
+      hasPlayedIntroAnimation = true;
+    }
+  }, [shouldAnimate]);
+
+  return <HeaderFrameBase {...props} shouldAnimate={shouldAnimate} />;
 }

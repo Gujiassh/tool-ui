@@ -1,7 +1,7 @@
 "use client";
 
-import { Tabs, Tab } from "fumadocs-ui/components/tabs";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { Tabs, Tab } from "@/app/docs/_components/fumadocs-tabs";
 import { Chart } from "@/components/tool-ui/chart";
 import { chartPresets, ChartPresetName } from "@/lib/presets/chart";
 import { OptionList } from "@/components/tool-ui/option-list";

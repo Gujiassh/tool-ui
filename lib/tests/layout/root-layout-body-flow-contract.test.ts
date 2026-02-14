@@ -10,8 +10,8 @@ vi.mock("geist/font/mono", () => ({
   GeistMono: { variable: "geist-mono" },
 }));
 
-vi.mock("@/app/components/layout/mobile-nav-sheet.client", () => ({
-  MobileNavSheet: () => null,
+vi.mock("@/app/components/layout/mobile-nav-sheet-gate.client", () => ({
+  MobileNavSheetGate: () => null,
 }));
 
 vi.mock("@/app/components/analytics/posthog-init.client", () => ({
