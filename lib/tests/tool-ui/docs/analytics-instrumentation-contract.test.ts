@@ -57,6 +57,13 @@ const FILE_ASSERTIONS = [
     ],
   },
   {
+    file: "app/docs/_components/gallery-analytics.client.tsx",
+    needles: [
+      "analytics.gallery.pageViewed(",
+      "analytics.gallery.componentPreviewed(",
+    ],
+  },
+  {
     file: "app/docs/_components/docs-search.client.tsx",
     needles: [
       "analytics.search.opened(",

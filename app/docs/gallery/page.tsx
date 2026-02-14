@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 
+import {
+  GalleryPageAnalytics,
+  GalleryPreviewImpression,
+} from "@/app/docs/_components/gallery-analytics.client";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
 import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
 import { DataTable } from "@/components/tool-ui/data-table";
@@ -19,6 +23,7 @@ import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
 import { dataTablePresets } from "@/lib/presets/data-table";
 import { imagePresets } from "@/lib/presets/image";
+import { instagramPostPresets } from "@/lib/presets/instagram-post";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
 import { itemCarouselPresets } from "@/lib/presets/item-carousel";
 import { linkPreviewPresets } from "@/lib/presets/link-preview";
@@ -26,6 +31,7 @@ import { linkedInPostPresets } from "@/lib/presets/linkedin-post";
 import { messageDraftPresets } from "@/lib/presets/message-draft";
 import { optionListPresets } from "@/lib/presets/option-list";
 import { orderSummaryPresets } from "@/lib/presets/order-summary";
+import { parameterSliderPresets } from "@/lib/presets/parameter-slider";
 import { planPresets } from "@/lib/presets/plan";
 import { preferencesPanelPresets } from "@/lib/presets/preferences-panel";
 import { progressTrackerPresets } from "@/lib/presets/progress-tracker";
@@ -34,6 +40,7 @@ import { statsDisplayPresets } from "@/lib/presets/stats-display";
 import { terminalPresets } from "@/lib/presets/terminal";
 import { videoPresets } from "@/lib/presets/video";
 import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
+import { xPostPresets } from "@/lib/presets/x-post";
 import { cn } from "@/lib/ui/cn";
 
 const ApprovalCard = dynamic(() =>
@@ -57,8 +64,14 @@ const LinkPreview = dynamic(() =>
 const LinkedInPost = dynamic(() =>
   import("@/components/tool-ui/linkedin-post").then((m) => m.LinkedInPost),
 );
+const InstagramPost = dynamic(() =>
+  import("@/components/tool-ui/instagram-post").then((m) => m.InstagramPost),
+);
 const OptionList = dynamic(() =>
   import("@/components/tool-ui/option-list").then((m) => m.OptionList),
+);
+const ParameterSlider = dynamic(() =>
+  import("@/components/tool-ui/parameter-slider").then((m) => m.ParameterSlider),
 );
 const OrderSummary = dynamic(() =>
   import("@/components/tool-ui/order-summary").then((m) => m.OrderSummary),
@@ -90,6 +103,9 @@ const QuestionFlow = dynamic(() =>
 );
 const MessageDraft = dynamic(() =>
   import("@/components/tool-ui/message-draft").then((m) => m.MessageDraft),
+);
+const XPost = dynamic(() =>
+  import("@/components/tool-ui/x-post").then((m) => m.XPost),
 );
 const WeatherWidget = dynamic(() =>
   import("@/components/tool-ui/weather-widget/runtime").then(
@@ -124,9 +140,10 @@ function GalleryPreviewCard({
           componentId={componentId}
           label={componentMeta.name}
           href={componentMeta.docsHref}
-          className="pointer-events-auto inline-flex items-center gap-1 whitespace-nowrap text-neutral-200/90 hover:text-white focus-visible:outline-none dark:text-neutral-700 dark:hover:text-neutral-950"
+          className="pointer-events-auto inline-flex items-center gap-1 whitespace-nowrap text-neutral-200/90 hover:text-white dark:text-neutral-700 dark:hover:text-neutral-950"
         />
       </div>
+      <GalleryPreviewImpression componentId={componentId} />
       {children}
     </div>
   );
@@ -137,7 +154,12 @@ export default function ComponentsGalleryPage() {
 
   return (
     <DocsBorderedShell>
-      <div className="scrollbar-subtle z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12">
+      <main
+        aria-label="Tool UI component gallery"
+        className="scrollbar-subtle z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12"
+      >
+        <h1 className="sr-only">Tool UI Component Gallery</h1>
+        <GalleryPageAnalytics />
         <div className="mx-auto columns-1 gap-5 pb-20 [column-fill:balance] md:columns-2 2xl:columns-3 2xl:gap-5">
           <GalleryPreviewCard
             componentId="item-carousel"
@@ -264,10 +286,10 @@ export default function ComponentsGalleryPage() {
           </GalleryPreviewCard>
 
           <GalleryPreviewCard
-            componentId="option-list"
+            componentId="parameter-slider"
             className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
           >
-            <OptionList {...optionListPresets.travel.data} />
+            <ParameterSlider {...parameterSliderPresets["photo-adjustments"].data} />
           </GalleryPreviewCard>
 
           <GalleryPreviewCard
@@ -319,6 +341,20 @@ export default function ComponentsGalleryPage() {
             <LinkedInPost post={linkedInPostPresets.basic.data.post} />
           </GalleryPreviewCard>
 
+          <GalleryPreviewCard
+            componentId="instagram-post"
+            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
+          >
+            <InstagramPost post={instagramPostPresets.basic.data.post} />
+          </GalleryPreviewCard>
+
+          <GalleryPreviewCard
+            componentId="x-post"
+            className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
+          >
+            <XPost post={xPostPresets.basic.data.post} />
+          </GalleryPreviewCard>
+
           {/* <div className="mb-5 flex justify-center break-inside-avoid 2xl:mb-5">
             <Link
               href="/builder"
@@ -331,7 +367,7 @@ export default function ComponentsGalleryPage() {
             </Link>
           </div> */}
         </div>
-      </div>
+      </main>
     </DocsBorderedShell>
   );
 }

@@ -27,7 +27,7 @@ export function GalleryDocsLink({
     <Link
       href={href}
       className={cn(
-        "group inline-flex items-center gap-1 whitespace-nowrap hover:no-underline focus-visible:no-underline",
+        "group inline-flex items-center gap-1 whitespace-nowrap rounded-md hover:no-underline focus-visible:no-underline focus-visible:ring-2 focus-visible:ring-neutral-200/90 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900 dark:focus-visible:ring-neutral-800 dark:focus-visible:ring-offset-neutral-100",
         className,
       )}
       onClick={handleClick}

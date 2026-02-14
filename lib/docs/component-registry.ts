@@ -206,10 +206,6 @@ export const componentsRegistry: ComponentMeta[] = [
   },
 ];
 
-export function getComponentById(id: string): ComponentMeta | undefined {
-  return componentsRegistry.find((component) => component.id === id);
-}
-
 export const componentsByCategory = new Map<ComponentCategory, ComponentMeta[]>();
 for (const component of componentsRegistry) {
   const arr = componentsByCategory.get(component.category) || [];
