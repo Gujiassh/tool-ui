@@ -10,6 +10,7 @@ import type { ApprovalCard } from "@/components/tool-ui/approval-card";
 import type { Chart } from "@/components/tool-ui/chart";
 import type { Citation } from "@/components/tool-ui/citation";
 import type { CodeBlockStandardProps } from "@/components/tool-ui/code-block";
+import { CodeBlock } from "@/components/tool-ui/code-block";
 import type { DataTable } from "@/components/tool-ui/data-table";
 import type { Image } from "@/components/tool-ui/image";
 import type { ImageGallery } from "@/components/tool-ui/image-gallery";
@@ -137,9 +138,6 @@ const DynamicCitation = dynamic(() =>
 );
 const DynamicCitationList = dynamic(() =>
   import("@/components/tool-ui/citation").then((m) => m.CitationList),
-);
-const DynamicCodeBlock = dynamic(() =>
-  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock.Standard),
 );
 const DynamicDataTable = dynamic(() =>
   import("@/components/tool-ui/data-table").then((m) => m.DataTable),
@@ -442,7 +440,7 @@ export const previewConfigs: Record<
     },
     renderComponent: ({ data }) => {
       const codeBlock = data as CodeBlockStandardProps;
-      return <DynamicCodeBlock {...codeBlock} />;
+      return <CodeBlock.Standard {...codeBlock} />;
     },
   },
   "data-table": {

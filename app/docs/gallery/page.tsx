@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
 import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
 import { DataTable } from "@/components/tool-ui/data-table";
+import { CodeBlock } from "@/components/tool-ui/code-block";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
@@ -68,9 +69,6 @@ const Plan = dynamic(() =>
 );
 const Terminal = dynamic(() =>
   import("@/components/tool-ui/terminal").then((m) => m.Terminal),
-);
-const CodeBlock = dynamic(() =>
-  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock.Standard),
 );
 const Chart = dynamic(() =>
   import("@/components/tool-ui/chart").then((m) => m.Chart),
@@ -288,7 +286,7 @@ export default function ComponentsGalleryPage() {
             componentId="code-block"
             className="mb-5 flex break-inside-avoid justify-center 2xl:mb-5"
           >
-            <CodeBlock {...codeBlockPresets.typescript.data} />
+            <CodeBlock.Standard {...codeBlockPresets.typescript.data} />
           </GalleryPreviewCard>
 
           <GalleryPreviewCard

@@ -424,7 +424,7 @@ function CodeBlockStandard(props: CodeBlockStandardProps) {
   );
 }
 
-type CodeBlockComponent = typeof CodeBlockRoot & {
+type CodeBlockComponent = {
   Root: typeof CodeBlockRoot;
   Standard: typeof CodeBlockStandard;
   Header: typeof CodeBlockHeader;
@@ -432,10 +432,10 @@ type CodeBlockComponent = typeof CodeBlockRoot & {
   CollapseToggle: typeof CodeBlockCollapseToggle;
 };
 
-export const CodeBlock = Object.assign(CodeBlockRoot, {
+export const CodeBlock = {
   Root: CodeBlockRoot,
   Standard: CodeBlockStandard,
   Header: CodeBlockHeader,
   Content: CodeBlockContent,
   CollapseToggle: CodeBlockCollapseToggle,
-}) as CodeBlockComponent;
+} as CodeBlockComponent;
