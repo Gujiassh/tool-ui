@@ -57,4 +57,31 @@ describe("item-carousel render contract", () => {
     expect(html).toContain('data-tool-ui-id="item-carousel-empty-contract"');
     expect(html).toContain('data-slot="item-carousel"');
   });
+
+  test("exposes compound subcomponents via ItemCarousel.Subcomponent syntax", () => {
+    expect(typeof ItemCarousel.Root).toBe("function");
+    expect(typeof ItemCarousel.Header).toBe("function");
+    expect(typeof ItemCarousel.EmptyState).toBe("function");
+    expect(typeof ItemCarousel.NavButton).toBe("function");
+    expect(typeof ItemCarousel.Card).toBe("function");
+  });
+
+  test("renders from ItemCarousel.Root compound entrypoint", () => {
+    const html = renderToStaticMarkup(
+      createElement(ItemCarousel.Root, {
+        id: "item-carousel-root-compound",
+        items: [
+          {
+            id: "item-1",
+            name: "First item",
+            subtitle: "Example",
+            color: "#ff0000",
+          },
+        ],
+      }),
+    );
+
+    expect(html).toContain('data-tool-ui-id="item-carousel-root-compound"');
+    expect(html).toContain('data-slot="item-carousel"');
+  });
 });
