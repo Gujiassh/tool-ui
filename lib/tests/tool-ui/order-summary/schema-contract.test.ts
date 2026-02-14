@@ -24,6 +24,50 @@ const baseOrderSummary = {
 };
 
 describe("order summary schema contract", () => {
+  it("accepts valid payloads", () => {
+    const parsed = parseSerializableOrderSummary({
+      ...baseOrderSummary,
+      choice: {
+        action: "confirm" as const,
+        orderId: "ORD-42",
+        confirmedAt: "2026-01-10T11:35:00.000Z",
+      },
+    });
+
+    expect(parsed.id).toBe(baseOrderSummary.id);
+    expect(parsed.choice?.orderId).toBe("ORD-42");
+  });
+
+  it("rejects duplicate item ids", () => {
+    const payload = {
+      ...baseOrderSummary,
+      items: [
+        ...baseOrderSummary.items,
+        {
+          id: "item-1",
+          name: "Duplicate id item",
+          unitPrice: 10,
+        },
+      ],
+    };
+
+    expect(() => parseSerializableOrderSummary(payload)).toThrow();
+    expect(safeParseSerializableOrderSummary(payload)).toBeNull();
+  });
+
+  it("rejects negative discount values", () => {
+    const payload = {
+      ...baseOrderSummary,
+      pricing: {
+        ...baseOrderSummary.pricing,
+        discount: -10,
+      },
+    };
+
+    expect(() => parseSerializableOrderSummary(payload)).toThrow();
+    expect(safeParseSerializableOrderSummary(payload)).toBeNull();
+  });
+
   it("rejects responseActions in display-only payloads", () => {
     const payload = {
       ...baseOrderSummary,

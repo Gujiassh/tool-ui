@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -11,41 +9,49 @@ const baseOrderSummary = {
     {
       id: "item-1",
       name: "Wireless Keyboard",
+      description: "Low-profile mechanical switches",
+      imageUrl: "https://example.com/keyboard.jpg",
       unitPrice: 79.99,
-      quantity: 1,
+      quantity: 2,
     },
   ],
   pricing: {
-    subtotal: 79.99,
+    subtotal: 159.98,
     tax: 6.4,
+    taxLabel: "Sales Tax",
     shipping: 0,
-    total: 86.39,
+    discount: 10,
+    discountLabel: "Promo",
+    total: 156.38,
     currency: "USD",
   },
 };
 
 describe("order summary render contract", () => {
-  it("is server-renderable (no client directive)", () => {
-    const sourcePath = path.join(
-      process.cwd(),
-      "components/tool-ui/order-summary/order-summary.tsx",
-    );
-    const source = fs.readFileSync(sourcePath, "utf8");
-
-    expect(source).not.toContain('"use client"');
+  it("is server-renderable", () => {
+    expect(() =>
+      renderToStaticMarkup(React.createElement(OrderSummary, baseOrderSummary)),
+    ).not.toThrow();
   });
 
-  it("does not render action buttons in display-only mode", () => {
+  it("renders display-only order details with no actions", () => {
     const html = renderToStaticMarkup(
       React.createElement(OrderSummary, baseOrderSummary),
     );
 
+    expect(html).toContain("Wireless Keyboard");
+    expect(html).toContain("Low-profile mechanical switches");
+    expect(html).toContain("Qty: 2");
+    expect(html).toContain("Promo");
+    expect(html).toContain("Shipping");
+    expect(html).toContain("Free");
+    expect(html).toContain("Sales Tax");
+    expect(html).toContain('alt="Wireless Keyboard"');
     expect(html).not.toContain("@container/actions");
     expect(html).not.toContain("<button");
-    expect(html).toContain("Wireless Keyboard");
   });
 
-  it("renders receipt metadata when choice is present", () => {
+  it("renders receipt metadata and hides decorative status icon from AT", () => {
     const html = renderToStaticMarkup(
       React.createElement(OrderSummary, {
         ...baseOrderSummary,
@@ -59,5 +65,19 @@ describe("order summary render contract", () => {
 
     expect(html).toContain("#ORD-42");
     expect(html).toContain("Order Summary");
+    expect(html).toContain('aria-hidden="true"');
+  });
+
+  it("gracefully handles malformed runtime payloads", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(OrderSummary, {
+        id: "bad-order",
+        title: "Broken",
+        items: [] as never[],
+        pricing: undefined as never,
+      }),
+    );
+
+    expect(html).toContain("Unable to render order summary");
   });
 });
