@@ -1,4 +1,5 @@
 import { CheckCircle, Package } from "lucide-react";
+import type { ReactElement } from "react";
 import { cn, Separator } from "./_adapter";
 import type {
   OrderSummaryProps,
@@ -237,7 +238,7 @@ function OrderSummaryRoot({
               )}
               {title}
             </h2>
-            {isReceipt && (
+            {isReceipt && choice && (
               <ReceiptBadge
                 orderId={choice.orderId}
                 confirmedAt={choice.confirmedAt}
@@ -264,19 +265,14 @@ function OrderSummaryRoot({
   );
 }
 
-export interface OrderSummaryDisplayProps
-  extends Omit<OrderSummaryProps, "variant" | "choice"> {
-  variant?: never;
-  choice?: never;
-}
+export type OrderSummaryDisplayProps = OrderSummaryProps;
 
 function OrderSummaryDisplay(props: OrderSummaryDisplayProps) {
   return <OrderSummaryRoot {...props} variant="summary" />;
 }
 
 export interface OrderSummaryReceiptProps
-  extends Omit<OrderSummaryProps, "variant" | "choice"> {
-  variant?: never;
+  extends Omit<OrderSummaryProps, "choice"> {
   choice: OrderDecision;
 }
 
@@ -285,9 +281,9 @@ function OrderSummaryReceipt(props: OrderSummaryReceiptProps) {
 }
 
 export interface OrderSummaryCompoundComponent {
-  (props: OrderSummaryProps): JSX.Element;
-  Display: (props: OrderSummaryDisplayProps) => JSX.Element;
-  Receipt: (props: OrderSummaryReceiptProps) => JSX.Element;
+  (props: OrderSummaryProps): ReactElement;
+  Display: (props: OrderSummaryDisplayProps) => ReactElement;
+  Receipt: (props: OrderSummaryReceiptProps) => ReactElement;
 }
 
 export const OrderSummary: OrderSummaryCompoundComponent = Object.assign(

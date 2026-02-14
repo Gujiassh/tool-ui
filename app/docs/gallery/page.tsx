@@ -7,6 +7,7 @@ import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
+import { OrderSummary } from "@/components/tool-ui/order-summary";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import {
   galleryComponentDocs,
@@ -59,9 +60,6 @@ const LinkedInPost = dynamic(() =>
 );
 const OptionList = dynamic(() =>
   import("@/components/tool-ui/option-list").then((m) => m.OptionList),
-);
-const OrderSummary = dynamic(() =>
-  import("@/components/tool-ui/order-summary").then((m) => m.OrderSummary),
 );
 const Plan = dynamic(() =>
   import("@/components/tool-ui/plan").then((m) => m.Plan),
