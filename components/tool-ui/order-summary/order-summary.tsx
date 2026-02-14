@@ -1,6 +1,12 @@
 import { CheckCircle, Package } from "lucide-react";
 import { cn, Separator } from "./_adapter";
-import type { OrderSummaryProps, OrderItem, Pricing } from "./schema";
+import type {
+  OrderSummaryProps,
+  OrderItem,
+  Pricing,
+  OrderDecision,
+  OrderSummaryVariant,
+} from "./schema";
 
 function formatCurrency(amount: number, currency: string): string {
   try {
@@ -167,15 +173,21 @@ function ReceiptBadge({
 export function OrderSummary({
   id,
   title = "Order Summary",
+  variant,
   items,
   pricing,
   choice,
   className,
 }: OrderSummaryProps) {
   const titleId = `${id}-title`;
-  const isReceipt = choice !== undefined;
+  const resolvedVariant: OrderSummaryVariant =
+    variant ?? (choice === undefined ? "summary" : "receipt");
+  const isReceipt = resolvedVariant === "receipt";
   const isMalformedPayload =
-    !Array.isArray(items) || items.length === 0 || pricing == null;
+    !Array.isArray(items) ||
+    items.length === 0 ||
+    pricing == null ||
+    (isReceipt && choice === undefined);
 
   if (isMalformedPayload) {
     return (
@@ -250,4 +262,24 @@ export function OrderSummary({
       </div>
     </article>
   );
+}
+
+export interface OrderSummaryDisplayProps
+  extends Omit<OrderSummaryProps, "variant" | "choice"> {
+  variant?: never;
+  choice?: never;
+}
+
+export function OrderSummaryDisplay(props: OrderSummaryDisplayProps) {
+  return <OrderSummary {...props} variant="summary" />;
+}
+
+export interface OrderSummaryReceiptProps
+  extends Omit<OrderSummaryProps, "variant" | "choice"> {
+  variant?: never;
+  choice: OrderDecision;
+}
+
+export function OrderSummaryReceipt(props: OrderSummaryReceiptProps) {
+  return <OrderSummary {...props} variant="receipt" />;
 }

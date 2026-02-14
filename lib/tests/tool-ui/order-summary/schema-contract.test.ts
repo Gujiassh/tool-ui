@@ -27,6 +27,7 @@ describe("order summary schema contract", () => {
   it("accepts valid payloads", () => {
     const parsed = parseSerializableOrderSummary({
       ...baseOrderSummary,
+      variant: "receipt",
       choice: {
         action: "confirm" as const,
         orderId: "ORD-42",
@@ -36,6 +37,39 @@ describe("order summary schema contract", () => {
 
     expect(parsed.id).toBe(baseOrderSummary.id);
     expect(parsed.choice?.orderId).toBe("ORD-42");
+  });
+
+  it("accepts explicit summary variant without choice", () => {
+    const parsed = parseSerializableOrderSummary({
+      ...baseOrderSummary,
+      variant: "summary",
+    });
+
+    expect(parsed.variant).toBe("summary");
+  });
+
+  it("rejects receipt variant without choice", () => {
+    const payload = {
+      ...baseOrderSummary,
+      variant: "receipt",
+    };
+
+    expect(() => parseSerializableOrderSummary(payload)).toThrow();
+    expect(safeParseSerializableOrderSummary(payload)).toBeNull();
+  });
+
+  it("rejects summary variant with choice", () => {
+    const payload = {
+      ...baseOrderSummary,
+      variant: "summary",
+      choice: {
+        action: "confirm" as const,
+        orderId: "ORD-42",
+      },
+    };
+
+    expect(() => parseSerializableOrderSummary(payload)).toThrow();
+    expect(safeParseSerializableOrderSummary(payload)).toBeNull();
   });
 
   it("rejects duplicate item ids", () => {

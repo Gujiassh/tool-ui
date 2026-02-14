@@ -1,7 +1,11 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { OrderSummary } from "@/components/tool-ui/order-summary";
+import {
+  OrderSummary,
+  OrderSummaryDisplay,
+  OrderSummaryReceipt,
+} from "@/components/tool-ui/order-summary";
 
 const baseOrderSummary = {
   id: "order-summary-render-contract",
@@ -66,6 +70,57 @@ describe("order summary render contract", () => {
     expect(html).toContain("#ORD-42");
     expect(html).toContain("Order Summary");
     expect(html).toContain('aria-hidden="true"');
+  });
+
+  it("supports explicit display variant composition", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(OrderSummaryDisplay, baseOrderSummary),
+    );
+
+    expect(html).toContain("Wireless Keyboard");
+    expect(html).not.toContain("#ORD-42");
+  });
+
+  it("supports explicit receipt variant composition", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(OrderSummaryReceipt, {
+        ...baseOrderSummary,
+        choice: {
+          action: "confirm" as const,
+          orderId: "ORD-42",
+          confirmedAt: "2026-01-10T11:35:00.000Z",
+        },
+      }),
+    );
+
+    expect(html).toContain("#ORD-42");
+  });
+
+  it("uses explicit variant over choice-derived mode", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(OrderSummary, {
+        ...baseOrderSummary,
+        variant: "summary" as const,
+        choice: {
+          action: "confirm" as const,
+          orderId: "ORD-42",
+          confirmedAt: "2026-01-10T11:35:00.000Z",
+        },
+      }),
+    );
+
+    expect(html).not.toContain("#ORD-42");
+  });
+
+  it("gracefully handles receipt variant without receipt choice", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(OrderSummary, {
+        ...baseOrderSummary,
+        variant: "receipt" as const,
+      }),
+    );
+
+    expect(html).toContain("Unable to render order summary");
   });
 
   it("gracefully handles malformed runtime payloads", () => {

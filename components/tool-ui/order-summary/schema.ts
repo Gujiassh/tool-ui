@@ -45,6 +45,9 @@ export const PricingSchema = z.object({
 
 export type Pricing = z.infer<typeof PricingSchema>;
 
+export const OrderSummaryVariantSchema = z.enum(["summary", "receipt"]);
+export type OrderSummaryVariant = z.infer<typeof OrderSummaryVariantSchema>;
+
 export const OrderDecisionSchema = z.object({
   action: z.literal("confirm"),
   orderId: z.string().optional(),
@@ -57,10 +60,29 @@ export const SerializableOrderSummarySchema = z.object({
   id: ToolUIIdSchema,
   role: ToolUIRoleSchema.optional(),
   title: z.string().optional(),
+  variant: OrderSummaryVariantSchema.optional(),
   items: OrderItemsSchema,
   pricing: PricingSchema,
   choice: OrderDecisionSchema.optional(),
-}).strict();
+})
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.variant === "receipt" && value.choice === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Receipt variant requires "choice".',
+        path: ["choice"],
+      });
+    }
+
+    if (value.variant === "summary" && value.choice !== undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Summary variant cannot include "choice".',
+        path: ["choice"],
+      });
+    }
+  });
 
 export type SerializableOrderSummary = z.infer<
   typeof SerializableOrderSummarySchema
