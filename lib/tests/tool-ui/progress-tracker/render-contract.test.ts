@@ -109,4 +109,50 @@ describe("progress tracker render contract", () => {
     expect(html).toContain('dateTime="PT43.2S"');
     expect(html).toContain("43.2s");
   });
+
+  it("rounds sub-minute values consistently at boundary transitions", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-time-boundary",
+        steps: [{ id: "step-1", label: "First", status: "in-progress" as const }],
+        elapsedTime: 59999,
+      }),
+    );
+
+    expect(html).toContain("1m 0s");
+    expect(html).toContain('dateTime="PT1M"');
+    expect(html).not.toContain("60.0s");
+  });
+
+  it("renders receipt mode with explicit non-success outcome icons", () => {
+    const partialHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-receipt-partial",
+        steps: [{ id: "step-1", label: "First", status: "completed" as const }],
+        choice: {
+          outcome: "partial",
+          summary: "Partially complete",
+          at: "2026-02-14T00:00:00.000Z",
+        },
+      }),
+    );
+
+    const cancelledHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-receipt-cancelled",
+        steps: [{ id: "step-1", label: "First", status: "failed" as const }],
+        choice: {
+          outcome: "cancelled",
+          summary: "Cancelled by user",
+          at: "2026-02-14T00:00:00.000Z",
+        },
+      }),
+    );
+
+    expect(partialHtml).toContain('data-receipt="true"');
+    expect(partialHtml).toContain('aria-label="Partially complete"');
+    expect(partialHtml).toContain("lucide-circle-alert");
+
+    expect(cancelledHtml).toContain("lucide-x");
+  });
 });

@@ -1,27 +1,33 @@
 import { cn } from "./_adapter";
-import type { ProgressStep, ProgressTrackerProps } from "./schema";
+import type {
+  ProgressStep,
+  ProgressTrackerChoice,
+  ProgressTrackerProps,
+} from "./schema";
 import { Check, X, Loader2, Timer, AlertCircle } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 function formatElapsedTime(milliseconds: number): string {
-  const seconds = milliseconds / 1000;
+  const roundedSeconds = Math.round(Math.max(0, milliseconds) / 100) / 10;
 
-  if (seconds < 60) {
-    return `${seconds.toFixed(1)}s`;
+  if (roundedSeconds < 60) {
+    return `${roundedSeconds.toFixed(1)}s`;
   }
 
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
+  const wholeSeconds = Math.floor(roundedSeconds);
+  const minutes = Math.floor(wholeSeconds / 60);
+  const remainingSeconds = wholeSeconds % 60;
   return `${minutes}m ${remainingSeconds}s`;
 }
 
 function formatElapsedTimeDateTime(milliseconds: number): string {
-  const totalSeconds = Math.max(0, milliseconds) / 1000;
+  const roundedSeconds = Math.round(Math.max(0, milliseconds) / 100) / 10;
 
-  if (totalSeconds < 60) {
-    return `PT${Number(totalSeconds.toFixed(1))}S`;
+  if (roundedSeconds < 60) {
+    return `PT${Number(roundedSeconds.toFixed(1))}S`;
   }
 
-  const wholeSeconds = Math.floor(totalSeconds);
+  const wholeSeconds = Math.floor(roundedSeconds);
   const hours = Math.floor(wholeSeconds / 3600);
   const minutes = Math.floor((wholeSeconds % 3600) / 60);
   const seconds = wholeSeconds % 60;
@@ -48,6 +54,33 @@ function getCurrentStepId(steps: ProgressStep[]): string | null {
   if (firstPendingStep) return firstPendingStep.id;
 
   return null;
+}
+
+function getReceiptState(
+  outcome: ProgressTrackerChoice["outcome"],
+): { toneClassName: string; icon: LucideIcon } {
+  switch (outcome) {
+    case "success":
+      return {
+        toneClassName: "text-emerald-600 dark:text-emerald-500",
+        icon: Check,
+      };
+    case "partial":
+      return {
+        toneClassName: "text-amber-600 dark:text-amber-500",
+        icon: AlertCircle,
+      };
+    case "failed":
+      return {
+        toneClassName: "text-destructive",
+        icon: AlertCircle,
+      };
+    case "cancelled":
+      return {
+        toneClassName: "text-muted-foreground",
+        icon: X,
+      };
+  }
 }
 
 interface StepIndicatorProps {
@@ -119,8 +152,10 @@ export function ProgressTracker({
   const viewKey = choice ? `receipt-${choice.outcome}` : "interactive";
   const receiptOutcome = choice?.outcome;
   const receiptSummary = choice?.summary;
-  const isReceiptSuccess = receiptOutcome === "success";
-  const isReceiptFailed = receiptOutcome === "failed";
+  const receiptState = receiptOutcome
+    ? getReceiptState(receiptOutcome)
+    : undefined;
+  const ReceiptIcon = receiptState?.icon;
 
   return (
     <div key={viewKey} className="contents">
@@ -151,19 +186,11 @@ export function ProgressTracker({
               <span
                 className={cn(
                   "flex items-center gap-1.5 text-xs font-medium",
-                  isReceiptSuccess && "text-emerald-600 dark:text-emerald-500",
-                  isReceiptFailed && "text-destructive",
-                  !isReceiptSuccess &&
-                    !isReceiptFailed &&
-                    "text-muted-foreground",
+                  receiptState?.toneClassName,
                 )}
               >
-                {isReceiptSuccess ? (
-                  <Check className="size-3.5" />
-                ) : isReceiptFailed ? (
-                  <AlertCircle className="size-3.5" />
-                ) : (
-                  <Check className="size-3.5" />
+                {ReceiptIcon && (
+                  <ReceiptIcon className="size-3.5" />
                 )}
                 {receiptSummary}
               </span>
