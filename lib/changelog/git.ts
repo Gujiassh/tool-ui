@@ -17,6 +17,14 @@ export type ReleaseGitContextOptions = {
   toRef?: string;
 };
 
+function isToolUiComponentPath(filePath: string): boolean {
+  return filePath.startsWith("components/tool-ui/");
+}
+
+function filterToolUiComponentFiles(files: string[]): string[] {
+  return files.filter((filePath) => isToolUiComponentPath(filePath));
+}
+
 function runGit(projectRoot: string, args: string[]): string {
   return execFileSync("git", ["-C", projectRoot, ...args], {
     encoding: "utf8",
@@ -96,13 +104,17 @@ export function collectReleaseGitContext(
         hash,
         subject: subject?.trim() ?? "",
         body: body?.trim() ?? "",
-        files: collectCommitFiles(projectRoot, hash),
+        files: filterToolUiComponentFiles(collectCommitFiles(projectRoot, hash)),
       };
-    });
+    })
+    .filter((commit) => commit.files.length > 0);
 
   if (commits.length === 0) {
     throw new Error(
-      `No commits found for release range "${range}". Cannot infer changelog.`,
+      [
+        `No tool-ui component commits found for release range "${range}".`,
+        "Changelog inference only includes component source changes under components/tool-ui/.",
+      ].join(" "),
     );
   }
 

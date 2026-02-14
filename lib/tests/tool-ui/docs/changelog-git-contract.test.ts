@@ -46,8 +46,64 @@ describe("changelog git contract", () => {
     expect(context.commits).toHaveLength(1);
     expect(context.changedFiles).toEqual([
       "components/tool-ui/plan/plan.tsx",
-      "scripts/generate-changelog.ts",
     ]);
+  });
+
+  test("drops commits that do not touch tool-ui components", () => {
+    execFileSyncMock.mockImplementation((_command, args) => {
+      const gitArgs = getGitArgs(args).slice(2);
+
+      if (gitArgs[0] === "describe") {
+        return "v2026.02.12";
+      }
+
+      if (gitArgs[0] === "log") {
+        return [
+          "aaa1111\x1fdocs: update changelog page\x1f\x1e",
+          "bbb2222\x1ffeat: tune plan component\x1f\x1e",
+        ].join("");
+      }
+
+      if (gitArgs[0] === "show" && gitArgs[3] === "aaa1111") {
+        return "app/docs/changelog/content.mdx\nlib/changelog/git.ts\n";
+      }
+
+      if (gitArgs[0] === "show" && gitArgs[3] === "bbb2222") {
+        return "components/tool-ui/plan/plan.tsx\napp/docs/plan/content.mdx\n";
+      }
+
+      throw new Error(`Unexpected git command: ${gitArgs.join(" ")}`);
+    });
+
+    const context = collectReleaseGitContext("/tmp/tool-ui");
+
+    expect(context.commits).toHaveLength(1);
+    expect(context.commits[0]?.hash).toBe("bbb2222");
+    expect(context.changedFiles).toEqual(["components/tool-ui/plan/plan.tsx"]);
+  });
+
+  test("throws when no commits touch tool-ui components", () => {
+    execFileSyncMock.mockImplementation((_command, args) => {
+      const gitArgs = getGitArgs(args).slice(2);
+
+      if (gitArgs[0] === "describe") {
+        return "v2026.02.12";
+      }
+
+      if (gitArgs[0] === "log") {
+        return "aaa1111\x1fdocs: update changelog page\x1f\x1e";
+      }
+
+      if (gitArgs[0] === "show" && gitArgs[3] === "aaa1111") {
+        return "app/docs/changelog/content.mdx\nscripts/generate-changelog.ts\n";
+      }
+
+      throw new Error(`Unexpected git command: ${gitArgs.join(" ")}`);
+    });
+
+    expect(() => collectReleaseGitContext("/tmp/tool-ui")).toThrow(
+      /No tool-ui component commits found/i,
+    );
   });
 
   test("falls back to HEAD baseline when no tags exist", () => {
