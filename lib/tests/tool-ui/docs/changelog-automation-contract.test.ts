@@ -1,27 +1,24 @@
 import { describe, expect, test } from "vitest";
 import {
-  readLatestReleaseDate,
-  readLatestReleaseGeneratedToRef,
   renderReleaseSection,
   upsertReleaseSection,
   validateChangelogStructure,
 } from "@/lib/changelog/changelog";
 
 describe("changelog automation contract", () => {
-  test("renders one migration prompt block for breaking releases", () => {
+  test("renders migration prompt for breaking releases", () => {
     const section = renderReleaseSection({
       date: "2026-02-12",
       notes: {
-        breakingChanges: ["Schema helpers moved to /schema entrypoints."],
-        changes: ["Data Table date formatting is now more consistent."],
-        migrationPrompt: "Migrate schema helper imports to /schema entrypoints.",
+        breakingChanges: ["Schema exports moved to dedicated entrypoints."],
+        changes: ["Updated components to use new schema boundaries."],
+        migrationPrompt: "Update schema imports and regenerate artifacts.",
       },
     });
 
     expect(section).toContain("## 2026-02-12");
     expect(section).toContain("### Breaking changes");
     expect(section).toContain("### Migration prompt");
-    expect(section.match(/### Migration prompt/g)?.length ?? 0).toBe(1);
     expect(section).toContain("```text");
     expect(section).toContain("### Changes");
   });
@@ -31,27 +28,14 @@ describe("changelog automation contract", () => {
       date: "2026-02-12",
       notes: {
         breakingChanges: [],
-        changes: ["Data Table date formatting is now more consistent."],
-        migrationPrompt: null,
+        changes: ["Improved option-list rendering."],
+        migrationPrompt: "This should be ignored",
       },
     });
 
     expect(section).not.toContain("### Breaking changes");
     expect(section).not.toContain("### Migration prompt");
     expect(section).toContain("### Changes");
-  });
-
-  test("uses a longer fence when migration prompt contains triple backticks", () => {
-    const section = renderReleaseSection({
-      date: "2026-02-12",
-      notes: {
-        breakingChanges: ["API changed."],
-        changes: ["Updated migration docs."],
-        migrationPrompt: "Run:\n```bash\npnpm test\n```",
-      },
-    });
-
-    expect(section).toContain("````text");
   });
 
   test("upserts a release section by date", () => {
@@ -89,37 +73,14 @@ describe("changelog automation contract", () => {
     expect(next.match(/^## 2026-02-12$/gm)?.length ?? 0).toBe(1);
   });
 
-  test("fails validation when a release has duplicate migration prompt headings", () => {
+  test("fails validation when migration prompt appears without breaking changes", () => {
     const content = `## 2026-02-12
-
-### Breaking changes
-
-- One
 
 ### Migration prompt
 
-Text
-
-### Migration prompt
-
-Text
-
-### Changes
-
-- Two`;
-
-    const result = validateChangelogStructure(content);
-
-    expect(result.ok).toBe(false);
-    expect(result.errors.join("\n")).toContain(
-      'contains duplicate "### Migration prompt" headings',
-    );
-  });
-
-  test("fails validation when intro prose appears before first subsection", () => {
-    const content = `## 2026-02-12
-
-This paragraph should not appear.
+\`\`\`text
+Do something
+\`\`\`
 
 ### Changes
 
@@ -129,88 +90,7 @@ This paragraph should not appear.
 
     expect(result.ok).toBe(false);
     expect(result.errors.join("\n")).toContain(
-      "contains prose before the first subsection heading",
+      'has "### Migration prompt" but no "### Breaking changes"',
     );
-  });
-
-  test("fails validation when migration prompt does not use a markdown code block", () => {
-    const content = `## 2026-02-12
-
-### Breaking changes
-
-- One
-
-### Migration prompt
-
-Migrate manually.
-
-### Changes
-
-- Two`;
-
-    const result = validateChangelogStructure(content);
-
-    expect(result.ok).toBe(false);
-    expect(result.errors.join("\n")).toContain(
-      "is missing the required Fumadocs code-block markdown fence",
-    );
-  });
-
-  test("allows machine metadata comments before the first subsection", () => {
-    const content = `## 2026-02-13
-
-<!-- changelog-generated-to: abcdef1234567890 -->
-
-### Changes
-
-- One`;
-
-    const result = validateChangelogStructure(content);
-
-    expect(result.ok).toBe(true);
-  });
-
-  test("reads the latest generated baseline ref from the top release section", () => {
-    const content = `import { DocsHeader } from "../_components/docs-header";
-
-<DocsHeader title="Changelog" mdxPath="app/docs/changelog/content.mdx" />
-
-## 2026-02-13
-
-<!-- changelog-generated-to: abcdef1234567890 -->
-
-### Changes
-
-- One
-
-## 2026-02-12
-
-<!-- changelog-generated-to: deadbeef -->
-
-### Changes
-
-- Older`;
-
-    expect(readLatestReleaseGeneratedToRef(content)).toBe("abcdef1234567890");
-  });
-
-  test("reads the latest release date from the top release section", () => {
-    const content = `import { DocsHeader } from "../_components/docs-header";
-
-<DocsHeader title="Changelog" mdxPath="app/docs/changelog/content.mdx" />
-
-## 2026-02-13
-
-### Changes
-
-- One
-
-## 2026-02-12
-
-### Changes
-
-- Older`;
-
-    expect(readLatestReleaseDate(content)).toBe("2026-02-13");
   });
 });

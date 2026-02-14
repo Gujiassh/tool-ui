@@ -11,8 +11,6 @@
     "start": "next start",
     "component:new": "tsx scripts/new-tool-ui-component.ts",
     "changelog:generate": "tsx scripts/generate-changelog.ts",
-    "changelog:generate:manual": "tsx scripts/generate-changelog.ts",
-    "changelog:generate:from-tag": "tsx scripts/generate-changelog.ts --from-tag",
     "changelog:check": "tsx scripts/check-changelog.ts",
     "registry:build": "tsx scripts/build-tool-ui-registry.ts",
     "registry:check": "pnpm registry:build && git diff --exit-code -- public/r",

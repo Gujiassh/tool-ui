@@ -10,7 +10,6 @@ export type InferredReleaseNotes = {
 type RenderReleaseSectionInput = {
   date: string;
   notes: InferredReleaseNotes;
-  generatedToRef?: string | null;
 };
 
 type UpsertReleaseSectionInput = {
@@ -33,7 +32,6 @@ type SectionBounds = {
 type SubsectionBounds = {
   heading: string;
   headingEnd: number;
-  start: number;
   end: number;
 };
 
@@ -44,85 +42,44 @@ function normalizeItemList(items: string[]): string[] {
     .map((item) => item.replace(/\s+/g, " "));
 }
 
-function listToBullets(items: string[]): string {
-  return items.map((item) => `- ${item}`).join("\n");
-}
-
 function parseReleaseSectionBounds(content: string): SectionBounds[] {
-  const sections: SectionBounds[] = [];
-  const headingRegex = /^##\s+([^\n]+)$/gm;
-  const matches = Array.from(content.matchAll(headingRegex));
-
-  for (let index = 0; index < matches.length; index += 1) {
-    const match = matches[index];
-    const start = match.index ?? 0;
-    const end = matches[index + 1]?.index ?? content.length;
-    sections.push({
-      heading: match[1]?.trim() ?? "",
-      start,
-      end,
-    });
-  }
-
-  return sections;
+  const matches = Array.from(content.matchAll(/^##\s+([^\n]+)$/gm));
+  return matches.map((match, index) => ({
+    heading: match[1]?.trim() ?? "",
+    start: match.index ?? 0,
+    end: matches[index + 1]?.index ?? content.length,
+  }));
 }
 
 function parseSubsectionBounds(sectionContent: string): SubsectionBounds[] {
-  const headingRegex = /^###\s+([^\n]+)$/gm;
-  const matches = Array.from(sectionContent.matchAll(headingRegex));
-
+  const matches = Array.from(sectionContent.matchAll(/^###\s+([^\n]+)$/gm));
   return matches.map((match, index) => {
+    const headingLine = match[0] ?? "";
     const start = match.index ?? 0;
-    const headingText = match[0] ?? "";
-    const heading = match[1]?.trim() ?? "";
-    const headingEnd = start + headingText.length;
-    const end = matches[index + 1]?.index ?? sectionContent.length;
     return {
-      heading,
-      headingEnd,
-      start,
-      end,
+      heading: match[1]?.trim() ?? "",
+      headingEnd: start + headingLine.length,
+      end: matches[index + 1]?.index ?? sectionContent.length,
     };
   });
 }
 
-function hasMarkdownCodeFence(input: string): boolean {
-  const normalized = input.trim();
-  if (!normalized) return false;
-
-  return /(^|\n)(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n\2(?=\n|$)/m.test(normalized);
+function listToBullets(items: string[]): string {
+  return items.map((item) => `- ${item}`).join("\n");
 }
 
-function toMarkdownCodeFence(input: string, language: string): string {
-  const normalized = input.replace(/\r\n/g, "\n").trimEnd();
-  const backtickRuns = Array.from(normalized.matchAll(/`+/g), (match) =>
-    match[0].length,
+function toCodeFence(content: string, language: string): string {
+  const trimmed = content.replace(/\r\n/g, "\n").trim();
+  const maxBackticks = Math.max(
+    3,
+    ...Array.from(trimmed.matchAll(/`+/g), (match) => match[0].length + 1),
   );
-  const maxBacktickRun = backtickRuns.length > 0 ? Math.max(...backtickRuns) : 0;
-  const fence = "`".repeat(Math.max(3, maxBacktickRun + 1));
-  return `${fence}${language}\n${normalized}\n${fence}`;
+  const fence = "`".repeat(maxBackticks);
+  return `${fence}${language}\n${trimmed}\n${fence}`;
 }
 
-function extractGeneratedToRef(content: string): string | null {
-  const markerMatch = content.match(
-    /<!--\s*changelog-generated-to:\s*([^\s>][^>]*)\s*-->/,
-  );
-  const marker = markerMatch?.[1]?.trim();
-  return marker && marker.length > 0 ? marker : null;
-}
-
-function extractReleaseDateFromHeading(heading: string): string | null {
-  const normalizedHeading = heading.trim();
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedHeading)) {
-    return null;
-  }
-
-  return normalizedHeading;
-}
-
-function introAreaContainsOnlyAllowedComments(introArea: string): boolean {
-  const stripped = introArea.replace(/<!--[\s\S]*?-->/g, "").trim();
-  return stripped.length === 0;
+function hasCodeFence(content: string): boolean {
+  return /(^|\n)(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n\2(?=\n|$)/m.test(content);
 }
 
 export function createInitialChangelogContent(): string {
@@ -146,25 +103,16 @@ export function ensureChangelogFileExists(filePath: string): void {
 export function renderReleaseSection({
   date,
   notes,
-  generatedToRef,
 }: RenderReleaseSectionInput): string {
   const breakingChanges = normalizeItemList(notes.breakingChanges);
   const changes = normalizeItemList(notes.changes);
   const migrationPrompt = notes.migrationPrompt?.trim() ?? null;
-  const normalizedGeneratedToRef = generatedToRef?.trim() ?? null;
 
   if (changes.length === 0) {
     throw new Error("Changelog rendering requires at least one change.");
   }
 
   const lines: string[] = [`## ${date}`, ""];
-
-  if (normalizedGeneratedToRef) {
-    lines.push(
-      `<!-- changelog-generated-to: ${normalizedGeneratedToRef} -->`,
-      "",
-    );
-  }
 
   if (breakingChanges.length > 0) {
     lines.push("### Breaking changes", "", listToBullets(breakingChanges), "");
@@ -174,7 +122,7 @@ export function renderReleaseSection({
     lines.push(
       "### Migration prompt",
       "",
-      toMarkdownCodeFence(migrationPrompt, "text"),
+      toCodeFence(migrationPrompt, "text"),
       "",
     );
   }
@@ -188,7 +136,7 @@ export function upsertReleaseSection({
   date,
   section,
 }: UpsertReleaseSectionInput): string {
-  const nextSection = section.trim();
+  const normalizedSection = section.trim();
   const sections = parseReleaseSectionBounds(content);
   const heading = date.trim();
 
@@ -196,13 +144,13 @@ export function upsertReleaseSection({
   if (existing) {
     const before = content.slice(0, existing.start).trimEnd();
     const after = content.slice(existing.end).replace(/^\s+/, "");
-    return `${before}\n\n${nextSection}\n${after ? `\n${after}` : ""}`.trimEnd() + "\n";
+    return `${before}\n\n${normalizedSection}\n${after ? `\n${after}` : ""}`.trimEnd() + "\n";
   }
 
   const insertAt = sections[0]?.start ?? content.length;
   const before = content.slice(0, insertAt).trimEnd();
   const after = content.slice(insertAt).replace(/^\s+/, "");
-  return `${before}\n\n${nextSection}\n${after ? `\n${after}` : ""}`.trimEnd() + "\n";
+  return `${before}\n\n${normalizedSection}\n${after ? `\n${after}` : ""}`.trimEnd() + "\n";
 }
 
 export function validateChangelogStructure(
@@ -219,18 +167,11 @@ export function validateChangelogStructure(
   for (const section of sections) {
     const sectionContent = content.slice(section.start, section.end);
     const subsectionBounds = parseSubsectionBounds(sectionContent);
-    const subsectionNames = subsectionBounds.map(
-      (subsection) => subsection.heading,
-    );
-    const migrationPromptCount = subsectionNames.filter(
-      (name) => name === "Migration prompt",
-    ).length;
+    const subsectionNames = subsectionBounds.map((subsection) => subsection.heading);
     const firstSubheadingMatch = sectionContent.match(/^###\s+[^\n]+$/m);
 
     if (!firstSubheadingMatch) {
-      errors.push(
-        `Release "${section.heading}" must include subsection headings.`,
-      );
+      errors.push(`Release "${section.heading}" must include subsection headings.`);
       continue;
     }
 
@@ -242,10 +183,7 @@ export function validateChangelogStructure(
       )
       .trim();
 
-    if (
-      introArea.length > 0 &&
-      !introAreaContainsOnlyAllowedComments(introArea)
-    ) {
+    if (introArea.length > 0) {
       errors.push(
         `Release "${section.heading}" contains prose before the first subsection heading.`,
       );
@@ -254,6 +192,9 @@ export function validateChangelogStructure(
     const idxBreaking = subsectionNames.indexOf("Breaking changes");
     const idxMigration = subsectionNames.indexOf("Migration prompt");
     const idxChanges = subsectionNames.indexOf("Changes");
+    const migrationPromptCount = subsectionNames.filter(
+      (name) => name === "Migration prompt",
+    ).length;
 
     if (idxChanges === -1) {
       errors.push(`Release "${section.heading}" is missing "### Changes".`);
@@ -283,7 +224,7 @@ export function validateChangelogStructure(
       );
     }
 
-    if (migrationPromptCount === 1) {
+    if (idxMigration !== -1) {
       const migrationPromptSection = subsectionBounds.find(
         (subsection) => subsection.heading === "Migration prompt",
       );
@@ -291,50 +232,13 @@ export function validateChangelogStructure(
         ? sectionContent.slice(migrationPromptSection.headingEnd, migrationPromptSection.end)
         : "";
 
-      if (!hasMarkdownCodeFence(migrationPromptBody)) {
+      if (!hasCodeFence(migrationPromptBody)) {
         errors.push(
-          `Release "${section.heading}" has a migration prompt but is missing the required Fumadocs code-block markdown fence.`,
-        );
-      }
-    }
-
-    for (const subsectionName of subsectionNames) {
-      if (
-        subsectionName !== "Breaking changes" &&
-        subsectionName !== "Migration prompt" &&
-        subsectionName !== "Changes"
-      ) {
-        errors.push(
-          `Release "${section.heading}" contains unsupported subsection heading "### ${subsectionName}".`,
+          `Release "${section.heading}" has a migration prompt but is missing a markdown code block.`,
         );
       }
     }
   }
 
   return { ok: errors.length === 0, errors };
-}
-
-export function readLatestReleaseGeneratedToRef(content: string): string | null {
-  const sections = parseReleaseSectionBounds(content);
-  const latestSection = sections[0];
-  if (!latestSection) {
-    return null;
-  }
-
-  const latestSectionContent = content.slice(latestSection.start, latestSection.end);
-  const firstSubheadingMatch = latestSectionContent.match(/^###\s+[^\n]+$/m);
-  const markerSearchContent = firstSubheadingMatch
-    ? latestSectionContent.slice(0, firstSubheadingMatch.index)
-    : latestSectionContent;
-  return extractGeneratedToRef(markerSearchContent);
-}
-
-export function readLatestReleaseDate(content: string): string | null {
-  const sections = parseReleaseSectionBounds(content);
-  const latestSection = sections[0];
-  if (!latestSection) {
-    return null;
-  }
-
-  return extractReleaseDateFromHeading(latestSection.heading);
 }

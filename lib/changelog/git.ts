@@ -14,18 +14,8 @@ export type ReleaseGitContext = {
 
 export type ReleaseGitContextOptions = {
   fromRef?: string;
-  fromDate?: string;
   toRef?: string;
-  fromChangelogPath?: string;
 };
-
-function isToolUiComponentPath(filePath: string): boolean {
-  return filePath.startsWith("components/tool-ui/");
-}
-
-function filterToolUiComponentFiles(files: string[]): string[] {
-  return files.filter((filePath) => isToolUiComponentPath(filePath));
-}
 
 function runGit(projectRoot: string, args: string[]): string {
   return execFileSync("git", ["-C", projectRoot, ...args], {
@@ -56,100 +46,31 @@ function collectCommitFiles(projectRoot: string, hash: string): string[] {
     .filter(Boolean);
 }
 
-function resolveReleaseRange(
+function resolveRange(
   projectRoot: string,
   options: ReleaseGitContextOptions,
 ): { lastTag: string | null; range: string } {
-  const normalizedFromRef = options.fromRef?.trim();
-  const normalizedFromDate = options.fromDate?.trim();
-  const normalizedToRef = options.toRef?.trim() || "HEAD";
-  const normalizedFromChangelogPath = options.fromChangelogPath?.trim();
+  const toRef = options.toRef?.trim() || "HEAD";
+  const fromRef = options.fromRef?.trim();
 
-  const baselineOptionsCount = [
-    normalizedFromRef,
-    normalizedFromDate,
-    normalizedFromChangelogPath,
-  ].filter(Boolean).length;
-
-  if (baselineOptionsCount > 1) {
-    throw new Error(
-      "Invalid changelog range options. Provide only one baseline selector: fromRef, fromDate, or fromChangelogPath.",
-    );
-  }
-
-  if (normalizedFromRef) {
+  if (fromRef) {
     return {
       lastTag: null,
-      range: `${normalizedFromRef}..${normalizedToRef}`,
-    };
-  }
-
-  if (normalizedFromDate) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedFromDate)) {
-      throw new Error(
-        `Invalid fromDate "${normalizedFromDate}". Use YYYY-MM-DD.`,
-      );
-    }
-
-    const baselineCommit = tryRunGit(projectRoot, [
-      "rev-list",
-      "-n",
-      "1",
-      `--before=${normalizedFromDate}T23:59:59`,
-      normalizedToRef,
-    ]);
-
-    if (!baselineCommit) {
-      return {
-        lastTag: null,
-        range: normalizedToRef,
-      };
-    }
-
-    return {
-      lastTag: null,
-      range: `${baselineCommit}..${normalizedToRef}`,
-    };
-  }
-
-  if (normalizedFromChangelogPath) {
-    const changelogBaselineCommit = tryRunGit(projectRoot, [
-      "log",
-      "-n",
-      "1",
-      "--pretty=format:%H",
-      "--",
-      normalizedFromChangelogPath,
-    ]);
-
-    if (!changelogBaselineCommit) {
-      throw new Error(
-        [
-          `No git history found for changelog path "${normalizedFromChangelogPath}".`,
-          "Ensure the changelog file exists and has been committed at least once.",
-        ].join(" "),
-      );
-    }
-
-    return {
-      lastTag: null,
-      range: `${changelogBaselineCommit}..${normalizedToRef}`,
+      range: `${fromRef}..${toRef}`,
     };
   }
 
   const lastTag = tryRunGit(projectRoot, ["describe", "--tags", "--abbrev=0"]);
-  if (!lastTag) {
-    throw new Error(
-      [
-        "No git release tag found. Changelog generation requires a tagged baseline.",
-        "Create and push an annotated tag first (example: git tag -a v2026.2.13 -m \"Release v2026.2.13\" && git push origin v2026.2.13).",
-      ].join("\n"),
-    );
+  if (lastTag) {
+    return {
+      lastTag,
+      range: `${lastTag}..${toRef}`,
+    };
   }
 
   return {
-    lastTag,
-    range: `${lastTag}..HEAD`,
+    lastTag: null,
+    range: toRef,
   };
 }
 
@@ -157,7 +78,7 @@ export function collectReleaseGitContext(
   projectRoot: string,
   options: ReleaseGitContextOptions = {},
 ): ReleaseGitContext {
-  const { lastTag, range } = resolveReleaseRange(projectRoot, options);
+  const { lastTag, range } = resolveRange(projectRoot, options);
   const rawCommits = runGit(projectRoot, [
     "log",
     "--no-merges",
@@ -171,24 +92,17 @@ export function collectReleaseGitContext(
     .filter(Boolean)
     .map((entry) => {
       const [hash, subject, body] = entry.split("\x1f");
-      const files = filterToolUiComponentFiles(
-        collectCommitFiles(projectRoot, hash),
-      );
       return {
         hash,
         subject: subject?.trim() ?? "",
         body: body?.trim() ?? "",
-        files,
+        files: collectCommitFiles(projectRoot, hash),
       };
-    })
-    .filter((commit) => commit.files.length > 0);
+    });
 
   if (commits.length === 0) {
     throw new Error(
-      [
-        `No tool-ui component commits found for release range "${range}".`,
-        "Changelog inference only includes component source changes under components/tool-ui/.",
-      ].join(" "),
+      `No commits found for release range "${range}". Cannot infer changelog.`,
     );
   }
 
@@ -215,13 +129,12 @@ export function formatCommitSummary(
       if (commit.body) {
         lines.push(`  body: ${commit.body.replace(/\s+/g, " ").trim()}`);
       }
-
       if (commit.files.length > 0) {
         const fileList = commit.files.slice(0, 12).join(", ");
-        const extra = commit.files.length > 12 ? ` (+${commit.files.length - 12} more)` : "";
+        const extra =
+          commit.files.length > 12 ? ` (+${commit.files.length - 12} more)` : "";
         lines.push(`  files: ${fileList}${extra}`);
       }
-
       return lines.join("\n");
     })
     .join("\n");

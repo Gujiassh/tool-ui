@@ -1,11 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
   ensureChangelogFileExists,
-  readLatestReleaseDate,
-  readLatestReleaseGeneratedToRef,
   renderReleaseSection,
   upsertReleaseSection,
   validateChangelogStructure,
@@ -46,105 +43,21 @@ function summarizeChangelogStyle(content: string): string {
   return lines.slice(0, 120).join("\n");
 }
 
-function resolveStableCommitHash(projectRoot: string, ref: string): string {
-  try {
-    return execFileSync(
-      "git",
-      ["-C", projectRoot, "rev-parse", "--verify", `${ref}^{commit}`],
-      {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"],
-      },
-    ).trim();
-  } catch {
-    throw new Error(
-      `Invalid git ref "${ref}". Provide a valid commit-ish for --to (example: --to=HEAD).`,
-    );
-  }
-}
-
-function resolveLatestEntryCommitRef(
-  projectRoot: string,
-  changelogRelativePath: string,
-  entryDate: string,
-): string | null {
-  try {
-    const entryCommit = execFileSync(
-      "git",
-      [
-        "-C",
-        projectRoot,
-        "log",
-        "-n",
-        "1",
-        "--pretty=format:%H",
-        "-G",
-        `^[-+]?##[[:space:]]+${entryDate}$`,
-        "--",
-        changelogRelativePath,
-      ],
-      {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"],
-      },
-    ).trim();
-    return entryCommit.length > 0 ? entryCommit : null;
-  } catch {
-    return null;
-  }
-}
-
 async function main(): Promise<void> {
   const scriptDir = path.dirname(fileURLToPath(import.meta.url));
   const projectRoot = path.resolve(scriptDir, "..");
-  const changelogRelativePath = "app/docs/changelog/content.mdx";
-  const changelogPath = path.join(projectRoot, changelogRelativePath);
+  const changelogPath = path.join(projectRoot, "app/docs/changelog/content.mdx");
   const argv = process.argv.slice(2);
   const releaseDate = resolveReleaseDate(argv);
-  const explicitFromRef = resolveArgValue(argv, "--from=");
-  const requestedToRef = resolveArgValue(argv, "--to=") ?? "HEAD";
-  const forceTagBaseline = argv.includes("--from-tag");
-  const fromChangelog = !forceTagBaseline;
+  const fromRef = resolveArgValue(argv, "--from=");
+  const toRef = resolveArgValue(argv, "--to=") ?? "HEAD";
 
   ensureChangelogFileExists(changelogPath);
 
   const currentContent = fs.readFileSync(changelogPath, "utf8");
-  const resolvedToCommitHash = resolveStableCommitHash(projectRoot, requestedToRef);
-  const markerFromRef = fromChangelog
-    ? readLatestReleaseGeneratedToRef(currentContent)
-    : null;
-  const latestReleaseDate = fromChangelog
-    ? readLatestReleaseDate(currentContent)
-    : null;
-  const latestEntryCommitRef =
-    fromChangelog && latestReleaseDate
-      ? resolveLatestEntryCommitRef(
-          projectRoot,
-          changelogRelativePath,
-          latestReleaseDate,
-        )
-      : null;
-  const fromRef = explicitFromRef ?? markerFromRef ?? latestEntryCommitRef ?? undefined;
-  const fromDate =
-    fromChangelog && !fromRef && latestReleaseDate ? latestReleaseDate : undefined;
-  const fromChangelogPath =
-    fromChangelog && !fromRef && !fromDate ? changelogRelativePath : undefined;
-  const baselineSource = explicitFromRef
-    ? "explicit --from"
-    : markerFromRef
-      ? "latest changelog marker"
-      : latestEntryCommitRef
-        ? "latest changelog entry commit"
-      : fromDate
-        ? "latest changelog release date"
-        : fromChangelogPath
-          ? "last changelog file commit"
-          : "latest git tag";
   const gitContext = collectReleaseGitContext(projectRoot, {
     fromRef,
-    fromDate,
-    toRef: resolvedToCommitHash,
-    fromChangelogPath,
+    toRef,
   });
   const commitSummary = formatCommitSummary(gitContext);
 
@@ -158,7 +71,6 @@ async function main(): Promise<void> {
   const section = renderReleaseSection({
     date: releaseDate,
     notes,
-    generatedToRef: resolvedToCommitHash,
   });
 
   const nextContent = upsertReleaseSection({
@@ -181,7 +93,6 @@ async function main(): Promise<void> {
 
   console.log("Generated changelog section.");
   console.log(`- date: ${releaseDate}`);
-  console.log(`- baseline: ${baselineSource}`);
   console.log(`- range: ${gitContext.range}`);
   console.log(`- lastTag: ${gitContext.lastTag ?? "none"}`);
   console.log(`- changelog: ${path.relative(projectRoot, changelogPath)}`);
