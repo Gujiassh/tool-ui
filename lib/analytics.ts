@@ -82,6 +82,13 @@ export const analytics = {
   },
 
   gallery: {
+    /** Gallery landing page view */
+    pageViewed: () => trackEvent("gallery_page_viewed"),
+
+    /** Which preview cards are shown in the gallery */
+    componentPreviewed: (componentName: string) =>
+      trackEvent("gallery_component_previewed", { component: componentName }),
+
     /** Which components get clicks from gallery overview */
     componentClicked: (componentName: string) =>
       trackEvent("gallery_component_clicked", { component: componentName }),

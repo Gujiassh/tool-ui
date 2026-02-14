@@ -27,6 +27,10 @@ export const galleryComponentDocs = {
     name: "Image",
     docsHref: "/docs/image",
   },
+  "instagram-post": {
+    name: "Instagram Post",
+    docsHref: "/docs/instagram-post",
+  },
   "image-gallery": {
     name: "Image Gallery",
     docsHref: "/docs/image-gallery",
@@ -54,6 +58,10 @@ export const galleryComponentDocs = {
   "order-summary": {
     name: "Order Summary",
     docsHref: "/docs/order-summary",
+  },
+  "parameter-slider": {
+    name: "Parameter Slider",
+    docsHref: "/docs/parameter-slider",
   },
   plan: {
     name: "Plan",
@@ -86,6 +94,10 @@ export const galleryComponentDocs = {
   "weather-widget": {
     name: "Weather Widget",
     docsHref: "/docs/weather-widget",
+  },
+  "x-post": {
+    name: "X Post",
+    docsHref: "/docs/x-post",
   },
 } as const satisfies Record<
   string,
