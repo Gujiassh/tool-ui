@@ -43,4 +43,11 @@ describe("gallery page contract", () => {
     expect(content).toContain("componentId={card.componentId}");
     expect(content).toContain("{card.render()}");
   });
+
+  test("gallery uses the callable code-block variant component", () => {
+    const content = fs.readFileSync(GALLERY_PAGE_PATH, "utf8");
+
+    expect(content).toContain("<CodeBlock.Standard");
+    expect(content).not.toContain("<CodeBlock {...codeBlockPresets.typescript.data} />");
+  });
 });
