@@ -33,6 +33,33 @@ describe("progress tracker render contract", () => {
     expect(html.indexOf("First")).toBeLessThan(html.indexOf("Second"));
   });
 
+  it("exposes compound variants on the root export", () => {
+    expect(typeof ProgressTracker.Live).toBe("function");
+    expect(typeof ProgressTracker.Receipt).toBe("function");
+
+    const liveHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker.Live, {
+        id: "progress-tracker-live-variant",
+        steps: [{ id: "step-1", label: "First", status: "in-progress" as const }],
+      }),
+    );
+
+    const receiptHtml = renderToStaticMarkup(
+      React.createElement(ProgressTracker.Receipt, {
+        id: "progress-tracker-receipt-variant",
+        steps: [{ id: "step-1", label: "First", status: "completed" as const }],
+        choice: {
+          outcome: "success",
+          summary: "Complete",
+          at: "2026-02-14T00:00:00.000Z",
+        },
+      }),
+    );
+
+    expect(liveHtml).toContain('data-slot="progress-tracker"');
+    expect(receiptHtml).toContain('data-receipt="true"');
+  });
+
   it("does not render action buttons in display-only v2", () => {
     const html = renderToStaticMarkup(
       React.createElement(ProgressTracker, {

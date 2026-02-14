@@ -338,7 +338,7 @@ function ProgressTrackerLive({
   );
 }
 
-export function ProgressTracker({
+function ProgressTrackerRoot({
   id,
   steps,
   elapsedTime,
@@ -368,3 +368,13 @@ export function ProgressTracker({
     </div>
   );
 }
+
+type ProgressTrackerComponent = typeof ProgressTrackerRoot & {
+  Live: typeof ProgressTrackerLive;
+  Receipt: typeof ProgressTrackerReceipt;
+};
+
+export const ProgressTracker = Object.assign(ProgressTrackerRoot, {
+  Live: ProgressTrackerLive,
+  Receipt: ProgressTrackerReceipt,
+}) as ProgressTrackerComponent;
