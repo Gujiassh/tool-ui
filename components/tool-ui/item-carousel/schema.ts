@@ -1,4 +1,5 @@
-import { z } from "zod";import { defineToolUiContract } from "../shared/contract";
+import { z } from "zod";
+import { defineToolUiContract } from "../shared/contract";
 import { ActionSchema, SerializableActionSchema, ToolUIIdSchema } from "../shared/schema";
 
 export const ItemSchema = z.object({
@@ -29,9 +30,28 @@ export const SerializableItemSchema = ItemSchema.extend({
   actions: z.array(SerializableActionSchema).optional(),
 });
 
-export const SerializableItemCarouselSchema = ItemCarouselPropsSchema.extend({
-  items: z.array(SerializableItemSchema),
-});
+export const SerializableItemCarouselSchema = ItemCarouselPropsSchema.omit({
+  className: true,
+})
+  .extend({
+    items: z.array(SerializableItemSchema),
+  })
+  .superRefine((payload, ctx) => {
+    const seenItemIds = new Map<string, number>();
+
+    payload.items.forEach((item, index) => {
+      const firstSeenAt = seenItemIds.get(item.id);
+      if (firstSeenAt !== undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["items", index, "id"],
+          message: `duplicate item id '${item.id}' (first seen at index ${firstSeenAt})`,
+        });
+        return;
+      }
+      seenItemIds.set(item.id, index);
+    });
+  });
 
 export type SerializableItem = z.infer<typeof SerializableItemSchema>;
 export type SerializableItemCarousel = z.infer<
