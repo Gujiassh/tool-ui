@@ -7,7 +7,7 @@ import {
   TabsTrigger,
   TabsContent,
   Tab,
-} from "@/app/docs/_components/fumadocs-tabs";
+} from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import { Files, File, Folder } from "fumadocs-ui/components/files";
 import * as React from "react";

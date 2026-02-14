@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Tab, Tabs } from "@/app/docs/_components/fumadocs-tabs";
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { analytics } from "@/lib/analytics";
 import {
   type ComponentId,
