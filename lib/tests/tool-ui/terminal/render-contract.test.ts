@@ -4,6 +4,12 @@ import { describe, expect, it } from "vitest";
 import { Terminal } from "@/components/tool-ui/terminal";
 
 describe("terminal render contract", () => {
+  it("exposes compound subcomponents via static members", () => {
+    expect(Terminal).toHaveProperty("Header");
+    expect(Terminal).toHaveProperty("Output");
+    expect(Terminal).toHaveProperty("Empty");
+  });
+
   it("renders a formatted duration when durationMs is provided", () => {
     const html = renderToStaticMarkup(
       React.createElement(Terminal, {

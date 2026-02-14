@@ -23,6 +23,27 @@ type TerminalComponentProps = TerminalProps & {
   onExpandedChange?: (expanded: boolean) => void;
 };
 
+interface TerminalHeaderProps {
+  command: string;
+  cwd?: string;
+  exitCode: number;
+  formattedDuration: string | null;
+  hasOutput: boolean;
+  copiedId: string | null;
+  isSuccess: boolean;
+  onCopy: () => void;
+}
+
+interface TerminalOutputProps {
+  stdout?: string;
+  stderr?: string;
+  truncated?: boolean;
+  isCollapsed: boolean;
+  shouldCollapse: boolean;
+  lineCount: number;
+  onToggleCollapse: () => void;
+}
+
 function formatDuration(durationMs?: number): string | null {
   if (durationMs == null) return null;
   if (durationMs < 1000) return `${Math.round(durationMs)}ms`;
@@ -35,7 +56,138 @@ function countOutputLines(output: string): number {
   return trimmedTrailingNewlines.split("\n").length;
 }
 
-export function Terminal({
+function TerminalHeader({
+  command,
+  cwd,
+  exitCode,
+  formattedDuration,
+  hasOutput,
+  copiedId,
+  isSuccess,
+  onCopy,
+}: TerminalHeaderProps) {
+  return (
+    <div className="bg-card flex items-center justify-between border-b px-4 py-2">
+      <div className="flex items-center gap-2 overflow-hidden">
+        <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" />
+        <code className="text-foreground truncate font-mono text-xs">
+          {cwd && <span className="text-muted-foreground">{cwd}$ </span>}
+          {command}
+        </code>
+      </div>
+      <div className="flex items-center gap-3">
+        {formattedDuration && (
+          <span className="text-muted-foreground font-mono text-sm tabular-nums">
+            {formattedDuration}
+          </span>
+        )}
+        <span
+          className={cn(
+            "font-mono text-sm tabular-nums",
+            isSuccess ? "text-muted-foreground" : "text-red-600 dark:text-red-400",
+          )}
+        >
+          {exitCode}
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCopy}
+          disabled={!hasOutput}
+          className="h-7 w-7 p-0"
+          aria-label={
+            !hasOutput
+              ? "No output to copy"
+              : copiedId === COPY_ID
+                ? "Copied"
+                : "Copy output"
+          }
+        >
+          {hasOutput && copiedId === COPY_ID ? (
+            <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
+          ) : (
+            <Copy className="text-muted-foreground h-4 w-4" />
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function TerminalOutput({
+  stdout,
+  stderr,
+  truncated,
+  isCollapsed,
+  shouldCollapse,
+  lineCount,
+  onToggleCollapse,
+}: TerminalOutputProps) {
+  return (
+    <Collapsible open={!isCollapsed}>
+      <div
+        className={cn(
+          "relative font-mono text-sm",
+          isCollapsed && "max-h-[200px] overflow-hidden",
+        )}
+      >
+        <div className="overflow-x-auto p-4">
+          {stdout && (
+            <div className="text-foreground break-all whitespace-pre-wrap">
+              <Ansi>{stdout}</Ansi>
+            </div>
+          )}
+          {stderr && (
+            <div className="mt-2 break-all whitespace-pre-wrap text-red-500 dark:text-red-400">
+              <Ansi>{stderr}</Ansi>
+            </div>
+          )}
+          {truncated && (
+            <div className="text-muted-foreground mt-2 text-xs italic">
+              Output truncated...
+            </div>
+          )}
+        </div>
+
+        {isCollapsed && (
+          <div className="from-card absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t to-transparent" />
+        )}
+      </div>
+
+      {shouldCollapse && (
+        <CollapsibleTrigger asChild>
+          <Button
+            variant="ghost"
+            onClick={onToggleCollapse}
+            className="text-muted-foreground w-full rounded-none border-t font-normal"
+          >
+            {isCollapsed ? (
+              <>
+                <ChevronDown className="mr-1 size-4" />
+                Show all {lineCount} lines
+              </>
+            ) : (
+              <>
+                <ChevronUp className="mr-1 size-4" />
+                Collapse
+              </>
+            )}
+          </Button>
+        </CollapsibleTrigger>
+      )}
+    </Collapsible>
+  );
+}
+
+function TerminalEmpty() {
+  return (
+    <div className="text-muted-foreground px-4 py-3 font-mono text-sm italic">
+      No output
+    </div>
+  );
+}
+
+function TerminalRoot({
   id,
   command,
   stdout,
@@ -50,11 +202,18 @@ export function Terminal({
   defaultExpanded = false,
   onExpandedChange,
 }: TerminalComponentProps) {
-  const [uncontrolledExpanded, setUncontrolledExpanded] =
-    useState(defaultExpanded);
+  const [uncontrolledExpanded, setUncontrolledExpanded] = useState(defaultExpanded);
   const { copiedId, copy } = useCopyToClipboard();
 
   const isExpanded = expanded ?? uncontrolledExpanded;
+  const isSuccess = exitCode === 0;
+  const hasOutput = Boolean(stdout || stderr);
+  const fullOutput = [stdout, stderr].filter(Boolean).join("\n");
+  const formattedDuration = formatDuration(durationMs);
+  const lineCount = countOutputLines(fullOutput);
+  const shouldCollapse =
+    maxCollapsedLines !== undefined && lineCount > maxCollapsedLines;
+  const isCollapsed = shouldCollapse && !isExpanded;
 
   const setExpanded = useCallback(
     (nextExpanded: boolean) => {
@@ -65,15 +224,6 @@ export function Terminal({
     },
     [expanded, onExpandedChange],
   );
-
-  const isSuccess = exitCode === 0;
-  const hasOutput = Boolean(stdout || stderr);
-  const fullOutput = [stdout, stderr].filter(Boolean).join("\n");
-  const formattedDuration = formatDuration(durationMs);
-
-  const lineCount = countOutputLines(fullOutput);
-  const shouldCollapse = maxCollapsedLines && lineCount > maxCollapsedLines;
-  const isCollapsed = shouldCollapse && !isExpanded;
 
   const handleCopy = useCallback(() => {
     if (!hasOutput) return;
@@ -90,115 +240,44 @@ export function Terminal({
       data-slot="terminal"
     >
       <div className="border-border bg-card overflow-hidden rounded-lg border shadow-xs">
-        <div className="bg-card flex items-center justify-between border-b px-4 py-2">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <TerminalIcon className="text-muted-foreground h-4 w-4 shrink-0" />
-            <code className="text-foreground truncate font-mono text-xs">
-              {cwd && <span className="text-muted-foreground">{cwd}$ </span>}
-              {command}
-            </code>
-          </div>
-          <div className="flex items-center gap-3">
-            {formattedDuration && (
-              <span className="text-muted-foreground font-mono text-sm tabular-nums">
-                {formattedDuration}
-              </span>
-            )}
-            <span
-              className={cn(
-                "font-mono text-sm tabular-nums",
-                isSuccess
-                  ? "text-muted-foreground"
-                  : "text-red-600 dark:text-red-400",
-              )}
-            >
-              {exitCode}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCopy}
-              disabled={!hasOutput}
-              className="h-7 w-7 p-0"
-              aria-label={
-                !hasOutput
-                  ? "No output to copy"
-                  : copiedId === COPY_ID
-                    ? "Copied"
-                    : "Copy output"
-              }
-            >
-              {hasOutput && copiedId === COPY_ID ? (
-                <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
-              ) : (
-                <Copy className="text-muted-foreground h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        </div>
+        <TerminalHeader
+          command={command}
+          cwd={cwd}
+          exitCode={exitCode}
+          formattedDuration={formattedDuration}
+          hasOutput={hasOutput}
+          copiedId={copiedId}
+          isSuccess={isSuccess}
+          onCopy={handleCopy}
+        />
 
         {hasOutput && (
-          <Collapsible open={!isCollapsed}>
-            <div
-              className={cn(
-                "relative font-mono text-sm",
-                isCollapsed && "max-h-[200px] overflow-hidden",
-              )}
-            >
-              <div className="overflow-x-auto p-4">
-                {stdout && (
-                  <div className="text-foreground break-all whitespace-pre-wrap">
-                    <Ansi>{stdout}</Ansi>
-                  </div>
-                )}
-                {stderr && (
-                  <div className="mt-2 break-all whitespace-pre-wrap text-red-500 dark:text-red-400">
-                    <Ansi>{stderr}</Ansi>
-                  </div>
-                )}
-                {truncated && (
-                  <div className="text-muted-foreground mt-2 text-xs italic">
-                    Output truncated...
-                  </div>
-                )}
-              </div>
-
-              {isCollapsed && (
-                <div className="from-card absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t to-transparent" />
-              )}
-            </div>
-
-            {shouldCollapse && (
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  onClick={() => setExpanded(!isExpanded)}
-                  className="text-muted-foreground w-full rounded-none border-t font-normal"
-                >
-                  {isCollapsed ? (
-                    <>
-                      <ChevronDown className="mr-1 size-4" />
-                      Show all {lineCount} lines
-                    </>
-                  ) : (
-                    <>
-                      <ChevronUp className="mr-1 size-4" />
-                      Collapse
-                    </>
-                  )}
-                </Button>
-              </CollapsibleTrigger>
-            )}
-          </Collapsible>
+          <TerminalOutput
+            stdout={stdout}
+            stderr={stderr}
+            truncated={truncated}
+            isCollapsed={isCollapsed}
+            shouldCollapse={shouldCollapse}
+            lineCount={lineCount}
+            onToggleCollapse={() => setExpanded(!isExpanded)}
+          />
         )}
 
-        {!hasOutput && (
-          <div className="text-muted-foreground px-4 py-3 font-mono text-sm italic">
-            No output
-          </div>
-        )}
+        {!hasOutput && <TerminalEmpty />}
       </div>
 
     </div>
   );
 }
+
+type TerminalComponent = typeof TerminalRoot & {
+  Header: typeof TerminalHeader;
+  Output: typeof TerminalOutput;
+  Empty: typeof TerminalEmpty;
+};
+
+export const Terminal = Object.assign(TerminalRoot, {
+  Header: TerminalHeader,
+  Output: TerminalOutput,
+  Empty: TerminalEmpty,
+}) as TerminalComponent;
