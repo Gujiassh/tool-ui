@@ -118,11 +118,7 @@ describe("useCopyToClipboard contract", () => {
           }
         ).execCommand = originalExecCommand;
       } else {
-        delete (
-          document as Document & {
-            execCommand?: (command: string) => boolean;
-          }
-        ).execCommand;
+        Reflect.deleteProperty(document as object, "execCommand");
       }
     }
   });
