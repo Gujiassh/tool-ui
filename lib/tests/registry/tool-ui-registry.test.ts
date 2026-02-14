@@ -101,4 +101,19 @@ describe("Tool UI registry artifacts", () => {
     expect(chartItem?.dependencies ?? []).toContain("recharts@2.15.4");
     expect(chartItem?.dependencies ?? []).not.toContain("recharts");
   });
+
+  it("keeps progress-tracker registry dependencies minimal", async () => {
+    const artifacts = await buildToolUiRegistryArtifacts(getProjectRoot());
+    const progressTrackerItem = artifacts.items.find(
+      (item) => item.name === "progress-tracker",
+    );
+
+    expect(
+      progressTrackerItem,
+      "missing registry item: progress-tracker",
+    ).toBeDefined();
+    expect(progressTrackerItem?.registryDependencies ?? []).not.toContain(
+      "button",
+    );
+  });
 });

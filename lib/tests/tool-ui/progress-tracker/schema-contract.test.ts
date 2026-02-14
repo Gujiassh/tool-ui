@@ -55,4 +55,18 @@ describe("progress tracker schema contract", () => {
     expect(() => parseSerializableProgressTracker(payload)).toThrow();
     expect(safeParseSerializableProgressTracker(payload)).toBeNull();
   });
+
+  it("rejects legacy receipt payloads to avoid accepted-but-ignored state", () => {
+    const payload = {
+      ...baseProgressTracker,
+      receipt: {
+        outcome: "success" as const,
+        summary: "Done",
+        at: new Date().toISOString(),
+      },
+    };
+
+    expect(() => parseSerializableProgressTracker(payload)).toThrow();
+    expect(safeParseSerializableProgressTracker(payload)).toBeNull();
+  });
 });
