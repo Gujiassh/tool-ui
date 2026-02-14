@@ -93,6 +93,33 @@ describe("progress tracker render contract", () => {
     expect(html).toContain("Failed migration");
   });
 
+  it("hides inactive descriptions from assistive tech in interactive mode", () => {
+    const html = renderToStaticMarkup(
+      React.createElement(ProgressTracker, {
+        id: "progress-tracker-description-a11y",
+        steps: [
+          {
+            id: "pending-step",
+            label: "Pending Step",
+            status: "pending" as const,
+            description: "This should stay hidden",
+          },
+          {
+            id: "active-step",
+            label: "Active Step",
+            status: "in-progress" as const,
+            description: "This should stay visible",
+          },
+        ],
+      }),
+    );
+
+    expect(html).toContain("This should stay hidden");
+    expect(html).toContain("This should stay visible");
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain('aria-hidden="false"');
+  });
+
   it("renders elapsed time using a semantic <time> with dateTime", () => {
     const html = renderToStaticMarkup(
       React.createElement(ProgressTracker, {

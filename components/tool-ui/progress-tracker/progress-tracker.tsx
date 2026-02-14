@@ -139,6 +139,205 @@ function StepIndicator({ status }: StepIndicatorProps) {
   return null;
 }
 
+function ElapsedTimeBadge({ elapsedTime }: { elapsedTime?: number }) {
+  if (elapsedTime === undefined || elapsedTime <= 0) {
+    return null;
+  }
+
+  return (
+    <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+      <Timer className="-mt-px size-3.5" />
+      <time dateTime={formatElapsedTimeDateTime(elapsedTime)}>
+        {formatElapsedTime(elapsedTime)}
+      </time>
+    </div>
+  );
+}
+
+interface ProgressTrackerBaseProps {
+  id: ProgressTrackerProps["id"];
+  steps: ProgressTrackerProps["steps"];
+  elapsedTime?: ProgressTrackerProps["elapsedTime"];
+  className?: ProgressTrackerProps["className"];
+}
+
+function ProgressTrackerReceipt({
+  id,
+  steps,
+  elapsedTime,
+  className,
+  choice,
+}: ProgressTrackerBaseProps & { choice: ProgressTrackerChoice }) {
+  const receiptState = getReceiptState(choice.outcome);
+  const ReceiptIcon = receiptState.icon;
+
+  return (
+    <div
+      className={cn(
+        "flex w-full max-w-md min-w-80 flex-col",
+        "text-foreground select-none",
+        "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:zoom-in-95 motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both",
+        className,
+      )}
+      data-slot="progress-tracker"
+      data-tool-ui-id={id}
+      data-receipt="true"
+      role="status"
+      aria-label={choice.summary}
+    >
+      <div className="bg-card/60 flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
+        <div className="flex items-center justify-between">
+          <ElapsedTimeBadge elapsedTime={elapsedTime} />
+          <span
+            className={cn(
+              "flex items-center gap-1.5 text-xs font-medium",
+              receiptState.toneClassName,
+            )}
+          >
+            <ReceiptIcon className="size-3.5" />
+            {choice.summary}
+          </span>
+        </div>
+
+        <ol className="m-0 flex list-none flex-col gap-2 p-0">
+          {steps.map((step, index) => (
+            <li
+              key={step.id}
+              className="relative -mx-2 flex items-start gap-3 rounded-lg px-2 py-1.5"
+            >
+              {index < steps.length - 1 && (
+                <div
+                  className="bg-border absolute top-8 left-5 w-px"
+                  style={{
+                    height: "calc(100% + 0.5rem)",
+                  }}
+                  aria-hidden="true"
+                />
+              )}
+              <div className="relative z-10">
+                <StepIndicator status={step.status} />
+              </div>
+              <div className="flex flex-1 flex-col gap-0.5">
+                <span className="text-sm leading-6 font-medium">
+                  {step.label}
+                </span>
+                {step.description && (
+                  <span className="text-muted-foreground text-sm">
+                    {step.description}
+                  </span>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+function ProgressTrackerLive({
+  id,
+  steps,
+  elapsedTime,
+  className,
+}: ProgressTrackerBaseProps) {
+  const hasInProgress = steps.some((step) => step.status === "in-progress");
+  const currentStepId = getCurrentStepId(steps);
+
+  return (
+    <article
+      className={cn(
+        "flex w-full max-w-md min-w-80 flex-col gap-3",
+        "text-foreground select-none",
+        className,
+      )}
+      data-slot="progress-tracker"
+      data-tool-ui-id={id}
+      role="status"
+      aria-live="polite"
+      aria-busy={hasInProgress}
+    >
+      <div className="bg-card flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
+        <ElapsedTimeBadge elapsedTime={elapsedTime} />
+
+        <ol className="m-0 flex list-none flex-col gap-3 p-0">
+          {steps.map((step, index) => {
+            const isCurrent = step.id === currentStepId;
+            const isActive = step.status === "in-progress";
+            const isFailed = step.status === "failed";
+            const hasDescription = !!step.description;
+            const shouldShowDescription = isActive || isFailed;
+
+            return (
+              <li
+                key={step.id}
+                className="relative -mx-2"
+                aria-current={isCurrent ? "step" : undefined}
+              >
+                {index < steps.length - 1 && (
+                  <div
+                    className={cn(
+                      "bg-border absolute top-6 left-5 w-px",
+                      "motion-safe:transition-all motion-safe:duration-300",
+                    )}
+                    style={{
+                      height: "calc(100% + 0.25rem)",
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
+                <div
+                  className={cn(
+                    "relative z-10 flex items-start gap-3 rounded-lg px-2 py-1.5",
+                    "motion-safe:transition-all motion-safe:duration-300",
+                    isCurrent && "bg-primary/5",
+                  )}
+                  style={{
+                    backdropFilter: isCurrent ? "blur(2px)" : undefined,
+                  }}
+                >
+                  <div className="relative z-10">
+                    <StepIndicator status={step.status} />
+                  </div>
+                  <div className="flex flex-1 flex-col">
+                    <span
+                      className={cn(
+                        "text-sm leading-6 font-medium",
+                        step.status === "pending" && "text-muted-foreground",
+                        step.status === "in-progress" &&
+                          "motion-safe:shimmer shimmer-invert text-foreground",
+                      )}
+                    >
+                      {step.label}
+                    </span>
+                    {hasDescription && (
+                      <div
+                        className={cn(
+                          "grid motion-safe:transition-[grid-template-rows,opacity] motion-safe:duration-300 motion-safe:ease-out",
+                          shouldShowDescription
+                            ? "grid-rows-[1fr] opacity-100"
+                            : "grid-rows-[0fr] opacity-0",
+                        )}
+                        aria-hidden={!shouldShowDescription}
+                      >
+                        <div className="overflow-hidden">
+                          <span className="text-muted-foreground block pt-0.5 text-sm">
+                            {step.description}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </article>
+  );
+}
+
 export function ProgressTracker({
   id,
   steps,
@@ -146,187 +345,25 @@ export function ProgressTracker({
   className,
   choice,
 }: ProgressTrackerProps) {
-  const hasInProgress = steps.some((step) => step.status === "in-progress");
-  const currentStepId = getCurrentStepId(steps);
-
   const viewKey = choice ? `receipt-${choice.outcome}` : "interactive";
-  const receiptOutcome = choice?.outcome;
-  const receiptSummary = choice?.summary;
-  const receiptState = receiptOutcome
-    ? getReceiptState(receiptOutcome)
-    : undefined;
-  const ReceiptIcon = receiptState?.icon;
 
   return (
     <div key={viewKey} className="contents">
       {choice ? (
-        <div
-          className={cn(
-            "flex w-full max-w-md min-w-80 flex-col",
-            "text-foreground select-none",
-            "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:zoom-in-95 motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both",
-            className,
-          )}
-          data-slot="progress-tracker"
-          data-tool-ui-id={id}
-          data-receipt="true"
-          role="status"
-          aria-label={receiptSummary}
-        >
-          <div className="bg-card/60 flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
-            <div className="flex items-center justify-between">
-              {elapsedTime !== undefined && elapsedTime > 0 && (
-                <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
-                  <Timer className="-mt-px size-3.5" />
-                  <time dateTime={formatElapsedTimeDateTime(elapsedTime)}>
-                    {formatElapsedTime(elapsedTime)}
-                  </time>
-                </div>
-              )}
-              <span
-                className={cn(
-                  "flex items-center gap-1.5 text-xs font-medium",
-                  receiptState?.toneClassName,
-                )}
-              >
-                {ReceiptIcon && (
-                  <ReceiptIcon className="size-3.5" />
-                )}
-                {receiptSummary}
-              </span>
-            </div>
-
-            <ol className="m-0 flex list-none flex-col gap-2 p-0">
-              {steps.map((step, index) => (
-                <li
-                  key={step.id}
-                  className="relative -mx-2 flex items-start gap-3 rounded-lg px-2 py-1.5"
-                >
-                  {index < steps.length - 1 && (
-                    <div
-                      className="bg-border absolute top-8 left-5 w-px"
-                      style={{
-                        height: "calc(100% + 0.5rem)",
-                      }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <div className="relative z-10">
-                    <StepIndicator status={step.status} />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-0.5">
-                    <span className="text-sm leading-6 font-medium">
-                      {step.label}
-                    </span>
-                    {step.description && (
-                      <span className="text-muted-foreground text-sm">
-                        {step.description}
-                      </span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
+        <ProgressTrackerReceipt
+          id={id}
+          steps={steps}
+          elapsedTime={elapsedTime}
+          className={className}
+          choice={choice}
+        />
       ) : (
-        <article
-          className={cn(
-            "flex w-full max-w-md min-w-80 flex-col gap-3",
-            "text-foreground select-none",
-            className,
-          )}
-          data-slot="progress-tracker"
-          data-tool-ui-id={id}
-          role="status"
-          aria-live="polite"
-          aria-busy={hasInProgress}
-        >
-          <div className="bg-card flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
-            {elapsedTime !== undefined && elapsedTime > 0 && (
-              <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
-                <Timer className="-mt-px size-3.5" />
-                <time dateTime={formatElapsedTimeDateTime(elapsedTime)}>
-                  {formatElapsedTime(elapsedTime)}
-                </time>
-              </div>
-            )}
-
-            <ol className="m-0 flex list-none flex-col gap-3 p-0">
-              {steps.map((step, index) => {
-                const isCurrent = step.id === currentStepId;
-                const isActive = step.status === "in-progress";
-                const isFailed = step.status === "failed";
-                const hasDescription = !!step.description;
-                const shouldShowDescription = isActive || isFailed;
-
-                return (
-                  <li
-                    key={step.id}
-                    className="relative -mx-2"
-                    aria-current={isCurrent ? "step" : undefined}
-                  >
-                    {index < steps.length - 1 && (
-                      <div
-                        className={cn(
-                          "bg-border absolute top-6 left-5 w-px",
-                          "motion-safe:transition-all motion-safe:duration-300",
-                        )}
-                        style={{
-                          height: "calc(100% + 0.25rem)",
-                        }}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <div
-                      className={cn(
-                        "relative z-10 flex items-start gap-3 rounded-lg px-2 py-1.5",
-                        "motion-safe:transition-all motion-safe:duration-300",
-                        isCurrent && "bg-primary/5",
-                      )}
-                      style={{
-                        backdropFilter: isCurrent ? "blur(2px)" : undefined,
-                      }}
-                    >
-                      <div className="relative z-10">
-                        <StepIndicator status={step.status} />
-                      </div>
-                      <div className="flex flex-1 flex-col">
-                        <span
-                          className={cn(
-                            "text-sm leading-6 font-medium",
-                            step.status === "pending" &&
-                              "text-muted-foreground",
-                            step.status === "in-progress" &&
-                              "motion-safe:shimmer shimmer-invert text-foreground",
-                          )}
-                        >
-                          {step.label}
-                        </span>
-                        {hasDescription && (
-                          <div
-                            className={cn(
-                              "grid motion-safe:transition-[grid-template-rows,opacity] motion-safe:duration-300 motion-safe:ease-out",
-                              shouldShowDescription
-                                ? "grid-rows-[1fr] opacity-100"
-                                : "grid-rows-[0fr] opacity-0",
-                            )}
-                          >
-                            <div className="overflow-hidden">
-                              <span className="text-muted-foreground block pt-0.5 text-sm">
-                                {step.description}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-        </article>
+        <ProgressTrackerLive
+          id={id}
+          steps={steps}
+          elapsedTime={elapsedTime}
+          className={className}
+        />
       )}
     </div>
   );
