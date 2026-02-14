@@ -54,6 +54,84 @@ export function sanitizeInferredReleaseNotes(
   };
 }
 
+function toTitleCaseComponentName(component: string): string {
+  return component
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function normalizeForMatch(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function isPublicToolUiComponent(componentId: string): boolean {
+  return componentId !== "shared";
+}
+
+function formatBreadthList(items: string[]): string {
+  if (items.length === 1) {
+    return items[0] ?? "";
+  }
+
+  if (items.length === 2) {
+    return `${items[0] ?? ""} and ${items[1] ?? ""}`;
+  }
+
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1] ?? ""}`;
+}
+
+export function ensureComponentCoverage(
+  notes: InferredReleaseNotes,
+  changedFiles: string[],
+): InferredReleaseNotes {
+  const componentIds = Array.from(
+    new Set(
+      changedFiles
+        .map((file) => file.match(/^components\/tool-ui\/([^/]+)\//)?.[1] ?? null)
+        .filter((component): component is string => Boolean(component))
+        .filter((component) => isPublicToolUiComponent(component)),
+    ),
+  ).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+
+  if (componentIds.length < 2) {
+    return notes;
+  }
+
+  const existingLines = [...notes.breakingChanges, ...notes.changes];
+  const normalizedContent = normalizeForMatch(existingLines.join(" "));
+  const missingComponents = componentIds
+    .map((component) => ({
+      id: component,
+      title: toTitleCaseComponentName(component),
+    }))
+    .filter(({ id, title }) => {
+      const idMatch = normalizeForMatch(id);
+      const titleMatch = normalizeForMatch(title);
+      return (
+        !normalizedContent.includes(idMatch) &&
+        !normalizedContent.includes(titleMatch)
+      );
+    });
+
+  if (missingComponents.length === 0) {
+    return notes;
+  }
+
+  const missingTitles = missingComponents.map((component) => component.title);
+  const breadthLine = `Updated ${missingTitles.length} Tool UI components: ${formatBreadthList(missingTitles)}.`;
+
+  return {
+    ...notes,
+    changes: [...notes.changes, breadthLine],
+  };
+}
+
 function selectModel() {
   if (process.env.OPENAI_API_KEY) {
     return openai(process.env.CHANGELOG_OPENAI_MODEL ?? "gpt-5.2");
@@ -108,5 +186,6 @@ export async function inferReleaseNotes(
     prompt: buildInferencePrompt(input),
   });
 
-  return sanitizeInferredReleaseNotes(object);
+  const sanitized = sanitizeInferredReleaseNotes(object);
+  return ensureComponentCoverage(sanitized, input.changedFiles);
 }
