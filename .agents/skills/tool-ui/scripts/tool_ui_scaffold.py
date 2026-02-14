@@ -12,6 +12,9 @@ SPECIAL_SYMBOLS = {
     "linkedin-post": "LinkedInPost",
 }
 
+# Components that keep dedicated action props (action-centric exceptions).
+ACTION_CENTRIC_COMPONENTS = {"option-list", "parameter-slider", "preferences-panel"}
+
 
 def load_component_ids() -> set[str]:
     skill_root = Path(__file__).resolve().parents[1]
@@ -44,9 +47,11 @@ def schema_symbol(component_id: str, component_symbol: str) -> str:
     return f"Serializable{component_symbol}Schema"
 
 
-def render_backend(component_id: str, tool_name: str, component_symbol: str) -> str:
+def render_backend(component_id: str, tool_name: str, component_symbol: str, *, with_actions: bool) -> str:
     parser_name = parser_symbol(component_id, component_symbol)
-    return f'''import {{ type Toolkit }} from "@assistant-ui/react";
+
+    if not with_actions:
+        return f'''import {{ type Toolkit }} from "@assistant-ui/react";
 import {{ {component_symbol}, {parser_name} }} from "@/components/tool-ui/{component_id}";
 import {{ createResultToolRenderer }} from "@/components/tool-ui/shared";
 
@@ -61,11 +66,45 @@ export const toolkit: Toolkit = {{
 }};
 '''
 
+    return f'''import {{ type Toolkit }} from "@assistant-ui/react";
+import {{ {component_symbol}, {parser_name} }} from "@/components/tool-ui/{component_id}";
+import {{ ToolUI, createResultToolRenderer, type Action }} from "@/components/tool-ui/shared";
+
+const localActions: Action[] = [
+  {{ id: "export", label: "Export", variant: "secondary" }},
+];
+
+export const toolkit: Toolkit = {{
+  {tool_name}: {{
+    type: "backend",
+    render: createResultToolRenderer({{
+      safeParse: {parser_name},
+      render: (parsedResult) => (
+        <ToolUI id={{parsedResult.id}}>
+          <ToolUI.Surface>
+            <{component_symbol} {{...parsedResult}} />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.LocalActions
+              actions={{localActions}}
+              onAction={{(actionId) => console.log("Action:", actionId)}}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
+      ),
+    }}),
+  }},
+}};
+'''
+
 
 def render_frontend(component_id: str, tool_name: str, component_symbol: str) -> str:
     parser_name = parser_symbol(component_id, component_symbol)
     schema_name = schema_symbol(component_id, component_symbol)
-    return f'''import {{ type Toolkit }} from "@assistant-ui/react";
+
+    # Action-centric components wire actions directly, no ToolUI wrapper.
+    if component_id in ACTION_CENTRIC_COMPONENTS:
+        return f'''import {{ type Toolkit }} from "@assistant-ui/react";
 import {{
   {component_symbol},
   {schema_name},
@@ -81,14 +120,68 @@ export const toolkit: Toolkit = {{
       safeParse: {parser_name},
       render: (parsedArgs, {{ result, addResult }}) => {{
         if (result) {{
-          return <{component_symbol} {{...parsedArgs}} />;
+          return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
         }}
 
         return (
           <{component_symbol}
             {{...parsedArgs}}
-            // TODO: Wire a user-confirmation callback and call addResult(...)
+            onAction={{(actionId, state) => {{
+              if (actionId === "confirm") addResult?.(state);
+            }}}}
           />
+        );
+      }},
+    }}),
+  }},
+}};
+'''
+
+    # Standard components use ToolUI compound with DecisionActions.
+    return f'''import {{ type Toolkit }} from "@assistant-ui/react";
+import {{
+  {component_symbol},
+  {schema_name},
+  {parser_name},
+}} from "@/components/tool-ui/{component_id}";
+import {{
+  ToolUI,
+  createDecisionResult,
+  createArgsToolRenderer,
+}} from "@/components/tool-ui/shared";
+
+export const toolkit: Toolkit = {{
+  {tool_name}: {{
+    description: "Describe when the model should call this tool.",
+    parameters: {schema_name},
+    render: createArgsToolRenderer({{
+      safeParse: {parser_name},
+      render: (parsedArgs, {{ result, addResult }}) => {{
+        if (result) {{
+          return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
+        }}
+
+        return (
+          <ToolUI id={{parsedArgs.id}}>
+            <ToolUI.Surface>
+              <{component_symbol} {{...parsedArgs}} />
+            </ToolUI.Surface>
+            <ToolUI.Actions>
+              <ToolUI.DecisionActions
+                actions={{[
+                  {{ id: "cancel", label: "Cancel", variant: "outline" }},
+                  {{ id: "confirm", label: "Confirm" }},
+                ]}}
+                onAction={{(action) =>
+                  createDecisionResult({{
+                    decisionId: parsedArgs.id,
+                    action,
+                  }})
+                }}
+                onCommit={{(decision) => addResult?.(decision)}}
+              />
+            </ToolUI.Actions>
+          </ToolUI>
         );
       }},
     }}),
@@ -125,6 +218,11 @@ def main() -> None:
         "--tool-name",
         help="Tool name key used in your runtime (default: show<Component>)",
     )
+    parser.add_argument(
+        "--with-actions",
+        action="store_true",
+        help="Include ToolUI compound wrapper with LocalActions (backend mode only)",
+    )
     args = parser.parse_args()
 
     component_id = args.component.strip().lower()
@@ -139,7 +237,7 @@ def main() -> None:
     tool_name = args.tool_name or default_tool_name
 
     if args.mode == "assistant-backend":
-        print(render_backend(component_id, tool_name, component_symbol))
+        print(render_backend(component_id, tool_name, component_symbol, with_actions=args.with_actions))
     elif args.mode == "assistant-frontend":
         print(render_frontend(component_id, tool_name, component_symbol))
     else:

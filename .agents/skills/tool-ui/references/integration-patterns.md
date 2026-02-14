@@ -2,9 +2,9 @@
 
 Use these patterns after installation.
 
-## Pattern A: assistant-ui backend tool rendering (recommended default)
+## Pattern A: Backend display (recommended default)
 
-Use when tool results are returned by the backend.
+Use when tool results are returned by the backend. No actions needed.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
@@ -22,47 +22,132 @@ export const toolkit: Toolkit = {
 };
 ```
 
-Generate this shape quickly:
+Generate starter snippet:
 
 ```bash
 python scripts/tool_ui_scaffold.py --mode assistant-backend --component plan
 ```
 
-## Pattern B: assistant-ui frontend interactive tool rendering
+## Pattern B: Backend display with local actions
 
-Use when user interaction must call `addResult(...)`.
+Use when the display component needs action buttons (export, copy, navigate) that are side-effect-only.
+
+```tsx
+import { type Toolkit } from "@assistant-ui/react";
+import { DataTable, safeParseSerializableDataTable } from "@/components/tool-ui/data-table";
+import { ToolUI, createResultToolRenderer, type Action } from "@/components/tool-ui/shared";
+
+const localActions: Action[] = [
+  { id: "export-csv", label: "Export CSV", variant: "secondary" },
+];
+
+export const toolkit: Toolkit = {
+  showExpenses: {
+    type: "backend",
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableDataTable,
+      render: (parsedResult) => (
+        <ToolUI id={parsedResult.id}>
+          <ToolUI.Surface>
+            <DataTable {...parsedResult} />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.LocalActions
+              actions={localActions}
+              onAction={(actionId) => {
+                if (actionId === "export-csv") downloadCsv(parsedResult);
+              }}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
+      ),
+    }),
+  },
+};
+```
+
+`LocalActions` handlers must not call `addResult(...)`.
+
+## Pattern C: Frontend decision with DecisionActions
+
+Use when user interaction is consequential (approve, purchase, delete) and must commit a durable result via `addResult(...)`.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
 import {
-  OptionList,
-  SerializableOptionListSchema,
-  safeParseSerializableOptionList,
-} from "@/components/tool-ui/option-list";
-import { createArgsToolRenderer } from "@/components/tool-ui/shared";
+  OrderSummary,
+  SerializableOrderSummarySchema,
+  safeParseSerializableOrderSummary,
+} from "@/components/tool-ui/order-summary";
+import {
+  ToolUI,
+  createDecisionResult,
+  createArgsToolRenderer,
+} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
-  chooseOption: {
-    description: "Ask user to choose one option",
-    parameters: SerializableOptionListSchema,
+  confirmOrder: {
+    description: "Present order for user confirmation.",
+    parameters: SerializableOrderSummarySchema,
     render: createArgsToolRenderer({
-      safeParse: safeParseSerializableOptionList,
+      safeParse: safeParseSerializableOrderSummary,
       render: (parsedArgs, { result, addResult }) => {
         if (result) {
-          return <OptionList {...parsedArgs} value={undefined} choice={result} />;
+          return <OrderSummary {...parsedArgs} choice={result} />;
         }
 
         return (
-          <OptionList
-            {...parsedArgs}
-            value={undefined}
-            onConfirm={(selection) => addResult?.(selection)}
-          />
+          <ToolUI id={parsedArgs.id}>
+            <ToolUI.Surface>
+              <OrderSummary {...parsedArgs} />
+            </ToolUI.Surface>
+            <ToolUI.Actions>
+              <ToolUI.DecisionActions
+                actions={[
+                  { id: "cancel", label: "Cancel", variant: "outline" },
+                  { id: "confirm", label: "Purchase" },
+                ]}
+                onAction={(action) =>
+                  createDecisionResult({
+                    decisionId: parsedArgs.id,
+                    action,
+                  })
+                }
+                onCommit={(decision) => addResult?.(decision)}
+              />
+            </ToolUI.Actions>
+          </ToolUI>
         );
       },
     }),
   },
 };
+```
+
+`DecisionActions` handlers must return a `createDecisionResult(...)` envelope.
+
+## Pattern D: Action-centric components
+
+OptionList, ParameterSlider, and PreferencesPanel keep embedded action props (`actions`, `onAction`, `onBeforeAction`). Do not wrap them in a `ToolUI` compound — wire actions directly:
+
+```tsx
+render: createArgsToolRenderer({
+  safeParse: safeParseSerializableOptionList,
+  render: (parsedArgs, { result, addResult }) => {
+    if (result) {
+      return <OptionList {...parsedArgs} choice={result} />;
+    }
+
+    return (
+      <OptionList
+        {...parsedArgs}
+        onAction={(actionId, selection) => {
+          if (actionId === "confirm") addResult?.(selection);
+        }}
+      />
+    );
+  },
+}),
 ```
 
 Generate starter snippet:
@@ -71,7 +156,7 @@ Generate starter snippet:
 python scripts/tool_ui_scaffold.py --mode assistant-frontend --component option-list
 ```
 
-## Pattern C: non-assistant-ui manual rendering
+## Pattern E: Non-assistant-ui manual rendering
 
 Use when app already has a runtime stack.
 
@@ -98,4 +183,6 @@ python scripts/tool_ui_scaffold.py --mode manual --component plan
 
 - Render only after safe parsing succeeds.
 - Keep payloads serializable and schema-validated.
+- LocalActions handlers must not call `addResult(...)`.
+- DecisionActions handlers must return a `createDecisionResult(...)` envelope.
 - Integrate one component first, then scale up.

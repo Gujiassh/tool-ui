@@ -92,12 +92,62 @@ If broken, use:
 
 - `references/troubleshooting.md`
 
+## Action Model
+
+Tool UI uses two action surfaces, rendered as compound siblings outside the display component:
+
+- `ToolUI.LocalActions`: non-consequential side effects (export, copy, open link). Handlers must not call `addResult(...)`.
+- `ToolUI.DecisionActions`: consequential choices that produce a `DecisionResult` envelope via `createDecisionResult(...)`. The commit callback calls `addResult(...)`.
+
+Compound wrapper pattern for display components with actions:
+
+```tsx
+<ToolUI id={surfaceId}>
+  <ToolUI.Surface><DataTable {...props} /></ToolUI.Surface>
+  <ToolUI.Actions>
+    <ToolUI.LocalActions
+      actions={[{ id: "export-csv", label: "Export CSV" }]}
+      onAction={(actionId) => { /* side effects only */ }}
+    />
+  </ToolUI.Actions>
+</ToolUI>
+```
+
+Three components are action-centric exceptions — they keep embedded action props instead of sibling surfaces. All three share a unified interface:
+
+- `actions`: action buttons rendered by the component.
+- `onAction(actionId, state)`: runs after the action and receives post-action state.
+- `onBeforeAction(actionId, state)`: guard evaluated before an action runs.
+
+| Component | State type passed to handlers |
+|---|---|
+| `OptionList` | `OptionListSelection` |
+| `ParameterSlider` | `SliderValue[]` |
+| `PreferencesPanel` | `PreferencesValue` |
+
+ESLint enforces this model:
+
+- `no-embedded-response-actions` — bans legacy `responseActions` / `onResponseAction` props.
+- `no-add-result-in-local-actions` — prevents `addResult()` inside LocalActions handlers.
+- `decision-actions-require-envelope` — requires `createDecisionResult(...)` in DecisionActions handlers.
+
+## Schema Boundary
+
+Import from colocated entrypoints, not barrel `index.tsx`:
+
+```tsx
+import { DataTable } from "@/components/tool-ui/data-table/data-table";
+import { safeParseSerializableDataTable } from "@/components/tool-ui/data-table/schema";
+import { ToolUI, createDecisionResult, type Action } from "@/components/tool-ui/shared";
+```
+
 ## Operational Rules
 
 - Install the smallest set of components that solves the request.
 - Validate one component first, then scale to multiple components.
 - Keep payload schemas serializable and explicit.
-- For interactive flows, ensure `addResult(...)` is called from user action callbacks.
+- For decision flows, wire `DecisionActions` with `createDecisionResult(...)` and commit via `addResult(...)`.
+- For display components that need actions, use the compound `ToolUI` wrapper with `LocalActions`.
 
 ## Maintainer Notes
 
