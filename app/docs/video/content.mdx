@@ -122,11 +122,11 @@ export const toolkit: Toolkit = {
     fit: {
       description: "Object fit mode",
       type: "'cover' | 'contain'",
-      default: "'contain'",
+      default: "'cover'",
     },
     durationMs: { description: "Duration in milliseconds", type: "number" },
-    autoPlay: { description: "Auto-play video (muted)", type: "boolean", default: "false" },
-    muted: { description: "Mute video", type: "boolean", default: "false" },
+    autoPlay: { description: "Auto-play video (muted)", type: "boolean", default: "true" },
+    defaultMuted: { description: "Initial mute state", type: "boolean", default: "true" },
     source: {
       description: "Source attribution",
       type: "{ label: string; iconUrl?: string; url?: string }",

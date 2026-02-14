@@ -1708,6 +1708,11 @@
           "target": "components/tool-ui/video/schema.ts"
         },
         {
+          "path": "components/tool-ui/video/video-helpers.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/video/video-helpers.ts"
+        },
+        {
           "path": "components/tool-ui/video/video.tsx",
           "type": "registry:component",
           "target": "components/tool-ui/video/video.tsx"
