@@ -22,7 +22,7 @@ describe("changelog automation contract", () => {
     expect(section).toContain("### Breaking changes");
     expect(section).toContain("### Migration prompt");
     expect(section.match(/### Migration prompt/g)?.length ?? 0).toBe(1);
-    expect(section).toContain("max-h-[300px]");
+    expect(section).toContain("```text");
     expect(section).toContain("### Changes");
   });
 
@@ -39,6 +39,19 @@ describe("changelog automation contract", () => {
     expect(section).not.toContain("### Breaking changes");
     expect(section).not.toContain("### Migration prompt");
     expect(section).toContain("### Changes");
+  });
+
+  test("uses a longer fence when migration prompt contains triple backticks", () => {
+    const section = renderReleaseSection({
+      date: "2026-02-12",
+      notes: {
+        breakingChanges: ["API changed."],
+        changes: ["Updated migration docs."],
+        migrationPrompt: "Run:\n```bash\npnpm test\n```",
+      },
+    });
+
+    expect(section).toContain("````text");
   });
 
   test("upserts a release section by date", () => {
@@ -117,6 +130,29 @@ This paragraph should not appear.
     expect(result.ok).toBe(false);
     expect(result.errors.join("\n")).toContain(
       "contains prose before the first subsection heading",
+    );
+  });
+
+  test("fails validation when migration prompt does not use a markdown code block", () => {
+    const content = `## 2026-02-12
+
+### Breaking changes
+
+- One
+
+### Migration prompt
+
+Migrate manually.
+
+### Changes
+
+- Two`;
+
+    const result = validateChangelogStructure(content);
+
+    expect(result.ok).toBe(false);
+    expect(result.errors.join("\n")).toContain(
+      "is missing the required Fumadocs code-block markdown fence",
     );
   });
 

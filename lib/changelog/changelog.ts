@@ -30,18 +30,18 @@ type SectionBounds = {
   end: number;
 };
 
+type SubsectionBounds = {
+  heading: string;
+  headingEnd: number;
+  start: number;
+  end: number;
+};
+
 function normalizeItemList(items: string[]): string[] {
   return items
     .map((item) => item.trim())
     .filter(Boolean)
     .map((item) => item.replace(/\s+/g, " "));
-}
-
-function escapeTemplateLiteralContent(input: string): string {
-  return input
-    .replace(/\\/g, "\\\\")
-    .replace(/`/g, "\\`")
-    .replace(/\$\{/g, "\\${");
 }
 
 function listToBullets(items: string[]): string {
@@ -67,11 +67,40 @@ function parseReleaseSectionBounds(content: string): SectionBounds[] {
   return sections;
 }
 
-function parseSubsectionHeadings(sectionContent: string): string[] {
+function parseSubsectionBounds(sectionContent: string): SubsectionBounds[] {
   const headingRegex = /^###\s+([^\n]+)$/gm;
-  return Array.from(sectionContent.matchAll(headingRegex))
-    .map((match) => match[1]?.trim() ?? "")
-    .filter(Boolean);
+  const matches = Array.from(sectionContent.matchAll(headingRegex));
+
+  return matches.map((match, index) => {
+    const start = match.index ?? 0;
+    const headingText = match[0] ?? "";
+    const heading = match[1]?.trim() ?? "";
+    const headingEnd = start + headingText.length;
+    const end = matches[index + 1]?.index ?? sectionContent.length;
+    return {
+      heading,
+      headingEnd,
+      start,
+      end,
+    };
+  });
+}
+
+function hasMarkdownCodeFence(input: string): boolean {
+  const normalized = input.trim();
+  if (!normalized) return false;
+
+  return /(^|\n)(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n\2(?=\n|$)/m.test(normalized);
+}
+
+function toMarkdownCodeFence(input: string, language: string): string {
+  const normalized = input.replace(/\r\n/g, "\n").trimEnd();
+  const backtickRuns = Array.from(normalized.matchAll(/`+/g), (match) =>
+    match[0].length,
+  );
+  const maxBacktickRun = backtickRuns.length > 0 ? Math.max(...backtickRuns) : 0;
+  const fence = "`".repeat(Math.max(3, maxBacktickRun + 1));
+  return `${fence}${language}\n${normalized}\n${fence}`;
 }
 
 function extractGeneratedToRef(content: string): string | null {
@@ -142,15 +171,10 @@ export function renderReleaseSection({
   }
 
   if (breakingChanges.length > 0 && migrationPrompt) {
-    const escapedPrompt = escapeTemplateLiteralContent(migrationPrompt);
     lines.push(
       "### Migration prompt",
       "",
-      '<div className="not-prose max-h-[300px] overflow-auto rounded-lg border border-border">',
-      '  <pre className="m-0 whitespace-pre-wrap p-4 text-sm leading-6">',
-      `{\`${escapedPrompt}\`}`,
-      "  </pre>",
-      "</div>",
+      toMarkdownCodeFence(migrationPrompt, "text"),
       "",
     );
   }
@@ -194,7 +218,10 @@ export function validateChangelogStructure(
 
   for (const section of sections) {
     const sectionContent = content.slice(section.start, section.end);
-    const subsectionNames = parseSubsectionHeadings(sectionContent);
+    const subsectionBounds = parseSubsectionBounds(sectionContent);
+    const subsectionNames = subsectionBounds.map(
+      (subsection) => subsection.heading,
+    );
     const migrationPromptCount = subsectionNames.filter(
       (name) => name === "Migration prompt",
     ).length;
@@ -256,10 +283,19 @@ export function validateChangelogStructure(
       );
     }
 
-    if (migrationPromptCount === 1 && !sectionContent.includes("max-h-[300px]")) {
-      errors.push(
-        `Release "${section.heading}" has a migration prompt but is missing the required max-height style.`,
+    if (migrationPromptCount === 1) {
+      const migrationPromptSection = subsectionBounds.find(
+        (subsection) => subsection.heading === "Migration prompt",
       );
+      const migrationPromptBody = migrationPromptSection
+        ? sectionContent.slice(migrationPromptSection.headingEnd, migrationPromptSection.end)
+        : "";
+
+      if (!hasMarkdownCodeFence(migrationPromptBody)) {
+        errors.push(
+          `Release "${section.heading}" has a migration prompt but is missing the required Fumadocs code-block markdown fence.`,
+        );
+      }
     }
 
     for (const subsectionName of subsectionNames) {

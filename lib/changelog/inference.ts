@@ -17,8 +17,73 @@ type InferReleaseNotesInput = {
   changelogTemplateContext: string;
 };
 
+type CriticalMigrationEvidence = Pick<
+  InferReleaseNotesInput,
+  "commitSummary" | "changedFiles"
+>;
+
 const RELEASE_NOTES_SYSTEM_PROMPT =
   "You are generating release notes for a public changelog. Return strict JSON only.";
+
+type CriticalTheme = {
+  id: string;
+  heading: string;
+  summarySignals: RegExp[];
+  fileSignals: RegExp[];
+  breakingSummarySignals: RegExp[];
+  inferBreakingFromFiles?: (changedFiles: string[]) => boolean;
+  breakingChangeLine: string;
+  changeLine: string;
+  migrationSteps: string[];
+};
+
+const ACTION_MODEL_THEME: CriticalTheme = {
+  id: "action-model",
+  heading: "Action model",
+  summarySignals: [
+    /action model/i,
+    /local\s*actions?/i,
+    /decision\s*actions?/i,
+    /response-action/i,
+    /toolui\.(localactions|decisionactions)/i,
+  ],
+  fileSignals: [
+    /components\/tool-ui\/shared\/local-actions\.tsx$/i,
+    /components\/tool-ui\/shared\/decision-actions\.tsx$/i,
+    /components\/tool-ui\/shared\/tool-ui(-context)?\.tsx$/i,
+    /components\/tool-ui\/shared\/schema\.ts$/i,
+  ],
+  breakingSummarySignals: [
+    /\bbreaking\b/i,
+    /\bremove(d)?\b/i,
+    /\bmigrat(e|ed|ion)\b/i,
+    /\bcut[- ]?over\b/i,
+    /\breplace(d)?\b/i,
+    /\bdeprecat(e|ed|ion)\b/i,
+    /\bdrop(ped)?\b/i,
+    /\blegacy\b/i,
+  ],
+  inferBreakingFromFiles: (changedFiles) => {
+    const hasLocalActions = changedFiles.some((pathValue) =>
+      /components\/tool-ui\/shared\/local-actions\.tsx$/i.test(pathValue),
+    );
+    const hasDecisionActions = changedFiles.some((pathValue) =>
+      /components\/tool-ui\/shared\/decision-actions\.tsx$/i.test(pathValue),
+    );
+    return hasLocalActions && hasDecisionActions;
+  },
+  breakingChangeLine:
+    "Tool UI action model moved to compound action surfaces (`ToolUI.LocalActions` / `ToolUI.DecisionActions`) and removed legacy inline response-action patterns. See [Actions](/docs/actions).",
+  changeLine:
+    "Tool UI action-surface composition was updated around `ToolUI.LocalActions` / `ToolUI.DecisionActions`. See [Actions](/docs/actions).",
+  migrationSteps: [
+    "Migrate action handling to `ToolUI.LocalActions` / `ToolUI.DecisionActions` for consequential workflows.",
+    "Replace legacy inline response-action handlers with action-surface composition where needed.",
+    "Update tests and docs to reflect action-surface and receipt semantics.",
+  ],
+};
+
+const CRITICAL_THEMES: CriticalTheme[] = [ACTION_MODEL_THEME];
 
 function extractJsonPayload(text: string): string {
   const fencedMatch = text.match(/```json\s*([\s\S]*?)```/i);
@@ -106,6 +171,92 @@ function normalizeInferredNotes(notes: InferredReleaseNotes): InferredReleaseNot
         ? normalizedMigrationPrompt
         : null,
   };
+}
+
+function textHasAnySignal(text: string, signals: RegExp[]): boolean {
+  return signals.some((signal) => signal.test(text));
+}
+
+function filesHaveAnySignal(filePaths: string[], signals: RegExp[]): boolean {
+  return filePaths.some((filePath) =>
+    signals.some((signal) => signal.test(filePath)),
+  );
+}
+
+function appendThemeMigrationSteps(
+  prompt: string | null,
+  theme: CriticalTheme,
+): string {
+  if (!prompt || prompt.trim().length === 0) {
+    return [
+      theme.migrationSteps[0] ?? "",
+      "",
+      "Steps:",
+      ...theme.migrationSteps.slice(1).map((step) => `- ${step}`),
+    ].join("\n");
+  }
+
+  if (textHasAnySignal(prompt, theme.summarySignals)) {
+    return prompt;
+  }
+
+  return [
+    prompt.trimEnd(),
+    "",
+    `${theme.heading} steps:`,
+    ...theme.migrationSteps.map((step) => `- ${step}`),
+  ].join("\n");
+}
+
+export function ensureCriticalMigrationCoverage(
+  notes: InferredReleaseNotes,
+  evidence: CriticalMigrationEvidence,
+): InferredReleaseNotes {
+  let next: InferredReleaseNotes = {
+    breakingChanges: [...notes.breakingChanges],
+    changes: [...notes.changes],
+    migrationPrompt: notes.migrationPrompt,
+  };
+
+  for (const theme of CRITICAL_THEMES) {
+    const hasThemeEvidence =
+      textHasAnySignal(evidence.commitSummary, theme.summarySignals) ||
+      filesHaveAnySignal(evidence.changedFiles, theme.fileSignals);
+
+    if (!hasThemeEvidence) {
+      continue;
+    }
+
+    const isBreakingEvidence =
+      textHasAnySignal(evidence.commitSummary, theme.breakingSummarySignals) ||
+      (theme.inferBreakingFromFiles?.(evidence.changedFiles) ?? false);
+
+    const hasThemeChange = next.changes.some((line) =>
+      textHasAnySignal(line, theme.summarySignals),
+    );
+    if (!hasThemeChange) {
+      next.changes.push(theme.changeLine);
+    }
+
+    const hasThemeBreaking = next.breakingChanges.some((line) =>
+      textHasAnySignal(line, theme.summarySignals),
+    );
+    if (isBreakingEvidence && !hasThemeBreaking) {
+      next.breakingChanges.push(theme.breakingChangeLine);
+    }
+
+    const shouldAppendMigrationSteps =
+      isBreakingEvidence ||
+      next.breakingChanges.some((line) => textHasAnySignal(line, theme.summarySignals));
+    if (shouldAppendMigrationSteps) {
+      next = {
+        ...next,
+        migrationPrompt: appendThemeMigrationSteps(next.migrationPrompt, theme),
+      };
+    }
+  }
+
+  return next;
 }
 
 export function parseInferredReleaseNotes(text: string): InferredReleaseNotes {
@@ -197,5 +348,9 @@ export async function inferReleaseNotes(
     prompt: buildInferencePrompt(input),
   });
 
-  return parseInferredReleaseNotes(text);
+  const parsedNotes = parseInferredReleaseNotes(text);
+  return ensureCriticalMigrationCoverage(parsedNotes, {
+    commitSummary: input.commitSummary,
+    changedFiles: input.changedFiles,
+  });
 }
