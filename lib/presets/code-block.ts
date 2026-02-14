@@ -22,15 +22,13 @@ interface CodeBlockPresetData extends SerializableCodeBlock {
 function generateCodeBlockCode(data: CodeBlockPresetData): string {
   const props: string[] = [];
 
+  props.push(`  id="${data.id}"`);
   props.push(`  code={\`${escape(data.code)}\`}`);
   props.push(`  language="${data.language}"`);
+  props.push(`  lineNumbers="${data.lineNumbers}"`);
 
   if (data.filename) {
     props.push(`  filename="${data.filename}"`);
-  }
-
-  if (data.showLineNumbers !== undefined) {
-    props.push(`  showLineNumbers={${data.showLineNumbers}}`);
   }
 
   if (data.highlightLines && data.highlightLines.length > 0) {
@@ -41,7 +39,7 @@ function generateCodeBlockCode(data: CodeBlockPresetData): string {
     props.push(`  maxCollapsedLines={${data.maxCollapsedLines}}`);
   }
 
-  const codeBlock = `<CodeBlock\n${props.join("\n")}\n/>`;
+  const codeBlock = `<CodeBlock.Root\n${props.join("\n")}\n>\n  <CodeBlock.Header />\n  <CodeBlock.Content />\n  <CodeBlock.CollapseToggle />\n</CodeBlock.Root>`;
   if (!data.localActions || data.localActions.length === 0) {
     return codeBlock;
   }
@@ -74,8 +72,8 @@ export function Counter() {
   );
 }`,
       language: "typescript",
+      lineNumbers: "visible",
       filename: "Counter.tsx",
-      showLineNumbers: true,
     } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
@@ -99,8 +97,8 @@ export function Counter() {
 # Example usage
 print(fibonacci(10))`,
       language: "python",
+      lineNumbers: "visible",
       filename: "fibonacci.py",
-      showLineNumbers: true,
     } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
@@ -118,8 +116,8 @@ print(fibonacci(10))`,
   }
 }`,
       language: "json",
+      lineNumbers: "visible",
       filename: "package.json",
-      showLineNumbers: true,
     } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
@@ -141,8 +139,8 @@ rsync -avz ./dist/ user@server:/var/www/app/
 
 echo "Done!"`,
       language: "bash",
+      lineNumbers: "visible",
       filename: "deploy.sh",
-      showLineNumbers: true,
     } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
   },
@@ -161,8 +159,8 @@ echo "Done!"`,
   return results;
 }`,
       language: "typescript",
+      lineNumbers: "visible",
       filename: "processor.ts",
-      showLineNumbers: true,
       highlightLines: [5, 6],
     } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
@@ -208,8 +206,8 @@ export const CreateUserSchema = UserSchema.omit({
 
 export type CreateUser = z.infer<typeof CreateUserSchema>;`,
       language: "typescript",
+      lineNumbers: "visible",
       filename: "user-schema.ts",
-      showLineNumbers: true,
       maxCollapsedLines: 10,
     } satisfies CodeBlockPresetData,
     generateExampleCode: generateCodeBlockCode,
@@ -224,8 +222,8 @@ pnpm install
 # Run development server
 pnpm dev`,
       language: "bash",
+      lineNumbers: "visible",
       filename: "setup.sh",
-      showLineNumbers: true,
       localActions: [
         { id: "copy", label: "Copy to clipboard", variant: "outline" },
         { id: "run", label: "Run in terminal", variant: "default" },

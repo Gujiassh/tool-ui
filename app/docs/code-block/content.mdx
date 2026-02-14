@@ -33,15 +33,19 @@ import { CodeBlock } from "@/components/tool-ui/code-block";
 
 export function MyComponent() {
   return (
-    <CodeBlock
+    <CodeBlock.Root
       id="my-code-example"
       code={`function hello(name: string) {
   return \`Hello, \${name}!\`;
 }`}
       language="typescript"
+      lineNumbers="visible"
       filename="hello.ts"
-      showLineNumbers={true}
-    />
+    >
+      <CodeBlock.Header />
+      <CodeBlock.Content />
+      <CodeBlock.CollapseToggle />
+    </CodeBlock.Root>
   );
 }
 ```
@@ -88,9 +92,7 @@ export const toolkit: Toolkit = {
     render: createResultToolRenderer({
       safeParse: safeParseSerializableCodeBlock,
       render: (parsedResult) => (
-        <>
-            <CodeBlock {...parsedResult} />
-        </>
+        <CodeBlock.Standard {...parsedResult} />
       ),
     }),
   },
@@ -145,10 +147,10 @@ export const toolkit: Toolkit = {
 
 <TypeTable
   type={{
-    showLineNumbers: {
-      description: "Show line numbers",
-      type: "boolean",
-      default: "true",
+    lineNumbers: {
+      description: "Line number variant",
+      type: '"visible" | "hidden"',
+      default: '"visible"',
     },
     highlightLines: {
       description: "Array of line numbers to highlight",

@@ -10,11 +10,21 @@ function makePayload(): SerializableCodeBlock {
     id: "code-block-schema-contract",
     code: "console.log('ok')",
     language: "typescript",
-    showLineNumbers: true,
+    lineNumbers: "visible",
   };
 }
 
 describe("code-block schema contract", () => {
+  test("rejects unknown lineNumbers mode", () => {
+    const payload = {
+      ...makePayload(),
+      lineNumbers: "always" as "visible",
+    };
+
+    expect(() => parseSerializableCodeBlock(payload)).toThrow();
+    expect(safeParseSerializableCodeBlock(payload)).toBeNull();
+  });
+
   test("rejects blank language values", () => {
     const payload = {
       ...makePayload(),

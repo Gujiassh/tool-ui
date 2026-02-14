@@ -576,9 +576,10 @@ function createSceneConfigs(reducedMotion: boolean): SceneConfig[] {
       userMessage: "Create a skill that learns from mistakes",
       preamble: "Here's a self-improving metaskill.",
       toolUI: (
-        <CodeBlock
+        <CodeBlock.Standard
           id="chat-showcase-code-block"
           language="markdown"
+          lineNumbers="visible"
           filename="learn-from-errors.md"
           code={`name: learn-from-errors
 triggers: [error, failed, mistake, wrong]
@@ -598,7 +599,6 @@ error → analyze → document → retry → verify
           ↑                            ↓
           └──────── if failed ─────────┘
 \`\`\``}
-          showLineNumbers={true}
           className="w-full"
         />
       ),

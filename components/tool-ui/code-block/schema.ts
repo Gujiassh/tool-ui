@@ -12,14 +12,15 @@ export const CodeBlockPropsSchema = z.object({
   receipt: ToolUIReceiptSchema.optional(),
   code: z.string(),
   language: z.string().trim().min(1).default("text"),
+  lineNumbers: z.enum(["visible", "hidden"]).default("visible"),
   filename: z.string().optional(),
-  showLineNumbers: z.boolean().default(true),
   highlightLines: z.array(z.number().int().positive()).optional(),
   maxCollapsedLines: z.number().min(1).optional(),
   className: z.string().optional(),
 });
 
 export type CodeBlockProps = z.infer<typeof CodeBlockPropsSchema>;
+export type CodeBlockLineNumbersMode = CodeBlockProps["lineNumbers"];
 
 export const SerializableCodeBlockSchema = CodeBlockPropsSchema.omit({
   className: true,

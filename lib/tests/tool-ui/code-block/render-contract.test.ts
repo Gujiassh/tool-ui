@@ -103,19 +103,19 @@ describe("code-block render contract", () => {
     const shiki = setupShikiMock();
     const { CodeBlock } = await import("@/components/tool-ui/code-block");
 
-    const first = h(CodeBlock, {
+    const first = h(CodeBlock.Standard, {
       id: "collision-a",
       code: "snippet",
       language: "lang::x",
-      showLineNumbers: true,
+      lineNumbers: "visible",
     });
     const { container, root } = await renderClient(first);
 
-    const second = h(CodeBlock, {
+    const second = h(CodeBlock.Standard, {
       id: "collision-b",
       code: "snippet::lang",
       language: "x",
-      showLineNumbers: true,
+      lineNumbers: "visible",
     });
     await rerenderClient(root, second);
 
@@ -130,11 +130,11 @@ describe("code-block render contract", () => {
     const { CodeBlock } = await import("@/components/tool-ui/code-block");
 
     const { container, root } = await renderClient(
-      h(CodeBlock, {
+      h(CodeBlock.Standard, {
         id: "bounded-cache-0",
         code: "code-0",
         language: "text",
-        showLineNumbers: true,
+        lineNumbers: "visible",
       }),
     );
 
@@ -142,22 +142,22 @@ describe("code-block render contract", () => {
     for (let index = 1; index < uniqueEntries; index += 1) {
       await rerenderClient(
         root,
-        h(CodeBlock, {
+        h(CodeBlock.Standard, {
           id: `bounded-cache-${index}`,
           code: `code-${index}`,
           language: "text",
-          showLineNumbers: true,
+          lineNumbers: "visible",
         }),
       );
     }
 
     await rerenderClient(
       root,
-      h(CodeBlock, {
+      h(CodeBlock.Standard, {
         id: "bounded-cache-revisit",
         code: "code-0",
         language: "text",
-        showLineNumbers: true,
+        lineNumbers: "visible",
       }),
     );
 
@@ -172,11 +172,11 @@ describe("code-block render contract", () => {
 
     const { CodeBlock } = await import("@/components/tool-ui/code-block");
     const { container, root } = await renderClient(
-      h(CodeBlock, {
+      h(CodeBlock.Standard, {
         id: "data-theme-dark",
         code: "const value = 1;",
         language: "typescript",
-        showLineNumbers: true,
+        lineNumbers: "visible",
       }),
     );
 

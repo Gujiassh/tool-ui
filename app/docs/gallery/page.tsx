@@ -70,7 +70,7 @@ const Terminal = dynamic(() =>
   import("@/components/tool-ui/terminal").then((m) => m.Terminal),
 );
 const CodeBlock = dynamic(() =>
-  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock),
+  import("@/components/tool-ui/code-block").then((m) => m.CodeBlock.Standard),
 );
 const Chart = dynamic(() =>
   import("@/components/tool-ui/chart").then((m) => m.Chart),
