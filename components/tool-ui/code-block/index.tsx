@@ -1,4 +1,4 @@
-export { CodeBlock } from "./code-block";
+export { CodeBlock, CodeBlockStandard } from "./code-block";
 export type {
   CodeBlockRootProps,
   CodeBlockStandardProps,

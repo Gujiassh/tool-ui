@@ -44,10 +44,12 @@ describe("gallery page contract", () => {
     expect(content).toContain("{card.render()}");
   });
 
-  test("gallery uses the callable code-block variant component", () => {
+  test("gallery uses a direct dynamic binding for the code-block variant", () => {
     const content = fs.readFileSync(GALLERY_PAGE_PATH, "utf8");
 
-    expect(content).toContain("<CodeBlock.Standard");
-    expect(content).not.toContain("<CodeBlock {...codeBlockPresets.typescript.data} />");
+    expect(content).toContain("const CodeBlockStandard = dynamic(");
+    expect(content).toContain(".then((m) => m.CodeBlockStandard)");
+    expect(content).toContain("<CodeBlockStandard");
+    expect(content).not.toContain("const CodeBlock = {");
   });
 });

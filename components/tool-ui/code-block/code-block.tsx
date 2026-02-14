@@ -414,7 +414,7 @@ function CodeBlockCollapseToggle({ className }: CodeBlockSectionProps) {
 
 export type CodeBlockStandardProps = Omit<CodeBlockRootProps, "children">;
 
-function CodeBlockStandard(props: CodeBlockStandardProps) {
+export function CodeBlockStandard(props: CodeBlockStandardProps) {
   return (
     <CodeBlockRoot {...props}>
       <CodeBlockHeader />

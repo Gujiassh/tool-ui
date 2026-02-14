@@ -80,11 +80,9 @@ const Plan = dynamic(() =>
 const Terminal = dynamic(() =>
   import("@/components/tool-ui/terminal").then((m) => m.Terminal),
 );
-const CodeBlock = {
-  Standard: dynamic(() =>
-    import("@/components/tool-ui/code-block").then((m) => m.CodeBlock.Standard),
-  ),
-};
+const CodeBlockStandard = dynamic(() =>
+  import("@/components/tool-ui/code-block").then((m) => m.CodeBlockStandard),
+);
 const Chart = dynamic(() =>
   import("@/components/tool-ui/chart").then((m) => m.Chart),
 );
@@ -282,7 +280,7 @@ export default function ComponentsGalleryPage() {
     {
       componentId: "code-block",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <CodeBlock.Standard {...codeBlockPresets.typescript.data} />,
+      render: () => <CodeBlockStandard {...codeBlockPresets.typescript.data} />,
     },
     {
       componentId: "chart",
