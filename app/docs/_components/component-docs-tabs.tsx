@@ -1,11 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { memo, useCallback, useMemo, useRef, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/ui/cn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DocsBorderedShell } from "./docs-bordered-shell";
 import { DocsContent } from "./docs-content";
+import type { ComponentId } from "@/lib/docs/component-ids";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
 import { analytics } from "@/lib/analytics";
 import { componentsRegistry } from "@/lib/docs/component-registry";
@@ -16,11 +18,15 @@ const VALID_TABS = ["docs", "examples"] as const;
 
 interface ComponentDocsTabsProps {
   docs: ReactNode;
-  examples: ReactNode;
+  componentId?: ComponentId;
+  examples?: ReactNode;
 }
+
+const LazyComponentPreview = dynamic(() => import("./component-preview").then((m) => m.ComponentPreview));
 
 export const ComponentDocsTabs = memo(function ComponentDocsTabs({
   docs,
+  componentId,
   examples,
 }: ComponentDocsTabsProps) {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -86,7 +92,11 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             value="examples"
             className="flex h-full min-h-0 flex-1 overflow-hidden"
           >
-            {examples}
+            {activeTab === "examples"
+              ? examples ?? (
+                  componentId ? <LazyComponentPreview componentId={componentId} /> : null
+                )
+              : null}
           </TabsContent>
         </div>
       </Tabs>

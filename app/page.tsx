@@ -1,5 +1,5 @@
 import ContentLayout from "@/app/components/layout/page-shell";
-import { AnimatedHeaderFrame } from "@/app/components/layout/app-shell";
+import { AnimatedHeaderFrame } from "@/app/components/layout/app-shell-animated.client";
 import { ThemeToggle } from "@/app/components/builder/theme-toggle";
 import { HomeHero } from "@/app/components/home/home-hero";
 import { HomeBackground } from "@/app/components/home/home-background";

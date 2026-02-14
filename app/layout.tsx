@@ -4,7 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { PostHogInit } from "@/app/components/analytics/posthog-init.client";
 import { ThemeProvider } from "@/app/components/theme/theme-provider";
-import { MobileNavSheet } from "@/app/components/layout/mobile-nav-sheet.client";
+import { MobileNavSheetGate } from "@/app/components/layout/mobile-nav-sheet-gate.client";
 
 const isProduction = process.env.NODE_ENV === "production";
 const title = isProduction ? "Tool UI" : "Tool UI — Dev";
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             disableTransitionOnChange
           >
             {children}
-            <MobileNavSheet />
+            <MobileNavSheetGate />
             <PostHogInit />
           </ThemeProvider>
         </div>

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Content from "./content.mdx";
 import { ComponentDocsTabs } from "../_components/component-docs-tabs";
-import { ComponentPreview } from "../_components/component-preview";
 
 export const metadata: Metadata = {
   title: "Question Flow",
@@ -14,7 +13,7 @@ export default function QuestionFlowDocsPage() {
   return (
     <ComponentDocsTabs
       docs={<Content />}
-      examples={<ComponentPreview componentId="question-flow" />}
+      componentId="question-flow"
     />
   );
 }

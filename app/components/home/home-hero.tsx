@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { HomeHexnutScene } from "./home-hexnut-scene";
@@ -16,13 +17,12 @@ const smoothSpring = {
   restDelta: 0.0001,
 };
 
-const preloadGallery = () => {
-  if (typeof window !== "undefined") {
-    void import("@/app/docs/gallery/page");
-  }
-};
-
 export function HomeHero() {
+  const router = useRouter();
+  const preloadGallery = () => {
+    void router.prefetch("/docs/gallery");
+  };
+
   return (
     <div className="flex flex-col gap-7">
       <motion.div

@@ -63,14 +63,26 @@ export function useHeadingsObserver(
   useEffect(() => {
     if (!container) return;
 
+    let frameId: number | null = null;
+
     const handleScroll = () => {
-      calculateActiveHeading();
+      if (frameId !== null) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        calculateActiveHeading();
+      });
     };
 
     container.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
       container.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
   }, [container, calculateActiveHeading]);
 
