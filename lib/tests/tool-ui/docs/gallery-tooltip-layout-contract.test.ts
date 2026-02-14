@@ -29,5 +29,7 @@ describe("gallery tooltip layout contract", () => {
     expect(content).toContain("hover:no-underline");
     expect(content).toContain("{label}");
     expect(content).toContain("View Docs");
+    expect(content).toContain("componentId: GalleryComponentDocId");
+    expect(content).toContain("href: `/docs/${string}`");
   });
 });

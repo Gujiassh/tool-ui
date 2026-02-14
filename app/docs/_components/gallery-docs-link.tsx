@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { analytics } from "@/lib/analytics";
+import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { cn } from "@/lib/ui/cn";
 
 interface GalleryDocsLinkProps {
-  componentId: string;
+  componentId: GalleryComponentDocId;
   label: string;
-  href: string;
+  href: `/docs/${string}`;
   className?: string;
 }
 

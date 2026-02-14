@@ -8,7 +8,7 @@ const GALLERY_PAGE_PATH = path.join(process.cwd(), "app/docs/gallery/page.tsx");
 
 function getGalleryPageComponentIds(): string[] {
   const content = fs.readFileSync(GALLERY_PAGE_PATH, "utf8");
-  return [...content.matchAll(/componentId="([a-z0-9-]+)"/g)].map(
+  return [...content.matchAll(/componentId:\s*"([a-z0-9-]+)"/g)].map(
     (match) => match[1],
   );
 }
@@ -33,5 +33,14 @@ describe("gallery page contract", () => {
 
     expect(content).toMatch(/<main[\s>]/);
     expect(content).toMatch(/<h1[^>]*>/);
+  });
+
+  test("gallery page composes preview cards from a single card config list", () => {
+    const content = fs.readFileSync(GALLERY_PAGE_PATH, "utf8");
+
+    expect(content).toContain("const galleryCards: GalleryCardConfig[] = [");
+    expect(content).toContain("galleryCards.map((card) => (");
+    expect(content).toContain("componentId={card.componentId}");
+    expect(content).toContain("{card.render()}");
   });
 });
