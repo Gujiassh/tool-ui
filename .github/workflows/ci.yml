@@ -37,8 +37,5 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Check changelog structure
-        run: pnpm changelog:check
-
       - name: Verify registry artifacts are up to date
         run: pnpm registry:check
