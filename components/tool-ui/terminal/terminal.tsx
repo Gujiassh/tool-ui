@@ -17,6 +17,12 @@ import { cn } from "./_adapter";
 
 const COPY_ID = "terminal-output";
 
+type TerminalComponentProps = TerminalProps & {
+  expanded?: boolean;
+  defaultExpanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
+};
+
 function formatDuration(durationMs?: number): string | null {
   if (durationMs == null) return null;
   if (durationMs < 1000) return `${Math.round(durationMs)}ms`;
@@ -40,9 +46,25 @@ export function Terminal({
   truncated,
   maxCollapsedLines,
   className,
-}: TerminalProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  expanded,
+  defaultExpanded = false,
+  onExpandedChange,
+}: TerminalComponentProps) {
+  const [uncontrolledExpanded, setUncontrolledExpanded] =
+    useState(defaultExpanded);
   const { copiedId, copy } = useCopyToClipboard();
+
+  const isExpanded = expanded ?? uncontrolledExpanded;
+
+  const setExpanded = useCallback(
+    (nextExpanded: boolean) => {
+      if (expanded === undefined) {
+        setUncontrolledExpanded(nextExpanded);
+      }
+      onExpandedChange?.(nextExpanded);
+    },
+    [expanded, onExpandedChange],
+  );
 
   const isSuccess = exitCode === 0;
   const hasOutput = Boolean(stdout || stderr);
@@ -106,7 +128,7 @@ export function Terminal({
                     : "Copy output"
               }
             >
-              {copiedId === COPY_ID ? (
+              {hasOutput && copiedId === COPY_ID ? (
                 <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
               ) : (
                 <Copy className="text-muted-foreground h-4 w-4" />
@@ -150,7 +172,7 @@ export function Terminal({
               <CollapsibleTrigger asChild>
                 <Button
                   variant="ghost"
-                  onClick={() => setIsExpanded(!isExpanded)}
+                  onClick={() => setExpanded(!isExpanded)}
                   className="text-muted-foreground w-full rounded-none border-t font-normal"
                 >
                   {isCollapsed ? (
