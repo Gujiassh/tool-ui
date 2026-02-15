@@ -6,7 +6,7 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/advanced/content.mdx"
 />
 
-The [Quick Start](/docs/quick-start) covers the basics: installing a component, registering it, and seeing it render. This page goes further — stronger typing with `InferUITools`, frontend tools that run entirely in the browser, and patterns for larger integrations like auto-continue and edge runtime forwarding.
+The [Quick Start](/docs/quick-start) covers the basics: installing a component, registering it, and seeing it render. This page goes further: stronger typing with `InferUITools`, frontend tools that run entirely in the browser, and patterns for larger integrations like auto-continue and edge runtime forwarding.
 
 ## Tool Type Inference
 
@@ -252,7 +252,7 @@ Pass this toolkit to `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so 
 
 ### Auto-continue after `addResult(...)`
 
-When a tool call produces results that need further processing — say, a search that should be followed by a summary — auto-continue tells the assistant to keep going instead of stopping and waiting for user input. Enable it with `sendAutomaticallyWhen`:
+When a tool call produces results that need further processing (say, a search that should be followed by a summary) auto-continue tells the assistant to keep going instead of stopping and waiting for user input. Enable it with `sendAutomaticallyWhen`:
 
 ```tsx
 import {
