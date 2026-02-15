@@ -6,7 +6,9 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/chart/content.mdx"
 />
 
-Some answers only make sense as a picture: spending breakdowns, revenue trends, performance over time. Chart renders bar or line visualizations inline in the conversation. You pass data, an x-axis key, and one or more series. Without it, the assistant would describe the numbers in prose or return raw JSON.
+"How did I spend money this week?" is a question best answered visually. Chart renders bar or line visualizations inline in the conversation — you pass data, an x-axis key, and one or more series. The assistant can show spending breakdowns, revenue trends, or performance over time without describing the numbers in prose.
+
+**Role:** Information — displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -218,3 +220,7 @@ Only `data`, `xKey`, and `series` are required. Title, description, legend, and 
 - Built on Recharts with semantic SVG structure
 - Tooltips and legends provide text alternatives for visual data
 - Inherits focus management from shadcn/ui Card primitives
+
+## Related
+
+- [Stats Display](/docs/stats-display) — key metrics as a grid of numbers with sparklines

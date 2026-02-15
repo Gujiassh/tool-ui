@@ -7,7 +7,9 @@ import { StatsDisplay } from "@/components/tool-ui/stats-display";
   mdxPath="app/docs/stats-display/content.mdx"
 />
 
-Agents often surface numerical summaries: revenue this quarter, active users, error rates. StatsDisplay renders those numbers in a responsive grid with sparklines, delta indicators, and locale-aware formatting. Without it, the assistant would list the figures in prose.
+Numeric data buried in a chat message is hard to scan. When the assistant reports four KPIs in a paragraph, the user has to parse each number from the surrounding text. StatsDisplay renders those numbers in a responsive grid with sparklines, delta indicators, and locale-aware formatting so trends are visible at a glance.
+
+**Role:** Information — displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -83,7 +85,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `StatsDisplay`.
+Registration tells assistant-ui which component to render when a tool named `showStats` returns data. Without it, tool results appear as raw JSON.
 
 ```tsx
 "use client";
@@ -272,3 +274,8 @@ export const toolkit: Toolkit = {
 
 - All values are rendered as text, accessible to screen readers
 - Sparklines are decorative SVG with appropriate hiding from assistive tech
+
+## Related
+
+- [Chart](/docs/chart) — both visualize numeric data, but Chart is better for time-series and multi-axis comparisons
+- [Weather Widget](/docs/weather-widget) — another structured data display with a specialized visual format

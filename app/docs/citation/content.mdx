@@ -7,7 +7,9 @@ import { Citation } from "@/components/tool-ui/citation";
   mdxPath="app/docs/citation/content.mdx"
 />
 
-Citation renders a clickable reference card with title, domain, favicon, and an optional text snippet. Use it when the assistant cites a source and you want the user to see where the information came from. Three variants cover different density needs: a full card, an inline chip, or stacked favicons.
+Users trust answers they can verify. Citation renders a clickable reference card with title, domain, favicon, and an optional text snippet so the reader can trace any claim back to its source. Three variants cover different density needs: a full card for prominent references, an inline chip for tight spaces, and stacked favicons for citation lists.
+
+**Role:** Information — displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -53,7 +55,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `Citation`.
+Registration tells assistant-ui which component to render when a tool returns citation data. Without it, tool results appear as raw JSON.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
@@ -158,3 +160,8 @@ The stacked variant popover supports full keyboard navigation:
 - **Escape:** Close popover and return focus to trigger
 
 Mouse users can hover to reveal the popover. All variants open links in new tabs with `noopener,noreferrer` for security.
+
+## Related
+
+- [Link Preview](/docs/link-preview) — both surface external references, but LinkPreview shows Open Graph cards while Citation focuses on source attribution
+- [Data Table](/docs/data-table) — for displaying multiple references in a structured, sortable format

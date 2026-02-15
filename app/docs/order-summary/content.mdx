@@ -7,7 +7,9 @@ import { OrderSummary } from "@/components/tool-ui/order-summary";
   mdxPath="app/docs/order-summary/content.mdx"
 />
 
-Shopping experiences need a clear receipt before the user commits. OrderSummary renders line items with images, quantities, and an itemized price breakdown. Use `OrderSummary.Display` during confirmation and `OrderSummary.Receipt` after a confirmed decision.
+Nobody clicks "Buy" without seeing what they're buying. OrderSummary renders line items with images, quantities, and an itemized price breakdown — everything the user needs to review before committing. Use `OrderSummary.Display` during confirmation and `OrderSummary.Receipt` after the purchase is confirmed.
+
+**Role:** Decision — captures a user choice that flows back to the assistant. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -168,6 +170,8 @@ export const toolkit: Toolkit = {
 
 ## Receipt State
 
+Pass a `choice` prop to render this component in its confirmed state. See [Receipts](/docs/receipts) for the pattern.
+
 Render `OrderSummary.Receipt` with a `choice` payload to show the confirmed order metadata.
 
 When parsing tool payloads with `SerializableOrderSummarySchema`, keep variant semantics aligned:
@@ -311,3 +315,8 @@ Use [`ToolUI.DecisionActions`](/docs/actions) to compose consequential actions n
 - Action buttons are keyboard accessible with visible focus states
 - Images use `alt=""` since item names provide the description
 - Receipt state shows clear visual indication of confirmation
+
+## Related
+
+- [Approval Card](/docs/approval-card) — binary confirmation for non-purchase actions
+- [Option List](/docs/option-list) — selecting from choices without a pricing breakdown

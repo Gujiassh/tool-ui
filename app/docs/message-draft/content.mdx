@@ -7,7 +7,9 @@ import { MessageDraft } from "@/components/tool-ui/message-draft";
   mdxPath="app/docs/message-draft/content.mdx"
 />
 
-Sending a message on someone's behalf is a high-stakes action. MessageDraft shows the full email or Slack message for review, gives the user a Send button with an undo grace period, and collapses into a compact receipt once sent or cancelled. Without it, the agent would send silently or dump the draft as plain text.
+An AI sending a message on your behalf without asking is a trust violation. MessageDraft shows the full email or Slack message for review, gives you a Send button with an undo grace period, and collapses into a compact receipt once sent or cancelled. The agent never sends silently.
+
+**Role:** Decision — captures a user choice that flows back to the assistant. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -241,3 +243,7 @@ Pass `outcome` to render a one-line receipt. Useful for showing the final state 
 - Sending state announces countdown via `aria-live="polite"`
 - Receipt state uses `role="status"` for screen reader announcements
 - Focus moves to Undo button when entering sending state
+
+## Related
+
+- [Approval Card](/docs/approval-card) — binary approve/deny for other consequential actions

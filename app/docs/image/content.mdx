@@ -7,7 +7,9 @@ import { Image } from "@/components/tool-ui/image";
   mdxPath="app/docs/image/content.mdx"
 />
 
-Image renders pictures inline in the conversation with title, description, and source attribution. Use it when a tool returns an image URL and you want more than a bare `<img>` tag. Without it, the user sees a raw link they have to open in a new tab.
+When a tool returns an image URL, a bare `<img>` tag has no context — no title, no attribution, no way for the assistant to reference it later. Image renders pictures inline in the conversation with title, description, source attribution, and configurable aspect ratios. The user sees the image in context instead of opening a raw link in a new tab.
+
+**Role:** Information — displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -54,7 +56,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `Image`.
+Registration tells assistant-ui which component to render when a tool returns image data. Without it, tool results appear as raw JSON.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
@@ -137,3 +139,9 @@ export const toolkit: Toolkit = {
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `Image`.
+
+## Related
+
+- [Image Gallery](/docs/image-gallery) — for displaying multiple images in a masonry grid with a lightbox
+- [Video](/docs/video) — the same inline media pattern for video content
+- [Link Preview](/docs/link-preview) — for when the image is part of a richer link card with Open Graph metadata

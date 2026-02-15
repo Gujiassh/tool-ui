@@ -7,7 +7,9 @@ import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
   mdxPath="app/docs/weather-widget/content.mdx"
 />
 
-When someone asks "What's the weather like?", a text answer works but a visual answer is better. WeatherWidget renders current conditions and a multi-day forecast with time-aware backgrounds and weather icons. You pass temperature, condition codes, and location data from any weather API.
+"72°F and partly cloudy" is accurate but forgettable. A visual forecast with icons, highs and lows, and a time-of-day background tells the same story in a way the user actually remembers. WeatherWidget renders current conditions and a multi-day forecast from any weather API, complete with 13 condition codes and time-aware scene styling.
+
+**Role:** Information — displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -65,7 +67,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `WeatherWidget`.
+Registration tells assistant-ui which component to render when a tool named `get_weather` returns data. Without it, tool results appear as raw JSON.
 
 ```tsx
 "use client";
@@ -240,3 +242,8 @@ Available condition values with their corresponding icons:
 - Forecast list uses proper `role="list"` and `role="listitem"` structure
 - Temperature values include screen reader labels with unit names
 - Condition icons are decorative (`aria-hidden`) with text labels provided
+
+## Related
+
+- [Stats Display](/docs/stats-display) — for structured numeric data that is not weather-specific
+- [Image](/docs/image) — WeatherWidget includes visual scene rendering; use Image when the visual itself is the content

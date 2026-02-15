@@ -9,7 +9,9 @@ import { ApprovalCard } from "@/components/tool-ui/approval-card";
   mdxPath="app/docs/receipts/content.mdx"
 />
 
-When a user approves a deploy, selects a plan, or confirms a purchase, the interactive UI should become a permanent record of what happened. Otherwise, scrolling back shows a clickable button for a decision that was already made. A **receipt state** replaces the interactive controls with a confirmation of the choice, proof of the decision that the assistant can reference later.
+When a user approves a deploy, selects a plan, or confirms a purchase, the interactive UI should become a permanent record of what happened. Without this, scrolling back shows a live button for a decision that was already made — confusing at best, dangerous at worst if someone clicks it again.
+
+A **receipt state** replaces the interactive controls with a confirmation of the choice. It's proof of the decision, visible to both the user and the assistant. This is the natural counterpart to [decision actions](/docs/actions): the action captures the choice, the receipt displays it.
 
 ## Why Receipts Matter
 
@@ -102,12 +104,13 @@ The pattern is: **[Past-tense decision] [Imperative action]**
 
 ## Components with Receipt States
 
-Components with built-in receipt states:
+Pass a `choice` prop to switch any of these components into receipt mode:
 
 | Component | Receipt Prop | What It Shows |
 |-----------|--------------|---------------|
 | [Approval Card](/docs/approval-card) | `choice` | The decision and action title |
 | [Option List](/docs/option-list) | `choice` | Only the selected option(s) |
+| [Question Flow](/docs/question-flow) | `choice` | Summary of completed answers |
 | [Preferences Panel](/docs/preferences-panel) | `choice` | Summary of saved preferences |
 | [Progress Tracker](/docs/progress-tracker) | `choice` | Final status of the workflow |
 | [Order Summary](/docs/order-summary) | `choice` | Confirmed order details |

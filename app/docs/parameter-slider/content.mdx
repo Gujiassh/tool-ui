@@ -7,7 +7,9 @@ import { ParameterSlider } from "@/components/tool-ui/parameter-slider";
   mdxPath="app/docs/parameter-slider/content.mdx"
 />
 
-Agents often need the user to fine-tune numeric values: image exposure, audio levels, model temperature. ParameterSlider renders grouped sliders with labels, units, and Reset/Apply actions. The confirmed values feed back to the assistant as a tool result.
+Text input is a poor fit for numeric tuning. When the user needs to dial in image exposure, audio levels, or model temperature, ParameterSlider renders grouped sliders with labels, units, and Reset/Apply actions. The confirmed values feed back to the assistant as a tool result.
+
+**Role:** Control — adjusts parameters without commitment. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -225,3 +227,7 @@ export const toolkit: Toolkit = {
 - `aria-valuetext` includes unit for screen readers (e.g., "plus 0.3 EV")
 - Tick marks provide visual reference for the range
 - Disabled state reduces opacity and disables pointer interactions
+
+## Related
+
+- [Preferences Panel](/docs/preferences-panel) — structured settings with switches, toggles, and selects

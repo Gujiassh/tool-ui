@@ -7,7 +7,9 @@ import { InstagramPost } from "@/components/tool-ui/instagram-post";
   mdxPath="app/docs/instagram-post/content.mdx"
 />
 
-InstagramPost renders a media-first card that matches Instagram's visual language: author info, image carousel, caption, and engagement stats. Use it when the assistant surfaces or drafts Instagram content and you want it displayed natively instead of as raw data.
+Instagram is a visual platform, and its content deserves a visual preview. InstagramPost renders a media-first card that matches Instagram's layout: author info, image carousel, caption, and engagement stats. Use it when the assistant surfaces or drafts Instagram content in the conversation.
+
+**Role:** Information — displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -126,3 +128,8 @@ export const toolkit: Toolkit = {
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `InstagramPost`.
+
+## Related
+
+- [X Post](/docs/x-post) — platform-native card for X (Twitter) content
+- [LinkedIn Post](/docs/linkedin-post) — platform-native card for LinkedIn content

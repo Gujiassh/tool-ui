@@ -4,7 +4,7 @@ import { Bot } from "lucide-react";
 
 <DocsHeader
   title="Quick Start"
-  description="Add your first Tool UI to a chat app."
+  description="Go from raw JSON to a rendered component in your chat app."
   mdxPath="app/docs/quick-start/content.mdx"
 />
 
@@ -67,7 +67,7 @@ This copies the source files into your project. You own the code. Modify it howe
 
 ## Wire it up
 
-With the runtime and component in place, define a backend tool that returns structured data, then register a renderer that turns that data into the LinkPreview component.
+Two pieces connect the component to the conversation: a **backend tool** that returns structured data when the model calls it, and a **frontend renderer** that turns that data into the LinkPreview component.
 
 <Steps>
 
@@ -120,7 +120,7 @@ In a real app, you'd fetch actual metadata here (Open Graph tags, screenshots, e
 
 <Step title="Register the renderer">
 
-On the client, register a renderer so assistant-ui knows how to display `previewLink` results.
+Registering tells assistant-ui: "when the model calls a tool named `previewLink`, parse the result and render this component." Without registration, tool results appear as raw JSON.
 
 ```tsx title="app/page.tsx"
 "use client";
@@ -193,123 +193,13 @@ Every component ships with a colocated `schema.ts` exporting a Zod schema and a 
 
 Browse all available components in the [Gallery](/docs/gallery).
 
-## Frontend tools (interactive Tool UIs)
+## Interactive Tool UIs
 
-Some Tool UIs (especially decision surfaces like **Option List**) are easiest to model as **frontend tools**: the model calls a tool with Tool UI props as the arguments, and your UI calls `addResult(...)` after the user confirms.
+The example above is a **display-only** component — the tool returns data, and the component renders it. Some components go further: they let the user make a choice that flows back to the assistant.
 
-If you're using `AssistantChatTransport`, it forwards **system instructions** and **registered tools** in the request body. Make sure your `/api/chat` route reads and forwards them, otherwise the model won't see your frontend tools.
+Components like [Option List](/docs/option-list) and [Approval Card](/docs/approval-card) support this pattern through **frontend tools**, where the model calls a tool, your UI renders the component, and the user's response is sent back via `addResult(...)`.
 
-```ts
-import { openai } from "@ai-sdk/openai";
-import {
-  streamText,
-  convertToModelMessages,
-  jsonSchema,
-  type UIMessage,
-  type JSONSchema7,
-} from "ai";
-
-type ForwardedTools = Record<
-  string,
-  { description?: string; parameters: JSONSchema7 }
->;
-
-function toStreamTextTools(tools?: ForwardedTools) {
-  if (!tools) return undefined;
-  return Object.fromEntries(
-    Object.entries(tools).map(([name, tool]) => [
-      name,
-      {
-        ...(tool.description ? { description: tool.description } : {}),
-        inputSchema: jsonSchema(tool.parameters),
-      },
-    ]),
-  );
-}
-
-export async function POST(req: Request) {
-  const body = (await req.json()) as {
-    messages: UIMessage[];
-    system?: string;
-    tools?: ForwardedTools;
-  };
-
-  const result = streamText({
-    model: openai("gpt-4o"),
-    messages: await convertToModelMessages(body.messages),
-    system: body.system,
-    tools: toStreamTextTools(body.tools),
-  });
-
-  return result.toUIMessageStreamResponse();
-}
-```
-
-### Register a frontend tool (assistant-ui)
-
-When the tool is frontend/interactive, you register the tool **on the client** (so it gets forwarded by `AssistantChatTransport`) and render a Tool UI when it is called.
-
-```tsx
-"use client";
-
-import { type Toolkit } from "@assistant-ui/react";
-import { OptionList } from "@/components/tool-ui/option-list";
-import {
-  safeParseSerializableOptionList,
-  SerializableOptionListSchema,
-} from "@/components/tool-ui/option-list/schema";
-import { createArgsToolRenderer } from "@/components/tool-ui/shared";
-
-export const toolkit: Toolkit = {
-  selectFormat: {
-    description: "Ask the user to choose an output format.",
-    parameters: SerializableOptionListSchema,
-    render: createArgsToolRenderer({
-      safeParse: safeParseSerializableOptionList,
-      idPrefix: "format-selection",
-      render: (parsedArgs, { result, addResult }) => {
-        if (result) {
-          return (
-            <OptionList {...parsedArgs} value={undefined} choice={result} />
-          );
-        }
-
-        return (
-          <OptionList
-            {...parsedArgs}
-            // Avoid controlled selection in LLM-driven payloads.
-            value={undefined}
-            onAction={(actionId, selection) => {
-              if (actionId === "confirm") {
-                void addResult?.(selection);
-              }
-            }}
-          />
-        );
-      },
-    }),
-  },
-};
-```
-
-Register this toolkit with `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so the tool and UI are forwarded by `AssistantChatTransport`.
-
-### Auto-continue after `addResult(...)` (AI SDK runtime)
-
-If you want the assistant to continue automatically after the user confirms (instead of waiting for the next user message), enable AI SDK's auto-resubmit behavior:
-
-```tsx
-import {
-  useChatRuntime,
-  AssistantChatTransport,
-} from "@assistant-ui/react-ai-sdk";
-import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-
-const runtime = useChatRuntime({
-  transport: new AssistantChatTransport({ api: "/api/chat" }),
-  sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-});
-```
+For the full implementation pattern — including how to forward frontend tools through your API route and enable auto-continue after user decisions — see the [Advanced](/docs/advanced) page.
 
 ## Other Frameworks
 
@@ -323,6 +213,8 @@ Tool UI components are installed from registry entries, and each entry includes 
 
 ## Next steps
 
-- [**Explore Components**](/docs/data-table): Data Table, Image, Video, Link Preview, Option List, X Post, Instagram Post, LinkedIn Post
-- [**UI Guidelines**](/docs/design-guidelines): Learn the interaction patterns
-- [**Examples**](https://github.com/assistant-ui/assistant-ui/tree/main/examples): Full implementations
+- [**Gallery**](/docs/gallery): Browse all available components
+- [**Actions**](/docs/actions): How interactive components feed user decisions back to the assistant
+- [**Receipts**](/docs/receipts): How components show permanent records of past decisions
+- [**Design Guidelines**](/docs/design-guidelines): The collaboration model and design constraints for chat UI
+- [**Advanced**](/docs/advanced): Frontend tools, type inference, and deeper integration patterns

@@ -7,7 +7,9 @@ import { ApprovalCard } from "@/components/tool-ui/approval-card";
   mdxPath="app/docs/approval-card/content.mdx"
 />
 
-Deploying to production, deleting a project, sending an email. Consequential actions deserve a gate. ApprovalCard renders a confirmation prompt with context about the action, and records the decision as a receipt once the user responds.
+Before the assistant deploys to production, deletes a project, or sends an email on your behalf, it should ask first. ApprovalCard renders a confirmation prompt with context about the action — metadata, consequences, a clear approve/deny choice — and records the decision as a receipt once the user responds.
+
+**Role:** Decision — captures a user choice that flows back to the assistant. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -111,7 +113,9 @@ export const toolkit: Toolkit = {
 
 ## Receipt State
 
-Pass `decision` to render the component as a compact receipt. The receipt shows the outcome (approved or denied) with the custom button label you specified, fades in with a subtle animation, and is read-only.
+Pass a `choice` prop to render this component in its confirmed state. See [Receipts](/docs/receipts) for the pattern.
+
+The receipt shows the outcome (approved or denied) with the custom button label you specified, fades in with a subtle animation, and is read-only.
 
 ## Destructive Variant
 
@@ -204,3 +208,10 @@ Long metadata values are automatically truncated with an ellipsis. Keep values c
 - Loading state disables both buttons to prevent double-submission
 - Receipt state uses `role="status"` for screen reader announcements
 - Fade-in animation respects `prefers-reduced-motion`
+
+## Related
+
+- [Order Summary](/docs/order-summary) — itemized confirmation for purchases
+- [Option List](/docs/option-list) — multiple choices when the decision isn't binary
+- [Message Draft](/docs/message-draft) — review and approve outgoing messages
+- [Preferences Panel](/docs/preferences-panel) — structured settings capture

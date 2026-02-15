@@ -6,7 +6,9 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/question-flow/content.mdx"
 />
 
-Some tasks require multiple decisions in sequence: project setup, onboarding, triage. QuestionFlow walks the user through single- or multi-select steps with back/next navigation. You can define all steps upfront or let the AI generate each step based on previous answers.
+A single question rarely captures a full intent. Project setup, onboarding, and triage all involve a chain of decisions where each answer shapes the next. QuestionFlow walks the user through single- or multi-select steps with back/next navigation. You can define all steps upfront or let the assistant generate each step based on previous answers.
+
+**Role:** Decision — captures a user choice that flows back to the assistant. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -124,7 +126,9 @@ Set `selectionMode="multi"` to allow multiple selections per step.
 
 ## Receipt State
 
-Pass `choice` with a title and summary to display the completed configuration. The receipt is read-only and shows a "Complete" badge with all choices listed.
+Pass a `choice` prop to render this component in its confirmed state. See [Receipts](/docs/receipts) for the pattern.
+
+The receipt shows a "Complete" badge with a summary of all choices listed. It is read-only.
 
 ## Progressive Mode Props
 
@@ -274,3 +278,8 @@ Pass `choice` with a title and summary to display the completed configuration. T
 - Focus management follows WAI-ARIA patterns for step navigation
 - Progress indicator provides context for screen readers
 - Back and Next buttons are keyboard-accessible
+
+## Related
+
+- [Option List](/docs/option-list) — single-step selection when one question is enough
+- [Preferences Panel](/docs/preferences-panel) — structured settings with switches, toggles, and selects

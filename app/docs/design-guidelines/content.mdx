@@ -132,13 +132,13 @@ The assistant introduces the tool UI, the user scans it and asks a follow-up, th
 
 Every Tool UI has a primary role:
 
-- **Information:** Display data (tables, cards, charts). Users read more than they click.
+- **Information:** Display data. Users read more than they click. Examples: [Data Table](/docs/data-table), [Chart](/docs/chart), [Link Preview](/docs/link-preview), [Citation](/docs/citation).
 
-- **Decision:** Capture choices that matter (approve/reject, send/cancel). These need clear options and receipts that prove what happened.
+- **Decision:** Capture choices that matter (approve/reject, send/cancel). These need clear options and [receipts](/docs/receipts) that prove what happened. Examples: [Approval Card](/docs/approval-card), [Option List](/docs/option-list), [Order Summary](/docs/order-summary).
 
-- **Control:** Adjust parameters without commitment (filters, sort orders, date ranges). Changes are reversible.
+- **Control:** Adjust parameters without commitment (filters, sort orders, date ranges). Changes are reversible. Examples: [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel).
 
-- **State:** Show internal activity (progress indicators, status logs, loading states).
+- **State:** Show internal activity (progress indicators, status logs, loading states). Examples: [Progress Tracker](/docs/progress-tracker), [Terminal](/docs/terminal).
 
 Some tool UIs combine roles. A data table with row actions is "information with control." When combining, pick one role to lead.
 
@@ -172,4 +172,11 @@ See the [Receipts](/docs/receipts) page for detailed guidance on receipt states 
 - **Hidden mutations:** Actions that change state should show what happened. Terminal decisions need a receipt showing what the user chose.
 - **Kitchen sinks:** If it needs tabs or navigation, consider breaking it into separate Tool UIs.
 - **Uncontextualized tool UIs:** Always have the assistant introduce a tool UI and explain what it shows.
-- **Redundant narration:** The assistant shouldn't describe what the tool UI already shows. The tool UI shouldn't echo what the assistant just said. If the assistant asks "Where to?", the tool UI doesn't need a header saying "Where to?"; just show the options. Divide the work: the assistant provides context, the tool UI provides structure.
+- **Redundant narration:** The assistant shouldn't describe what the tool UI already shows. The tool UI shouldn't echo what the assistant just said. If the assistant asks "Where to?", the tool UI doesn't need a header saying "Where to?"; show the options. Divide the work: the assistant provides context, the tool UI provides structure.
+
+## Further reading
+
+- [**Overview**](/docs/overview): What Tool UI is and how schema-first rendering works
+- [**Actions**](/docs/actions): The local vs. decision action model in detail
+- [**Receipts**](/docs/receipts): How to show durable records of user decisions
+- [**Gallery**](/docs/gallery): Browse all available components
