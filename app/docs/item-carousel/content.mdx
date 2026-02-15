@@ -6,7 +6,9 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/item-carousel/content.mdx"
 />
 
-ItemCarousel lays out a scrollable row of cards for browsing products, restaurants, or any collection the assistant returns. Each card can show an image, subtitle, and action buttons. The user scrolls horizontally, clicks into a card, or takes an action without leaving the conversation.
+A vertical list of ten search results buries everything below the fold. ItemCarousel lays them out in a scrollable row of cards so the user can browse products, restaurants, or any collection the assistant returns without losing their place in the conversation. Each card shows an image, subtitle, and action buttons.
+
+**Role:** Information. Displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -42,7 +44,7 @@ export function Example({ payload }: { payload: React.ComponentProps<typeof Item
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `ItemCarousel`.
+Registration tells assistant-ui which component to render when a tool named `searchItems` returns data. Without it, tool results appear as raw JSON.
 
 ```tsx
 // Backend tool
@@ -217,3 +219,8 @@ How the carousel handles common interaction patterns:
 - Cards are keyboard-navigable with Enter/Space activation
 - Proper ARIA roles and labels for screen reader announcements
 - Focus rings visible for keyboard navigation
+
+## Related
+
+- [Data Table](/docs/data-table): both present collections, but DataTable is better for dense, sortable comparisons
+- [Image Gallery](/docs/image-gallery): for image-heavy collections where the visuals are the primary content

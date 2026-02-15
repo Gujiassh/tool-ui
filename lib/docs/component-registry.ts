@@ -95,7 +95,7 @@ export const componentsRegistry: ComponentMeta[] = [
   {
     id: "link-preview",
     label: "Link Preview",
-    description: "Rich link previews with OG data",
+    description: "Rich link previews with Open Graph data",
     path: "/docs/link-preview",
     category: "display",
   },
@@ -130,7 +130,7 @@ export const componentsRegistry: ComponentMeta[] = [
   {
     id: "plan",
     label: "Plan",
-    description: "Display step-by-step task workflows",
+    description: "Step-by-step task workflows with status tracking",
     path: "/docs/plan",
     category: "progress",
   },
@@ -179,7 +179,7 @@ export const componentsRegistry: ComponentMeta[] = [
   {
     id: "stats-display",
     label: "Stats Display",
-    description: "Display key metrics in a grid",
+    description: "Key metrics and KPIs in a visual grid",
     path: "/docs/stats-display",
     category: "display",
   },

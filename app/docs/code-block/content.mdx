@@ -6,7 +6,9 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/code-block/content.mdx"
 />
 
-CodeBlock renders agent-produced code with syntax highlighting, line numbers, and a copy button. You can highlight specific lines to draw attention to changes or bugs, and optionally collapse long snippets by setting `maxCollapsedLines` so conversations stay scannable. Without it, code appears as unstyled monospace text.
+When the assistant generates or references code, unstyled monospace text sells it short. CodeBlock renders syntax-highlighted snippets with line numbers and a copy button. You can highlight specific lines to draw attention to changes or bugs, and collapse long snippets with `maxCollapsedLines` to keep conversations scannable.
+
+**Role:** Information. Displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -200,3 +202,7 @@ See [Shiki documentation](https://shiki.style/languages) for the complete list.
 - Collapsible sections use Radix Collapsible with proper ARIA attributes
 - Copy button is keyboard-accessible with focus indication
 - Code content is selectable and works with screen readers
+
+## Related
+
+- [Terminal](/docs/terminal): command-line output and logs

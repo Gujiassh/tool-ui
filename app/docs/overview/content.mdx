@@ -7,7 +7,7 @@ import { InteractiveOptionDemo } from "../_components/interactive-option-demo";
 
 <DocsHeader
   title="Overview"
-  description="Rich, interactive UI components for AI tool calls."
+  description="Designed UI for tool calls."
   mdxPath="app/docs/overview/content.mdx"
 />
 
@@ -23,9 +23,9 @@ import { InteractiveOptionDemo } from "../_components/interactive-option-demo";
   </AlertDescription>
 </Alert>
 
-When an AI assistant calls a tool, it usually returns plain text or raw JSON. The user sees a wall of data they have to parse themselves.
+When an AI assistant calls a tool, the result is usually plain text or raw JSON. Without purpose-built components, users see a wall of unformatted data they have to parse themselves. The experience breaks, not because the data is wrong, but because nothing is designed to present it.
 
-Tool UI turns those tool results into **real React components**: cards, tables, option lists that render inline in the conversation and let users interact without leaving the chat.
+Tool UI is a component library for this problem. Each component turns a specific kind of tool output into a real piece of UI: a card, a table, an option list, a chart. They render inline in the conversation and let users interact without leaving the chat.
 
 <div className="mt-8 grid gap-6 md:grid-cols-2">
   <MockThread caption="Without Tool UI">
@@ -68,11 +68,11 @@ Same data, different experience. The left side dumps JSON the user has to read. 
 
 ## What is tool calling?
 
-Most AI chat applications let the model do more than just generate text. Through **tool calling** (sometimes called "function calling"), you define functions the model can invoke (searching a database, fetching a URL, running a calculation) and the model decides when to call them based on the conversation.
+From the user's perspective, tool calling is what happens when the assistant *does* something instead of *saying* something. The user asks "find me flights to Tokyo," and instead of describing flight options in a paragraph, the assistant calls a search tool and returns structured results.
 
-The model sends structured arguments. Your server executes the function and returns a result. Normally, that result is plain text or JSON that gets passed back into the conversation as-is.
+Behind the scenes, you define functions the model can invoke: searching a database, fetching a URL, running a calculation. The model decides when to call them based on the conversation. It sends structured arguments, your server executes the function, and a result comes back.
 
-Tool UI is about what happens next: **rendering those results as interactive UI**.
+Normally, that result is plain text or JSON that gets dumped into the chat as-is. Tool UI is about what happens next: **rendering those results as designed, interactive UI**.
 
 ## What if tool results could render UI?
 
@@ -233,8 +233,8 @@ export default function App() {
 
 ## Next steps
 
-- **[Quick Start](/docs/quick-start):** Set up a working tool UI from scratch
-- **[Actions](/docs/actions):** How interactive tool UIs feed decisions back to the assistant
-- **[Receipts](/docs/receipts):** How to show durable records of user decisions
+- **[Quick Start](/docs/quick-start):** Add your first Tool UI component to a chat app
+- **[Design Guidelines](/docs/design-guidelines):** The collaboration model, component roles, and constraints for building in chat
+- **[Actions](/docs/actions):** How interactive tool UIs feed user decisions back to the assistant
+- **[Receipts](/docs/receipts):** How components show permanent records of past decisions
 - **[Gallery](/docs/gallery):** Browse all available components
-- **[UI Guidelines](/docs/design-guidelines):** Design philosophy and patterns

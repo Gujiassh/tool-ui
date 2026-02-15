@@ -6,6 +6,10 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/plan/content.mdx"
 />
 
+When the assistant breaks work into steps (a deployment pipeline, a research plan, a migration checklist) the Plan component turns that structure into a visual progress tracker. Each phase shows its status, and the overall shape of the work is scannable at a glance.
+
+**Role:** State. Shows internal activity and progress. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
+
 ## Getting Started
 
 <Steps>
@@ -206,3 +210,7 @@ Use `Plan.Compact` for a steps-only card body:
 - Decorative motion classes (spinner rotation, shimmer, enter/exit effects) are gated behind `motion-safe` variants
 - The progress bar fill uses a base CSS transition, so completion updates can still animate unless your app adds `motion-reduce` overrides
 - Functionality and content remain available regardless of motion preferences
+
+## Related
+
+- [Progress Tracker](/docs/progress-tracker): real-time status for operations like build/test/deploy

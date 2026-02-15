@@ -7,7 +7,9 @@ import { Video } from "@/components/tool-ui/video";
   mdxPath="app/docs/video/content.mdx"
 />
 
-Raw video URLs are just links in a chat. Video renders an inline player with poster image, native controls, and metadata. You pass a `src`, optional title, and an aspect ratio. The user can watch without leaving the conversation.
+Pasting a video URL into a chat gives the user a clickable link and nothing else. No preview, no playback, no context. Video renders an inline player with a poster image, native controls, and metadata so the user can watch without leaving the conversation.
+
+**Role:** Information. Displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -54,7 +56,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `Video`.
+Registration tells assistant-ui which component to render when a tool returns video data. Without it, tool results appear as raw JSON.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
@@ -136,3 +138,9 @@ export const toolkit: Toolkit = {
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `Video`.
+
+## Related
+
+- [Audio](/docs/audio): the same inline media pattern for audio content
+- [Image](/docs/image): for static visual content with metadata and attribution
+- [Image Gallery](/docs/image-gallery): for presenting multiple visual assets in a grid

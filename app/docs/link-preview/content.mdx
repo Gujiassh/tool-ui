@@ -7,7 +7,9 @@ import { LinkPreview } from "@/components/tool-ui/link-preview";
   mdxPath="app/docs/link-preview/content.mdx"
 />
 
-Raw URLs are invisible in a chat thread. The user has no idea what's behind the link. LinkPreview renders fetched URLs as clickable cards with the page title, description, image, and favicon, giving you the same kind of rich embed you see in Slack or iMessage. Without it, the user sees a bare href or a blob of Open Graph JSON.
+Every shared link is a black box until someone clicks it. The user has no idea if the URL leads to documentation, a blog post, or a 404. LinkPreview renders fetched URLs as clickable cards with the page title, description, image, and favicon, the same kind of rich embed you see in Slack or iMessage. Without it, the user sees a bare href or a blob of Open Graph JSON.
+
+**Role:** Information. Displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -53,7 +55,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `LinkPreview`.
+Registration tells assistant-ui which component to render when a tool returns link metadata. Without it, tool results appear as raw JSON.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
@@ -120,3 +122,8 @@ export const toolkit: Toolkit = {
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `LinkPreview`.
+
+## Related
+
+- [Citation](/docs/citation): both surface external references, but Citation is optimized for source attribution with snippets
+- [Image](/docs/image): for when the link target is primarily visual content

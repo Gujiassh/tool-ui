@@ -7,7 +7,9 @@ import { XPost } from "@/components/tool-ui/x-post";
   mdxPath="app/docs/x-post/content.mdx"
 />
 
-Raw tweet links in a chat are just URLs. XPost embeds the full post inline: author, text, media, quoted posts, and engagement stats, styled to match the platform. You use it when the assistant fetches or drafts social content and you want it to look like a real post instead of JSON.
+A link to a tweet tells you nothing until you click it. XPost embeds the full post inline (author, text, media, quoted posts, and engagement stats) styled to match the platform. Use it when the assistant fetches or drafts X content and you want it displayed as a real post.
+
+**Role:** Information. Displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -119,3 +121,8 @@ export const toolkit: Toolkit = {
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `XPost`.
+
+## Related
+
+- [Instagram Post](/docs/instagram-post): platform-native card for Instagram content
+- [LinkedIn Post](/docs/linkedin-post): platform-native card for LinkedIn content

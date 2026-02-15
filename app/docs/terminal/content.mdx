@@ -6,7 +6,9 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/terminal/content.mdx"
 />
 
-Shell output loses all formatting when pasted into a chat. No ANSI colors, no exit codes, no stderr separation. Terminal renders command output the way you would see it in a real terminal, and long output auto-collapses so it does not take over the conversation. Without it, you would paste monospace text and lose everything that makes terminal output useful.
+Raw terminal output was not designed for conversation. Shell results lose their ANSI colors, exit codes, and stderr separation the moment they land in a chat message. Terminal renders command output the way you would see it in a real shell, colored, structured, and auto-collapsed when it gets long, so it does not take over the conversation.
+
+**Role:** Information. Displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -54,7 +56,7 @@ drwxr-xr-x 12 user user 4096 Dec  3 10:20 ..
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `Terminal`.
+Registration tells assistant-ui which component to render when a tool returns command output. Without it, tool results appear as raw JSON.
 
 ```tsx
 // Backend tool
@@ -237,3 +239,8 @@ Common ANSI codes:
 - ANSI colors maintain WCAG contrast ratios against both light and dark backgrounds
 - Screen readers announce the command, exit status, and output content
 - Collapsible sections are keyboard-accessible with proper ARIA attributes
+
+## Related
+
+- [Code Block](/docs/code-block): both show monospaced content, but CodeBlock is for source code while Terminal is for command execution results
+- [Progress Tracker](/docs/progress-tracker): for when you need real-time status updates during a long-running operation

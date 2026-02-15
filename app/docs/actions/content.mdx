@@ -12,11 +12,15 @@ import {
 
 <DocsHeader
   title="Actions"
-  description="Action model basics."
+  description="Interactive controls on tool results."
   mdxPath="app/docs/actions/content.mdx"
 />
 
-Tool UI actions are how a user turns a rendered tool UI into behavior. If you're new to tool calling, this page gives you the mental model first, then the implementation patterns.
+By default, tool results are read-only. The assistant calls a tool, a component renders the data, and that's it. Actions change that: they let users **respond** to what the assistant shows them.
+
+An action might be a small utility (exporting a table as CSV, copying a code snippet) or a consequential decision like approving a deploy or confirming a purchase. Tool UI splits these into two categories: **local actions** for in-context side effects, and **decision actions** for choices that flow back to the assistant and produce a permanent [receipt](/docs/receipts).
+
+For background on how components relate to the assistant and the user, see [Design Guidelines](/docs/design-guidelines).
 
 ## Mental Model
 
@@ -106,10 +110,12 @@ await addResult?.(decision);
 
 ## Action Surfaces
 
-The standard split is:
+Tool UI provides two action surfaces:
 
-- `ToolUI.LocalActions`: non-consequential runtime side effects.
-- `ToolUI.DecisionActions`: consequential choices that produce commit-ready decision envelopes.
+- **`ToolUI.LocalActions`**: Non-consequential side effects. Exporting, copying, opening a link. The assistant doesn't need to know it happened.
+- **`ToolUI.DecisionActions`**: Consequential choices that produce a durable decision envelope. Approving, confirming, selecting. The result flows back to the assistant and the component shows a [receipt](/docs/receipts).
+
+**When to use which:** If the user's action changes the conversation, if the assistant should know about it and respond, use `DecisionActions`. If it's a utility that stays local to the UI, use `LocalActions`.
 
 ### Display Components + LocalActions
 

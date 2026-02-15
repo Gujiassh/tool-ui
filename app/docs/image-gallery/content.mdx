@@ -7,7 +7,9 @@ import { ImageGallery } from "@/components/tool-ui/image-gallery";
   mdxPath="app/docs/image-gallery/content.mdx"
 />
 
-When a tool returns multiple images, dumping them in a vertical list wastes space and forces scrolling. ImageGallery arranges them in a masonry grid with a fullscreen lightbox for detail. You get captions, source attribution, and keyboard navigation out of the box.
+Five images stacked vertically push the rest of the conversation off-screen. ImageGallery arranges multiple images in a masonry grid that respects each photo's aspect ratio, with a fullscreen lightbox for inspecting detail. Captions, source attribution, and keyboard navigation come built in.
+
+**Role:** Information. Displays data without requiring user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -70,7 +72,7 @@ export function Example() {
 
 <Step title="Register it in your runtime provider">
 
-Register this renderer so tool results display as `ImageGallery`.
+Registration tells assistant-ui which component to render when a tool returns a set of images. Without it, tool results appear as raw JSON.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
@@ -164,3 +166,9 @@ export const toolkit: Toolkit = {
     },
   }}
 />
+
+## Related
+
+- [Image](/docs/image): for displaying a single image with metadata and attribution
+- [Video](/docs/video): for inline video playback in the same media pattern
+- [Item Carousel](/docs/item-carousel): for browsable collections where each card has actions, not just images

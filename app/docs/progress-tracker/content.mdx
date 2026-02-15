@@ -3,11 +3,13 @@ import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
 
 <DocsHeader
   title="Progress Tracker"
-  description="Real-time status feedback for multi-step operations."
+  description="Real-time multi-step status."
   mdxPath="app/docs/progress-tracker/content.mdx"
 />
 
-Long-running operations need progress visibility. ProgressTracker shows each step of a multi-step workflow (build, test, deploy) with its current status: pending, in-progress, completed, or failed. The user sees exactly where the operation is and what went wrong if it breaks. Once it finishes, the tracker collapses into a receipt with the final outcome.
+When an operation takes more than a moment (build, test, deploy) the user deserves to know where things stand. ProgressTracker shows each step of a multi-step workflow with its current status: pending, in-progress, completed, or failed. If something breaks, the error is visible immediately. Once the operation finishes, the tracker collapses into a receipt with the final outcome.
+
+**Role:** State. Shows internal activity and progress. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
 ## Getting Started
 
@@ -125,7 +127,9 @@ The component automatically highlights the current step (first `in-progress`, ot
 
 ## Receipt Pattern
 
-Pass `choice` to render the final state after an operation completes, fails, or is cancelled. The receipt shows all steps with their final statuses, an elapsed time badge, and an outcome indicator in the top-right corner. Supports `success`, `partial`, `failed`, and `cancelled` outcomes. Read-only with no action buttons.
+Pass a `choice` prop to render this component in its receipt state. See [Receipts](/docs/receipts) for the pattern.
+
+The receipt shows all steps with their final statuses, an elapsed time badge, and an outcome indicator in the top-right corner. Supports `success`, `partial`, `failed`, and `cancelled` outcomes. Read-only with no action buttons.
 
 ## Elapsed Time
 
@@ -227,3 +231,7 @@ Pass `elapsedTime` in milliseconds to display a timer badge. Automatically forma
 - Elapsed duration is rendered with semantic `<time>` and machine-readable `dateTime`
 - All animations respect `prefers-reduced-motion`
 - Text is unselectable to prevent accidental highlighting during status changes
+
+## Related
+
+- [Plan](/docs/plan): task-oriented progress with expandable detail per step
