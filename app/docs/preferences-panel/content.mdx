@@ -7,7 +7,7 @@ import { PreferencesPanel } from "@/components/tool-ui/preferences-panel";
   mdxPath="app/docs/preferences-panel/content.mdx"
 />
 
-Asking the user to type "turn off notifications and set theme to dark" is fragile. PreferencesPanel renders switches, toggles, and selects in a compact card with explicit Save/Cancel actions. Changes are staged locally until the user commits, and the confirmed state shows as a receipt.
+Asking the user to type "turn off notifications and set theme to dark" is fragile. PreferencesPanel renders switches, toggles, and selects in a compact card with explicit Save/Cancel actions. Changes are staged locally until the user commits, and the result shows as a receipt.
 
 **Role:** Decision. Captures a user choice that flows back to the assistant. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
@@ -143,7 +143,7 @@ export const toolkit: Toolkit = {
 
 ## Receipt State
 
-Pass a `choice` prop to render this component in its confirmed state. See [Receipts](/docs/receipts) for the pattern.
+Pass a `choice` prop to render this component in its receipt state. See [Receipts](/docs/receipts) for the pattern.
 
 ### Receipt Example
 
