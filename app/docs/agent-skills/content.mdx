@@ -12,19 +12,75 @@ import { DocsHeader } from "../_components/docs-header";
 npx skills add https://github.com/assistant-ui/tool-ui --skill tool-ui
 ```
 
-## High-signal resources for coding agents
+## What's included
 
-| Resource | Why it matters | Path |
-| --- | --- | --- |
-| Skill workflow | End-to-end integration playbook | `.agents/skills/tool-ui/SKILL.md` |
-| Component metadata (canonical) | Source of truth for shipped docs components | `lib/docs/component-registry.ts` |
-| Component metadata (agent-optimized) | Fast lookup for scripts and intent matching | `.agents/skills/tool-ui/references/components-data.json` |
-| Catalog and bundles | Human-readable component discovery and intent bundles | `.agents/skills/tool-ui/references/components-catalog.md`, `.agents/skills/tool-ui/references/recipes.md` |
-| Integration recipes | Runtime wiring patterns by integration mode | `.agents/skills/tool-ui/references/integration-patterns.md` |
-| Troubleshooting matrix | Symptom → likely cause → fix | `.agents/skills/tool-ui/references/troubleshooting.md` |
-| Component sync script | Regenerates agent metadata from canonical source | `.agents/skills/tool-ui/scripts/sync_components.py` |
-| Compatibility doctor | Detects and explains integration blockers | `.agents/skills/tool-ui/scripts/tool_ui_compat.py` |
-| Install/discovery helper | Lists, finds, bundles, and prints install commands | `.agents/skills/tool-ui/scripts/tool_ui_components.py` |
-| Scaffold generator | Generates ready-to-paste runtime wiring snippets | `.agents/skills/tool-ui/scripts/tool_ui_scaffold.py` |
-| Script test suite | Regression coverage for agent-facing tooling | `.agents/skills/tool-ui/tests/` |
-| Docs contract tests | Guards docs consistency and registry-installation policy | `lib/tests/tool-ui/docs/` |
+The package ships a SKILL.md workflow, reference docs, CLI scripts, and test suites. Together they give a coding agent everything it needs to discover, install, and wire Tool UI components into a project.
+
+## SKILL.md — the agent workflow
+
+`.agents/skills/tool-ui/SKILL.md` is the entry point. It defines a five-step workflow that agents follow end-to-end:
+
+1. **Compatibility check** — verify the project meets prerequisites (shadcn/ui, Tailwind, Radix)
+2. **Discover** — search and browse available components
+3. **Install** — pull components from the registry
+4. **Scaffold** — generate adapter files and runtime wiring code
+5. **Validate** — confirm the integration works
+
+Each step links to the script or reference doc the agent should use.
+
+## Reference docs
+
+All reference material lives in `.agents/skills/tool-ui/references/`.
+
+### `components-catalog.md`
+
+Human-readable component catalog organized by category — Progress, Input/Decision, Display, Artifacts, Confirmation, and Media. Each entry includes a brief description and selection heuristics so agents can match a user's intent to the right component.
+
+### `components-data.json`
+
+Machine-readable component metadata. Each record contains `id`, `label`, `description`, `category`, and `path`. The CLI scripts read this file for search and install operations.
+
+### `recipes.md`
+
+Curated bundles of components for common patterns — planning flow, research output, commerce flow, and others. Each recipe includes a one-line install command that pulls every component in the bundle at once.
+
+### `integration-patterns.md`
+
+Five wiring patterns with full code examples:
+
+- **Backend display** — render tool results as read-only UI
+- **Backend + local actions** — add inline actions alongside backend data
+- **Frontend decision** — collect user input before proceeding
+- **Action-centric** — surface standalone actions without surrounding content
+- **Manual** — wire components directly without the runtime framework
+
+### `troubleshooting.md`
+
+Symptom → cause → fix matrix covering common install and runtime issues. Agents consult this when an integration step fails.
+
+## CLI scripts
+
+All scripts live in `.agents/skills/tool-ui/scripts/`.
+
+### `tool_ui_compat.py`
+
+Checks `components.json` compatibility, auto-fixes the `@tool-ui` registry entry, and runs deeper doctor checks — shared folder presence, import resolution, and package dependencies.
+
+### `tool_ui_components.py`
+
+Lists, searches, and generates install commands for components. Also handles bundle recipes from `recipes.md`. Reads from `components-data.json` for fast lookups.
+
+### `tool_ui_scaffold.py`
+
+Generates ready-to-paste runtime wiring code in three modes: `assistant-backend`, `assistant-frontend`, and `manual`. Output adapts to the project's framework and integration pattern.
+
+### `sync_components.py`
+
+Maintainer script that regenerates `components-data.json` and `components-catalog.md` from `lib/docs/component-registry.ts`. Run this after adding or modifying components in the registry.
+
+## Test suites
+
+Two layers of tests guard the package:
+
+- **Script tests** (`.agents/skills/tool-ui/tests/`) — regression coverage for the CLI scripts. Validates SKILL.md references, script syntax, and data integrity.
+- **Docs contract tests** (`lib/tests/tool-ui/docs/`) — guards docs-site consistency, ensuring registry entries, preview configs, and presets stay aligned.
