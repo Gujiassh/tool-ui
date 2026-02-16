@@ -74,13 +74,6 @@ Lists, searches, and generates install commands for components. Also handles bun
 
 Generates ready-to-paste runtime wiring code in three modes: `assistant-backend`, `assistant-frontend`, and `manual`. Output adapts to the project's framework and integration pattern.
 
-### `sync_components.py`
-
-Maintainer script that regenerates `components-data.json` and `components-catalog.md` from `lib/docs/component-registry.ts`. Run this after adding or modifying components in the registry.
-
 ## Test suites
 
-Two layers of tests guard the package:
-
-- **Script tests** (`.agents/skills/tool-ui/tests/`) — regression coverage for the CLI scripts. Validates SKILL.md references, script syntax, and data integrity.
-- **Docs contract tests** (`lib/tests/tool-ui/docs/`) — guards docs-site consistency, ensuring registry entries, preview configs, and presets stay aligned.
+Script tests in `.agents/skills/tool-ui/tests/` provide regression coverage for the CLI scripts. They validate SKILL.md references, script syntax, and data integrity.
