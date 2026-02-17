@@ -22,5 +22,5 @@ export * as SharedToolUi from "./shared";
 export * as StatsDisplayToolUi from "./stats-display";
 export * as TerminalToolUi from "./terminal";
 export * as VideoToolUi from "./video";
-export * as WeatherWidgetToolUi from "./weather-widget";
+export * as WeatherWidgetToolUi from "./weather-widget/runtime";
 export * as XPostToolUi from "./x-post";

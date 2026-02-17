@@ -15,6 +15,8 @@ import {
 import type { WeatherWidgetRuntimeProps } from "./schema-runtime";
 import { WeatherDataOverlay } from "./weather-data-overlay";
 
+type TimeCheckpoint = "dawn" | "noon" | "dusk" | "midnight";
+
 export function WeatherWidget({
   version: _version,
   id,
@@ -70,7 +72,12 @@ export function WeatherWidget({
   const timeOfDay = resolvedTime.timeOfDay;
   const tunedOverrides =
     TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES[current.conditionCode];
-  const glassParams = tunedOverrides?.[getNearestCheckpoint(timeOfDay)]?.glass;
+  const checkpoint = getNearestCheckpoint(timeOfDay) as TimeCheckpoint;
+  const checkpointOverrides = tunedOverrides?.[checkpoint];
+  const glassParams =
+    checkpointOverrides && "glass" in checkpointOverrides
+      ? checkpointOverrides.glass
+      : undefined;
   const brightness = getSceneBrightnessFromTimeOfDay(timeOfDay, current.conditionCode);
   const weatherTheme = getWeatherTheme(brightness);
   const isWeatherDark = weatherTheme === "dark";
@@ -92,6 +99,7 @@ export function WeatherWidget({
       >
         {effectsEnabled && (
           <EffectCompositorRuntime
+            className="absolute inset-0"
             conditionCode={current.conditionCode}
             windSpeed={current.windSpeed}
             precipitationLevel={current.precipitationLevel}
