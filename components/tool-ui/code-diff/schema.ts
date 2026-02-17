@@ -6,7 +6,7 @@ import {
   ToolUIRoleSchema,
 } from "../shared/schema";
 
-export const CodeDiffPropsSchema = z.object({
+const CodeDiffPropsSchemaBase = z.object({
   id: ToolUIIdSchema,
   role: ToolUIRoleSchema.optional(),
   receipt: ToolUIReceiptSchema.optional(),
@@ -21,11 +21,38 @@ export const CodeDiffPropsSchema = z.object({
   className: z.string().optional(),
 });
 
+function validateCodeDiffInputMode(
+  data: { patch?: string; oldCode?: string; newCode?: string },
+  ctx: z.RefinementCtx,
+) {
+  const hasPatch = !!data.patch;
+  const hasFiles = !!data.oldCode || !!data.newCode;
+
+  if (!hasPatch && !hasFiles) {
+    ctx.addIssue({
+      code: "custom",
+      message:
+        "Provide either a patch string or at least one of oldCode/newCode",
+    });
+  }
+
+  if (hasPatch && hasFiles) {
+    ctx.addIssue({
+      code: "custom",
+      message:
+        "Cannot mix patch mode with oldCode/newCode — use one or the other",
+    });
+  }
+}
+
+export const CodeDiffPropsSchema =
+  CodeDiffPropsSchemaBase.superRefine(validateCodeDiffInputMode);
+
 export type CodeDiffProps = z.infer<typeof CodeDiffPropsSchema>;
 
-export const SerializableCodeDiffSchema = CodeDiffPropsSchema.omit({
+export const SerializableCodeDiffSchema = CodeDiffPropsSchemaBase.omit({
   className: true,
-});
+}).superRefine(validateCodeDiffInputMode);
 
 export type SerializableCodeDiff = z.infer<typeof SerializableCodeDiffSchema>;
 

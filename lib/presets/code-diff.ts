@@ -10,7 +10,11 @@ export type CodeDiffPresetName =
   | "split";
 
 function escape(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/`/g, "\\`");
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/`/g, "\\`")
+    .replace(/\$\{/g, "\\${");
 }
 
 function generateCodeDiffCode(data: SerializableCodeDiff): string {
