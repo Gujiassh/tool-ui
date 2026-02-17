@@ -15,7 +15,7 @@ import {
   Layers,
   Sparkles,
 } from "lucide-react";
-import { WeatherWidget } from "@/lib/weather-authoring/weather-widget";
+import { WeatherWidget as AuthoringWeatherWidget } from "@/lib/weather-authoring/weather-widget";
 import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 import type { WeatherEffectLayer } from "@/lib/weather-authoring/weather-widget/effects";
 import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
@@ -1099,7 +1099,7 @@ export default function WeatherCompositorSandbox() {
                   ? "bg-blue-500/30 text-blue-300"
                   : "text-white/60 hover:bg-white/10 hover:text-white"
               }`}
-              title="Show widget with old compositor"
+              title="Show authoring widget with custom compositor"
             >
               <Eye className="size-4" />
             </button>
@@ -1110,7 +1110,7 @@ export default function WeatherCompositorSandbox() {
                   ? "bg-purple-500/30 text-purple-300"
                   : "text-white/60 hover:bg-white/10 hover:text-white"
               }`}
-              title="Show unified canvas (new!)"
+              title="Show production-style unified runtime layering"
             >
               <Sparkles className="size-4" />
             </button>
@@ -1204,7 +1204,7 @@ export default function WeatherCompositorSandbox() {
                 }}
               />
               <div className="relative z-10 h-full w-full [&_[data-slot=card]]:h-full [&_[data-slot=card]]:border-0 [&_[data-slot=card]]:bg-transparent [&_[data-slot=card]]:shadow-none [&_[data-slot=weather-widget]]:h-full [&_[data-slot=weather-widget]]:max-w-none [&_article]:h-full">
-                <WeatherWidget
+                <AuthoringWeatherWidget
                   version="3.1"
                   id="unified-preview"
                   location={{ name: "San Francisco, CA" }}
@@ -1259,7 +1259,7 @@ export default function WeatherCompositorSandbox() {
               </div>
             </div>
           ) : previewMode === "widget" ? (
-            <WeatherWidget
+            <AuthoringWeatherWidget
               version="3.1"
               id="compositor-preview"
               location={{ name: "San Francisco, CA" }}

@@ -2,12 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { useControls, Leva } from "leva";
-import { WeatherWidget } from "@/lib/weather-authoring/weather-widget";
-import type {
-  TemperatureUnit,
-  WeatherWidgetCurrent,
-  WeatherWidgetPayload,
-} from "@/lib/weather-authoring/weather-widget/schema";
+import {
+  WeatherWidget,
+  type TemperatureUnit,
+  type WeatherWidgetCurrent,
+  type WeatherWidgetPayload,
+} from "@/components/tool-ui/weather-widget/runtime";
 
 interface LocationPreset {
   name: string;
