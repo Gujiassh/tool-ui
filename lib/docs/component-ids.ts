@@ -3,6 +3,7 @@ export const componentIds = [
   "chart",
   "citation",
   "code-block",
+  "code-diff",
   "data-table",
   "image",
   "image-gallery",

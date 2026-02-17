@@ -22,6 +22,7 @@ import { audioPresets } from "@/lib/presets/audio";
 import { chartPresets } from "@/lib/presets/chart";
 import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
+import { codeDiffPresets } from "@/lib/presets/code-diff";
 import { dataTablePresets } from "@/lib/presets/data-table";
 import { imagePresets } from "@/lib/presets/image";
 import { instagramPostPresets } from "@/lib/presets/instagram-post";
@@ -82,6 +83,9 @@ const Terminal = dynamic(() =>
 );
 const CodeBlockStandard = dynamic(() =>
   import("@/components/tool-ui/code-block").then((m) => m.CodeBlockStandard),
+);
+const CodeDiffStandard = dynamic(() =>
+  import("@/components/tool-ui/code-diff").then((m) => m.CodeDiffStandard),
 );
 const Chart = dynamic(() =>
   import("@/components/tool-ui/chart").then((m) => m.Chart),
@@ -281,6 +285,11 @@ export default function ComponentsGalleryPage() {
       componentId: "code-block",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
       render: () => <CodeBlockStandard {...codeBlockPresets.typescript.data} />,
+    },
+    {
+      componentId: "code-diff",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <CodeDiffStandard {...codeDiffPresets["bug-fix"].data} />,
     },
     {
       componentId: "chart",

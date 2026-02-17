@@ -344,6 +344,73 @@
       ]
     },
     {
+      "name": "code-diff",
+      "type": "registry:block",
+      "title": "Code Diff",
+      "description": "Code Diff component for AI interfaces.",
+      "dependencies": [
+        "@pierre/diffs",
+        "lucide-react",
+        "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "collapsible"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/code-diff/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/code-diff/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/code-diff/code-diff.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/code-diff/code-diff.tsx"
+        },
+        {
+          "path": "components/tool-ui/code-diff/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/code-diff/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/code-diff/pierre-dark-theme.js",
+          "type": "registry:file",
+          "target": "components/tool-ui/code-diff/pierre-dark-theme.js"
+        },
+        {
+          "path": "components/tool-ui/code-diff/pierre-light-theme.js",
+          "type": "registry:file",
+          "target": "components/tool-ui/code-diff/pierre-light-theme.js"
+        },
+        {
+          "path": "components/tool-ui/code-diff/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/code-diff/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/use-copy-to-clipboard.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/use-copy-to-clipboard.ts"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:block",
       "title": "Data Table",

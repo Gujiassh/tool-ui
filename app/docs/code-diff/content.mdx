@@ -1,0 +1,276 @@
+import { DocsHeader } from "../_components/docs-header";
+
+<DocsHeader
+  title="Code Diff"
+  description="Compare code changes with syntax-highlighted diffs."
+  mdxPath="app/docs/code-diff/content.mdx"
+/>
+
+When the assistant refactors code, fixes a bug, or proposes a configuration change, showing raw before-and-after text forces the user to play spot-the-difference. CodeDiff renders syntax-highlighted diffs with additions and deletions marked clearly, so the user can review changes at a glance. Supports two input modes: pass `oldCode` and `newCode` for file-level diffs, or pass a `patch` string for unified diffs from version control.
+
+**Role:** Information. Displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
+
+## Getting Started
+
+<Steps>
+
+<Step title="Install the component">
+
+Run this once from your project root.
+
+```bash
+npx shadcn@latest add @tool-ui/code-diff
+```
+
+</Step>
+
+<Step title="Install the peer dependency">
+
+CodeDiff uses [`@pierre/diffs`](https://www.npmjs.com/package/@pierre/diffs) for diff computation and rendering.
+
+```bash
+pnpm add @pierre/diffs
+```
+
+</Step>
+
+<Step title="Use it in your application">
+
+Render `CodeDiff` in your UI with tool-compatible props.
+
+<div className="[&_pre]:max-h-[30rem] [&_pre]:overflow-y-auto">
+
+```tsx
+import { CodeDiff } from "@/components/tool-ui/code-diff";
+
+export function MyComponent() {
+  return (
+    <CodeDiff.Standard
+      id="my-diff-example"
+      language="typescript"
+      filename="lib/auth.ts"
+      oldCode={`function checkAuth(token: string) {
+  if (!token) throw new Error("Missing token");
+  return jwt.verify(token, SECRET);
+}`}
+      newCode={`function checkAuth(token: string): AuthResult {
+  if (!token) return { ok: false, error: "missing_token" };
+  const decoded = jwt.verify(token, SECRET);
+  return { ok: true, user: decoded };
+}`}
+    />
+  );
+}
+```
+
+</div>
+
+</Step>
+
+<Step title="Register it in your runtime provider">
+
+Register this renderer so tool results display as `CodeDiff`.
+
+```tsx
+// Backend tool
+import { tool, jsonSchema } from "ai";
+
+const showCodeDiff = tool({
+  description: "Show a code diff",
+  inputSchema: jsonSchema<{}>({
+    type: "object",
+    properties: {},
+    additionalProperties: false,
+  }),
+  async execute() {
+    return {
+      id: "diff-1",
+      language: "typescript",
+      filename: "lib/auth.ts",
+      oldCode: "function checkAuth() { throw new Error(); }",
+      newCode: "function checkAuth(): Result { return { ok: false }; }",
+    };
+  },
+});
+
+// Frontend with assistant-ui
+import { type Toolkit } from "@assistant-ui/react";
+import { CodeDiff } from "@/components/tool-ui/code-diff";
+import { safeParseSerializableCodeDiff } from "@/components/tool-ui/code-diff/schema";
+import { createResultToolRenderer } from "@/components/tool-ui/shared";
+
+export const toolkit: Toolkit = {
+  showCodeDiff: {
+    type: "backend",
+    render: createResultToolRenderer({
+      safeParse: safeParseSerializableCodeDiff,
+      render: (parsedResult) => (
+        <CodeDiff.Standard {...parsedResult} />
+      ),
+    }),
+  },
+};
+```
+
+</Step>
+
+</Steps>
+
+## Key Features
+
+<FeatureGrid>
+  <Feature icon="GitCompareArrows" title="Two input modes">
+    Pass `oldCode`/`newCode` for file diffs, or `patch` for unified diffs
+  </Feature>
+  <Feature icon="Palette" title="Syntax highlighting">
+    Language-aware highlighting powered by @pierre/diffs
+  </Feature>
+  <Feature icon="FoldVertical" title="Collapsible diffs">
+    Collapse long diffs with `maxCollapsedLines`
+  </Feature>
+  <Feature icon="FileCode" title="Filename header">
+    Show the file path and language in the header bar
+  </Feature>
+</FeatureGrid>
+
+## Input Modes
+
+### Mode A: File Diff
+
+Pass `oldCode` and `newCode` to compare two versions of a file. CodeDiff computes the diff internally.
+
+```tsx
+<CodeDiff.Standard
+  id="file-diff"
+  language="typescript"
+  filename="hooks/use-pagination.ts"
+  oldCode={`const totalPages = Math.floor(items.length / pageSize);`}
+  newCode={`const totalPages = Math.ceil(items.length / pageSize);`}
+/>
+```
+
+### Mode B: Unified Patch
+
+Pass a `patch` string (unified diff format) when working with version control output. This is useful when you already have a diff from `git diff` or a pull request.
+
+```tsx
+<CodeDiff.Standard
+  id="patch-diff"
+  language="typescript"
+  filename="api/routes.ts"
+  patch={`@@ -14,6 +14,10 @@ export function registerRoutes(app: Express) {
+   app.get("/api/users", listUsers);
+   app.post("/api/users", createUser);
+-  app.put("/api/users/:id", updateUser);
++  app.patch("/api/users/:id", updateUser);
+   app.delete("/api/users/:id", deleteUser);
++
++  app.get("/healthz", (_req, res) => {
++    res.json({ status: "ok" });
++  });
+ }`}
+/>
+```
+
+## Split View
+
+Set `diffStyle="split"` for a side-by-side comparison. This works well for refactors where you want to see old and new code next to each other. Split view needs more horizontal space than unified — it works best in wide containers.
+
+```tsx
+<CodeDiff.Standard
+  id="split-example"
+  language="typescript"
+  filename="utils/format.ts"
+  diffStyle="split"
+  oldCode={oldCode}
+  newCode={newCode}
+/>
+```
+
+## Props
+
+### Core Props
+
+<TypeTable
+  type={{
+    oldCode: {
+      description: "Original code content (Mode A)",
+      type: "string",
+    },
+    newCode: {
+      description: "Modified code content (Mode A)",
+      type: "string",
+    },
+    patch: {
+      description: "Unified diff string (Mode B)",
+      type: "string",
+    },
+    language: {
+      description: "Programming language for syntax highlighting",
+      type: "string",
+      default: '"text"',
+    },
+    filename: {
+      description: "File path displayed in the header",
+      type: "string",
+    },
+  }}
+/>
+
+### Display Options
+
+<TypeTable
+  type={{
+    lineNumbers: {
+      description: "Show or hide line numbers",
+      type: '"visible" | "hidden"',
+      default: '"visible"',
+    },
+    diffStyle: {
+      description: "Unified (interleaved) or split (side-by-side) view",
+      type: '"unified" | "split"',
+      default: '"unified"',
+    },
+    maxCollapsedLines: {
+      description: "Collapse the diff when it exceeds this many lines",
+      type: "number",
+    },
+  }}
+/>
+
+### Standard Props
+
+<TypeTable
+  type={{
+    id: {
+      description: "Unique identifier for this component",
+      type: "string",
+      required: true,
+    },
+    className: {
+      description: "Additional CSS classes",
+      type: "string",
+    },
+  }}
+/>
+
+Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `CodeDiff`.
+
+## Dependency
+
+CodeDiff requires [`@pierre/diffs`](https://www.npmjs.com/package/@pierre/diffs) as a peer dependency. This package handles diff computation and rendering. Install it alongside the component:
+
+```bash
+pnpm add @pierre/diffs
+```
+
+## Accessibility
+
+- Collapsible sections use Radix Collapsible with proper ARIA attributes
+- Copy button is keyboard-accessible with focus indication
+- Diff content is selectable and works with screen readers
+
+## Related
+
+- [Code Block](/docs/code-block): single-file syntax-highlighted code display
+- [Terminal](/docs/terminal): command-line output and logs

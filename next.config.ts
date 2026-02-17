@@ -4,6 +4,7 @@ import createMDX from "@next/mdx";
 const config: NextConfig = {
   reactStrictMode: true,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  transpilePackages: ["@pierre/diffs"],
   experimental: {
     optimizePackageImports: [
       "@radix-ui/react-accordion",
