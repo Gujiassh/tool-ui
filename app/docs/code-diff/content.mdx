@@ -2,11 +2,11 @@ import { DocsHeader } from "../_components/docs-header";
 
 <DocsHeader
   title="Code Diff"
-  description="Compare code changes with syntax-highlighted diffs."
+  description="Display syntax-highlighted diffs."
   mdxPath="app/docs/code-diff/content.mdx"
 />
 
-When the assistant refactors code, fixes a bug, or proposes a configuration change, showing raw before-and-after text forces the user to play spot-the-difference. CodeDiff renders syntax-highlighted diffs with additions and deletions marked clearly, so the user can review changes at a glance. Supports two input modes: pass `oldCode` and `newCode` for file-level diffs, or pass a `patch` string for unified diffs from version control.
+Dumping raw before-and-after text into a chat message forces users to play spot-the-difference. CodeDiff renders syntax-highlighted diffs with additions and deletions marked clearly, so changes are obvious at a glance. Pass `oldCode` and `newCode` to compare two versions of a file, or pass a `patch` string for unified diffs straight from version control.
 
 **Role:** Information. Displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
@@ -135,7 +135,7 @@ export const toolkit: Toolkit = {
 
 ## Input Modes
 
-### Mode A: File Diff
+### File comparison
 
 Pass `oldCode` and `newCode` to compare two versions of a file. CodeDiff computes the diff internally.
 
@@ -149,16 +149,18 @@ Pass `oldCode` and `newCode` to compare two versions of a file. CodeDiff compute
 />
 ```
 
-### Mode B: Unified Patch
+### Unified patch
 
-Pass a `patch` string (unified diff format) when working with version control output. This is useful when you already have a diff from `git diff` or a pull request.
+Pass a `patch` string (unified diff format) when you already have output from `git diff` or a pull request.
 
 ```tsx
 <CodeDiff.Standard
   id="patch-diff"
   language="typescript"
   filename="api/routes.ts"
-  patch={`@@ -14,6 +14,10 @@ export function registerRoutes(app: Express) {
+  patch={`--- a/api/routes.ts
++++ b/api/routes.ts
+@@ -14,6 +14,10 @@ export function registerRoutes(app: Express) {
    app.get("/api/users", listUsers);
    app.post("/api/users", createUser);
 -  app.put("/api/users/:id", updateUser);
@@ -174,7 +176,7 @@ Pass a `patch` string (unified diff format) when working with version control ou
 
 ## Split View
 
-Set `diffStyle="split"` for a side-by-side comparison. This works well for refactors where you want to see old and new code next to each other. Split view needs more horizontal space than unified — it works best in wide containers.
+Set `diffStyle="split"` for a side-by-side comparison. Split view shows what was removed alongside what replaced it, making structural changes — renamed parameters, reordered logic, signature rewrites — easier to follow than interleaved lines. It needs more horizontal space than unified, so it works best in wide containers.
 
 ```tsx
 <CodeDiff.Standard
@@ -194,15 +196,15 @@ Set `diffStyle="split"` for a side-by-side comparison. This works well for refac
 <TypeTable
   type={{
     oldCode: {
-      description: "Original code content (Mode A)",
+      description: "Original code content (file comparison mode)",
       type: "string",
     },
     newCode: {
-      description: "Modified code content (Mode A)",
+      description: "Modified code content (file comparison mode)",
       type: "string",
     },
     patch: {
-      description: "Unified diff string (Mode B)",
+      description: "Unified diff string (patch mode)",
       type: "string",
     },
     language: {
@@ -255,14 +257,6 @@ Set `diffStyle="split"` for a side-by-side comparison. This works well for refac
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `CodeDiff`.
-
-## Dependency
-
-CodeDiff requires [`@pierre/diffs`](https://www.npmjs.com/package/@pierre/diffs) as a peer dependency. This package handles diff computation and rendering. Install it alongside the component:
-
-```bash
-pnpm add @pierre/diffs
-```
 
 ## Accessibility
 

@@ -197,7 +197,9 @@ export async function rateLimit(req: Request) {
       filename: "api/routes.ts",
       lineNumbers: "visible",
       diffStyle: "unified",
-      patch: `@@ -14,8 +14,12 @@ export function registerRoutes(app: Express) {
+      patch: `--- a/api/routes.ts
++++ b/api/routes.ts
+@@ -14,8 +14,12 @@ export function registerRoutes(app: Express) {
    app.get("/api/users", listUsers);
    app.get("/api/users/:id", getUser);
    app.post("/api/users", createUser);
