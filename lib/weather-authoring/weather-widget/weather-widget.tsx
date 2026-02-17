@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { cn, Card } from "./_adapter";
 import { EffectCompositor } from "./effects/effect-compositor";
 import {
@@ -7,7 +9,7 @@ import {
   getWeatherTheme,
 } from "./effects/parameter-mapper";
 import { getNearestCheckpoint } from "./effects/tuning";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./effects/tuned-presets";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./effects/generated/tuned-presets.generated";
 import type { WeatherWidgetProps } from "./schema";
 import { resolveWeatherTime } from "./time";
 import { WeatherDataOverlay } from "./weather-data-overlay";
@@ -25,10 +27,40 @@ export function WeatherWidget({
   effects,
   customEffectProps,
 }: WeatherWidgetProps) {
-  const prefersReducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-  const reducedMotion = effects?.reducedMotion ?? Boolean(prefersReducedMotion);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return;
+    }
+
+    const mediaQueryList = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQueryList.matches);
+
+    const handleMotionPreferenceChange = (event: MediaQueryListEvent) => {
+      setPrefersReducedMotion(event.matches);
+    };
+
+    if (typeof mediaQueryList.addEventListener === "function") {
+      mediaQueryList.addEventListener("change", handleMotionPreferenceChange);
+      return () => {
+        mediaQueryList.removeEventListener("change", handleMotionPreferenceChange);
+      };
+    }
+
+    mediaQueryList.addListener(handleMotionPreferenceChange);
+    return () => {
+      mediaQueryList.removeListener(handleMotionPreferenceChange);
+    };
+  }, []);
+
+  const reducedMotion = effects?.reducedMotion ?? prefersReducedMotion;
   const effectsEnabled = effects?.enabled !== false && !reducedMotion;
 
   const overlayTimeOfDay = customEffectProps?.celestial?.timeOfDay;
@@ -92,6 +124,7 @@ export function WeatherWidget({
           timeOfDay={timeOfDay}
           timestamp={updatedAt}
           glassParams={glassParams}
+          reducedMotion={reducedMotion}
         />
       </Card>
     </article>

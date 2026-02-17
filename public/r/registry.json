@@ -1058,11 +1058,6 @@
           "target": "components/tool-ui/shared/contract.ts"
         },
         {
-          "path": "components/tool-ui/shared/embedded-actions.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/embedded-actions.ts"
-        },
-        {
           "path": "components/tool-ui/shared/parse.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/parse.ts"
@@ -1200,11 +1195,6 @@
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/embedded-actions.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/embedded-actions.ts"
         },
         {
           "path": "components/tool-ui/shared/parse.ts",
@@ -1362,11 +1352,6 @@
           "path": "components/tool-ui/shared/contract.ts",
           "type": "registry:lib",
           "target": "components/tool-ui/shared/contract.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/embedded-actions.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/embedded-actions.ts"
         },
         {
           "path": "components/tool-ui/shared/parse.ts",
@@ -1725,172 +1710,13 @@
       "title": "Weather Widget",
       "description": "Display weather conditions and forecasts.",
       "dependencies": [
-        "lucide-react",
-        "zod"
-      ],
-      "registryDependencies": [
-        "card"
+        "lucide-react"
       ],
       "files": [
         {
-          "path": "components/tool-ui/shared/contract.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/contract.ts"
-        },
-        {
-          "path": "components/tool-ui/shared/parse.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/shared/parse.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/_adapter.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/_adapter.tsx"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/assets/moon-texture.jpg",
+          "path": "components/tool-ui/weather-widget/generated/weather-runtime-core.generated.js",
           "type": "registry:file",
-          "target": "components/tool-ui/weather-widget/assets/moon-texture.jpg"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/canvas-resolver-base.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/canvas-resolver-base.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/canvas-resolver.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/canvas-resolver.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/celestial-canvas.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/effects/celestial-canvas.tsx"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/checkpoint-overrides.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/checkpoint-overrides.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/custom-effect-props.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/custom-effect-props.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/effect-compositor-custom-props.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/effect-compositor-custom-props.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/effect-compositor-quality.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/effect-compositor-quality.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/effect-compositor.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/effects/effect-compositor.tsx"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/glass-panel-svg.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/effects/glass-panel-svg.tsx"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/glass-style-resolver.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/glass-style-resolver.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/index.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/index.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/parameter-mapper.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/parameter-mapper.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/tuned-presets.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/tuned-presets.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/tuning.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/tuning.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/types.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/types.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/use-glass-region.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/use-glass-region.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/use-weather-effects-renderer.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/use-weather-effects-renderer.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-compositor-types.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-compositor-types.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effect-gl.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-effect-gl.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effect-render-passes.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-effect-render-passes.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effect-shaders.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-effect-shaders.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effects-canvas.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/effects/weather-effects-canvas.tsx"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effects-defaults.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-effects-defaults.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effects-props.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-effects-props.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-effects-types.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-effects-types.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/effects/weather-webgl-budget.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/effects/weather-webgl-budget.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/index.tsx",
-          "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/index.tsx"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/README.md",
-          "type": "registry:file",
-          "target": "components/tool-ui/weather-widget/README.md"
+          "target": "components/tool-ui/weather-widget/generated/weather-runtime-core.generated.js"
         },
         {
           "path": "components/tool-ui/weather-widget/runtime.ts",
@@ -1898,14 +1724,9 @@
           "target": "components/tool-ui/weather-widget/runtime.ts"
         },
         {
-          "path": "components/tool-ui/weather-widget/schema.ts",
+          "path": "components/tool-ui/weather-widget/schema-runtime.ts",
           "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/schema.ts"
-        },
-        {
-          "path": "components/tool-ui/weather-widget/time.ts",
-          "type": "registry:lib",
-          "target": "components/tool-ui/weather-widget/time.ts"
+          "target": "components/tool-ui/weather-widget/schema-runtime.ts"
         },
         {
           "path": "components/tool-ui/weather-widget/weather-data-overlay.tsx",
@@ -1913,9 +1734,9 @@
           "target": "components/tool-ui/weather-widget/weather-data-overlay.tsx"
         },
         {
-          "path": "components/tool-ui/weather-widget/weather-widget.tsx",
+          "path": "components/tool-ui/weather-widget/weather-widget-container.tsx",
           "type": "registry:component",
-          "target": "components/tool-ui/weather-widget/weather-widget.tsx"
+          "target": "components/tool-ui/weather-widget/weather-widget-container.tsx"
         }
       ]
     },

@@ -10,7 +10,7 @@ import {
   type SnowParams,
   type InteractionParams,
   type LayerToggles,
-} from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
+} from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 
 export default function WeatherEffectsSandbox() {
   const layers = useControls("Layers", {

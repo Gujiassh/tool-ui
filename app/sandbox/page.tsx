@@ -22,7 +22,7 @@ const sandboxes = [
   {
     href: "/sandbox/weather-compositor",
     title: "Weather Compositor",
-    description: "Full tuning tool with condition presets and export/import",
+    description: "Authoring-only custom compositor with condition presets and export/import",
     icon: SlidersHorizontal,
     featured: true,
   },
@@ -36,13 +36,13 @@ const sandboxes = [
   {
     href: "/sandbox/weather-widget",
     title: "Weather Widget",
-    description: "Complete widget component preview",
+    description: "Production runtime widget preview",
     icon: ThermometerSun,
   },
   {
     href: "/sandbox/weather-widget-stress",
     title: "Weather Widget Stress Lab",
-    description: "Stress test variants, performance, and edge cases",
+    description: "Production runtime stress test (WebGL-safe)",
     icon: ThermometerSun,
   },
   {

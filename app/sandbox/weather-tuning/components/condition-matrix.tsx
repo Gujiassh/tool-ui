@@ -1,6 +1,6 @@
 "use client";
 
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import { WEATHER_CONDITIONS } from "../../weather-compositor/presets";
 import { ConditionCard } from "./condition-card";
 import type { ConditionCheckpoints } from "../types";

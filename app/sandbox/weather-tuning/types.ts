@@ -1,4 +1,4 @@
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import type { ConditionOverrides } from "../weather-compositor/presets";
 
 export type CheckpointStatus = "pending" | "reviewed";
@@ -26,4 +26,4 @@ export interface TuningState {
   signedOff: Set<WeatherConditionCode>;
 }
 
-export type { TimeCheckpoint } from "@/components/tool-ui/weather-widget/effects/tuning";
+export type { TimeCheckpoint } from "@/lib/weather-authoring/weather-widget/effects/tuning";

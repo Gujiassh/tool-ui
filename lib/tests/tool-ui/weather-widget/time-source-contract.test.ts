@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { resolveWeatherTime } from "@/components/tool-ui/weather-widget/time";
+import { resolveWeatherTime } from "@/lib/weather-authoring/weather-widget/time";
 
 describe("weather-widget time precedence", () => {
   test("prefers time.timeBucket over localTimeOfDay and updatedAt", () => {

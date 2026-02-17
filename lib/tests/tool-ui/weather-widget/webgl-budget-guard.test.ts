@@ -6,7 +6,7 @@ import {
   releaseWeatherWebglBudgetSlotOnInitFailure,
   setMaxConcurrentWeatherWebglCanvases,
   tryAcquireWeatherWebglCanvasBudgetSlot,
-} from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
+} from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 
 describe("weather-effects-canvas WebGL budget guard", () => {
   beforeEach(() => {

@@ -44,8 +44,8 @@ import * as TerminalUi from "@/components/tool-ui/terminal";
 import * as TerminalSchema from "@/components/tool-ui/terminal/schema";
 import * as VideoUi from "@/components/tool-ui/video";
 import * as VideoSchema from "@/components/tool-ui/video/schema";
-import * as WeatherWidgetUi from "@/components/tool-ui/weather-widget";
-import * as WeatherWidgetSchema from "@/components/tool-ui/weather-widget/schema";
+import * as WeatherWidgetUi from "@/lib/weather-authoring/weather-widget";
+import * as WeatherWidgetSchema from "@/lib/weather-authoring/weather-widget/schema";
 import * as XPostUi from "@/components/tool-ui/x-post";
 import * as XPostSchema from "@/components/tool-ui/x-post/schema";
 

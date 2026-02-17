@@ -2,7 +2,7 @@ import {
   mapWeatherCompositorParamsToCanvasProps,
   type WeatherStudioCompositorParams,
   type WeatherEffectsCanvasProps,
-} from "@/components/tool-ui/weather-widget/effects";
+} from "@/lib/weather-authoring/weather-widget/effects";
 import type { FullCompositorParams } from "../../weather-compositor/presets";
 
 /**

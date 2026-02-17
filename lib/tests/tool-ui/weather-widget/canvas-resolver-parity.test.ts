@@ -5,8 +5,8 @@ import {
   TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
   resolveWeatherEffectsCanvasProps,
   type TimeCheckpoint,
-} from "@/components/tool-ui/weather-widget/effects";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+} from "@/lib/weather-authoring/weather-widget/effects";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   getRawBaseParamsForCondition,
   mergeWithOverrides,

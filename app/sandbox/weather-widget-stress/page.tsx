@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Leva, useControls, button } from "leva";
-import { WeatherWidget } from "@/components/tool-ui/weather-widget";
-import type {
+import {
+  WeatherWidget,
   ForecastDay,
   PrecipitationLevel,
   TemperatureUnit,
   WeatherConditionCode,
-} from "@/components/tool-ui/weather-widget/schema";
+} from "@/components/tool-ui/weather-widget/runtime";
 import { cn } from "@/lib/ui/cn";
 
 const CONDITIONS: WeatherConditionCode[] = [

@@ -1,13 +1,16 @@
 import { writeFile } from "fs/promises";
 
-import type { WeatherConditionCode } from "../../../../components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "../../../../lib/weather-authoring/weather-widget/schema";
 import type { CheckpointOverrides } from "../../../sandbox/weather-compositor/presets";
 import {
   buildCanonicalToolUiPresetsForEditedConditions,
-  generateToolUiTypeScript,
   replaceEditedConditions,
 } from "../../../sandbox/weather-tuning/lib/tool-ui-export";
-import type { WeatherEffectsTunedPresets } from "../../../../components/tool-ui/weather-widget/effects/tuning";
+import type { WeatherEffectsTunedPresets } from "../../../../lib/weather-authoring/weather-widget/effects/tuning";
+import {
+  canonicalizeWeatherPresetData,
+  writeWeatherRuntimeArtifacts,
+} from "../../../../lib/weather-codegen/compile-weather-runtime";
 import {
   readToolUiTunedPresetsFromDisk,
   TOOL_UI_TUNED_PRESETS_PATH,
@@ -37,7 +40,6 @@ export async function POST(request: Request) {
     return new Response("Missing 'checkpointOverrides' field.", { status: 400 });
   }
 
-  const signedOff = new Set<WeatherConditionCode>(payload.signedOff ?? []);
   if (Object.keys(payload.checkpointOverrides).length === 0) {
     return new Response("No tuning changes to apply.", { status: 400 });
   }
@@ -61,12 +63,20 @@ export async function POST(request: Request) {
   }
 
   const merged = replaceEditedConditions(base, canonicalEditedConditions);
-
-  const content = generateToolUiTypeScript(merged, signedOff);
+  const canonicalMerged = canonicalizeWeatherPresetData(merged) as WeatherEffectsTunedPresets;
+  const content = `${JSON.stringify(canonicalMerged, null, 2)}\n`;
   await writeFile(TOOL_UI_TUNED_PRESETS_PATH, content, "utf8");
+  const generated = await writeWeatherRuntimeArtifacts(process.cwd());
+
+  const updatedArtifacts = [
+    "lib/weather-authoring/presets/tuned-presets.json",
+    ...generated.written,
+  ];
+
   return Response.json({
     ok: true,
-    path: "components/tool-ui/weather-widget/effects/tuned-presets.ts",
-    checkpointOverrides: mapToolUiPresetsToCompositor(merged),
+    path: "lib/weather-authoring/presets/tuned-presets.json",
+    updatedArtifacts,
+    checkpointOverrides: mapToolUiPresetsToCompositor(canonicalMerged),
   });
 }

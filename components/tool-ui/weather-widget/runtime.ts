@@ -1,16 +1,13 @@
 /**
- * Minimal, production-focused Weather Widget surface.
+ * Start here when wiring the Weather Widget in your app.
  *
- * Prefer importing from this module in application code.
- * Use `index.tsx` only when you need lower-level internals.
+ * Import `WeatherWidget` and the runtime types from this file for production use.
+ * Reach for `index.tsx` only if you're actively working on authoring/debug internals.
  */
-export { WeatherWidget } from "./weather-widget";
+export { WeatherWidget } from "./weather-widget-container";
 export {
-  WeatherWidgetPayloadSchema,
-  parseWeatherWidgetPayload,
-  safeParseWeatherWidgetPayload,
   type WeatherWidgetPayload,
-  type WeatherWidgetProps,
+  type WeatherWidgetRuntimeProps as WeatherWidgetProps,
   type WeatherWidgetCurrent,
   type WeatherWidgetTime,
   type WeatherWidgetLocation,
@@ -18,4 +15,4 @@ export {
   type ForecastDay,
   type TemperatureUnit,
   type PrecipitationLevel,
-} from "./schema";
+} from "./schema-runtime";

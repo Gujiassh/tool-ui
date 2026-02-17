@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
-import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
+import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
 import {
   CONDITION_LABELS,

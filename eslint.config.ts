@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
     "**/.next/**",
     "**/out/**",
     "**/next-env.d.ts",
+    "components/tool-ui/weather-widget/generated/**",
   ]),
 
   // Next.js recommended configs (native flat format in v16, includes React)

@@ -41,7 +41,9 @@ export function getMoonPhase(timestamp?: string): number {
     (date.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
   const synodicMonth = 29.530588853;
 
-  return (daysSinceNewMoon % synodicMonth) / synodicMonth;
+  const phaseDays =
+    ((daysSinceNewMoon % synodicMonth) + synodicMonth) % synodicMonth;
+  return phaseDays / synodicMonth;
 }
 
 /**

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveGlassBackdropFilterStyles } from "@/components/tool-ui/weather-widget/effects";
+import { resolveGlassBackdropFilterStyles } from "@/lib/weather-authoring/weather-widget/effects";
 
 describe("resolveGlassBackdropFilterStyles", () => {
   it("returns the SVG glass styles when backdrop-filter is present", () => {

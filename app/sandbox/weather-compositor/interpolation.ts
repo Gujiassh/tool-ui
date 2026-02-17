@@ -4,7 +4,7 @@ import {
   TIME_CHECKPOINT_ORDER,
   getNearestCheckpoint as getNearestCheckpointCore,
   type TimeCheckpoint,
-} from "@/components/tool-ui/weather-widget/effects/tuning";
+} from "@/lib/weather-authoring/weather-widget/effects/tuning";
 
 export interface CheckpointOverrides {
   dawn: ConditionOverrides;

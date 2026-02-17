@@ -4,7 +4,7 @@ import {
   WeatherWidgetPayloadSchema,
   safeParseWeatherWidgetPayload,
   type WeatherWidgetPayload,
-} from "@/components/tool-ui/weather-widget/schema";
+} from "@/lib/weather-authoring/weather-widget/schema";
 
 function makeBasePayload(): WeatherWidgetPayload {
   return {

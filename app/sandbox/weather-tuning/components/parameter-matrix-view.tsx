@@ -6,8 +6,8 @@ import {
   WeatherEffectsCanvas,
   getMaxConcurrentWeatherWebglCanvases,
   setMaxConcurrentWeatherWebglCanvases,
-} from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+} from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   WEATHER_CONDITIONS,
   CONDITION_LABELS,

@@ -3,11 +3,11 @@
 import { useMemo } from "react";
 import { RotateCcw, Eye, EyeOff, CheckCircle2, Copy } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   WeatherEffectsCanvas,
   type WeatherEffectsCanvasProps,
-} from "@/components/tool-ui/weather-widget/effects";
+} from "@/lib/weather-authoring/weather-widget/effects";
 import { WeatherDataOverlay, createWeatherOverlayStubData } from "./weather-data-overlay";
 import { GlassControls } from "./glass-controls";
 import { CONDITION_LABELS } from "../../weather-compositor/presets";

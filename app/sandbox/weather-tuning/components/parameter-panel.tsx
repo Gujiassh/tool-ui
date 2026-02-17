@@ -25,7 +25,7 @@ import {
 } from "../../weather-compositor/presets";
 import { ParameterRow, ParameterToggleRow } from "./parameter-row";
 import type { TimeCheckpoint } from "../types";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   RAIN_PARAM_LIMITS,
   SNOW_FALL_SPEED_MAX,

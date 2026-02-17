@@ -33,7 +33,7 @@ export type {
 } from "./weather-effects-types";
 
 export * from "./tuning";
-export { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
+export { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./generated/tuned-presets.generated";
 
 export { GlassPanel, GlassPanelCSS, GlassPanelUnderlay, useGlassStyles } from "./glass-panel-svg";
 export { resolveGlassBackdropFilterStyles } from "./glass-style-resolver";

@@ -142,6 +142,16 @@ export interface PostProcessParams {
   godRaySamples: number;
 }
 
+export interface GlassParams {
+  enabled: boolean;
+  depth: number;
+  strength: number;
+  chromaticAberration: number;
+  blur: number;
+  brightness: number;
+  saturation: number;
+}
+
 export interface LayerToggles {
   celestial: boolean;
   clouds: boolean;
@@ -163,6 +173,7 @@ export interface WeatherEffectsCanvasProps {
   rain?: Partial<RainParams>;
   lightning?: Partial<LightningParams>;
   snow?: Partial<SnowParams>;
+  glass?: Partial<GlassParams>;
   interactions?: Partial<InteractionParams>;
   post?: Partial<PostProcessParams>;
 }

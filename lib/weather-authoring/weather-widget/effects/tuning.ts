@@ -7,6 +7,7 @@ import type {
   RainParams,
   LightningParams,
   SnowParams,
+  GlassParams,
   InteractionParams,
   PostProcessParams,
 } from "./weather-effects-types";
@@ -34,15 +35,7 @@ export interface WeatherEffectsOverrides {
   rain?: Partial<RainParams>;
   lightning?: Partial<LightningParams>;
   snow?: Partial<SnowParams>;
-  glass?: {
-    enabled?: boolean;
-    depth?: number;
-    strength?: number;
-    chromaticAberration?: number;
-    blur?: number;
-    brightness?: number;
-    saturation?: number;
-  };
+  glass?: Partial<GlassParams>;
   interactions?: Partial<InteractionParams>;
   post?: Partial<PostProcessParams>;
 }
@@ -96,12 +89,14 @@ export function applyWeatherEffectsOverrides(
   overrides: WeatherEffectsOverrides,
 ): WeatherEffectsCanvasProps {
   return {
+    ...base,
     layers: mergeGroup(base.layers, overrides.layers),
     celestial: mergeGroup(base.celestial, overrides.celestial),
     cloud: mergeGroup(base.cloud, overrides.cloud),
     rain: mergeGroup(base.rain, overrides.rain),
     lightning: mergeGroup(base.lightning, overrides.lightning),
     snow: mergeGroup(base.snow, overrides.snow),
+    glass: mergeGroup(base.glass, overrides.glass),
     interactions: mergeGroup(base.interactions, overrides.interactions),
     post: mergeGroup(base.post, overrides.post),
   };

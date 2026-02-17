@@ -3,10 +3,11 @@ import { describe, expect, test } from "vitest";
 import {
   configToRainProps,
   configToSnowProps,
+  getMoonPhase,
   getSceneBrightness,
   timeOfDayToSunAltitude,
   mapWeatherToEffects,
-} from "@/components/tool-ui/weather-widget/effects/parameter-mapper";
+} from "@/lib/weather-authoring/weather-widget/effects/parameter-mapper";
 
 describe("weather-widget parameter-mapper", () => {
   test("haze floors against scaled cloud darkness", () => {
@@ -63,5 +64,12 @@ describe("weather-widget parameter-mapper", () => {
     expect(config.celestial?.timeOfDay).toBe(0);
     expect(config.atmosphere.sunAltitude).toBeCloseTo(timeOfDayToSunAltitude(0), 6);
     expect(config.atmosphere.starVisibility).toBeGreaterThan(0);
+  });
+
+  test("getMoonPhase stays in [0, 1] for pre-2000 timestamps", () => {
+    const phase = getMoonPhase("1999-01-01T12:00:00Z");
+
+    expect(phase).toBeGreaterThanOrEqual(0);
+    expect(phase).toBeLessThanOrEqual(1);
   });
 });
