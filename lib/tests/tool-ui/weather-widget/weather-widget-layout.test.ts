@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 
-import { WeatherWidget } from "@/components/tool-ui/weather-widget";
+import { WeatherWidget } from "@/lib/weather-authoring/weather-widget";
 
 function getClassForDataSlot(html: string, dataSlot: string): string {
   const pattern = new RegExp(

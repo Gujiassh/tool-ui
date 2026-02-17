@@ -7,13 +7,13 @@ export {
   WeatherDataOverlay,
   type WeatherDataOverlayProps,
   type GlassEffectParams,
-} from "@/components/tool-ui/weather-widget";
+} from "@/lib/weather-authoring/weather-widget";
 
 import type {
   ForecastDay,
   TemperatureUnit,
   WeatherConditionCode,
-} from "@/components/tool-ui/weather-widget/schema";
+} from "@/lib/weather-authoring/weather-widget/schema";
 
 export interface WeatherOverlayStubData {
   location: string;

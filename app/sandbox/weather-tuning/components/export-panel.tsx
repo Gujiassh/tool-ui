@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, FileCode } from "lucide-react";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 import { hasAnyTuningDelta } from "../lib/has-any-tuning-delta";
 import { listUpdatedParams } from "../lib/list-updated-params";
@@ -92,7 +92,7 @@ export function ExportPanel({
       const filePath =
         typeof payload?.path === "string"
           ? payload.path
-          : "components/tool-ui/weather-widget/effects/tuned-presets.ts";
+          : "lib/weather-authoring/presets/tuned-presets.json";
 
       const updatedParams = listUpdatedParams(checkpointOverrides);
       const detail =

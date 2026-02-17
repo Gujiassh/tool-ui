@@ -116,4 +116,108 @@ describe("Tool UI registry artifacts", () => {
       "button",
     );
   });
+
+  it("ships weather-widget as runtime-entry closure without authoring-only effects files", async () => {
+    const artifacts = await buildToolUiRegistryArtifacts(getProjectRoot());
+    const weatherWidgetItem = artifacts.items.find(
+      (item) => item.name === "weather-widget",
+    );
+
+    expect(weatherWidgetItem, "missing registry item: weather-widget").toBeDefined();
+
+    const weatherPaths = new Set(
+      weatherWidgetItem?.files.map((file) => file.path) ?? [],
+    );
+    expect(weatherPaths.size).toBe(5);
+
+    expect(weatherPaths.has("components/tool-ui/weather-widget/runtime.ts")).toBe(
+      true,
+    );
+    expect(weatherPaths.has("components/tool-ui/weather-widget/schema-runtime.ts")).toBe(
+      true,
+    );
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/generated/weather-runtime-core.generated.js",
+      ),
+    ).toBe(true);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/weather-widget-container.tsx",
+      ),
+    ).toBe(true);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/weather-data-overlay.tsx",
+      ),
+    ).toBe(true);
+
+    expect(
+      weatherPaths.has("components/tool-ui/weather-widget/effects/index.ts"),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/tuned-presets.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/weather-effect-shaders.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/use-glass-region.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/glass-panel-svg.tsx",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/custom-effect-props.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/effect-compositor-custom-props.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/checkpoint-overrides.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/parameter-mapper.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/weather-effect-render-passes.ts",
+      ),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "components/tool-ui/weather-widget/effects/use-weather-effects-renderer.ts",
+      ),
+    ).toBe(false);
+    expect(weatherPaths.has("components/tool-ui/weather-widget/weather-widget.generated.js")).toBe(false);
+    expect(
+      weatherPaths.has("lib/weather-authoring/weather-widget/weather-widget-container.tsx"),
+    ).toBe(false);
+    expect(
+      weatherPaths.has(
+        "lib/weather-authoring/weather-widget/effects/parameter-mapper.ts",
+      ),
+    ).toBe(false);
+    expect(weatherPaths.has("components/tool-ui/weather-widget/schema.ts")).toBe(
+      false,
+    );
+    expect(weatherPaths.has("components/tool-ui/shared/contract.ts")).toBe(false);
+    expect(weatherPaths.has("components/tool-ui/shared/parse.ts")).toBe(false);
+  });
 });

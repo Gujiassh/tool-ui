@@ -1,5 +1,5 @@
 import { getTimeOfDay } from "./effects/parameter-mapper";
-import type { WeatherWidgetTime } from "./schema";
+import type { WeatherWidgetTime } from "./schema-runtime";
 
 export interface ResolveWeatherTimeInput {
   time?: WeatherWidgetTime;

@@ -1,4 +1,4 @@
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 import type { ConditionCheckpoints } from "../types";
 import { SESSION_KEY as LEGACY_WORKFLOW_STATE_STORAGE_KEY } from "./constants";

@@ -6,7 +6,7 @@ import { CloudCanvas } from "@/app/sandbox/cloud-effect/cloud-canvas";
 import { RainCanvas } from "@/app/sandbox/rain-effect/rain-canvas";
 import { LightningCanvas } from "@/app/sandbox/lightning-effect/lightning-canvas";
 import { SnowCanvas } from "@/app/sandbox/snow-effect/snow-canvas";
-import { CelestialCanvas } from "@/components/tool-ui/weather-widget/effects/celestial-canvas";
+import { CelestialCanvas } from "./celestial-canvas";
 import {
   Download,
   Upload,
@@ -15,10 +15,10 @@ import {
   Layers,
   Sparkles,
 } from "lucide-react";
-import { WeatherWidget } from "@/components/tool-ui/weather-widget";
-import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
-import type { WeatherEffectLayer } from "@/components/tool-ui/weather-widget/effects";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import { WeatherWidget } from "@/lib/weather-authoring/weather-widget";
+import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
+import type { WeatherEffectLayer } from "@/lib/weather-authoring/weather-widget/effects";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   WEATHER_CONDITIONS,
   CONDITION_LABELS,

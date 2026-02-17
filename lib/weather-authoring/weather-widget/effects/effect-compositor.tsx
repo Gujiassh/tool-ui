@@ -6,7 +6,7 @@ import type { EffectSettings } from "./types";
 import type { CustomEffectProps } from "./custom-effect-props";
 import { WeatherEffectsCanvas } from "./weather-effects-canvas";
 import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./tuned-presets";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./generated/tuned-presets.generated";
 import { type WeatherEffectsTunedPresets } from "./tuning";
 import {
   resolveWeatherEffectsCanvasProps,

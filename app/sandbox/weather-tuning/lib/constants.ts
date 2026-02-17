@@ -2,7 +2,7 @@ import {
   TIME_CHECKPOINTS as TOOL_UI_TIME_CHECKPOINTS,
   TIME_CHECKPOINT_ORDER as TOOL_UI_TIME_CHECKPOINT_ORDER,
   type TimeCheckpoint,
-} from "@/components/tool-ui/weather-widget/effects/tuning";
+} from "@/lib/weather-authoring/weather-widget/effects/tuning";
 
 export const TIME_CHECKPOINTS: Record<
   TimeCheckpoint,

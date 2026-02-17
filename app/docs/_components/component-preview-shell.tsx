@@ -18,6 +18,14 @@ const PREVIEW_MAX_WIDTH = 100;
 const VALID_VIEW_MODES = ["canvas", "chat", "code"] as const;
 type ViewMode = (typeof VALID_VIEW_MODES)[number];
 
+function toStablePanelIdSegment(value: string): string {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return normalized || "component";
+}
+
 function ViewModeToggle({
   value,
   onValueChange,
@@ -71,24 +79,31 @@ const RESIZE_HANDLE_STYLES = cn(
 const ResizablePreviewArea = memo(function ResizablePreviewArea({
   panelGroupRef,
   handleLayout,
+  panelIdBase,
   children,
 }: {
   panelGroupRef: React.RefObject<ImperativePanelGroupHandle | null>;
   handleLayout: (sizes: number[]) => void;
+  panelIdBase: string;
   children: ReactNode;
 }) {
   return (
     <PanelGroup
+      id={`${panelIdBase}-group`}
       ref={panelGroupRef}
       direction="horizontal"
       onLayout={handleLayout}
       className="group/canvas"
     >
-      <Panel defaultSize={7.5} minSize={0} />
-      <PanelResizeHandle className="group/handle relative w-4">
+      <Panel id={`${panelIdBase}-left`} defaultSize={7.5} minSize={0} />
+      <PanelResizeHandle
+        id={`${panelIdBase}-left-handle`}
+        className="group/handle relative w-4"
+      >
         <div className={RESIZE_HANDLE_STYLES} />
       </PanelResizeHandle>
       <Panel
+        id={`${panelIdBase}-center`}
         defaultSize={85}
         minSize={PREVIEW_MIN_WIDTH}
         maxSize={PREVIEW_MAX_WIDTH}
@@ -97,10 +112,13 @@ const ResizablePreviewArea = memo(function ResizablePreviewArea({
           {children}
         </div>
       </Panel>
-      <PanelResizeHandle className="group/handle relative w-4">
+      <PanelResizeHandle
+        id={`${panelIdBase}-right-handle`}
+        className="group/handle relative w-4"
+      >
         <div className={RESIZE_HANDLE_STYLES} />
       </PanelResizeHandle>
-      <Panel defaultSize={7.5} minSize={0} />
+      <Panel id={`${panelIdBase}-right`} defaultSize={7.5} minSize={0} />
     </PanelGroup>
   );
 });
@@ -132,6 +150,7 @@ export function ComponentPreviewShell({
     });
   const { copiedId, copy } = useCopyToClipboard();
   const copied = copiedId === COPY_ID;
+  const panelIdBase = `component-preview-${toStablePanelIdSegment(componentId)}`;
   const { panelGroupRef, handleLayout } = useResponsivePreview({
     minWidth: PREVIEW_MIN_WIDTH,
     maxWidth: PREVIEW_MAX_WIDTH,
@@ -253,6 +272,7 @@ export function ComponentPreviewShell({
                 <ResizablePreviewArea
                   panelGroupRef={panelGroupRef}
                   handleLayout={handleLayout}
+                  panelIdBase={panelIdBase}
                 >
                   {preview}
                 </ResizablePreviewArea>

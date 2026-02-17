@@ -14,18 +14,23 @@ import {
   Wind,
   type LucideIcon,
 } from "lucide-react";
-import { cn } from "./_adapter";
-import type { ForecastDay, TemperatureUnit, WeatherConditionCode } from "./schema";
+import { cn } from "@/lib/utils";
+import type {
+  ForecastDay,
+  TemperatureUnit,
+  WeatherConditionCode,
+} from "./schema-runtime";
 import {
   getSceneBrightnessFromTimeOfDay,
   getTimeOfDay,
   getWeatherTheme,
-  type WeatherTheme,
-} from "./effects/parameter-mapper";
+} from "./generated/weather-runtime-core.generated.js";
 import {
   resolveGlassBackdropFilterStyles,
-} from "./effects/glass-style-resolver";
-import { useGlassStyles } from "./effects/glass-panel-svg";
+  useGlassStyles,
+} from "./generated/weather-runtime-core.generated.js";
+
+type WeatherTheme = "light" | "dark";
 
 function getPeakIntensity(timeOfDay: number): number {
   const noonDistance = Math.abs(timeOfDay - 0.5);
@@ -96,6 +101,7 @@ export interface WeatherDataOverlayProps {
   timeOfDay?: number;
   timestamp?: string;
   className?: string;
+  reducedMotion?: boolean;
   /**
    * Glass refraction effect parameters for the forecast card.
    * When enabled, applies SVG displacement filter for realistic glass distortion.
@@ -128,6 +134,7 @@ export function WeatherDataOverlay({
   timeOfDay: timeOfDayProp,
   timestamp,
   className,
+  reducedMotion = false,
   glassParams,
 }: WeatherDataOverlayProps) {
   const timeOfDay =
@@ -183,6 +190,11 @@ export function WeatherDataOverlay({
     getWeatherTheme(getSceneBrightnessFromTimeOfDay(timeOfDay, conditionCode));
 
   useEffect(() => {
+    if (reducedMotion) {
+      setGlowState((prev) => ({ ...prev, intensity: 0 }));
+      return;
+    }
+
     const container = containerRef.current;
     if (!container) return;
 
@@ -234,7 +246,7 @@ export function WeatherDataOverlay({
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [reducedMotion]);
 
   const unitSymbol = unit === "celsius" ? "C" : "F";
   const peakIntensity = getPeakIntensity(timeOfDay);

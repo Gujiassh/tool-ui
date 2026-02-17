@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-import { observeCardDimensions } from "@/components/tool-ui/weather-widget/weather-data-overlay";
+import { observeCardDimensions } from "@/lib/weather-authoring/weather-widget/weather-data-overlay";
 
 describe("weather-data-overlay resize observer guard", () => {
   afterEach(() => {

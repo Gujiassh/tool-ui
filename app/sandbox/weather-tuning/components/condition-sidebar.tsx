@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/ui/cn";
 import { Check, Cloud, CloudRain, CloudSnow, Sun, Wind, Zap, CloudFog, CloudHail, Cloudy, CloudDrizzle, Snowflake } from "lucide-react";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import { CONDITION_GROUPS, CONDITION_LABELS } from "../../weather-compositor/presets";
 import { CheckpointDots } from "./checkpoint-dots";
 import type { ConditionCheckpoints } from "../types";

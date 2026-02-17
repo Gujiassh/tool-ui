@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { TIME_CHECKPOINTS } from "@/components/tool-ui/weather-widget/effects/tuning";
-import type { TimeCheckpoint } from "@/components/tool-ui/weather-widget/effects/tuning";
+import { TIME_CHECKPOINTS } from "@/lib/weather-authoring/weather-widget/effects/tuning";
+import type { TimeCheckpoint } from "@/lib/weather-authoring/weather-widget/effects/tuning";
 import type { FullCompositorParams } from "@/app/sandbox/weather-compositor/presets";
 import { mergeWithOverrides } from "@/app/sandbox/weather-compositor/presets";
 import type { CheckpointOverrides } from "@/app/sandbox/weather-compositor/interpolation";

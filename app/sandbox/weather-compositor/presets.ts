@@ -1,9 +1,9 @@
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   mapWeatherToEffects,
   getTimeOfDay,
   getNearestCheckpoint,
-} from "@/components/tool-ui/weather-widget/effects";
+} from "@/lib/weather-authoring/weather-widget/effects";
 
 // Weather conditions grouped by category for intuitive navigation
 export interface ConditionGroup {

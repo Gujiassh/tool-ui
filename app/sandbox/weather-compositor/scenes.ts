@@ -1,4 +1,4 @@
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 
 export interface WeatherScene {
   id: string;

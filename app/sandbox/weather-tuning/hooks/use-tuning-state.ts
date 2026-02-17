@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/components/tool-ui/weather-widget/effects/tuned-presets";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/lib/weather-authoring/weather-widget/effects/tuned-presets";
 import {
   resolveWeatherEffectsCanvasProps,
   type WeatherEffectsCanvasProps,
   type WeatherEffectsCheckpointMode,
-} from "@/components/tool-ui/weather-widget/effects";
+} from "@/lib/weather-authoring/weather-widget/effects";
 import type {
   ConditionOverrides,
   FullCompositorParams,

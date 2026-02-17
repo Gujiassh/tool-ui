@@ -1,5 +1,6 @@
 import { existsSync, statSync, promises as fs } from "fs";
 import path from "path";
+import ts from "typescript";
 
 type RegistryItemType =
   | "registry:block"
@@ -43,6 +44,7 @@ interface ToolUiRegistryDefinition {
   title: string;
   description: string;
   sourceDir: string;
+  entrypointFilePaths?: string[];
 }
 
 export interface ToolUiRegistryArtifacts {
@@ -53,10 +55,20 @@ export interface ToolUiRegistryArtifacts {
 const REGISTRY_SCHEMA = "https://ui.shadcn.com/schema/registry.json";
 const REGISTRY_ITEM_SCHEMA = "https://ui.shadcn.com/schema/registry-item.json";
 
-const IMPORT_SPECIFIER_RE = /(?:import|export)\s[^"']*from\s+["']([^"']+)["']/g;
-const DYNAMIC_IMPORT_RE = /import\(["']([^"']+)["']\)/g;
+const IMPORT_META_URL_RE =
+  /new\s+URL\(\s*["']([^"']+)["']\s*,\s*import\.meta\.url\s*\)/g;
 const TOOL_UI_COMPONENTS_DIR = "components/tool-ui";
 const IGNORED_REGISTRY_FILE_NAMES = new Set([".DS_Store", "Thumbs.db"]);
+const IMPORT_GRAPH_SOURCE_EXTENSIONS = new Set([
+  ".ts",
+  ".tsx",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".mts",
+  ".cts",
+]);
 const DEPENDENCY_VERSION_OVERRIDES: Record<string, string> = {
   recharts: "2.15.4",
 };
@@ -88,6 +100,9 @@ const COMPONENT_DESCRIPTION_OVERRIDES: Partial<Record<string, string>> = {
   video: "Video playback with controls and poster.",
   "weather-widget": "Display weather conditions and forecasts.",
   "x-post": "Render X (Twitter) post previews.",
+};
+const COMPONENT_ENTRYPOINT_OVERRIDES: Partial<Record<string, string[]>> = {
+  "weather-widget": ["runtime.ts"],
 };
 
 function inferRegistryFileType(filePath: string): RegistryItemType {
@@ -121,6 +136,10 @@ async function listFilesRecursively(dirPath: string): Promise<string[]> {
 
 function toPosixPath(filePath: string): string {
   return filePath.split(path.sep).join(path.posix.sep);
+}
+
+function shouldTraverseImportGraph(filePath: string): boolean {
+  return IMPORT_GRAPH_SOURCE_EXTENSIONS.has(path.extname(filePath));
 }
 
 function resolveLocalImport(
@@ -163,16 +182,65 @@ function resolveLocalImport(
 
 function extractImportSpecifiers(content: string): string[] {
   const imports = new Set<string>();
-  IMPORT_SPECIFIER_RE.lastIndex = 0;
-  DYNAMIC_IMPORT_RE.lastIndex = 0;
+  const sourceFile = ts.createSourceFile(
+    "registry-import-scan.tsx",
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+
+  const isTypeOnlyImport = (clause: ts.ImportClause | undefined): boolean => {
+    if (!clause) return false;
+    if (clause.isTypeOnly) return true;
+    if (clause.name) return false;
+    if (!clause.namedBindings) return false;
+    if (ts.isNamespaceImport(clause.namedBindings)) return false;
+    if (clause.namedBindings.elements.length === 0) return false;
+    return clause.namedBindings.elements.every((element) => element.isTypeOnly);
+  };
+
+  const visit = (node: ts.Node) => {
+    if (
+      ts.isImportDeclaration(node) &&
+      ts.isStringLiteral(node.moduleSpecifier) &&
+      !isTypeOnlyImport(node.importClause)
+    ) {
+      imports.add(node.moduleSpecifier.text);
+    }
+
+    if (
+      ts.isExportDeclaration(node) &&
+      !node.isTypeOnly &&
+      node.moduleSpecifier &&
+      ts.isStringLiteral(node.moduleSpecifier)
+    ) {
+      imports.add(node.moduleSpecifier.text);
+    }
+
+    if (
+      ts.isCallExpression(node) &&
+      node.expression.kind === ts.SyntaxKind.ImportKeyword &&
+      node.arguments.length === 1 &&
+      ts.isStringLiteral(node.arguments[0])
+    ) {
+      imports.add(node.arguments[0].text);
+    }
+
+    ts.forEachChild(node, visit);
+  };
+
+  ts.forEachChild(sourceFile, visit);
+
+  return Array.from(imports);
+}
+
+function extractImportMetaUrlSpecifiers(content: string): string[] {
+  const imports = new Set<string>();
+  IMPORT_META_URL_RE.lastIndex = 0;
   let match: RegExpExecArray | null;
 
-  while ((match = IMPORT_SPECIFIER_RE.exec(content)) !== null) {
-    const specifier = match[1];
-    imports.add(specifier);
-  }
-
-  while ((match = DYNAMIC_IMPORT_RE.exec(content)) !== null) {
+  while ((match = IMPORT_META_URL_RE.exec(content)) !== null) {
     const specifier = match[1];
     imports.add(specifier);
   }
@@ -181,9 +249,21 @@ function extractImportSpecifiers(content: string): string[] {
 }
 
 function extractLocalImportSpecifiers(content: string): string[] {
-  return extractImportSpecifiers(content).filter((specifier) =>
-    specifier.startsWith(".") || specifier.startsWith("@/"),
-  );
+  const imports = new Set<string>();
+
+  for (const specifier of extractImportSpecifiers(content)) {
+    if (specifier.startsWith(".") || specifier.startsWith("@/")) {
+      imports.add(specifier);
+    }
+  }
+
+  for (const specifier of extractImportMetaUrlSpecifiers(content)) {
+    if (specifier.startsWith(".") || specifier.startsWith("@/")) {
+      imports.add(specifier);
+    }
+  }
+
+  return Array.from(imports);
 }
 
 function toTitleCase(name: string): string {
@@ -256,6 +336,9 @@ async function discoverToolUiRegistryDefinitions(
         title,
         description,
         sourceDir: `${TOOL_UI_COMPONENTS_DIR}/${name}`,
+        entrypointFilePaths: COMPONENT_ENTRYPOINT_OVERRIDES[name]?.map(
+          (entrypoint) => `${TOOL_UI_COMPONENTS_DIR}/${name}/${entrypoint}`,
+        ),
       };
     });
 }
@@ -270,10 +353,15 @@ function shouldIncludeResolvedPath(
 
 async function collectItemFilePaths(
   projectRoot: string,
-  sourceDir: string,
+  definition: ToolUiRegistryDefinition,
 ): Promise<string[]> {
-  const absoluteSourceDir = path.join(projectRoot, sourceDir);
-  const componentFilePaths = await listFilesRecursively(absoluteSourceDir);
+  const absoluteSourceDir = path.join(projectRoot, definition.sourceDir);
+  const componentFilePaths =
+    definition.entrypointFilePaths && definition.entrypointFilePaths.length > 0
+      ? definition.entrypointFilePaths.map((entrypointPath) =>
+          path.join(projectRoot, entrypointPath),
+        )
+      : await listFilesRecursively(absoluteSourceDir);
 
   const included = new Set(componentFilePaths);
   const queue = [...componentFilePaths];
@@ -283,6 +371,7 @@ async function collectItemFilePaths(
     const absolutePath = queue.pop() as string;
     if (seen.has(absolutePath)) continue;
     seen.add(absolutePath);
+    if (!shouldTraverseImportGraph(absolutePath)) continue;
 
     const content = await fs.readFile(absolutePath, "utf8");
     const importSpecifiers = extractLocalImportSpecifiers(content);
@@ -298,7 +387,7 @@ async function collectItemFilePaths(
       const relativePath = toPosixPath(
         path.relative(projectRoot, resolvedPath),
       );
-      if (!shouldIncludeResolvedPath(relativePath, sourceDir)) continue;
+      if (!shouldIncludeResolvedPath(relativePath, definition.sourceDir)) continue;
 
       if (!included.has(resolvedPath)) {
         included.add(resolvedPath);
@@ -318,10 +407,7 @@ async function buildRegistryItem(
   projectRoot: string,
   definition: ToolUiRegistryDefinition,
 ): Promise<RegistryItem> {
-  const relativeFilePaths = await collectItemFilePaths(
-    projectRoot,
-    definition.sourceDir,
-  );
+  const relativeFilePaths = await collectItemFilePaths(projectRoot, definition);
   const dependencySet = new Set<string>();
   const registryDependencySet = new Set<string>();
 

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/ui/cn";
 import { Slider } from "@/components/ui/slider";
-import { WeatherEffectsCanvas } from "@/components/tool-ui/weather-widget/effects/weather-effects-canvas";
+import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 import type { LucideIcon } from "lucide-react";
 import {
   Cloud,
@@ -15,7 +15,7 @@ import {
   SunDim,
   SunMedium,
 } from "lucide-react";
-import type { WeatherConditionCode } from "@/components/tool-ui/weather-widget/schema";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import type { TimeCheckpoint } from "../types";
 import type { TuningStateReturn } from "../hooks/use-tuning-state";
 import { TIME_CHECKPOINT_ORDER } from "../lib/constants";
