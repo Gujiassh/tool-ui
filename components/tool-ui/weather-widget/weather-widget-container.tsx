@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   EffectCompositorRuntime,
@@ -91,7 +90,8 @@ export function WeatherWidget({
       data-tool-ui-id={id}
       className={cn("w-full max-w-md", className)}
     >
-      <Card
+      <div
+        data-slot="card"
         className={cn(
           "@container/weather [container-type:size] relative overflow-clip aspect-[4/3] border-0 p-0 shadow-none",
           backgroundClass,
@@ -124,7 +124,7 @@ export function WeatherWidget({
           glassParams={glassParams}
           reducedMotion={reducedMotion}
         />
-      </Card>
+      </div>
     </article>
   );
 }

@@ -1712,9 +1712,6 @@
       "dependencies": [
         "lucide-react"
       ],
-      "registryDependencies": [
-        "card"
-      ],
       "files": [
         {
           "path": "components/tool-ui/weather-widget/generated/weather-runtime-core.generated.js",
