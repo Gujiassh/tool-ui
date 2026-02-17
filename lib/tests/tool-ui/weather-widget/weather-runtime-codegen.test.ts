@@ -38,6 +38,28 @@ describe("weather runtime codegen", () => {
     expect(bundledRuntime).not.toContain("../assets/moon-texture.jpg");
   });
 
+  test("shipped weather runtime files do not import private authoring modules", () => {
+    const registryEntryPath = path.join(
+      PROJECT_ROOT,
+      "public/r/weather-widget.json",
+    );
+    const registryEntryRaw = readFileSync(registryEntryPath, "utf8");
+    const registryEntry = JSON.parse(registryEntryRaw) as {
+      files: Array<{ path: string }>;
+    };
+
+    for (const file of registryEntry.files) {
+      const absolutePath = path.join(PROJECT_ROOT, file.path);
+      const source = readFileSync(absolutePath, "utf8");
+      expect(source).not.toMatch(
+        /\bfrom\s+["']@\/lib\/weather-authoring\//,
+      );
+      expect(source).not.toMatch(
+        /\bimport\s*\(\s*["']@\/lib\/weather-authoring\//,
+      );
+    }
+  });
+
   test("generated artifacts are not stale", async () => {
     await expect(getStaleWeatherRuntimeArtifacts(PROJECT_ROOT)).resolves.toEqual(
       [],
