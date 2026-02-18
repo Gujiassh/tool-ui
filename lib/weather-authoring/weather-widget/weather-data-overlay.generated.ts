@@ -104,7 +104,7 @@ export function WeatherDataOverlay({ location, conditionCode, temperature, tempH
             }
             return nextState;
         });
-    }, []);
+    }, [setGlowState]);
     const cancelPendingGlowFrame = useCallback(() => {
         pendingGlowStateRef.current = null;
         if (pendingGlowFrameRef.current !== null &&
@@ -142,7 +142,7 @@ export function WeatherDataOverlay({ location, conditionCode, temperature, tempH
             }
             return { ...prevState, intensity: 0 };
         });
-    }, [cancelPendingGlowFrame]);
+    }, [cancelPendingGlowFrame, setGlowState]);
     useEffect(() => {
         if (reducedMotion) {
             clearGlowIntensity();

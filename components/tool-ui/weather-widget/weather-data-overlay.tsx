@@ -212,7 +212,7 @@ export function WeatherDataOverlay({
 
       return nextState;
     });
-  }, []);
+  }, [setGlowState]);
 
   const cancelPendingGlowFrame = useCallback(() => {
     pendingGlowStateRef.current = null;
@@ -267,7 +267,7 @@ export function WeatherDataOverlay({
 
       return { ...prevState, intensity: 0 };
     });
-  }, [cancelPendingGlowFrame]);
+  }, [cancelPendingGlowFrame, setGlowState]);
 
   useEffect(() => {
     if (reducedMotion) {
