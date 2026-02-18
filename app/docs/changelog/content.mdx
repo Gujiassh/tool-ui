@@ -5,6 +5,45 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/changelog/content.mdx"
 />
 
+{/* changelog-generated-to: 16038eb */}
+
+## 2026-02-17
+
+### Migration prompt
+
+```text
+Update Tool UI components to the compound composition API.
+
+Goals:
+1) Re-install only the affected components that already exist in this project.
+2) Migrate usage from monolithic component props to compound subcomponents (e.g., CodeBlock.Root, Terminal.Output).
+3) Validate UI rendering with updated component APIs.
+
+Steps:
+- Check which of these components exist in this project by looking for their directories under components/tool-ui/:
+  code-block, terminal, order-summary, video, progress-tracker, item-carousel
+- For each component that exists, re-install it to pull in the new compound exports:
+  npx shadcn@latest add @tool-ui/code-block
+  npx shadcn@latest add @tool-ui/terminal
+  npx shadcn@latest add @tool-ui/order-summary
+  npx shadcn@latest add @tool-ui/video
+  npx shadcn@latest add @tool-ui/progress-tracker
+  npx shadcn@latest add @tool-ui/item-carousel
+- Skip any component not already installed — do not add new components.
+- Update imports and usage to reference compound subcomponents instead of monolithic component props.
+- Run lint, typecheck, and tests; fix any breakages.
+- Validate UI rendering with updated component APIs.
+```
+
+### Changes
+
+- New component: [CodeDiff](/docs/code-diff) — unified and split diff views for code.
+- Compound composition API shipped across [Code Block](/docs/code-block), [Terminal](/docs/terminal), [Order Summary](/docs/order-summary), [Video](/docs/video), [Progress Tracker](/docs/progress-tracker), and [Item Carousel](/docs/item-carousel).
+- [Weather Widget](/docs/weather-widget): runtime artifacts now generate as TypeScript; generated payload shrunk with size guardrails.
+- Shared theme tokens introduced across code components; `Code Block` mirrors shared tokens locally with tightened content line-height.
+- Normalized action button styling and layout across components; default spacing added between `ToolUI` surface and actions.
+- [Data Table](/docs/data-table): added links-tags preset; removed escalate from actions preset; removed resources preset from docs.
+
 ## 2026-02-12
 
 ### Breaking changes
