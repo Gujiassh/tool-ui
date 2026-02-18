@@ -51,7 +51,12 @@ export function Example() {
         { label: "Tue", tempMin: 62, tempMax: 75, conditionCode: "heavy-rain" },
         { label: "Wed", tempMin: 58, tempMax: 70, conditionCode: "rain" },
         { label: "Thu", tempMin: 55, tempMax: 68, conditionCode: "cloudy" },
-        { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
+        {
+          label: "Fri",
+          tempMin: 52,
+          tempMax: 72,
+          conditionCode: "partly-cloudy",
+        },
         { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
       ]}
       time={{ localTimeOfDay: 22 / 24 }}
@@ -86,7 +91,11 @@ function safeParseWeatherWidgetPayload(
   input: unknown,
 ): WeatherWidgetProps | null {
   const result = WeatherWidgetPayloadSchema.safeParse(input);
-  if (!result.success || typeof result.data !== "object" || result.data === null) {
+  if (
+    !result.success ||
+    typeof result.data !== "object" ||
+    result.data === null
+  ) {
     return null;
   }
   return {
@@ -106,9 +115,7 @@ export const toolkit: Toolkit = {
           ...(input as Record<string, unknown>),
         }),
       idPrefix: "weather",
-      render: (parsedArgs) => (
-          <WeatherWidget {...parsedArgs} />
-      ),
+      render: (parsedArgs) => <WeatherWidget {...parsedArgs} />,
     }),
   },
 };
@@ -117,6 +124,52 @@ export const toolkit: Toolkit = {
 </Step>
 
 </Steps>
+
+## Coding Agent Prompt
+
+Copy this prompt into your coding agent (Claude Code, Cursor, etc.) and it will wire `WeatherWidget` to whatever weather API you use.
+
+<div className="[&_pre]:max-h-[30rem] [&_pre]:overflow-y-auto">
+
+```text
+Integrate the Tool UI WeatherWidget with a live weather API.
+
+Step 1 — Discover the weather API:
+- Check the codebase for an existing weather API integration (look for API keys, env vars, fetch calls to weather services).
+- If one exists, use that provider. If not, ask the user which weather API they want to use.
+
+Step 2 — Build the adapter:
+Create a provider adapter module (e.g. weatherAdapter.ts) that:
+- Fetches current conditions and forecast data from the chosen provider
+- Maps provider-specific weather codes to WeatherConditionCode with an explicit lookup table and a sensible fallback
+- Derives localTimeOfDay (0..1) from the location's local time
+- Returns a validated WeatherWidgetProps payload
+
+The payload must match WeatherWidgetProps exactly:
+- version: "3.1"
+- id: stable id string
+- location: { name }
+- units: { temperature: "celsius" | "fahrenheit" }
+- current: { temperature, tempMin, tempMax, conditionCode, windSpeed?, precipitationLevel?, visibility? }
+- forecast: 1–7 items of { label, tempMin, tempMax, conditionCode }
+- time: { localTimeOfDay } where localTimeOfDay is 0..1 based on location local time
+- updatedAt: ISO timestamp
+
+Valid WeatherConditionCode values:
+clear | partly-cloudy | cloudy | overcast | fog | drizzle | rain | heavy-rain | thunderstorm | snow | sleet | hail | windy
+
+Step 3 — Register the tool:
+Register a get_weather tool renderer so tool output renders WeatherWidget (not raw JSON).
+Keep the existing runtime import:
+  import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
+
+Additional requirements:
+- Add lightweight runtime validation before rendering (zod safeParse + fallback behavior).
+- Keep all API keys/secrets server-side only.
+- Add tests for condition code mapping and payload shape.
+```
+
+</div>
 
 ## Key Features
 
