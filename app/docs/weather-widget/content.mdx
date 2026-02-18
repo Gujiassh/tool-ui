@@ -51,7 +51,12 @@ export function Example() {
         { label: "Tue", tempMin: 62, tempMax: 75, conditionCode: "heavy-rain" },
         { label: "Wed", tempMin: 58, tempMax: 70, conditionCode: "rain" },
         { label: "Thu", tempMin: 55, tempMax: 68, conditionCode: "cloudy" },
-        { label: "Fri", tempMin: 52, tempMax: 72, conditionCode: "partly-cloudy" },
+        {
+          label: "Fri",
+          tempMin: 52,
+          tempMax: 72,
+          conditionCode: "partly-cloudy",
+        },
         { label: "Sat", tempMin: 58, tempMax: 76, conditionCode: "clear" },
       ]}
       time={{ localTimeOfDay: 22 / 24 }}
@@ -86,7 +91,11 @@ function safeParseWeatherWidgetPayload(
   input: unknown,
 ): WeatherWidgetProps | null {
   const result = WeatherWidgetPayloadSchema.safeParse(input);
-  if (!result.success || typeof result.data !== "object" || result.data === null) {
+  if (
+    !result.success ||
+    typeof result.data !== "object" ||
+    result.data === null
+  ) {
     return null;
   }
   return {
@@ -106,9 +115,7 @@ export const toolkit: Toolkit = {
           ...(input as Record<string, unknown>),
         }),
       idPrefix: "weather",
-      render: (parsedArgs) => (
-          <WeatherWidget {...parsedArgs} />
-      ),
+      render: (parsedArgs) => <WeatherWidget {...parsedArgs} />,
     }),
   },
 };
@@ -117,6 +124,48 @@ export const toolkit: Toolkit = {
 </Step>
 
 </Steps>
+
+## Agent Integration Prompt (Optional)
+
+Copy-paste this into your coding agent if you want it to wire `WeatherWidget` to your weather API (for example, Open-Meteo):
+
+```text
+Integrate the Tool UI WeatherWidget with a weather API (Open-Meteo is fine).
+
+Requirements:
+1) Keep the existing WeatherWidget runtime usage:
+   import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
+2) Build and return a payload that matches WeatherWidgetProps exactly.
+3) Use deterministic mapping from provider weather codes into Tool UI WeatherConditionCode values:
+   clear | partly-cloudy | cloudy | overcast | fog | drizzle | rain | heavy-rain | thunderstorm | snow | sleet | hail | windy
+4) Include:
+   - version: "3.1"
+   - id: stable id string
+   - location: { name }
+   - units: { temperature: "celsius" | "fahrenheit" }
+   - current: { temperature, tempMin, tempMax, conditionCode, windSpeed?, precipitationLevel?, visibility? }
+   - forecast: 1-7 items of { label, tempMin, tempMax, conditionCode }
+   - time: { localTimeOfDay } where localTimeOfDay is 0..1 based on location local time
+   - updatedAt: ISO timestamp
+5) Register a get_weather tool renderer so tool output renders WeatherWidget (not raw JSON).
+
+Implementation tasks:
+- Create a provider adapter module (e.g. openMeteoToWeatherWidgetPayload.ts) that:
+  - fetches geocode + forecast/current data from Open-Meteo
+  - maps provider weather codes to WeatherConditionCode with an explicit lookup table and sensible fallback
+  - derives precipitationLevel from precipitation/rain intensity
+  - derives localTimeOfDay from provider timezone/current time
+  - returns validated WeatherWidgetProps
+- Add lightweight runtime validation before rendering (zod safeParse + fallback behavior).
+- Keep all API keys/secrets server-side only.
+- Add tests for code mapping and payload shape.
+
+Deliverables:
+- adapter module
+- tool registration update for get_weather
+- one example invocation path that renders <WeatherWidget {...payload} />
+- tests + brief README comment explaining mapping assumptions
+```
 
 ## Key Features
 
