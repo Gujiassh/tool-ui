@@ -11,6 +11,7 @@ import type { Chart } from "@/components/tool-ui/chart";
 import type { Citation } from "@/components/tool-ui/citation";
 import type { CodeBlockStandardProps } from "@/components/tool-ui/code-block";
 import { CodeBlock } from "@/components/tool-ui/code-block";
+import type { CodeDiffStandardProps } from "@/components/tool-ui/code-diff";
 import type { DataTable } from "@/components/tool-ui/data-table";
 import type { Image } from "@/components/tool-ui/image";
 import type { ImageGallery } from "@/components/tool-ui/image-gallery";
@@ -55,6 +56,10 @@ import {
   codeBlockPresets,
   type CodeBlockPresetName,
 } from "@/lib/presets/code-block";
+import {
+  codeDiffPresets,
+  type CodeDiffPresetName,
+} from "@/lib/presets/code-diff";
 import {
   dataTablePresets,
   type DataTablePresetName,
@@ -138,6 +143,9 @@ const DynamicCitation = dynamic(() =>
 );
 const DynamicCitationList = dynamic(() =>
   import("@/components/tool-ui/citation").then((m) => m.CitationList),
+);
+const DynamicCodeDiff = dynamic(() =>
+  import("@/components/tool-ui/code-diff").then((m) => m.CodeDiffStandard),
 );
 const DynamicDataTable = dynamic(() =>
   import("@/components/tool-ui/data-table").then((m) => m.DataTable),
@@ -441,6 +449,18 @@ export const previewConfigs: Record<
     renderComponent: ({ data }) => {
       const codeBlock = data as CodeBlockStandardProps;
       return <CodeBlock.Standard {...codeBlock} />;
+    },
+  },
+  "code-diff": {
+    presets: codeDiffPresets as Record<string, PresetWithCodeGen<unknown>>,
+    defaultPreset: "refactor" satisfies CodeDiffPresetName,
+    chatContext: {
+      userMessage: "Refactor checkAuth to return a result type instead of throwing",
+      preamble: "Here are the changes:",
+    },
+    renderComponent: ({ data }) => {
+      const diffData = data as CodeDiffStandardProps;
+      return <DynamicCodeDiff {...diffData} />;
     },
   },
   "data-table": {

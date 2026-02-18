@@ -19,6 +19,10 @@ export const galleryComponentDocs = {
     name: "Code Block",
     docsHref: "/docs/code-block",
   },
+  "code-diff": {
+    name: "Code Diff",
+    docsHref: "/docs/code-diff",
+  },
   "data-table": {
     name: "Data Table",
     docsHref: "/docs/data-table",

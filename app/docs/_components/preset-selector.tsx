@@ -12,6 +12,7 @@ import { approvalCardPresets } from "@/lib/presets/approval-card";
 import { chartPresets } from "@/lib/presets/chart";
 import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
+import { codeDiffPresets } from "@/lib/presets/code-diff";
 import { dataTablePresets } from "@/lib/presets/data-table";
 import { imagePresets } from "@/lib/presets/image";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
@@ -40,6 +41,7 @@ const PRESET_REGISTRY: Record<string, PresetMap> = {
   chart: chartPresets,
   citation: citationPresets,
   "code-block": codeBlockPresets,
+  "code-diff": codeDiffPresets,
   "data-table": dataTablePresets,
   image: imagePresets,
   "image-gallery": imageGalleryPresets,

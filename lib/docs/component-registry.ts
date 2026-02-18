@@ -58,6 +58,13 @@ export const componentsRegistry: ComponentMeta[] = [
     category: "artifacts",
   },
   {
+    id: "code-diff",
+    label: "Code Diff",
+    description: "Compare code changes with syntax-highlighted diffs",
+    path: "/docs/code-diff",
+    category: "artifacts",
+  },
+  {
     id: "data-table",
     label: "Data Table",
     description: "Present structured data in sortable tables",
