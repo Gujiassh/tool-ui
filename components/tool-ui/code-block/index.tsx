@@ -1,7 +1,7 @@
-export { CodeBlock, CodeBlockStandard } from "./code-block";
+export { CodeBlock } from "./code-block";
 export type {
   CodeBlockRootProps,
-  CodeBlockStandardProps,
+  CodeBlockComposedProps,
   CodeBlockSectionProps,
 } from "./code-block";
 export type {

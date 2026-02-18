@@ -6,7 +6,7 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/code-diff/content.mdx"
 />
 
-Dumping raw before-and-after text into a chat message forces users to play spot-the-difference. CodeDiff renders syntax-highlighted diffs with additions and deletions marked clearly, so changes are obvious at a glance. Pass `oldCode` and `newCode` to compare two versions of a file, or pass a `patch` string for unified diffs straight from version control.
+CodeDiff renders syntax-highlighted diffs with additions and deletions marked in color. Pass `oldCode` / `newCode` for file comparisons or a `patch` string for unified diffs from version control.
 
 **Role:** Information. Displays data for the user to read. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
@@ -45,7 +45,7 @@ import { CodeDiff } from "@/components/tool-ui/code-diff";
 
 export function MyComponent() {
   return (
-    <CodeDiff.Standard
+    <CodeDiff
       id="my-diff-example"
       language="typescript"
       filename="lib/auth.ts"
@@ -72,28 +72,6 @@ export function MyComponent() {
 Register this renderer so tool results display as `CodeDiff`.
 
 ```tsx
-// Backend tool
-import { tool, jsonSchema } from "ai";
-
-const showCodeDiff = tool({
-  description: "Show a code diff",
-  inputSchema: jsonSchema<{}>({
-    type: "object",
-    properties: {},
-    additionalProperties: false,
-  }),
-  async execute() {
-    return {
-      id: "diff-1",
-      language: "typescript",
-      filename: "lib/auth.ts",
-      oldCode: "function checkAuth() { throw new Error(); }",
-      newCode: "function checkAuth(): Result { return { ok: false }; }",
-    };
-  },
-});
-
-// Frontend with assistant-ui
 import { type Toolkit } from "@assistant-ui/react";
 import { CodeDiff } from "@/components/tool-ui/code-diff";
 import { safeParseSerializableCodeDiff } from "@/components/tool-ui/code-diff/schema";
@@ -105,7 +83,7 @@ export const toolkit: Toolkit = {
     render: createResultToolRenderer({
       safeParse: safeParseSerializableCodeDiff,
       render: (parsedResult) => (
-        <CodeDiff.Standard {...parsedResult} />
+        <CodeDiff {...parsedResult} />
       ),
     }),
   },
@@ -119,75 +97,19 @@ export const toolkit: Toolkit = {
 ## Key Features
 
 <FeatureGrid>
-  <Feature icon="GitCompareArrows" title="Two input modes">
+  <Feature icon="Code" title="Two input modes">
     Pass `oldCode`/`newCode` for file diffs, or `patch` for unified diffs
   </Feature>
   <Feature icon="Palette" title="Syntax highlighting">
     Language-aware highlighting powered by @pierre/diffs
   </Feature>
+  <Feature icon="Expand" title="Split view">
+    Side-by-side comparison with `diffStyle="split"`
+  </Feature>
   <Feature icon="FoldVertical" title="Collapsible diffs">
     Collapse long diffs with `maxCollapsedLines`
   </Feature>
-  <Feature icon="FileCode" title="Filename header">
-    Show the file path and language in the header bar
-  </Feature>
 </FeatureGrid>
-
-## Input Modes
-
-### File comparison
-
-Pass `oldCode` and `newCode` to compare two versions of a file. CodeDiff computes the diff internally.
-
-```tsx
-<CodeDiff.Standard
-  id="file-diff"
-  language="typescript"
-  filename="hooks/use-pagination.ts"
-  oldCode={`const totalPages = Math.floor(items.length / pageSize);`}
-  newCode={`const totalPages = Math.ceil(items.length / pageSize);`}
-/>
-```
-
-### Unified patch
-
-Pass a `patch` string (unified diff format) when you already have output from `git diff` or a pull request.
-
-```tsx
-<CodeDiff.Standard
-  id="patch-diff"
-  language="typescript"
-  filename="api/routes.ts"
-  patch={`--- a/api/routes.ts
-+++ b/api/routes.ts
-@@ -14,6 +14,10 @@ export function registerRoutes(app: Express) {
-   app.get("/api/users", listUsers);
-   app.post("/api/users", createUser);
--  app.put("/api/users/:id", updateUser);
-+  app.patch("/api/users/:id", updateUser);
-   app.delete("/api/users/:id", deleteUser);
-+
-+  app.get("/healthz", (_req, res) => {
-+    res.json({ status: "ok" });
-+  });
- }`}
-/>
-```
-
-## Split View
-
-Set `diffStyle="split"` for a side-by-side comparison. Split view shows what was removed alongside what replaced it, making structural changes — renamed parameters, reordered logic, signature rewrites — easier to follow than interleaved lines. It needs more horizontal space than unified, so it works best in wide containers.
-
-```tsx
-<CodeDiff.Standard
-  id="split-example"
-  language="typescript"
-  filename="utils/format.ts"
-  diffStyle="split"
-  oldCode={oldCode}
-  newCode={newCode}
-/>
-```
 
 ## Props
 
