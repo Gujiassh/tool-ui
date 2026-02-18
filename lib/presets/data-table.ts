@@ -239,33 +239,14 @@ const taskData: GenericRow[] = [
   },
 ];
 
-const resourceColumns: Column<GenericRow>[] = [
+const linksTagsColumns: Column<GenericRow>[] = [
   { key: "name", label: "Resource", priority: "primary" },
   {
-    key: "category",
-    label: "Category",
-    priority: "primary",
-    format: {
-      kind: "badge",
-      colorMap: {
-        Documentation: "info",
-        Tutorial: "success",
-        Reference: "neutral",
-        Tool: "warning",
-      },
-    },
-  },
-  {
-    key: "url",
+    key: "linkLabel",
     label: "Link",
-    priority: "secondary",
-    format: { kind: "link", external: true },
-  },
-  {
-    key: "localPath",
-    label: "Local Copy",
-    priority: "secondary",
-    format: { kind: "link" },
+    priority: "primary",
+    truncate: true,
+    format: { kind: "link", hrefKey: "url", external: true },
   },
   {
     key: "tags",
@@ -273,46 +254,32 @@ const resourceColumns: Column<GenericRow>[] = [
     priority: "secondary",
     format: { kind: "array", maxVisible: 2 },
   },
-  {
-    key: "updatedAt",
-    label: "Last Updated",
-    priority: "tertiary",
-    format: { kind: "date", dateFormat: "relative" },
-  },
 ];
 
-const resourceData: GenericRow[] = [
+const linksTagsData: GenericRow[] = [
   {
-    name: "The ENIAC Story",
-    category: "Documentation",
-    url: "https://www.computerhistory.org/revolution/early-computers/5",
-    localPath: "/docs/eniac-story.pdf",
-    tags: ["eniac", "vacuum-tube", "history"],
-    updatedAt: "2025-05-12T09:00:00.000Z",
-  },
-  {
-    name: "The UNIX Philosophy",
-    category: "Reference",
+    name: "UNIX Philosophy",
+    linkLabel: "Read chapter",
     url: "https://homepage.cs.uri.edu/~thenry/resources/unix_art/ch01s06.html",
-    localPath: "/docs/unix-philosophy.md",
-    tags: ["unix", "pipe", "philosophy"],
-    updatedAt: "2025-05-12T13:00:00.000Z",
+    tags: ["unix", "pipelines", "design"],
   },
   {
     name: "ARPANET Origins",
-    category: "Tutorial",
+    linkLabel: "Internet Society brief",
     url: "https://www.internetsociety.org/internet/history-internet/brief-history-internet/",
-    localPath: null,
-    tags: ["arpanet", "internet", "packet-switching"],
-    updatedAt: "2025-05-12T18:00:00.000Z",
+    tags: ["arpanet", "history", "networking"],
   },
   {
-    name: "Xerox PARC Research",
-    category: "Tool",
+    name: "Xerox PARC Archive",
+    linkLabel: "Open archive",
     url: "https://xeroxparc.archive.org/",
-    localPath: "/docs/parc-archive/",
-    tags: ["gui", "wimp", "innovation"],
-    updatedAt: "2025-05-06T09:00:00.000Z",
+    tags: ["gui", "research", "innovation"],
+  },
+  {
+    name: "ENIAC Collection",
+    linkLabel: "Computer History Museum",
+    url: "https://www.computerhistory.org/revolution/early-computers/5",
+    tags: ["eniac", "hardware", "history"],
   },
 ];
 
@@ -401,7 +368,11 @@ const actionsData: GenericRow[] = [
   },
 ];
 
-export type DataTablePresetName = "stocks" | "tasks" | "resources" | "actions";
+export type DataTablePresetName =
+  | "stocks"
+  | "tasks"
+  | "links-tags"
+  | "actions";
 
 export const dataTablePresets: Record<
   DataTablePresetName,
@@ -427,13 +398,12 @@ export const dataTablePresets: Record<
     },
     generateExampleCode: generateDataTableCode,
   },
-  resources: {
-    description:
-      "External and internal links, tag arrays, badges, and relative dates",
+  "links-tags": {
+    description: "Compact link and tag formatting without wide resource metadata",
     data: {
-      id: "data-table-preview-resources",
-      columns: resourceColumns,
-      data: resourceData,
+      id: "data-table-preview-links-tags",
+      columns: linksTagsColumns,
+      data: linksTagsData,
       rowIdKey: "name",
     },
     generateExampleCode: generateDataTableCode,
@@ -453,7 +423,6 @@ export const dataTablePresets: Record<
           confirmLabel: "Confirm close",
           variant: "destructive",
         },
-        { id: "escalate", label: "Escalate", variant: "secondary" },
         { id: "assign", label: "Assign to me", variant: "default" },
       ],
     },

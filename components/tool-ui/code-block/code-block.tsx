@@ -10,6 +10,8 @@ import {
 } from "react";
 import { createHighlighter, type Highlighter } from "shiki";
 import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
+import pierreDarkTheme from "../shared/pierre-dark-theme.js";
+import pierreLightTheme from "../shared/pierre-light-theme.js";
 import type {
   CodeBlockLineNumbersMode,
   CodeBlockProps,
@@ -26,7 +28,7 @@ let highlighterPromise: Promise<Highlighter> | null = null;
 function getHighlighter(): Promise<Highlighter> {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
-      themes: ["github-dark", "github-light"],
+      themes: [pierreDarkTheme as never, pierreLightTheme as never],
       langs: [],
     });
   }
@@ -199,7 +201,7 @@ function CodeBlockRoot({
     [expandedProp, onExpandedChange],
   );
 
-  const theme = resolvedTheme === "dark" ? "github-dark" : "github-light";
+  const theme = resolvedTheme === "dark" ? "pierre-dark" : "pierre-light";
   const cacheKey = getCacheKey(code, language, theme, lineNumbers, highlightLines);
 
   const [highlightedHtml, setHighlightedHtml] = useState<string | null>(
@@ -371,7 +373,7 @@ function CodeBlockContent({ className }: CodeBlockSectionProps) {
   return (
     <div
       className={cn(
-        "overflow-x-auto overflow-y-clip text-sm [&_pre]:bg-transparent [&_pre]:py-4",
+        "overflow-x-auto overflow-y-clip text-[13px] leading-[1.4] [&_pre]:bg-transparent [&_pre]:py-4",
         isCollapsed && "max-h-[200px]",
         className,
       )}

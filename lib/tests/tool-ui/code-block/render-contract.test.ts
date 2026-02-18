@@ -183,7 +183,29 @@ describe("code-block render contract", () => {
     const call = shiki.codeToHtml.mock.calls.at(0)?.[1] as
       | { theme?: string }
       | undefined;
-    expect(call?.theme).toBe("github-dark");
+    expect(call?.theme).toBe("pierre-dark");
+
+    await cleanupClientRender(root, container);
+  });
+
+  it("uses 13px content sizing to match code-diff", async () => {
+    setupShikiMock();
+    const { CodeBlock } = await import("@/components/tool-ui/code-block");
+
+    const { container, root } = await renderClient(
+      h(CodeBlock, {
+        id: "content-font-size-contract",
+        code: "const value = 1;",
+        language: "typescript",
+        lineNumbers: "visible",
+      }),
+    );
+
+    const content = container.querySelector('[data-slot="code-block"] .overflow-x-auto');
+    expect(content).not.toBeNull();
+    expect(content?.className).toContain("text-[13px]");
+    expect(content?.className).toContain("leading-[1.4]");
+    expect(content?.className).not.toContain("text-sm");
 
     await cleanupClientRender(root, container);
   });
