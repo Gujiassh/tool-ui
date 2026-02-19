@@ -188,6 +188,31 @@ describe("code-block render contract", () => {
     await cleanupClientRender(root, container);
   });
 
+  it("ignores local preview data-theme scopes when document theme is unchanged", async () => {
+    const shiki = setupShikiMock();
+
+    const { CodeBlock } = await import("@/components/tool-ui/code-block");
+    const { container, root } = await renderClient(
+      h(
+        "div",
+        { "data-theme": "dark" },
+        h(CodeBlock, {
+          id: "local-preview-theme-scope",
+          code: "const value = 1;",
+          language: "typescript",
+          lineNumbers: "visible",
+        }),
+      ),
+    );
+
+    const call = shiki.codeToHtml.mock.calls.at(0)?.[1] as
+      | { theme?: string }
+      | undefined;
+    expect(call?.theme).toBe("pierre-light");
+
+    await cleanupClientRender(root, container);
+  });
+
   it("uses 13px content sizing to match code-diff", async () => {
     setupShikiMock();
     const { CodeBlock } = await import("@/components/tool-ui/code-block");

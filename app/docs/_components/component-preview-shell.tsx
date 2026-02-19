@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, type ReactNode } from "react";
+import { memo, useCallback, type CSSProperties, type ReactNode } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import type { ImperativePanelGroupHandle } from "react-resizable-panels";
 import { Check, Code, Copy, Eye, MessageCircle } from "lucide-react";
@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/ui/cn";
 import { useResponsivePreview } from "@/hooks/use-responsive-preview";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
+import { useResolvedPreviewTheme } from "@/hooks/use-preview-theme-search-params";
 import { useCopyToClipboard } from "@/components/tool-ui/shared";
 import { analytics } from "@/lib/analytics";
 
@@ -160,6 +161,12 @@ export function ComponentPreviewShell({
     minWidth: PREVIEW_MIN_WIDTH,
     maxWidth: PREVIEW_MAX_WIDTH,
   });
+  const { resolvedAppearance, resolvedPreviewThemeVars } = useResolvedPreviewTheme();
+  const isDarkPreview = resolvedAppearance === "dark";
+  const previewThemeShellStyle = {
+    ...resolvedPreviewThemeVars,
+    fontFamily: "var(--font-sans)",
+  } as CSSProperties;
 
   const handleCopy = useCallback(() => {
     analytics.component.codeCopied(componentId, "full");
@@ -182,7 +189,11 @@ export function ComponentPreviewShell({
   );
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-clip lg:flex-row">
+    <div
+      data-theme={resolvedAppearance}
+      style={previewThemeShellStyle}
+      className="flex h-full min-h-0 w-full flex-1 flex-col overflow-clip lg:flex-row"
+    >
       {/* Desktop sidebar */}
       <aside
         className={cn(
@@ -212,14 +223,18 @@ export function ComponentPreviewShell({
 
         <div
           className={cn(
-            "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-neutral-100 dark:bg-neutral-950",
+            "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+            isDarkPreview ? "bg-neutral-950" : "bg-neutral-100",
             "z-10",
             "border lg:mr-4 lg:mb-4 lg:rounded-lg lg:border-l",
           )}
         >
           {viewMode === "canvas" && (
             <div
-              className="bg-dot-grid pointer-events-none absolute inset-0 z-0 dark:opacity-60"
+              className={cn(
+                "bg-dot-grid pointer-events-none absolute inset-0 z-0",
+                isDarkPreview && "opacity-60",
+              )}
               aria-hidden="true"
             />
           )}
@@ -228,7 +243,9 @@ export function ComponentPreviewShell({
             <div
               className={cn(
                 "pointer-events-none absolute top-0 right-12 left-0 z-20 h-20",
-                "bg-linear-to-b from-neutral-100 via-neutral-100/80 to-transparent dark:from-neutral-950 dark:via-neutral-950/80",
+                isDarkPreview
+                  ? "bg-linear-to-b from-neutral-950 via-neutral-950/80 to-transparent"
+                  : "bg-linear-to-b from-neutral-100 via-neutral-100/80 to-transparent",
                 "hidden lg:block",
               )}
               aria-hidden="true"

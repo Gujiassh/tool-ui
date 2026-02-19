@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { LayoutDashboardIcon } from "lucide-react";
 import { analytics } from "@/lib/analytics";
@@ -13,6 +13,7 @@ import {
   type ComponentCategory,
 } from "@/lib/docs/component-registry";
 import { cn } from "@/lib/ui/cn";
+import { PREVIEW_THEME_QUERY_PARAM_KEYS } from "@/hooks/use-preview-theme-search-params";
 import {
   CONCEPTS_DOCS_PAGES,
   GET_STARTED_DOCS_PAGES,
@@ -22,6 +23,7 @@ const STORAGE_KEY = "tool-ui-components-nav-collapsed:v1";
 
 export function DocsNav() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [currentTab] = useQueryState("tab");
   const [currentView] = useQueryState("view");
   const [collapsed, setCollapsed] = useState(false);
@@ -194,6 +196,13 @@ export function DocsNav() {
                 // Preserve view mode across component navigation when browsing examples.
                 if (currentView === "chat" || currentView === "code") {
                   params.set("view", currentView);
+                }
+
+                for (const paramKey of PREVIEW_THEME_QUERY_PARAM_KEYS) {
+                  const value = searchParams.get(paramKey);
+                  if (value !== null) {
+                    params.set(paramKey, value);
+                  }
                 }
 
                 return `${component.path}?${params.toString()}`;
