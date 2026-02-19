@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/app/components/builder/theme-toggle";
 import { DocsNav } from "./_components/docs-nav";
 import { DocsTocProvider } from "./_components/docs-toc-context";
 import { DocsSearch } from "./_components/docs-search.client";
+import { PreviewThemeControls } from "./_components/preview-theme-controls";
 
 export const metadata: Metadata = {
   title: {
@@ -23,6 +24,7 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
         rightContent={
           <div className="flex items-center gap-2">
             <DocsSearch />
+            <PreviewThemeControls />
             <ThemeToggle />
           </div>
         }
