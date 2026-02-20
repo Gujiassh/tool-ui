@@ -30,4 +30,14 @@ describe("root layout body flow contract", () => {
     expect(html).toContain("id=\"app-root\"");
     expect(html).toContain("class=\"flex h-screen h-svh flex-col\"");
   });
+
+  it("paints the html root with themed background to avoid white flashes during viewport resize", async () => {
+    const { default: RootLayout } = await import("@/app/layout");
+
+    const html = renderToStaticMarkup(
+      createElement(RootLayout, null, createElement("main", null, "content")),
+    );
+
+    expect(html).toMatch(/<html[^>]*class="[^"]*bg-background[^"]*"/);
+  });
 });
