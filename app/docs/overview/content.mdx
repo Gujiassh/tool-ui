@@ -2,6 +2,7 @@ import { DocsHeader } from "../_components/docs-header";
 import { MockThread, MockMessage } from "../_components/mock-thread";
 import { LinkPreview } from "@/components/tool-ui/link-preview";
 import { InteractiveOptionDemo } from "../_components/interactive-option-demo";
+import { ThemedPreviewScope } from "../_components/themed-preview-scope";
 
 <DocsHeader
   title="Overview"
@@ -37,14 +38,16 @@ Tool UI is a component library built for this. Each component turns a specific k
         {"Found it."}
       </span>
       <div className="mt-3">
-        <LinkPreview
-          id="lp-tailwind"
-          href="https://tailwindcss.com/docs"
-          title="Tailwind CSS"
-          description="Rapidly build modern websites without ever leaving your HTML."
-          domain="tailwindcss.com"
-          favicon="https://tailwindcss.com/favicons/favicon-32x32.png"
-        />
+        <ThemedPreviewScope className="block">
+          <LinkPreview
+            id="lp-tailwind"
+            href="https://tailwindcss.com/docs"
+            title="Tailwind CSS"
+            description="Rapidly build modern websites without ever leaving your HTML."
+            domain="tailwindcss.com"
+            favicon="https://tailwindcss.com/favicons/favicon-32x32.png"
+          />
+        </ThemedPreviewScope>
       </div>
     </MockMessage>
   </MockThread>
@@ -85,7 +88,9 @@ Every Tool UI component has a corresponding schema: a Zod definition that descri
 Some tool UIs just display information like a link preview, a chart, or a code block. But others let users **make decisions** that feed back into the conversation.
 
 <div className="pb-4">
-  <InteractiveOptionDemo />
+  <ThemedPreviewScope className="block">
+    <InteractiveOptionDemo />
+  </ThemedPreviewScope>
 </div>
 
 The user selects an option, and the choice returns to the assistant as a **tool result**. The assistant can then continue the conversation with that context. The selected state stays visible as a **receipt** — a record of what was chosen.

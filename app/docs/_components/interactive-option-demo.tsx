@@ -5,6 +5,7 @@ import { RotateCcw } from "lucide-react";
 import { MockThread, MockMessage } from "./mock-thread";
 import { OptionList } from "@/components/tool-ui/option-list";
 import { cn, Button } from "@/components/tool-ui/option-list/_adapter";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 
 const OPTIONS = [
   {
@@ -60,13 +61,15 @@ export function InteractiveOptionDemo() {
             {"Based on your requirements, here are some options:"}
           </span>
           <div className="mt-3">
-            <OptionList
-              id="overview-demo-db-picker"
-              selectionMode="single"
-              options={OPTIONS}
-              choice={choice ?? undefined}
-              onAction={handleAction}
-            />
+            <ThemedPreviewScope className="block">
+              <OptionList
+                id="overview-demo-db-picker"
+                selectionMode="single"
+                options={OPTIONS}
+                choice={choice ?? undefined}
+                onAction={handleAction}
+              />
+            </ThemedPreviewScope>
           </div>
         </MockMessage>
         {choice && (

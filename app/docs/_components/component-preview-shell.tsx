@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, type CSSProperties, type ReactNode } from "react";
+import { memo, useCallback, type ReactNode } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import type { ImperativePanelGroupHandle } from "react-resizable-panels";
 import { Check, Code, Copy, Eye, MessageCircle } from "lucide-react";
@@ -12,6 +12,7 @@ import { useTabSearchParam } from "@/hooks/use-tab-search-param";
 import { useResolvedPreviewTheme } from "@/hooks/use-preview-theme-search-params";
 import { useCopyToClipboard } from "@/components/tool-ui/shared";
 import { analytics } from "@/lib/analytics";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 
 const PREVIEW_MIN_WIDTH = 40;
 const PREVIEW_MAX_WIDTH = 100;
@@ -161,12 +162,8 @@ export function ComponentPreviewShell({
     minWidth: PREVIEW_MIN_WIDTH,
     maxWidth: PREVIEW_MAX_WIDTH,
   });
-  const { resolvedAppearance, resolvedPreviewThemeVars } = useResolvedPreviewTheme();
+  const { resolvedAppearance } = useResolvedPreviewTheme();
   const isDarkPreview = resolvedAppearance === "dark";
-  const previewThemeShellStyle = {
-    ...resolvedPreviewThemeVars,
-    fontFamily: "var(--font-sans)",
-  } as CSSProperties;
 
   const handleCopy = useCallback(() => {
     analytics.component.codeCopied(componentId, "full");
@@ -190,8 +187,6 @@ export function ComponentPreviewShell({
 
   return (
     <div
-      data-theme={resolvedAppearance}
-      style={previewThemeShellStyle}
       className="flex h-full min-h-0 w-full flex-1 flex-col overflow-clip lg:flex-row"
     >
       {/* Desktop sidebar */}
@@ -296,13 +291,15 @@ export function ComponentPreviewShell({
                   handleLayout={handleLayout}
                   panelIdBase={panelIdBase}
                 >
-                  {preview}
+                  <ThemedPreviewScope>{preview}</ThemedPreviewScope>
                 </ResizablePreviewArea>
               </div>
             )}
             {viewMode === "chat" && (
               <div className="relative h-fit w-full p-4 pt-12 lg:pt-16">
-                <div className="mx-auto max-w-2xl">{chatPanel}</div>
+                <div className="mx-auto max-w-2xl">
+                  <ThemedPreviewScope>{chatPanel}</ThemedPreviewScope>
+                </div>
               </div>
             )}
             {viewMode === "code" && codePanel}

@@ -1,8 +1,10 @@
 import { SHADCN_V4_THEMES } from "@/lib/docs/shadcn-v4-themes";
 
-export const PREVIEW_APPEARANCES = ["system", "light", "dark"] as const;
 export const PREVIEW_BASE_COLORS = ["neutral", "stone", "zinc", "gray"] as const;
 export const PREVIEW_RADII = ["default", "none", "small", "medium", "large"] as const;
+export const PREVIEW_DENSITIES = ["compact", "default", "comfortable"] as const;
+export const PREVIEW_FONT_SCALES = ["small", "default", "large"] as const;
+export const PREVIEW_SURFACE_TINTS = ["none", "warm", "cool", "mauve", "sage", "sand"] as const;
 export const PREVIEW_MENU_ACCENTS = ["subtle", "bold"] as const;
 export const PREVIEW_MENU_COLORS = ["default", "inverted"] as const;
 export const PREVIEW_FONTS = [
@@ -20,9 +22,11 @@ export const PREVIEW_FONTS = [
   "geist-mono",
 ] as const;
 
-export type PreviewAppearance = (typeof PREVIEW_APPEARANCES)[number];
 export type PreviewBaseColor = (typeof PREVIEW_BASE_COLORS)[number];
 export type PreviewRadius = (typeof PREVIEW_RADII)[number];
+export type PreviewDensity = (typeof PREVIEW_DENSITIES)[number];
+export type PreviewFontScale = (typeof PREVIEW_FONT_SCALES)[number];
+export type PreviewSurfaceTint = (typeof PREVIEW_SURFACE_TINTS)[number];
 export type PreviewMenuAccent = (typeof PREVIEW_MENU_ACCENTS)[number];
 export type PreviewMenuColor = (typeof PREVIEW_MENU_COLORS)[number];
 export type PreviewFont = (typeof PREVIEW_FONTS)[number];
@@ -36,20 +40,24 @@ export const PREVIEW_THEMES = ALL_THEME_NAMES;
 export type PreviewTheme = (typeof PREVIEW_THEMES)[number];
 
 export interface PreviewThemeConfig {
-  previewAppearance: PreviewAppearance;
   previewBaseColor: PreviewBaseColor;
   previewTheme: PreviewTheme;
   previewRadius: PreviewRadius;
+  previewDensity: PreviewDensity;
+  previewFontScale: PreviewFontScale;
+  previewSurfaceTint: PreviewSurfaceTint;
   previewMenuAccent: PreviewMenuAccent;
   previewMenuColor: PreviewMenuColor;
   previewFont: PreviewFont;
 }
 
 export const DEFAULT_PREVIEW_THEME_CONFIG: PreviewThemeConfig = {
-  previewAppearance: "system",
   previewBaseColor: "neutral",
   previewTheme: "neutral",
   previewRadius: "default",
+  previewDensity: "default",
+  previewFontScale: "default",
+  previewSurfaceTint: "none",
   previewMenuAccent: "subtle",
   previewMenuColor: "default",
   previewFont: "geist",
@@ -63,20 +71,89 @@ const PREVIEW_RADIUS_VALUES: Record<PreviewRadius, string> = {
   large: "0.875rem",
 };
 
-const PREVIEW_FONT_FAMILIES: Record<PreviewFont, string> = {
-  geist: "var(--font-geist-sans), 'Geist Variable', sans-serif",
-  inter: "'Inter Variable', var(--font-geist-sans), sans-serif",
-  "noto-sans": "'Noto Sans Variable', var(--font-geist-sans), sans-serif",
-  "nunito-sans": "'Nunito Sans Variable', var(--font-geist-sans), sans-serif",
-  figtree: "'Figtree Variable', var(--font-geist-sans), sans-serif",
-  roboto: "'Roboto', var(--font-geist-sans), sans-serif",
-  raleway: "'Raleway', var(--font-geist-sans), sans-serif",
-  "dm-sans": "'DM Sans', var(--font-geist-sans), sans-serif",
-  "public-sans": "'Public Sans', var(--font-geist-sans), sans-serif",
-  outfit: "'Outfit', var(--font-geist-sans), sans-serif",
-  "jetbrains-mono": "'JetBrains Mono Variable', var(--font-geist-mono), monospace",
-  "geist-mono": "var(--font-geist-mono), 'Geist Mono Variable', monospace",
+const PREVIEW_DENSITY_SPACING: Record<PreviewDensity, string> = {
+  compact: "0.2rem",
+  default: "0.25rem",
+  comfortable: "0.3rem",
 };
+
+const PREVIEW_FONT_SCALE_VALUES: Record<PreviewFontScale, string> = {
+  small: "0.875",
+  default: "1",
+  large: "1.125",
+};
+
+const PREVIEW_FONT_FAMILIES: Record<PreviewFont, string> = {
+  geist: "var(--font-geist-sans), sans-serif",
+  inter: "var(--font-inter), var(--font-geist-sans), sans-serif",
+  "noto-sans": "var(--font-noto-sans), var(--font-geist-sans), sans-serif",
+  "nunito-sans": "var(--font-nunito-sans), var(--font-geist-sans), sans-serif",
+  figtree: "var(--font-figtree), var(--font-geist-sans), sans-serif",
+  roboto: "var(--font-roboto), var(--font-geist-sans), sans-serif",
+  raleway: "var(--font-raleway), var(--font-geist-sans), sans-serif",
+  "dm-sans": "var(--font-dm-sans), var(--font-geist-sans), sans-serif",
+  "public-sans": "var(--font-public-sans), var(--font-geist-sans), sans-serif",
+  outfit: "var(--font-outfit), var(--font-geist-sans), sans-serif",
+  "jetbrains-mono": "var(--font-jetbrains-mono), var(--font-geist-mono), monospace",
+  "geist-mono": "var(--font-geist-mono), monospace",
+};
+
+const SURFACE_TINT_MAP: Record<
+  Exclude<PreviewSurfaceTint, "none">,
+  { hue: number; chroma: number }
+> = {
+  warm: { hue: 60, chroma: 0.015 },
+  cool: { hue: 240, chroma: 0.012 },
+  mauve: { hue: 300, chroma: 0.015 },
+  sage: { hue: 150, chroma: 0.012 },
+  sand: { hue: 80, chroma: 0.015 },
+};
+
+const SURFACE_TINT_TOKENS = new Set([
+  "background",
+  "foreground",
+  "card",
+  "card-foreground",
+  "muted",
+  "muted-foreground",
+  "border",
+  "input",
+  "popover",
+  "popover-foreground",
+  "secondary",
+  "secondary-foreground",
+  "accent",
+  "accent-foreground",
+  "sidebar-background",
+  "sidebar-foreground",
+  "sidebar-accent",
+  "sidebar-accent-foreground",
+  "sidebar-border",
+]);
+
+const OKLCH_RE = /oklch\(([\d.]+)\s+([\d.]+)\s+([\d.]+)\)/;
+const FOREGROUND_TOKEN_RE = /-foreground$|^foreground$/;
+
+function applySurfaceTint(vars: RawThemeVars, tint: Exclude<PreviewSurfaceTint, "none">): void {
+  const { hue, chroma } = SURFACE_TINT_MAP[tint];
+
+  for (const token of SURFACE_TINT_TOKENS) {
+    const value = vars[token];
+    if (!value) continue;
+
+    const match = OKLCH_RE.exec(value);
+    if (!match) continue;
+
+    const currentChroma = parseFloat(match[2]!);
+    if (currentChroma >= 0.01) continue;
+
+    const l = match[1]!;
+    const isForeground = FOREGROUND_TOKEN_RE.test(token);
+    const targetChroma = isForeground ? 0.005 : chroma;
+
+    vars[token] = `oklch(${l} ${targetChroma} ${hue})`;
+  }
+}
 
 const BASE_COLOR_SET = new Set<string>(PREVIEW_BASE_COLORS);
 
@@ -198,9 +275,24 @@ export function buildPreviewThemeVars(config: PreviewThemeConfig): {
     darkVars.radius = radius;
   }
 
+  if (resolvedConfig.previewDensity !== "default") {
+    const spacing = PREVIEW_DENSITY_SPACING[resolvedConfig.previewDensity];
+    lightVars.spacing = spacing;
+    darkVars.spacing = spacing;
+  }
+
+  if (resolvedConfig.previewSurfaceTint !== "none") {
+    applySurfaceTint(lightVars, resolvedConfig.previewSurfaceTint);
+    applySurfaceTint(darkVars, resolvedConfig.previewSurfaceTint);
+  }
+
   const fontFamily = PREVIEW_FONT_FAMILIES[resolvedConfig.previewFont];
   lightVars["font-sans"] = fontFamily;
   darkVars["font-sans"] = fontFamily;
+
+  const zoom = PREVIEW_FONT_SCALE_VALUES[resolvedConfig.previewFontScale];
+  lightVars["zoom"] = zoom;
+  darkVars["zoom"] = zoom;
 
   return {
     light: toCssVarMap(lightVars),
@@ -208,13 +300,3 @@ export function buildPreviewThemeVars(config: PreviewThemeConfig): {
   };
 }
 
-export function resolvePreviewAppearance(
-  appearance: PreviewAppearance,
-  resolvedSiteTheme: "light" | "dark" | null | undefined,
-): "light" | "dark" {
-  if (appearance === "light" || appearance === "dark") {
-    return appearance;
-  }
-
-  return resolvedSiteTheme === "dark" ? "dark" : "light";
-}

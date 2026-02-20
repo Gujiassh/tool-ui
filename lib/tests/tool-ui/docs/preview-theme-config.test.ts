@@ -4,7 +4,6 @@ import {
   DEFAULT_PREVIEW_THEME_CONFIG,
   normalizePreviewThemeConfig,
   resolveAvailableThemes,
-  resolvePreviewAppearance,
 } from "@/lib/docs/preview-theme-config";
 
 describe("preview theme config", () => {
@@ -50,8 +49,4 @@ describe("preview theme config", () => {
     expect(vars.dark["--radius"]).toBe("0.875rem");
   });
 
-  it("resolves system appearance using site theme", () => {
-    expect(resolvePreviewAppearance("system", "dark")).toBe("dark");
-    expect(resolvePreviewAppearance("system", "light")).toBe("light");
-  });
 });

@@ -18,6 +18,7 @@ import {
 import { ToolUI, createDecisionResult } from "@/components/tool-ui/shared";
 import { Button } from "@/components/ui/button";
 import { MockMessage, MockThread } from "../_components/mock-thread";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 
 const tableRows = [
   { id: "1", merchant: "Delta Airlines", amount: 847 },
@@ -92,15 +93,17 @@ export function ActionFlowToolCallVisual() {
 export function ActionFlowRenderVisual() {
   return (
     <div className="not-prose max-w-2xl">
-      <DataTable
-        id="flow-render-surface"
-        rowIdKey="id"
-        columns={[
-          { key: "merchant", label: "Merchant" },
-          { key: "amount", label: "Amount", align: "right" },
-        ]}
-        data={tableRows}
-      />
+      <ThemedPreviewScope className="block">
+        <DataTable
+          id="flow-render-surface"
+          rowIdKey="id"
+          columns={[
+            { key: "merchant", label: "Merchant" },
+            { key: "amount", label: "Amount", align: "right" },
+          ]}
+          data={tableRows}
+        />
+      </ThemedPreviewScope>
     </div>
   );
 }
@@ -110,34 +113,32 @@ export function ActionFlowUserActionVisual() {
 
   return (
     <div className="not-prose flex max-w-2xl flex-col gap-3">
-      <ToolUI id="flow-local-action">
-        <ToolUI.Surface>
-          <DataTable
-            id="flow-local-action"
-            rowIdKey="id"
-            columns={[
-              { key: "merchant", label: "Merchant" },
-              { key: "amount", label: "Amount", align: "right" },
-            ]}
-            data={tableRows}
-          />
-        </ToolUI.Surface>
-        <ToolUI.Actions>
-          <ToolUI.LocalActions
-            actions={[
-              { id: "export-csv", label: "Export CSV", variant: "secondary" },
-              {
-                id: "open-report",
-                label: "Open Full Report",
-                variant: "outline",
-              },
-            ]}
-            onAction={(actionId) => {
-              setEvent(`Clicked: ${actionId}`);
-            }}
-          />
-        </ToolUI.Actions>
-      </ToolUI>
+      <ThemedPreviewScope className="block">
+        <ToolUI id="flow-local-action">
+          <ToolUI.Surface>
+            <DataTable
+              id="flow-local-action"
+              rowIdKey="id"
+              columns={[
+                { key: "merchant", label: "Merchant" },
+                { key: "amount", label: "Amount", align: "right" },
+              ]}
+              data={tableRows}
+            />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.LocalActions
+              actions={[
+                { id: "export-csv", label: "Export CSV", variant: "secondary" },
+                { id: "open-report", label: "Open Full Report", variant: "outline" },
+              ]}
+              onAction={(actionId) => {
+                setEvent(`Clicked: ${actionId}`);
+              }}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
+      </ThemedPreviewScope>
       <p className="text-muted-foreground text-xs">{event}</p>
     </div>
   );
@@ -183,71 +184,73 @@ export function ActionFlowCommitVisual() {
 
   return (
     <div className="not-prose flex max-w-md flex-col gap-3">
-      <ToolUI id="flow-decision">
-        <ToolUI.Surface>
-          {orderChoice ? (
-            <OrderSummary.Receipt
-              id="flow-decision"
-              title="Order Summary"
-              items={orderItems}
-              pricing={orderPricing}
-              choice={orderChoice}
-            />
-          ) : (
-            <OrderSummary.Display
-              id="flow-decision"
-              title="Order Summary"
-              items={orderItems}
-              pricing={orderPricing}
-            />
-          )}
-        </ToolUI.Surface>
-        {!orderChoice && (
-          <ToolUI.Actions>
-            <ToolUI.DecisionActions
-              actions={[
-                { id: "cancel", label: "Cancel", variant: "outline" },
-                { id: "confirm", label: "Purchase", variant: "default" },
-              ]}
-              onAction={(action) =>
-                createDecisionResult({
-                  decisionId: "flow-order-decision",
-                  action,
-                  payload:
-                    action.id === "confirm"
-                      ? {
-                          orderId: `ORD-${Date.now()}`,
-                          confirmedAt: new Date().toISOString(),
-                        }
-                      : undefined,
-                })
-              }
-              onCommit={(result) => {
-                if (result.actionId !== "confirm") {
-                  setEvent("Decision cancelled.");
-                  return;
+      <ThemedPreviewScope className="block">
+        <ToolUI id="flow-decision">
+          <ToolUI.Surface>
+            {orderChoice ? (
+              <OrderSummary.Receipt
+                id="flow-decision"
+                title="Order Summary"
+                items={orderItems}
+                pricing={orderPricing}
+                choice={orderChoice}
+              />
+            ) : (
+              <OrderSummary.Display
+                id="flow-decision"
+                title="Order Summary"
+                items={orderItems}
+                pricing={orderPricing}
+              />
+            )}
+          </ToolUI.Surface>
+          {!orderChoice && (
+            <ToolUI.Actions>
+              <ToolUI.DecisionActions
+                actions={[
+                  { id: "cancel", label: "Cancel", variant: "outline" },
+                  { id: "confirm", label: "Purchase", variant: "default" },
+                ]}
+                onAction={(action) =>
+                  createDecisionResult({
+                    decisionId: "flow-order-decision",
+                    action,
+                    payload:
+                      action.id === "confirm"
+                        ? {
+                            orderId: `ORD-${Date.now()}`,
+                            confirmedAt: new Date().toISOString(),
+                          }
+                        : undefined,
+                  })
                 }
+                onCommit={(result) => {
+                  if (result.actionId !== "confirm") {
+                    setEvent("Decision cancelled.");
+                    return;
+                  }
 
-                const orderId =
-                  typeof result.payload?.orderId === "string"
-                    ? result.payload.orderId
-                    : `ORD-${Date.now()}`;
-                const confirmedAt =
-                  typeof result.payload?.confirmedAt === "string"
-                    ? result.payload.confirmedAt
-                    : new Date().toISOString();
+                  const orderId =
+                    typeof result.payload?.orderId === "string"
+                      ? result.payload.orderId
+                      : `ORD-${Date.now()}`;
+                  const confirmedAt =
+                    typeof result.payload?.confirmedAt === "string"
+                      ? result.payload.confirmedAt
+                      : new Date().toISOString();
 
-                setOrderChoice({
-                  action: "confirm",
-                  orderId,
-                  confirmedAt,
-                });
-                setEvent(`Committed decision: ${orderId}`);
-              }}
-            />
-          </ToolUI.Actions>
-        )}
-      </ToolUI>
+                  setOrderChoice({
+                    action: "confirm",
+                    orderId,
+                    confirmedAt,
+                  });
+                  setEvent(`Committed decision: ${orderId}`);
+                }}
+              />
+            </ToolUI.Actions>
+          )}
+        </ToolUI>
+      </ThemedPreviewScope>
       <div className="flex items-center gap-2">
         <p className="text-muted-foreground text-xs">{event}</p>
         {orderChoice && (
@@ -272,34 +275,32 @@ export function DisplaySurfaceLocalActionsExample() {
 
   return (
     <div className="not-prose flex max-w-2xl flex-col gap-3">
-      <ToolUI id="display-local-actions-table">
-        <ToolUI.Surface>
-          <DataTable
-            id="display-local-actions-table"
-            rowIdKey="id"
-            columns={[
-              { key: "merchant", label: "Merchant" },
-              { key: "amount", label: "Amount", align: "right" },
-            ]}
-            data={tableRows}
-          />
-        </ToolUI.Surface>
-        <ToolUI.Actions>
-          <ToolUI.LocalActions
-            actions={[
-              { id: "export-csv", label: "Export CSV", variant: "secondary" },
-              {
-                id: "open-report",
-                label: "Open Full Report",
-                variant: "outline",
-              },
-            ]}
-            onAction={(actionId) => {
-              setEvent(`Local action executed: ${actionId}`);
-            }}
-          />
-        </ToolUI.Actions>
-      </ToolUI>
+      <ThemedPreviewScope className="block">
+        <ToolUI id="display-local-actions-table">
+          <ToolUI.Surface>
+            <DataTable
+              id="display-local-actions-table"
+              rowIdKey="id"
+              columns={[
+                { key: "merchant", label: "Merchant" },
+                { key: "amount", label: "Amount", align: "right" },
+              ]}
+              data={tableRows}
+            />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.LocalActions
+              actions={[
+                { id: "export-csv", label: "Export CSV", variant: "secondary" },
+                { id: "open-report", label: "Open Full Report", variant: "outline" },
+              ]}
+              onAction={(actionId) => {
+                setEvent(`Local action executed: ${actionId}`);
+              }}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
+      </ThemedPreviewScope>
       <p className="text-muted-foreground text-xs">{event}</p>
     </div>
   );
@@ -313,71 +314,73 @@ export function DecisionSurfaceExample() {
 
   return (
     <div className="not-prose flex max-w-md flex-col gap-3">
-      <ToolUI id="decision-actions-order">
-        <ToolUI.Surface>
-          {orderChoice ? (
-            <OrderSummary.Receipt
-              id="decision-actions-order"
-              title="Order Summary"
-              items={orderItems}
-              pricing={orderPricing}
-              choice={orderChoice}
-            />
-          ) : (
-            <OrderSummary.Display
-              id="decision-actions-order"
-              title="Order Summary"
-              items={orderItems}
-              pricing={orderPricing}
-            />
-          )}
-        </ToolUI.Surface>
-        {!orderChoice && (
-          <ToolUI.Actions>
-            <ToolUI.DecisionActions
-              actions={[
-                { id: "cancel", label: "Cancel", variant: "outline" },
-                { id: "confirm", label: "Purchase", variant: "default" },
-              ]}
-              onAction={(action) =>
-                createDecisionResult({
-                  decisionId: "decision-actions-order-decision",
-                  action,
-                  payload:
-                    action.id === "confirm"
-                      ? {
-                          orderId: `ORD-${Date.now()}`,
-                          confirmedAt: new Date().toISOString(),
-                        }
-                      : undefined,
-                })
-              }
-              onCommit={(result) => {
-                if (result.actionId !== "confirm") {
-                  setEvent("Decision cancelled.");
-                  return;
+      <ThemedPreviewScope className="block">
+        <ToolUI id="decision-actions-order">
+          <ToolUI.Surface>
+            {orderChoice ? (
+              <OrderSummary.Receipt
+                id="decision-actions-order"
+                title="Order Summary"
+                items={orderItems}
+                pricing={orderPricing}
+                choice={orderChoice}
+              />
+            ) : (
+              <OrderSummary.Display
+                id="decision-actions-order"
+                title="Order Summary"
+                items={orderItems}
+                pricing={orderPricing}
+              />
+            )}
+          </ToolUI.Surface>
+          {!orderChoice && (
+            <ToolUI.Actions>
+              <ToolUI.DecisionActions
+                actions={[
+                  { id: "cancel", label: "Cancel", variant: "outline" },
+                  { id: "confirm", label: "Purchase", variant: "default" },
+                ]}
+                onAction={(action) =>
+                  createDecisionResult({
+                    decisionId: "decision-actions-order-decision",
+                    action,
+                    payload:
+                      action.id === "confirm"
+                        ? {
+                            orderId: `ORD-${Date.now()}`,
+                            confirmedAt: new Date().toISOString(),
+                          }
+                        : undefined,
+                  })
                 }
+                onCommit={(result) => {
+                  if (result.actionId !== "confirm") {
+                    setEvent("Decision cancelled.");
+                    return;
+                  }
 
-                const orderId =
-                  typeof result.payload?.orderId === "string"
-                    ? result.payload.orderId
-                    : `ORD-${Date.now()}`;
-                const confirmedAt =
-                  typeof result.payload?.confirmedAt === "string"
-                    ? result.payload.confirmedAt
-                    : new Date().toISOString();
+                  const orderId =
+                    typeof result.payload?.orderId === "string"
+                      ? result.payload.orderId
+                      : `ORD-${Date.now()}`;
+                  const confirmedAt =
+                    typeof result.payload?.confirmedAt === "string"
+                      ? result.payload.confirmedAt
+                      : new Date().toISOString();
 
-                setOrderChoice({
-                  action: "confirm",
-                  orderId,
-                  confirmedAt,
-                });
-                setEvent(`Committed decision envelope: ${orderId}`);
-              }}
-            />
-          </ToolUI.Actions>
-        )}
-      </ToolUI>
+                  setOrderChoice({
+                    action: "confirm",
+                    orderId,
+                    confirmedAt,
+                  });
+                  setEvent(`Committed decision envelope: ${orderId}`);
+                }}
+              />
+            </ToolUI.Actions>
+          )}
+        </ToolUI>
+      </ThemedPreviewScope>
       <div className="flex items-center gap-2">
         <p className="text-muted-foreground text-xs">{event}</p>
         {orderChoice && (
@@ -421,44 +424,46 @@ export function ActionCentricExceptionsExample() {
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="flex flex-col gap-2">
           <h4 className="text-base font-semibold">OptionList</h4>
-          <OptionList
-            id="action-centric-option-list"
-            selectionMode="single"
-            options={[
-              {
-                id: "merge",
-                label: "Merge duplicates",
-                description: "Combine records and preserve all unique fields.",
-              },
-              {
-                id: "keep",
-                label: "Keep separate",
-                description: "Leave both records untouched.",
-              },
-              {
-                id: "review",
-                label: "Review manually",
-                description: "Open each pair for manual confirmation.",
-              },
-            ]}
-            choice={optionChoice}
-            actions={[
-              { id: "cancel", label: "Clear", variant: "ghost" },
-              { id: "confirm", label: "Confirm Selection", variant: "default" },
-            ]}
-            onAction={(actionId, selection) => {
-              setOptionOutput({ actionId, state: selection });
+          <ThemedPreviewScope className="block">
+            <OptionList
+              id="action-centric-option-list"
+              selectionMode="single"
+              options={[
+                {
+                  id: "merge",
+                  label: "Merge duplicates",
+                  description: "Combine records and preserve all unique fields.",
+                },
+                {
+                  id: "keep",
+                  label: "Keep separate",
+                  description: "Leave both records untouched.",
+                },
+                {
+                  id: "review",
+                  label: "Review manually",
+                  description: "Open each pair for manual confirmation.",
+                },
+              ]}
+              choice={optionChoice}
+              actions={[
+                { id: "cancel", label: "Clear", variant: "ghost" },
+                { id: "confirm", label: "Confirm Selection", variant: "default" },
+              ]}
+              onAction={(actionId, selection) => {
+                setOptionOutput({ actionId, state: selection });
 
-              if (actionId === "confirm") {
-                setOptionChoice(selection);
-                return;
-              }
+                if (actionId === "confirm") {
+                  setOptionChoice(selection);
+                  return;
+                }
 
-              if (actionId === "cancel") {
-                setOptionChoice(undefined);
-              }
-            }}
-          />
+                if (actionId === "cancel") {
+                  setOptionChoice(undefined);
+                }
+              }}
+            />
+          </ThemedPreviewScope>
           <div className="flex items-center gap-2">
             {optionChoice !== undefined && (
               <Button
@@ -493,39 +498,41 @@ export function ActionCentricExceptionsExample() {
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="flex flex-col gap-2">
           <h4 className="text-base font-semibold">ParameterSlider</h4>
-          <ParameterSlider
-            id="action-centric-parameter-slider"
-            sliders={[
-              {
-                id: "exposure",
-                label: "Exposure",
-                min: -2,
-                max: 2,
-                step: 0.1,
-                value: 0.2,
-                unit: " EV",
-                precision: 1,
-              },
-              {
-                id: "contrast",
-                label: "Contrast",
-                min: -50,
-                max: 50,
-                step: 1,
-                value: 12,
-                unit: "%",
-              },
-            ]}
-            values={sliderValues}
-            onChange={setSliderValues}
-            actions={[
-              { id: "reset", label: "Reset", variant: "ghost" },
-              { id: "apply", label: "Apply Adjustments", variant: "default" },
-            ]}
-            onAction={(actionId, values) => {
-              setSliderOutput({ actionId, state: values });
-            }}
-          />
+          <ThemedPreviewScope className="block">
+            <ParameterSlider
+              id="action-centric-parameter-slider"
+              sliders={[
+                {
+                  id: "exposure",
+                  label: "Exposure",
+                  min: -2,
+                  max: 2,
+                  step: 0.1,
+                  value: 0.2,
+                  unit: " EV",
+                  precision: 1,
+                },
+                {
+                  id: "contrast",
+                  label: "Contrast",
+                  min: -50,
+                  max: 50,
+                  step: 1,
+                  value: 12,
+                  unit: "%",
+                },
+              ]}
+              values={sliderValues}
+              onChange={setSliderValues}
+              actions={[
+                { id: "reset", label: "Reset", variant: "ghost" },
+                { id: "apply", label: "Apply Adjustments", variant: "default" },
+              ]}
+              onAction={(actionId, values) => {
+                setSliderOutput({ actionId, state: values });
+              }}
+            />
+          </ThemedPreviewScope>
         </div>
         <div className="border-border bg-card rounded-xl border p-3">
           <p className="text-sm font-medium">Mock output</p>
@@ -549,26 +556,28 @@ export function ActionCentricExceptionsExample() {
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="flex flex-col gap-2">
           <h4 className="text-base font-semibold">PreferencesPanel</h4>
-          <PreferencesPanel
-            id="action-centric-preferences-panel"
-            title="Notification Preferences"
-            sections={preferencesSections}
-            actions={[
-              { id: "cancel", label: "Cancel", variant: "ghost" },
-              { id: "save", label: "Save Preferences", variant: "default" },
-            ]}
-            onAction={(actionId, value) => {
-              setPreferencesOutput({ actionId, state: value });
+          <ThemedPreviewScope className="block">
+            <PreferencesPanel
+              id="action-centric-preferences-panel"
+              title="Notification Preferences"
+              sections={preferencesSections}
+              actions={[
+                { id: "cancel", label: "Cancel", variant: "ghost" },
+                { id: "save", label: "Save Preferences", variant: "default" },
+              ]}
+              onAction={(actionId, value) => {
+                setPreferencesOutput({ actionId, state: value });
 
-              if (actionId === "save") {
-                setSavedPreferences(value);
-                return;
-              }
-              if (actionId === "cancel") {
-                setSavedPreferences(null);
-              }
-            }}
-          />
+                if (actionId === "save") {
+                  setSavedPreferences(value);
+                  return;
+                }
+                if (actionId === "cancel") {
+                  setSavedPreferences(null);
+                }
+              }}
+            />
+          </ThemedPreviewScope>
         </div>
         <div className="border-border bg-card rounded-xl border p-3">
           <p className="text-sm font-medium">Mock output</p>

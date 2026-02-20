@@ -33,6 +33,7 @@ import {
   questionFlowPresets,
   QuestionFlowPresetName,
 } from "@/lib/presets/question-flow";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 
 function generateOptionListCode(preset: OptionListPresetName): string {
   const list = optionListPresets[preset].data;
@@ -156,7 +157,9 @@ export function OptionListPresetExample({
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose mx-auto max-w-md">
-          <OptionList {...data} />
+          <ThemedPreviewScope className="block">
+            <OptionList {...data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -212,7 +215,9 @@ export function ChartPresetExample({ preset }: ChartPresetExampleProps) {
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose">
-          <Chart id={`chart-${preset}`} {...config} />
+          <ThemedPreviewScope className="block">
+            <Chart id={`chart-${preset}`} {...config} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -236,7 +241,9 @@ export function CodeBlockPresetExample({
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose">
-          <CodeBlock {...data} />
+          <ThemedPreviewScope className="block">
+            <CodeBlock {...data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -258,7 +265,9 @@ export function TerminalPresetExample({ preset }: TerminalPresetExampleProps) {
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose">
-          <Terminal {...data} />
+          <ThemedPreviewScope className="block">
+            <Terminal {...data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -302,7 +311,9 @@ export function PlanPresetExample({ preset }: PlanPresetExampleProps) {
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose mx-auto max-w-xl">
-          <Plan {...data} />
+          <ThemedPreviewScope className="block">
+            <Plan {...data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -342,7 +353,9 @@ export function ItemCarouselPresetExample({
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose">
-          <ItemCarousel {...data} />
+          <ThemedPreviewScope className="block">
+            <ItemCarousel {...data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -406,7 +419,9 @@ export function ApprovalCardPresetExample({
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose mx-auto max-w-sm">
-          <ApprovalCard {...data} />
+          <ThemedPreviewScope className="block">
+            <ApprovalCard {...data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">
@@ -430,7 +445,9 @@ export function QuestionFlowPresetExample({
     <Tabs items={["Preview", "Code"]}>
       <Tab value="Preview">
         <div className="not-prose mx-auto max-w-md">
-          <QuestionFlow {...presetData.data} />
+          <ThemedPreviewScope className="block">
+            <QuestionFlow {...presetData.data} />
+          </ThemedPreviewScope>
         </div>
       </Tab>
       <Tab value="Code">

@@ -7,7 +7,8 @@ import {
   GalleryPreviewImpression,
 } from "@/app/docs/_components/gallery-analytics.client";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
-import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
+import { GalleryInstallStrip } from "@/app/docs/_components/gallery-install-strip";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
@@ -354,7 +355,7 @@ export default function ComponentsGalleryPage() {
               componentId={card.componentId}
               className={card.className}
             >
-              {card.render()}
+              <ThemedPreviewScope>{card.render()}</ThemedPreviewScope>
             </GalleryPreviewCard>
           ))}
 

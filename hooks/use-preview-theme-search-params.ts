@@ -11,15 +11,16 @@ import {
   buildPreviewThemeVars,
   DEFAULT_PREVIEW_THEME_CONFIG,
   normalizePreviewThemeConfig,
-  PREVIEW_APPEARANCES,
   PREVIEW_BASE_COLORS,
+  PREVIEW_DENSITIES,
+  PREVIEW_FONT_SCALES,
   PREVIEW_FONTS,
   PREVIEW_MENU_ACCENTS,
   PREVIEW_MENU_COLORS,
   PREVIEW_RADII,
+  PREVIEW_SURFACE_TINTS,
   PREVIEW_THEMES,
   resolveAvailableThemes,
-  resolvePreviewAppearance,
   type PreviewThemeConfig,
 } from "@/lib/docs/preview-theme-config";
 
@@ -30,9 +31,6 @@ const QUERY_STATE_OPTIONS = {
 };
 
 const previewThemeSearchParamParsers = {
-  previewAppearance: parseAsStringLiteral(PREVIEW_APPEARANCES)
-    .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewAppearance)
-    .withOptions({ clearOnDefault: false }),
   previewBaseColor: parseAsStringLiteral(PREVIEW_BASE_COLORS)
     .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewBaseColor)
     .withOptions({ clearOnDefault: false }),
@@ -41,6 +39,15 @@ const previewThemeSearchParamParsers = {
     .withOptions({ clearOnDefault: false }),
   previewRadius: parseAsStringLiteral(PREVIEW_RADII)
     .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewRadius)
+    .withOptions({ clearOnDefault: false }),
+  previewDensity: parseAsStringLiteral(PREVIEW_DENSITIES)
+    .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewDensity)
+    .withOptions({ clearOnDefault: false }),
+  previewFontScale: parseAsStringLiteral(PREVIEW_FONT_SCALES)
+    .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewFontScale)
+    .withOptions({ clearOnDefault: false }),
+  previewSurfaceTint: parseAsStringLiteral(PREVIEW_SURFACE_TINTS)
+    .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewSurfaceTint)
     .withOptions({ clearOnDefault: false }),
   previewMenuAccent: parseAsStringLiteral(PREVIEW_MENU_ACCENTS)
     .withDefault(DEFAULT_PREVIEW_THEME_CONFIG.previewMenuAccent)
@@ -65,10 +72,12 @@ function resolveConfigFromParams(
   params: PreviewThemeSearchParamsState,
 ): PreviewThemeConfig {
   return normalizePreviewThemeConfig({
-    previewAppearance: params.previewAppearance,
     previewBaseColor: params.previewBaseColor,
     previewTheme: params.previewTheme,
     previewRadius: params.previewRadius,
+    previewDensity: params.previewDensity,
+    previewFontScale: params.previewFontScale,
+    previewSurfaceTint: params.previewSurfaceTint,
     previewMenuAccent: params.previewMenuAccent,
     previewMenuColor: params.previewMenuColor,
     previewFont: params.previewFont,
@@ -114,16 +123,7 @@ export function usePreviewThemeSearchParams() {
 export function useResolvedPreviewTheme() {
   const previewTheme = usePreviewThemeSearchParams();
   const { resolvedTheme } = useTheme();
-  const resolvedSiteTheme = resolvedTheme === "dark" ? "dark" : "light";
-
-  const resolvedAppearance = useMemo(
-    () =>
-      resolvePreviewAppearance(
-        previewTheme.config.previewAppearance,
-        resolvedSiteTheme,
-      ),
-    [previewTheme.config.previewAppearance, resolvedSiteTheme],
-  );
+  const resolvedAppearance = resolvedTheme === "dark" ? "dark" : ("light" as const);
 
   const previewThemeVars = useMemo(
     () => buildPreviewThemeVars(previewTheme.config),

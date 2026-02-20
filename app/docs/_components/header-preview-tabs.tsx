@@ -9,6 +9,8 @@ import {
   getPreviewConfig,
   type PreviewState,
 } from "@/lib/docs/preview-config";
+import { withComponentImport } from "@/lib/docs/preview-code";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 
 interface HeaderPreviewTabsProps {
   componentId: ComponentId;
@@ -62,7 +64,9 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
       <Tabs items={["Preview", "Code"]}>
         <Tab value="Preview">
           <div className="header-preview-center flex w-full justify-center">
-            {wrappedPreview}
+            <ThemedPreviewScope className="block">
+              {wrappedPreview}
+            </ThemedPreviewScope>
           </div>
         </Tab>
         <Tab value="Code">

@@ -15,6 +15,7 @@ import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
 import { MessageDraft } from "@/components/tool-ui/message-draft";
 import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 import {
   type Flight,
   TABLE_COLUMNS,
@@ -816,7 +817,11 @@ function AnimatedScene({
             >
               <div className="flex w-full justify-start">
                 <div className="w-full max-w-[720px] *:**:data-[slot=table]:min-w-0">
-                  <ToolReveal>{config.toolUI}</ToolReveal>
+                  <ToolReveal>
+                    <ThemedPreviewScope className="block">
+                      {config.toolUI}
+                    </ThemedPreviewScope>
+                  </ToolReveal>
                 </div>
               </div>
             </motion.div>

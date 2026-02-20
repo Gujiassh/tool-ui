@@ -7,6 +7,7 @@ import {
 } from "@/components/tool-ui/data-table";
 import { getMockTasks } from "@/lib/mocks/tasks";
 import { useEffect, useState } from "react";
+import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
 
 export function TasksDemo() {
   const [rows, setRows] = useState<DataTableRowData[] | null>(null);
@@ -74,13 +75,15 @@ export function TasksDemo() {
 
   return (
     <div className="not-prose">
-      <DataTable.Table
-        id="data-table-tasks-demo"
-        rowIdKey="id"
-        columns={columns}
-        data={rows ?? []}
-        defaultSort={{ by: "urgencyOrder", direction: "asc" }}
-      />
+      <ThemedPreviewScope className="block">
+        <DataTable.Table
+          id="data-table-tasks-demo"
+          rowIdKey="id"
+          columns={columns}
+          data={rows ?? []}
+          defaultSort={{ by: "urgencyOrder", direction: "asc" }}
+        />
+      </ThemedPreviewScope>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { DocsNav } from "./_components/docs-nav";
 import { DocsTocProvider } from "./_components/docs-toc-context";
 import { DocsSearch } from "./_components/docs-search.client";
 import { PreviewThemeControls } from "./_components/preview-theme-controls";
+import { previewFontVariableClasses } from "./_fonts/preview-fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -20,19 +21,21 @@ export const metadata: Metadata = {
 export default function DocsLayout({ children }: { children: ReactNode }) {
   return (
     <NuqsAdapter>
-      <HeaderFrame
-        rightContent={
-          <div className="flex items-center gap-2">
-            <DocsSearch />
-            <PreviewThemeControls />
-            <ThemeToggle />
-          </div>
-        }
-      >
-        <DocsTocProvider>
-          <ContentLayout sidebar={<DocsNav />}>{children}</ContentLayout>
-        </DocsTocProvider>
-      </HeaderFrame>
+      <div className={`h-full ${previewFontVariableClasses}`}>
+        <HeaderFrame
+          rightContent={
+            <div className="flex items-center gap-2">
+              <DocsSearch />
+              <PreviewThemeControls />
+              <ThemeToggle />
+            </div>
+          }
+        >
+          <DocsTocProvider>
+            <ContentLayout sidebar={<DocsNav />}>{children}</ContentLayout>
+          </DocsTocProvider>
+        </HeaderFrame>
+      </div>
     </NuqsAdapter>
   );
 }

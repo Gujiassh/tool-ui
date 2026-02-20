@@ -1,6 +1,7 @@
 "use client";
 
-import { Palette, RotateCcw } from "lucide-react";
+import { Check, Copy, Palette, RotateCcw } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -12,18 +13,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  PREVIEW_APPEARANCES,
   PREVIEW_BASE_COLORS,
   PREVIEW_FONTS,
   PREVIEW_MENU_ACCENTS,
   PREVIEW_MENU_COLORS,
+  PREVIEW_DENSITIES,
+  PREVIEW_FONT_SCALES,
   PREVIEW_RADII,
-  type PreviewAppearance,
+  PREVIEW_SURFACE_TINTS,
   type PreviewBaseColor,
+  type PreviewDensity,
   type PreviewFont,
+  type PreviewFontScale,
   type PreviewMenuAccent,
   type PreviewMenuColor,
   type PreviewRadius,
+  type PreviewSurfaceTint,
   type PreviewTheme,
 } from "@/lib/docs/preview-theme-config";
 import { usePreviewThemeSearchParams } from "@/hooks/use-preview-theme-search-params";
@@ -38,6 +43,7 @@ function toLabel(value: string): string {
 export function PreviewThemeControls() {
   const { config, availableThemes, setPreviewTheme, resetPreviewTheme } =
     usePreviewThemeSearchParams();
+  const [copied, setCopied] = useState(false);
 
   return (
     <Popover>
@@ -51,41 +57,33 @@ export function PreviewThemeControls() {
       <PopoverContent align="end" className="w-80 p-3">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-medium">Preview Theme</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={resetPreviewTheme}
-            className="h-7 gap-1 px-2 text-xs"
-          >
-            <RotateCcw className="size-3" />
-            Reset
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                navigator.clipboard.writeText(JSON.stringify(config, null, 2));
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              }}
+              className="h-7 gap-1 px-2 text-xs"
+            >
+              {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
+              Copy
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetPreviewTheme}
+              className="h-7 gap-1 px-2 text-xs"
+            >
+              <RotateCcw className="size-3" />
+              Reset
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-2.5">
-          <div className="grid grid-cols-[6.5rem_1fr] items-center gap-2">
-            <Label htmlFor="preview-appearance" className="text-xs">
-              Appearance
-            </Label>
-            <Select
-              value={config.previewAppearance}
-              onValueChange={(value) =>
-                setPreviewTheme({ previewAppearance: value as PreviewAppearance })
-              }
-            >
-              <SelectTrigger id="preview-appearance" size="sm" className="w-full">
-                <SelectValue placeholder="Appearance" />
-              </SelectTrigger>
-              <SelectContent align="end">
-                {PREVIEW_APPEARANCES.map((appearance) => (
-                  <SelectItem key={appearance} value={appearance}>
-                    {toLabel(appearance)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="grid grid-cols-[6.5rem_1fr] items-center gap-2">
             <Label htmlFor="preview-base-color" className="text-xs">
               Base Color
@@ -103,6 +101,29 @@ export function PreviewThemeControls() {
                 {PREVIEW_BASE_COLORS.map((baseColor) => (
                   <SelectItem key={baseColor} value={baseColor}>
                     {toLabel(baseColor)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-[6.5rem_1fr] items-center gap-2">
+            <Label htmlFor="preview-surface-tint" className="text-xs">
+              Surface Tint
+            </Label>
+            <Select
+              value={config.previewSurfaceTint}
+              onValueChange={(value) =>
+                setPreviewTheme({ previewSurfaceTint: value as PreviewSurfaceTint })
+              }
+            >
+              <SelectTrigger id="preview-surface-tint" size="sm" className="w-full">
+                <SelectValue placeholder="Surface tint" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                {PREVIEW_SURFACE_TINTS.map((tint) => (
+                  <SelectItem key={tint} value={tint}>
+                    {toLabel(tint)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -149,6 +170,29 @@ export function PreviewThemeControls() {
                 {PREVIEW_RADII.map((radius) => (
                   <SelectItem key={radius} value={radius}>
                     {toLabel(radius)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-[6.5rem_1fr] items-center gap-2">
+            <Label htmlFor="preview-density" className="text-xs">
+              Density
+            </Label>
+            <Select
+              value={config.previewDensity}
+              onValueChange={(value) =>
+                setPreviewTheme({ previewDensity: value as PreviewDensity })
+              }
+            >
+              <SelectTrigger id="preview-density" size="sm" className="w-full">
+                <SelectValue placeholder="Density" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                {PREVIEW_DENSITIES.map((density) => (
+                  <SelectItem key={density} value={density}>
+                    {toLabel(density)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -218,6 +262,29 @@ export function PreviewThemeControls() {
                 {PREVIEW_FONTS.map((font) => (
                   <SelectItem key={font} value={font}>
                     {toLabel(font)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-[6.5rem_1fr] items-center gap-2">
+            <Label htmlFor="preview-font-scale" className="text-xs">
+              Font Scale
+            </Label>
+            <Select
+              value={config.previewFontScale}
+              onValueChange={(value) =>
+                setPreviewTheme({ previewFontScale: value as PreviewFontScale })
+              }
+            >
+              <SelectTrigger id="preview-font-scale" size="sm" className="w-full">
+                <SelectValue placeholder="Font scale" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                {PREVIEW_FONT_SCALES.map((scale) => (
+                  <SelectItem key={scale} value={scale}>
+                    {toLabel(scale)}
                   </SelectItem>
                 ))}
               </SelectContent>
