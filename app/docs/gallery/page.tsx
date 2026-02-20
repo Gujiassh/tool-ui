@@ -17,6 +17,8 @@ import {
   galleryComponentDocs,
   type GalleryComponentDocId,
 } from "@/lib/docs/gallery-component-docs";
+import type { ComponentId } from "@/lib/docs/component-ids";
+import { withComponentImport } from "@/lib/docs/preview-code";
 import { approvalCardPresets } from "@/lib/presets/approval-card";
 import { audioPresets } from "@/lib/presets/audio";
 import { chartPresets } from "@/lib/presets/chart";
@@ -134,22 +136,47 @@ interface GalleryCardConfig {
   render: () => ReactNode;
 }
 
+const COMPONENT_SYMBOL_OVERRIDES: Partial<Record<GalleryComponentDocId, string>> = {
+  "linkedin-post": "LinkedInPost",
+  "x-post": "XPost",
+};
+
+function toComponentSymbol(componentId: GalleryComponentDocId): string {
+  const override = COMPONENT_SYMBOL_OVERRIDES[componentId];
+  if (override) return override;
+  return componentId
+    .split("-")
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join("");
+}
+
+function getGalleryUsageCode(componentId: GalleryComponentDocId): string {
+  const symbol = toComponentSymbol(componentId);
+  const baseCode = `export default function Demo() {
+  return (
+    <${symbol} />
+  );
+}`;
+  return withComponentImport(componentId as ComponentId, baseCode);
+}
+
 function GalleryPreviewCard({
   componentId,
   className,
   children,
 }: GalleryPreviewCardProps) {
   const componentMeta = galleryComponentDocs[componentId];
+  const installCommand = `npx shadcn@latest add @tool-ui/${componentId}`;
 
   return (
-    <div className={cn("group/gallery-card relative pt-[44px]", className)}>
-      <div className="absolute top-0 left-1/2 z-20 w-fit -translate-x-1/2 -translate-y-1">
-        <GalleryInstallStrip
-          componentId={componentId}
-          componentName={componentMeta.name}
-          docsHref={componentMeta.docsHref}
-        />
-      </div>
+    <div className={cn("group/gallery-card relative flex flex-col gap-2", className)}>
+      <GalleryInstallStrip
+        componentId={componentId}
+        componentName={componentMeta.name}
+        docsHref={componentMeta.docsHref}
+        usageCode={getGalleryUsageCode(componentId)}
+        installCommand={installCommand}
+      />
       <GalleryPreviewImpression componentId={componentId} />
       {children}
     </div>

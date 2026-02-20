@@ -2,9 +2,11 @@
 
 import type { MouseEventHandler } from "react";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Check, Copy as CopyIcon, Terminal } from "lucide-react";
+import { Check, Copy as CopyIcon, Terminal, CircleHelp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GalleryDocsLink } from "./gallery-docs-link";
+import { GalleryPopup } from "./gallery-popup";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { analytics } from "@/lib/analytics";
 
@@ -12,14 +14,17 @@ interface GalleryInstallStripProps {
   componentId: GalleryComponentDocId;
   componentName: string;
   docsHref: `/docs/${string}`;
+  usageCode: string;
+  installCommand: string;
 }
 
 export function GalleryInstallStrip({
   componentId,
   componentName,
   docsHref,
+  usageCode,
+  installCommand,
 }: GalleryInstallStripProps) {
-  const installCommand = `npx shadcn@latest add @tool-ui/${componentId}`;
   const [checked, copyCommand] = useCopyButton(async () => {
     await navigator.clipboard.writeText(installCommand);
   });
@@ -31,24 +36,54 @@ export function GalleryInstallStrip({
   };
 
   return (
-    <div className="pointer-events-auto rounded-xl border border-neutral-700/70 bg-neutral-900/90 px-3 py-2 text-neutral-100 shadow-sm backdrop-blur-sm dark:border-neutral-300/80 dark:bg-neutral-100/90 dark:text-neutral-900">
-      <GalleryDocsLink
-        componentId={componentId}
-        label={componentName}
-        href={docsHref}
-        className="text-neutral-200/90 hover:text-white dark:text-neutral-700 dark:hover:text-neutral-950"
-      />
+    <div className="pointer-events-auto rounded-md border border-border/60 bg-background/75 px-2 py-1.5 text-foreground/85 backdrop-blur-sm">
+      <div className="flex items-center justify-between gap-2">
+        <GalleryDocsLink
+          componentId={componentId}
+          label={componentName}
+          href={docsHref}
+          className="text-foreground/65 hover:text-foreground"
+        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-5 text-foreground/60 hover:text-foreground"
+              aria-label={`How to use ${componentName}`}
+              title="How to use"
+            >
+              <CircleHelp className="size-3.5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="top"
+            align="end"
+            sideOffset={8}
+            className="w-[min(92vw,640px)] border-neutral-700/80 bg-neutral-950/96 p-0 dark:border-neutral-300/70 dark:bg-neutral-50/96"
+          >
+            <GalleryPopup
+              componentId={componentId}
+              componentName={componentName}
+              docsHref={docsHref}
+              usageCode={usageCode}
+              installCommand={installCommand}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
-      <div className="mt-2 flex items-center gap-2 rounded-md border border-neutral-700/60 bg-neutral-800/70 px-2 py-1.5 dark:border-neutral-300/70 dark:bg-neutral-50">
-        <Terminal className="size-3.5 shrink-0 text-neutral-300 dark:text-neutral-600" />
-        <code className="min-w-0 flex-1 truncate font-mono text-[11px] text-neutral-100 dark:text-neutral-900">
+      <div className="mt-1 flex items-center gap-1.5 rounded-sm border border-border/50 bg-muted/55 px-1.5 py-0.5">
+        <Terminal className="size-2.5 shrink-0 text-foreground/45" />
+        <code className="min-w-0 flex-1 truncate font-mono text-[9px] text-foreground/70">
           {installCommand}
         </code>
         <Button
           type="button"
-          variant="secondary"
+          variant="ghost"
           size="sm"
-          className="h-6 shrink-0 px-2 text-[11px]"
+          className="h-4 shrink-0 px-1 text-[9px] text-foreground/55 hover:text-foreground/80"
           onClick={onCopy}
           aria-label={checked ? "Copied install command" : "Copy install command"}
           title={checked ? "Copied" : "Copy install command"}
