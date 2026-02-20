@@ -1,6 +1,22 @@
 import { NextConfig } from "next";
 import createMDX from "@next/mdx";
 
+const isDev = process.env.NODE_ENV === "development";
+
+const cspHeader = `
+    default-src 'self';
+    connect-src 'self' *;
+    script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data:;
+    font-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+`;
+
 const config: NextConfig = {
   reactStrictMode: true,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
@@ -55,6 +71,19 @@ const config: NextConfig = {
         },
       ],
     };
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: cspHeader.replace(/\n/g, ""),
+          },
+        ],
+      },
+    ];
   },
 };
 
