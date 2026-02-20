@@ -1,64 +1,65 @@
 # Tool UI
 
-When an AI assistant calls a tool, the result is usually raw JSON dumped into the conversation. Tool UI turns those results into interactive React components: cards, tables, option lists that render inline and let users act without leaving the chat.
+<p>
+  <img src="./public/assets/homepage.png" alt="Tool UI homepage overview" width="100%" />
+</p>
 
-**[tool-ui.com](https://tool-ui.com)** | [Docs](https://tool-ui.com/docs/overview) | [Gallery](https://tool-ui.com/docs/gallery)
+Tool UI is a copy/paste component library for AI assistants.
 
-## Quick start
+When a model calls a tool, most apps dump JSON into the chat. Tool UI turns those payloads into purpose-built interfaces such as approvals, forms, tables, charts, media cards, and receipts so users can understand and act inline.
 
-1. Run `pnpm dev` and open `/playground`.
-2. Add a prototype entry in `lib/playground/registry.ts`.
-3. Use an existing preset from `lib/presets/*.ts` to render your target tool payload.
-4. Iterate on the matching component under `components/tool-ui/<component>/`.
-5. Rebuild registry artifacts with `pnpm registry:build`.
+**[tool-ui.com](https://tool-ui.com)** | [Docs](https://tool-ui.com/docs/overview) | [Gallery](https://tool-ui.com/docs/gallery) | [Quick Start](https://tool-ui.com/docs/quick-start)
 
-## Components
+## What You Get
 
-- Approval Card: Binary confirmation for agent actions
-- Audio: Playback with artwork and metadata
-- Chart: Interactive data visualization
-- Citation: Source references with attribution
-- Code Block: Syntax-highlighted code snippets
-- Data Table: Sortable columns, row actions, mobile accordion layout
-- Image: Images with metadata and attribution
-- Image Gallery: Grid layout for browsing collections
-- Item Carousel: Horizontal browsing for collections
-- Link Preview: Rich previews with OG data
-- Option List: Single/multi-select with local and decision actions
-- Order Summary: Itemized purchase confirmation with pricing
-- Parameter Slider: Numeric parameter adjustment
-- Plan: Step-by-step task workflows
-- Preferences Panel: Compact settings surface
-- Progress Tracker: Multi-step progress and status
-- Question Flow: Guided multi-step input and selection
-- Social Post: X/Instagram/LinkedIn renderers with media previews
-- Stats Display: Metric cards and deltas
-- Terminal: Command-line output and logs
-- Video: Playback with controls and poster
-- Weather Widget: Forecast and conditions
+- 25+ Tool UI components organized by interaction role (decision, input, display, progress, media)
+- Serializable schemas and safe parse helpers for model/tool payloads
+- Runtime integration patterns for assistant-ui and manual renderers
+- Presets for realistic payload examples and docs previews
+- A docs site and gallery that mirror production usage patterns
 
-[Browse all components](https://tool-ui.com/docs/gallery)
+## Image Examples
 
-## Development
+<p>
+  <img src="./public/assets/gallery.png" alt="Tool UI gallery showcase" width="100%" />
+</p>
+
+<p>
+  <img src="./public/assets/option-list.png" alt="Option List Tool UI component" width="49%" />
+  <img src="./public/assets/question-flow.png" alt="Question Flow Tool UI component" width="49%" />
+</p>
+
+## Component Coverage
+
+- **Decision/Confirmation**: Approval Card, Order Summary, Message Draft, Option List
+- **Input/Configuration**: Parameter Slider, Preferences Panel, Question Flow
+- **Display/Artifacts**: Data Table, Chart, Citation, Link Preview, Stats Display, Code Block, Code Diff, Terminal
+- **Media/Creative**: Image, Image Gallery, Video, Audio, Instagram Post, LinkedIn Post, X Post
+- **Progress/Execution**: Plan, Progress Tracker, Weather Widget
+
+Browse all components in the [Gallery](https://tool-ui.com/docs/gallery).
+
+## Local Development
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-`pnpm install` runs `prepare`, which configures local Git hooks to use `.githooks/`.
+Useful local routes:
 
-- `http://localhost:3000/docs/quick-start` for integration walkthrough
-- `http://localhost:3000/docs/changelog` for release notes
-- `http://localhost:3000/playground` for interactive prototype testing
+- `http://localhost:3000/docs/quick-start` integration walkthrough
+- `http://localhost:3000/docs/gallery` component browsing and previews
+- `http://localhost:3000/playground` interactive runtime prototyping
+- `http://localhost:3000/docs/changelog` release and update notes
 
-## Testing
+## Validation
 
 ```bash
 pnpm verify:ci
 ```
 
-If `registry:check` fails, regenerate and stage artifacts:
+If registry checks fail, regenerate artifacts and stage them:
 
 ```bash
 pnpm registry:build
