@@ -96,19 +96,22 @@ import {
   safeParseSerializableStatsDisplay,
   SerializableStatsDisplaySchema,
 } from "@/components/tool-ui/stats-display/schema";
-import { createArgsToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showStats: {
     description: "Display key metrics in a grid",
     parameters: SerializableStatsDisplaySchema,
-    render: createArgsToolRenderer({
-      safeParse: safeParseSerializableStatsDisplay,
-      idPrefix: "stats",
-      render: (parsedArgs) => (
-          <StatsDisplay {...parsedArgs} />
-      ),
-    }),
+    render: ({ args, toolCallId }) => {
+      const parsedArgs = safeParseSerializableStatsDisplay({
+        ...args,
+        id: args.id ?? `stats-${toolCallId}`,
+      });
+      if (!parsedArgs) {
+        return null;
+      }
+
+      return <StatsDisplay {...parsedArgs} />;
+    },
   },
 };
 ```

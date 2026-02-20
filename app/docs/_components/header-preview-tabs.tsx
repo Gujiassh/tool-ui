@@ -9,6 +9,7 @@ import {
   getPreviewConfig,
   type PreviewState,
 } from "@/lib/docs/preview-config";
+import { withComponentImport } from "@/lib/docs/preview-code";
 
 interface HeaderPreviewTabsProps {
   componentId: ComponentId;
@@ -55,7 +56,10 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
   ) : (
     preview
   );
-  const code = preset.generateExampleCode(preset.data);
+  const code = withComponentImport(
+    componentId,
+    preset.generateExampleCode(preset.data),
+  );
 
   return (
     <div className="not-prose mt-6" onClickCapture={handleTabClickCapture}>
