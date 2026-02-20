@@ -5,7 +5,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 const cspHeader = `
     default-src 'self';
-    connect-src 'self' *;
+    connect-src *;
     script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data:;
