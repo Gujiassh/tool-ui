@@ -5,7 +5,7 @@ import { InteractiveOptionDemo } from "../_components/interactive-option-demo";
 
 <DocsHeader
   title="Overview"
-  description="Designed UI for tool calls."
+  description="UI components for tool call results."
   mdxPath="app/docs/overview/content.mdx"
 />
 
@@ -58,11 +58,11 @@ From the user's perspective, tool calling is what happens when the assistant *do
 
 Behind the scenes, you define functions the model can invoke: searching a database, fetching a URL, running a calculation. The model decides when to call them based on the conversation. It sends structured arguments, your server executes the function, and a result comes back.
 
-Normally, that result is plain text or JSON that gets dumped into the chat as-is. Tool UI is about what happens next: **rendering those results as designed, interactive UI**.
+Normally, that result is plain text or JSON that gets dumped into the chat as-is. Tool UI is about what happens next: **rendering those results as real UI**.
 
 ## What if tool results could render UI?
 
-When a tool returns JSON that matches a known **schema**, your app can render a rich component instead of showing raw data.
+When a tool returns JSON that matches a known **schema**, your app can render a component instead of showing raw data.
 
 Every Tool UI component has a corresponding schema: a Zod definition that describes the shape of the data it needs. When the tool result matches, the component renders. When it doesn't, parsing fails safely and nothing renders.
 
@@ -78,7 +78,7 @@ Every Tool UI component has a corresponding schema: a Zod definition that descri
 // ...that matches the LinkPreview schema → renders as a card
 ```
 
-This is **schema-first rendering**: the data contract between server and client is explicit, typed, and validated. No brittle string parsing. No hoping the model formats things correctly.
+This is **schema-first rendering**: the data contract between server and client is typed and validated. No brittle string parsing. No hoping the model formats things correctly.
 
 ## What if that UI could be interactive?
 
@@ -88,9 +88,9 @@ Some tool UIs just display information like a link preview, a chart, or a code b
   <InteractiveOptionDemo />
 </div>
 
-The user selects an option, and the choice flows back to the assistant as a **tool result**. The assistant can then continue the conversation with that context. The selected state stays visible as a **receipt**, a permanent record of the decision.
+The user selects an option, and the choice flows back to the assistant as a **tool result**. The assistant can then continue the conversation with that context. The selected state stays visible as a **receipt** — a record of what was chosen.
 
-This is the [actions](/docs/actions) model: user interactions on tool UIs that produce side effects and durable records.
+This is the [actions](/docs/actions) model: user interactions on tool UIs that produce side effects and records.
 
 ## Where Tool UI fits
 
