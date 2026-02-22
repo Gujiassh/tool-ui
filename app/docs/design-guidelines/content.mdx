@@ -15,7 +15,7 @@ In AI chat, users interact with both the assistant and any tool UIs it renders. 
 
 <CollaborationDiagram />
 
-The assistant provides context and narration. The tool UI provides structure that prose cannot — sortable tables, controls, media. They work together.
+The assistant gives context and narration. The tool UI gives structure that prose cannot — sortable tables, controls, media. They work together.
 
 <div>
   <MockThread caption="The triadic loop in action">
@@ -134,7 +134,7 @@ Every Tool UI has a job:
 
 - **Information** — Display data. Users read more than they click. Examples: [Data Table](/docs/data-table), [Chart](/docs/chart), [Link Preview](/docs/link-preview).
 
-- **Decision** — Capture choices that matter (approve/reject, send/cancel). Show clear options and [receipts](/docs/receipts) that confirm what happened. Examples: [Approval Card](/docs/approval-card), [Option List](/docs/option-list).
+- **Decision** — For choices that matter (approve/reject, send/cancel). Show clear options and [receipts](/docs/receipts) that confirm what happened. Examples: [Approval Card](/docs/approval-card), [Option List](/docs/option-list).
 
 - **Control** — Adjust parameters without commitment (filters, sort orders, date ranges). Changes are reversible. Examples: [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel).
 
@@ -172,7 +172,7 @@ See the [Receipts](/docs/receipts) page for patterns and copy guidance.
 - **Hidden mutations:** Actions that change state should show what happened. Terminal decisions need a receipt showing what the user chose.
 - **Kitchen sinks:** If it needs tabs or navigation, consider breaking it into separate Tool UIs.
 - **Uncontextualized tool UIs:** Always have the assistant introduce a tool UI and explain what it shows.
-- **Redundant narration:** The assistant shouldn't describe what the tool UI already shows. The tool UI shouldn't echo what the assistant just said. If the assistant asks "Where to?", the tool UI doesn't need a header saying "Where to?" — just show the options. Divide the work between them: the assistant provides context, the tool UI provides structure.
+- **Redundant narration:** The assistant shouldn't describe what the tool UI already shows. The tool UI shouldn't echo what the assistant just said. If the assistant asks "Where to?", the tool UI doesn't need a header saying "Where to?" — just show the options. Divide the work between them: the assistant gives context, the tool UI gives structure.
 
 ## Further reading
 

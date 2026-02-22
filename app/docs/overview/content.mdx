@@ -11,7 +11,7 @@ import { InteractiveOptionDemo } from "../_components/interactive-option-demo";
 
 When an AI assistant calls a tool, the result is often plain text or raw JSON. Without purpose-built components, users see a wall of unformatted data they have to parse themselves. The experience breaks because nothing presents the data well.
 
-Tool UI is a component library built for this. Each component turns a specific kind of tool output into real UI: a card, a table, an option list, a chart. They render inline in the conversation and let users interact without leaving the chat.
+Tool UI is a component library built for this. Each component turns a specific kind of tool output into real UI: a card, a table, an option list, a chart. They render inline in the conversation and users can interact without leaving the chat.
 
 <div className="mt-8 grid min-w-0 gap-6 md:grid-cols-2">
   <MockThread caption="Without Tool UI">
@@ -88,18 +88,18 @@ Some tool UIs just display information like a link preview, a chart, or a code b
   <InteractiveOptionDemo />
 </div>
 
-The user selects an option, and the choice flows back to the assistant as a **tool result**. The assistant can then continue the conversation with that context. The selected state stays visible as a **receipt** — a record of what was chosen.
+The user selects an option, and the choice returns to the assistant as a **tool result**. The assistant can then continue the conversation with that context. The selected state stays visible as a **receipt** — a record of what was chosen.
 
 The [actions](/docs/actions) model covers user interactions on tool UIs that produce side effects and records.
 
 ## Where Tool UI fits
 
-Tool UI is between your design system and your LLM orchestration layer:
+Tool UI sits between your design system and your LLM orchestration layer:
 
 [Radix](https://www.radix-ui.com/)/[shadcn](https://ui.shadcn.com/) (design primitives) → **Tool UI** (conversation-native components) → [AI SDK](https://ai-sdk.dev/) / [LangGraph](https://langchain-ai.github.io/langgraphjs/) / etc. (LLM orchestration)
 
-- **Radix / shadcn** provide the base UI primitives (buttons, dialogs, inputs).
-- **Tool UI** provides components designed for chat (inline cards, tables, option lists, approval flows) with schemas that map to tool outputs.
+- **Radix / shadcn** give you the base UI primitives (buttons, dialogs, inputs).
+- **Tool UI** gives you components designed for chat (inline cards, tables, option lists, approval flows) with schemas that map to tool outputs.
 - **AI SDK / LangGraph** handle the model communication, streaming, and tool execution.
 
 Tool UI doesn't replace your design system. It extends it. Components use shadcn primitives internally and follow your theme.
@@ -111,7 +111,7 @@ flowchart LR
     A["Assistant calls tool"] --> B["Tool returns JSON"]
     B --> C["Schema match → Component renders"]
     C --> D["User interacts"]
-    D --> E["Result flows back"]
+    D --> E["Result returns"]
 
     style A fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
     style B fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
@@ -125,7 +125,7 @@ flowchart LR
 2. **The tool returns JSON.** Your server-side function executes and returns structured data matching an `outputSchema`.
 3. **The schema matches. A component renders.** On the client, a registered renderer parses the JSON against the component's schema. If it matches, the component renders inline in the chat message.
 4. **The user interacts.** For display components, this is the end. For interactive components (decisions, approvals), the user takes an action.
-5. **The result flows back.** The user's choice is sent back to the assistant as a tool result via `addResult`, continuing the conversation.
+5. **The result returns.** The user's choice is sent back to the assistant as a tool result via `addResult`, continuing the conversation.
 
 ### Minimal example
 
