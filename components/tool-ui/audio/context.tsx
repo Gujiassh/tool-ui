@@ -17,7 +17,7 @@ export interface AudioContextValue {
 const AudioContext = React.createContext<AudioContextValue | null>(null);
 
 export function useAudio() {
-  const ctx = React.useContext(AudioContext);
+  const ctx = React.use(AudioContext);
   if (!ctx) {
     throw new Error("useAudio must be used within an <AudioProvider />");
   }

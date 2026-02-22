@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 
 export interface ToolUIContextValue {
   id: string;
@@ -11,7 +11,7 @@ export interface ToolUIContextValue {
 export const ToolUIContext = createContext<ToolUIContextValue | null>(null);
 
 export function useOptionalToolUI(): ToolUIContextValue | null {
-  return useContext(ToolUIContext);
+  return use(ToolUIContext);
 }
 
 export function useToolUI(): ToolUIContextValue {

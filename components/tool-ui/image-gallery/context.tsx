@@ -2,7 +2,7 @@
 
 import {
   createContext,
-  useContext,
+  use,
   useState,
   useCallback,
   useMemo,
@@ -28,7 +28,7 @@ const ImageGalleryContext = createContext<ImageGalleryContextValue | null>(
 );
 
 export function useImageGallery(): ImageGalleryContextValue {
-  const context = useContext(ImageGalleryContext);
+  const context = use(ImageGalleryContext);
   if (!context) {
     throw new Error("useImageGallery must be used within ImageGalleryProvider");
   }

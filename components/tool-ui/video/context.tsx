@@ -17,7 +17,7 @@ export interface VideoContextValue {
 const VideoContext = React.createContext<VideoContextValue | null>(null);
 
 export function useVideo() {
-  const ctx = React.useContext(VideoContext);
+  const ctx = React.use(VideoContext);
   if (!ctx) {
     throw new Error("useVideo must be used within a <VideoProvider />");
   }
