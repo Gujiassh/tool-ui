@@ -196,33 +196,28 @@ export function SocialPostPreview({
     useState<Platform>(initialPlatform);
   const [currentPreset, setCurrentPreset] = useState<PresetName>(initialPreset);
 
-  useEffect(() => {
-    if (lockedPlatform) {
-      if (currentPlatform !== lockedPlatform) {
-        setCurrentPlatform(lockedPlatform);
-      }
+  const [prevPlatformParam, setPrevPlatformParam] = useState(platformParam);
+  const [prevPresetParam, setPrevPresetParam] = useState(presetParam);
+  const [prevLockedPlatform, setPrevLockedPlatform] = useState(lockedPlatform);
 
-      const validPreset = getValidPreset(lockedPlatform, presetParam);
-      if (validPreset !== currentPreset) {
-        setCurrentPreset(validPreset);
-      }
-      return;
-    }
+  if (
+    platformParam !== prevPlatformParam ||
+    presetParam !== prevPresetParam ||
+    lockedPlatform !== prevLockedPlatform
+  ) {
+    setPrevPlatformParam(platformParam);
+    setPrevPresetParam(presetParam);
+    setPrevLockedPlatform(lockedPlatform);
 
-    if (
-      platformParam &&
-      VALID_PLATFORMS.includes(platformParam as Platform) &&
-      platformParam !== currentPlatform
-    ) {
-      setCurrentPlatform(platformParam as Platform);
-      setCurrentPreset(getValidPreset(platformParam as Platform, presetParam));
-    } else if (presetParam && presetParam !== currentPreset) {
-      const validPreset = getValidPreset(currentPlatform, presetParam);
-      if (validPreset !== currentPreset) {
-        setCurrentPreset(validPreset);
-      }
-    }
-  }, [platformParam, presetParam, currentPlatform, currentPreset, lockedPlatform]);
+    const nextPlatform = lockedPlatform
+      ? lockedPlatform
+      : platformParam && VALID_PLATFORMS.includes(platformParam as Platform)
+        ? (platformParam as Platform)
+        : currentPlatform;
+    
+    setCurrentPlatform(nextPlatform);
+    setCurrentPreset(getValidPreset(nextPlatform, presetParam));
+  }
 
   const updateUrl = useCallback(
     (platform: Platform, preset: PresetName) => {

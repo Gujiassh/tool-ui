@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { ComponentPreviewShell } from "./component-preview-shell";
 import { ChatContextPreview } from "./chat-context-preview";
 import { PresetSelector } from "./preset-selector";
@@ -27,10 +27,12 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
   });
 
   const [state, setState] = useState<PreviewState>(EMPTY_STATE);
+  const [prevPreset, setPrevPreset] = useState(currentPreset);
 
-  useEffect(() => {
+  if (currentPreset !== prevPreset) {
+    setPrevPreset(currentPreset);
     setState(EMPTY_STATE);
-  }, [currentPreset]);
+  }
 
   const handleSelectPreset = useCallback(
     (preset: unknown) => {

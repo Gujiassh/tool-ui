@@ -254,20 +254,6 @@ export function OptionList({
       ),
   );
 
-  useEffect(() => {
-    setUncontrolledSelected((prev) => {
-      const normalized = normalizeSelectionForOptions(
-        parseSelectionToIdSet(
-          Array.from(prev),
-          selectionMode,
-          effectiveMaxSelections,
-        ),
-        optionIds,
-      );
-      return areSetsEqual(prev, normalized) ? prev : normalized;
-    });
-  }, [selectionMode, effectiveMaxSelections, optionIds]);
-
   const selectedIds = useMemo(
     () => {
       const parsed =

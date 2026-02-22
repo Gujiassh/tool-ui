@@ -26,7 +26,13 @@ export function DocsNav() {
   const [currentView] = useQueryState("view");
   const [collapsed, setCollapsed] = useState(false);
   const [isPressing, setIsPressing] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
   const previousPathRef = React.useRef<string | null>(null);
+
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setIsPressing(false);
+  }
 
   React.useEffect(() => {
     try {
@@ -36,10 +42,6 @@ export function DocsNav() {
       }
     } catch {}
   }, []);
-
-  React.useEffect(() => {
-    setIsPressing(false);
-  }, [pathname]);
 
   React.useEffect(() => {
     const handleMouseUp = (e: MouseEvent) => {

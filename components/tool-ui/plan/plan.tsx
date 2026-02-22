@@ -283,13 +283,6 @@ function PlanRoot({
     }, [todos, maxVisibleTodos]);
 
   useEffect(() => {
-    seenTodoIds.current = new Set<string>();
-    prevProgressRef.current = 0;
-    setNewTodoIds(new Set<string>());
-    setIsCelebrating(false);
-  }, [id]);
-
-  useEffect(() => {
     const newIds = new Set<string>();
 
     todos.forEach((todo) => {
@@ -392,14 +385,18 @@ function PlanRoot({
   );
 }
 
-export function PlanCompact(props: PlanProps) {
-  return <PlanRoot {...props} compact />;
+function PlanComponent(props: PlanProps) {
+  return <PlanRoot key={props.id} {...props} />;
 }
 
-type PlanComponent = typeof PlanRoot & {
+export function PlanCompact(props: PlanProps) {
+  return <PlanRoot key={props.id} {...props} compact />;
+}
+
+type PlanComponentType = typeof PlanComponent & {
   Compact: typeof PlanCompact;
 };
 
-export const Plan = Object.assign(PlanRoot, {
+export const Plan = Object.assign(PlanComponent, {
   Compact: PlanCompact,
-}) as PlanComponent;
+}) as PlanComponentType;
