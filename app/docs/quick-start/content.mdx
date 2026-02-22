@@ -31,7 +31,7 @@ Add a Tool UI component to a chat app. By the end you'll have an assistant that 
 
 [assistant-ui](https://www.assistant-ui.com/) is the React runtime that manages chat state, message streaming, and tool rendering. If you already have it set up, skip to [Step 2](#add-a-tool-ui-component).
 
-The fastest way to start is with the CLI, which scaffolds a working chat app in a Next.js project:
+The fastest way to start is with the CLI. It creates a working chat app in a Next.js project:
 
 ```sh
 npx assistant-ui@latest init
@@ -59,7 +59,7 @@ Run `pnpm dev` and confirm you see a working chat interface before continuing.
 npx shadcn@latest add https://tool-ui.com/r/link-preview.json
 ```
 
-This copies the source files into your project. You own the code. Modify it however you like.
+This copies the source files into your project. The code is yours - change it however you want.
 
 </Step>
 
@@ -114,7 +114,7 @@ export async function POST(req: Request) {
 }
 ```
 
-In a real app, you'd fetch actual metadata here (Open Graph tags, screenshots, etc.).
+In a real app, fetch actual metadata here (Open Graph tags, screenshots, etc.).
 
 </Step>
 
@@ -193,7 +193,7 @@ Every component ships with a colocated `schema.ts` exporting a Zod schema and a 
 
 Browse all available components in the [Gallery](/docs/gallery).
 
-## Interactive Tool UIs
+## Interactive tool UIs
 
 The example above is a **display-only** component. The tool returns data, and the component renders it. Some components go further: they let the user make a choice that flows back to the assistant.
 
@@ -201,13 +201,13 @@ Components like [Option List](/docs/option-list) and [Approval Card](/docs/appro
 
 For the full implementation pattern, including how to forward frontend tools through your API route and enable auto-continue after user decisions, see the [Advanced](/docs/advanced) page.
 
-## Other Frameworks
+## Other frameworks
 
-Tool UI components work with any React app. Without assistant-ui, you'll need to manually parse tool outputs and render components. For the best experience, we recommend using assistant-ui.
+Tool UI components work with any React app. Without assistant-ui, you manually parse tool outputs and render components. Use assistant-ui for the best experience.
 
 Tool UI components are installed from registry entries, and each entry includes `components/tool-ui/shared` automatically.
 
-## Runtime Options
+## Runtime options
 
 [assistant-ui](https://www.assistant-ui.com/) supports multiple runtimes: [AI SDK](https://ai-sdk.dev/), [LangGraph](https://langchain-ai.github.io/langgraphjs/), LangServe, [Mastra](https://mastra.dev/), or custom backends. The examples above use AI SDK v6.
 

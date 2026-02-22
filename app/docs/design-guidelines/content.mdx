@@ -11,11 +11,11 @@ import { DataTable } from "@/components/tool-ui/data-table";
 
 ## The Collaboration Model
 
-In AI chat, users interact with both the assistant and any tool UIs it renders. Most tool UIs treat this relationship as incidental: a tool UI appears, the user clicks something, done. We think it matters more than that. The assistant, the tool UI, and the user form a collaborative triad.
+In AI chat, users interact with both the assistant and any tool UIs it renders. Most tool UIs treat this as incidental — a tool UI appears, the user clicks, done. That undersells what's happening. The assistant, the tool UI, and the user form a collaborative triad.
 
 <CollaborationDiagram />
 
-The assistant contextualizes, interprets, and narrates. The tool UI provides structure that prose cannot: sortable tables, precise controls, rich media. They work together.
+The assistant provides context and narration. The tool UI provides structure that prose cannot — sortable tables, controls, media. They work together.
 
 <div>
   <MockThread caption="The triadic loop in action">
@@ -130,15 +130,15 @@ The assistant introduces the tool UI, the user scans it and asks a follow-up, th
 
 ## Roles
 
-Every Tool UI has a primary role:
+Every Tool UI has a job:
 
-- **Information:** Display data. Users read more than they click. Examples: [Data Table](/docs/data-table), [Chart](/docs/chart), [Link Preview](/docs/link-preview), [Citation](/docs/citation).
+- **Information** — Display data. Users read more than they click. Examples: [Data Table](/docs/data-table), [Chart](/docs/chart), [Link Preview](/docs/link-preview).
 
-- **Decision:** Capture choices that matter (approve/reject, send/cancel). These need clear options and [receipts](/docs/receipts) that prove what happened. Examples: [Approval Card](/docs/approval-card), [Option List](/docs/option-list), [Order Summary](/docs/order-summary).
+- **Decision** — Capture choices that matter (approve/reject, send/cancel). Show clear options and [receipts](/docs/receipts) that confirm what happened. Examples: [Approval Card](/docs/approval-card), [Option List](/docs/option-list).
 
-- **Control:** Adjust parameters without commitment (filters, sort orders, date ranges). Changes are reversible. Examples: [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel).
+- **Control** — Adjust parameters without commitment (filters, sort orders, date ranges). Changes are reversible. Examples: [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel).
 
-- **State:** Show internal activity (progress indicators, status logs, loading states). Examples: [Progress Tracker](/docs/progress-tracker), [Terminal](/docs/terminal).
+- **State** — Show internal activity (progress indicators, status logs, loading states). Examples: [Progress Tracker](/docs/progress-tracker), [Terminal](/docs/terminal).
 
 Some tool UIs combine roles. A data table with row actions is "information with control." When combining, pick one role to lead.
 
@@ -158,13 +158,13 @@ If the assistant can't point at something later, you lose half the value of rend
 - **`id`**: Identifies this specific tool UI in the conversation ("the preview above", "that table").
 - **`assetId` / row IDs / option IDs**: Identify real objects ("that link", "row 4", "the merge option").
 
-Use stable IDs from your backend (database IDs, canonical URLs) rather than array indexes or UUIDs generated at render time. Anything the user can act on should have an ID the assistant can cite.
+Use stable IDs from your backend — database IDs, canonical URLs — not array indexes or render-time UUIDs. Anything the user can act on should have an ID the assistant can cite.
 
 ## Receipts
 
-When a user takes an action with consequences, the tool UI should transition to a receipt state that confirms what happened. This gives the user proof and gives the assistant something to reference later.
+When a user takes an action with consequences, the tool UI should transition to a receipt — a read-only confirmation of what happened. This gives the user proof and the assistant something to cite later.
 
-See the [Receipts](/docs/receipts) page for detailed guidance on receipt states and how to write receipt copy.
+See the [Receipts](/docs/receipts) page for patterns and copy guidance.
 
 ## Anti-Patterns
 
@@ -172,7 +172,7 @@ See the [Receipts](/docs/receipts) page for detailed guidance on receipt states 
 - **Hidden mutations:** Actions that change state should show what happened. Terminal decisions need a receipt showing what the user chose.
 - **Kitchen sinks:** If it needs tabs or navigation, consider breaking it into separate Tool UIs.
 - **Uncontextualized tool UIs:** Always have the assistant introduce a tool UI and explain what it shows.
-- **Redundant narration:** The assistant shouldn't describe what the tool UI already shows. The tool UI shouldn't echo what the assistant just said. If the assistant asks "Where to?", the tool UI doesn't need a header saying "Where to?"; show the options. Divide the work: the assistant provides context, the tool UI provides structure.
+- **Redundant narration:** The assistant shouldn't describe what the tool UI already shows. The tool UI shouldn't echo what the assistant just said. If the assistant asks "Where to?", the tool UI doesn't need a header saying "Where to?" — just show the options. Divide the work between them: the assistant provides context, the tool UI provides structure.
 
 ## Further reading
 

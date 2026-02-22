@@ -6,7 +6,7 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/advanced/content.mdx"
 />
 
-The [Quick Start](/docs/quick-start) covers the basics: installing a component, registering it, and seeing it render. This page goes further: stronger typing with `InferUITools`, frontend tools that run entirely in the browser, and patterns for larger integrations like auto-continue and edge runtime forwarding.
+The [Quick Start](/docs/quick-start) covers the basics — installing a component, registering it, and seeing it render. This page adds three patterns: type-safe tool results with `InferUITools`, frontend tools that run entirely in the browser, and auto-continue for multi-step flows.
 
 ## Tool Type Inference
 
@@ -124,7 +124,7 @@ export default function Chat() {
 
 ### Keep runtime boundaries clean
 
-Export only types from `lib/tools.ts` to the client; never import server code into the browser.
+Export only types from `lib/tools.ts` to the client. **Never import server code into the browser.**
 
 ### Single-tool helpers
 
@@ -134,7 +134,7 @@ Export only types from `lib/tools.ts` to the client; never import server code in
 
 Use the component's `outputSchema` on the server and `safeParseSerializable{componentName}` on the client to validate at both ends.
 
-### Lifecycle-aware routing (outside Tool UI renderers)
+### Routing by lifecycle state (outside Tool UI renderers)
 
 If you consume raw `message.parts`, keep lifecycle handling outside Tool UI components:
 
@@ -153,7 +153,7 @@ return <X {...parsed} />;
 
 ## Frontend tools (interactive Tool UIs)
 
-Decision surfaces like OptionList are best modeled as **frontend tools**: the model calls a tool whose arguments are the component props, and your UI calls `addResult(...)` after the user confirms. The result feeds back into the conversation as a tool result.
+Decision surfaces like OptionList work best as **frontend tools**. The model calls a tool with component props as arguments, then your UI calls `addResult(...)` after the user confirms. That result feeds back into the conversation.
 
 If you're using `AssistantChatTransport`, it forwards **system instructions** and **registered tools** in the request body. Your `/api/chat` route needs to read and forward them, otherwise the model won't see your frontend tools.
 
@@ -252,7 +252,7 @@ Pass this toolkit to `Tools({ toolkit })` under `<AssistantRuntimeProvider>` so 
 
 ### Auto-continue after `addResult(...)`
 
-When a tool call produces results that need further processing (say, a search that should be followed by a summary) auto-continue tells the assistant to keep going instead of stopping and waiting for user input. Enable it with `sendAutomaticallyWhen`:
+When a tool produces results that need follow-up — a search that needs a summary, a calculation that needs interpretation — auto-continue tells the assistant to proceed without waiting for user input. Enable it with `sendAutomaticallyWhen`:
 
 ```tsx
 import {
@@ -263,6 +263,7 @@ import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 
 const runtime = useChatRuntime({
   transport: new AssistantChatTransport({ api: "/api/chat" }),
+  // Automatically send when the assistant finishes with tool calls
   sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
 });
 ```

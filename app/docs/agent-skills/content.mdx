@@ -14,39 +14,42 @@ npx skills add https://github.com/assistant-ui/tool-ui --skill tool-ui
 
 ## What's included
 
-The package ships a SKILL.md workflow, reference docs, CLI scripts, and test suites. Together they give a coding agent everything it needs to discover, install, and wire Tool UI components into a project.
+This package gives coding agents everything they need to integrate Tool UI components:
 
-## SKILL.md — the agent workflow
+- **SKILL.md** — the five-step workflow (see below)
+- **Reference docs** — component catalog, recipes, integration patterns, troubleshooting
+- **CLI scripts** — compatibility checks, search, scaffolding
+- **Test suites** — regression coverage for the scripts
 
-`.agents/skills/tool-ui/SKILL.md` is the entry point. It defines a five-step workflow that agents follow end-to-end:
+## SKILL.md — the workflow
 
-1. **Compatibility check** — verify the project meets prerequisites (shadcn/ui, Tailwind, Radix)
+`.agents/skills/tool-ui/SKILL.md` is the entry point. Follow these five steps:
+
+1. **Compatibility check** — verify prerequisites (shadcn/ui, Tailwind, Radix)
 2. **Discover** — search and browse available components
 3. **Install** — pull components from the registry
 4. **Scaffold** — generate adapter files and runtime wiring code
 5. **Validate** — confirm the integration works
 
-Each step links to the script or reference doc the agent should use.
+Each step links to the relevant script or reference doc.
 
 ## Reference docs
 
 All reference material lives in `.agents/skills/tool-ui/references/`.
 
-### `components-catalog.md`
+### Discover
 
-Human-readable component catalog organized by category — Progress, Input/Decision, Display, Artifacts, Confirmation, and Media. Each entry includes a brief description and selection heuristics so agents can match a user's intent to the right component.
+**`components-catalog.md`** — Browse components by category. Each entry includes a description and guidelines for picking the right one for your use case.
 
-### `components-data.json`
+**`components-data.json`** — Machine-readable metadata that the CLI scripts use for search and install operations.
 
-Machine-readable component metadata. Each record contains `id`, `label`, `description`, `category`, and `path`. The CLI scripts read this file for search and install operations.
+### Install
 
-### `recipes.md`
+**`recipes.md`** — Pre-built bundles for common patterns (planning flow, research output, commerce flow). Each recipe has a one-line install command that pulls the entire bundle.
 
-Curated bundles of components for common patterns — planning flow, research output, commerce flow, and others. Each recipe includes a one-line install command that pulls every component in the bundle at once.
+### Scaffold
 
-### `integration-patterns.md`
-
-Five wiring patterns with full code examples:
+**`integration-patterns.md`** — Five wiring patterns with full code examples:
 
 - **Backend display** — render tool results as read-only UI
 - **Backend + local actions** — add inline actions alongside backend data
@@ -54,9 +57,9 @@ Five wiring patterns with full code examples:
 - **Action-centric** — surface standalone actions without surrounding content
 - **Manual** — wire components directly without the runtime framework
 
-### `troubleshooting.md`
+### Validate
 
-Symptom → cause → fix matrix covering common install and runtime issues. Agents consult this when an integration step fails.
+**`troubleshooting.md`** — Symptom → cause → fix matrix for common install and runtime issues.
 
 ## CLI scripts
 

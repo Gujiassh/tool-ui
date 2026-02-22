@@ -9,9 +9,9 @@ import { InteractiveOptionDemo } from "../_components/interactive-option-demo";
   mdxPath="app/docs/overview/content.mdx"
 />
 
-When an AI assistant calls a tool, the result is usually plain text or raw JSON. Without purpose-built components, users see a wall of unformatted data they have to parse themselves. The experience breaks, not because the data is wrong, but because nothing is designed to present it.
+When an AI assistant calls a tool, the result is often plain text or raw JSON. Without purpose-built components, users see a wall of unformatted data they have to parse themselves. The experience breaks because nothing presents the data well.
 
-Tool UI is a component library for this problem. Each component turns a specific kind of tool output into a real piece of UI: a card, a table, an option list, a chart. They render inline in the conversation and let users interact without leaving the chat.
+Tool UI is a component library built for this. Each component turns a specific kind of tool output into real UI: a card, a table, an option list, a chart. They render inline in the conversation and let users interact without leaving the chat.
 
 <div className="mt-8 grid min-w-0 gap-6 md:grid-cols-2">
   <MockThread caption="Without Tool UI">
@@ -50,15 +50,15 @@ Tool UI is a component library for this problem. Each component turns a specific
   </MockThread>
 </div>
 
-Same data, different experience. The left side either dumps JSON to the user or, if you're using a markdown renderer like MDX, gives you a plain text link. The right side renders a clickable card that looks and behaves like a native part of the conversation.
+Same data, different experience. The left side either dumps JSON to the user or, with a markdown renderer like MDX, gives you a plain text link. The right side renders a clickable card that looks and behaves like a native part of the conversation.
 
 ## What is tool calling?
 
-From the user's perspective, tool calling is what happens when the assistant *does* something instead of *saying* something. The user asks "find me flights to Tokyo," and instead of describing flight options in a paragraph, the assistant calls a search tool and returns structured results.
+Tool calling happens when the assistant *does* something instead of *saying* something. The user asks "find me flights to Tokyo," and instead of describing options in a paragraph, the assistant calls a search tool and returns structured results.
 
-Behind the scenes, you define functions the model can invoke: searching a database, fetching a URL, running a calculation. The model decides when to call them based on the conversation. It sends structured arguments, your server executes the function, and a result comes back.
+You define the functions the model can invoke: searching a database, fetching a URL, running a calculation. The model decides when to call them based on the conversation. It sends structured arguments, your server executes the function, and a result comes back.
 
-Normally, that result is plain text or JSON that gets dumped into the chat as-is. Tool UI is about what happens next: **rendering those results as real UI**.
+Usually that result is plain text or JSON dumped into the chat. Tool UI handles what comes after: **rendering those results as real UI**.
 
 ## What if tool results could render UI?
 
@@ -78,7 +78,7 @@ Every Tool UI component has a corresponding schema: a Zod definition that descri
 // ...that matches the LinkPreview schema → renders as a card
 ```
 
-This is **schema-first rendering**: the data contract between server and client is typed and validated. No brittle string parsing. No hoping the model formats things correctly.
+**Schema-first rendering** means the data contract between server and client is typed and validated. No brittle string parsing. No hoping the model formats things correctly.
 
 ## What if that UI could be interactive?
 
@@ -90,11 +90,11 @@ Some tool UIs just display information like a link preview, a chart, or a code b
 
 The user selects an option, and the choice flows back to the assistant as a **tool result**. The assistant can then continue the conversation with that context. The selected state stays visible as a **receipt** — a record of what was chosen.
 
-This is the [actions](/docs/actions) model: user interactions on tool UIs that produce side effects and records.
+The [actions](/docs/actions) model covers user interactions on tool UIs that produce side effects and records.
 
 ## Where Tool UI fits
 
-Tool UI sits between your design system and your LLM orchestration layer:
+Tool UI is between your design system and your LLM orchestration layer:
 
 [Radix](https://www.radix-ui.com/)/[shadcn](https://ui.shadcn.com/) (design primitives) → **Tool UI** (conversation-native components) → [AI SDK](https://ai-sdk.dev/) / [LangGraph](https://langchain-ai.github.io/langgraphjs/) / etc. (LLM orchestration)
 
@@ -102,7 +102,7 @@ Tool UI sits between your design system and your LLM orchestration layer:
 - **Tool UI** provides components designed for chat (inline cards, tables, option lists, approval flows) with schemas that map to tool outputs.
 - **AI SDK / LangGraph** handle the model communication, streaming, and tool execution.
 
-Tool UI doesn't replace your design system. It builds on it. Components use shadcn primitives internally and follow your theme.
+Tool UI doesn't replace your design system. It extends it. Components use shadcn primitives internally and follow your theme.
 
 ## How it works
 
@@ -121,7 +121,7 @@ flowchart LR
 
 `} />
 
-1. **The assistant calls a tool.** Based on the conversation, the model decides to invoke a tool you've defined (e.g., `previewLink`, `searchFlights`).
+1. **The assistant calls a tool.** Based on the conversation, the model invokes a tool you've defined (e.g., `previewLink`, `searchFlights`).
 2. **The tool returns JSON.** Your server-side function executes and returns structured data matching an `outputSchema`.
 3. **The schema matches. A component renders.** On the client, a registered renderer parses the JSON against the component's schema. If it matches, the component renders inline in the chat message.
 4. **The user interacts.** For display components, this is the end. For interactive components (decisions, approvals), the user takes an action.
@@ -215,7 +215,7 @@ export default function App() {
 }
 ```
 
-`toolkit` maps tool names to renderers. Each renderer parses the tool result with `safeParse` and renders when valid. `useAui` and `Tools` wire everything into the assistant-ui runtime.
+`toolkit` maps tool names to renderers. Each renderer parses the tool result with `safeParse` and renders when valid. `useAui` and `Tools` connect everything to the assistant-ui runtime.
 
 ## Next steps
 
