@@ -1,9 +1,5 @@
 # Tool UI
 
-<p>
-  <img src="./public/assets/homepage.png" alt="Tool UI homepage overview" width="100%" />
-</p>
-
 Tool UI is a copy/paste component library for AI assistants.
 
 When a model calls a tool, most apps dump JSON into the chat. Tool UI turns those payloads into purpose-built interfaces such as approvals, forms, tables, charts, media cards, and receipts so users can understand and act inline.
@@ -17,17 +13,6 @@ When a model calls a tool, most apps dump JSON into the chat. Tool UI turns thos
 - Runtime integration patterns for assistant-ui and manual renderers
 - Presets for realistic payload examples and docs previews
 - A docs site and gallery that mirror production usage patterns
-
-## Image Examples
-
-<p>
-  <img src="./public/assets/gallery.png" alt="Tool UI gallery showcase" width="100%" />
-</p>
-
-<p>
-  <img src="./public/assets/option-list.png" alt="Option List Tool UI component" width="49%" />
-  <img src="./public/assets/question-flow.png" alt="Question Flow Tool UI component" width="49%" />
-</p>
 
 ## Component Coverage
 
