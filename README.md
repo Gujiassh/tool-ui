@@ -1,20 +1,12 @@
 # Tool UI
 
-Tool UI is a copy/paste component library for AI assistants.
+Copy/paste React components for rendering tool calls in AI chat interfaces. Built by [assistant-ui](https://github.com/assistant-ui).
 
-When a model calls a tool, most apps dump JSON into the chat. Tool UI turns those payloads into purpose-built interfaces such as approvals, forms, tables, charts, media cards, and receipts so users can understand and act inline.
+When a model calls a tool, most apps dump raw JSON into the conversation. These components turn tool payloads into interactive UI — approvals, forms, tables, charts, media cards, and receipts — so users can understand and act without leaving the chat.
 
 **[tool-ui.com](https://tool-ui.com)** | [Docs](https://tool-ui.com/docs/overview) | [Gallery](https://tool-ui.com/docs/gallery) | [Quick Start](https://tool-ui.com/docs/quick-start)
 
-## What You Get
-
-- 25+ Tool UI components organized by interaction role (decision, input, display, progress, media)
-- Serializable schemas and safe parse helpers for model/tool payloads
-- Runtime integration patterns for assistant-ui and manual renderers
-- Presets for realistic payload examples and docs previews
-- A docs site and gallery that mirror production usage patterns
-
-## Component Coverage
+## Components
 
 - **Decision/Confirmation**: Approval Card, Order Summary, Message Draft, Option List
 - **Input/Configuration**: Parameter Slider, Preferences Panel, Question Flow
@@ -22,34 +14,7 @@ When a model calls a tool, most apps dump JSON into the chat. Tool UI turns thos
 - **Media/Creative**: Image, Image Gallery, Video, Audio, Instagram Post, LinkedIn Post, X Post
 - **Progress/Execution**: Plan, Progress Tracker, Weather Widget
 
-Browse all components in the [Gallery](https://tool-ui.com/docs/gallery).
-
-## Local Development
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Useful local routes:
-
-- `http://localhost:3000/docs/quick-start` integration walkthrough
-- `http://localhost:3000/docs/gallery` component browsing and previews
-- `http://localhost:3000/playground` interactive runtime prototyping
-- `http://localhost:3000/docs/changelog` release and update notes
-
-## Validation
-
-```bash
-pnpm verify:ci
-```
-
-If registry checks fail, regenerate artifacts and stage them:
-
-```bash
-pnpm registry:build
-git add public/r
-```
+Each component includes a Zod schema for payload validation and presets for realistic example data. Browse them all in the [Gallery](https://tool-ui.com/docs/gallery).
 
 ## License
 
