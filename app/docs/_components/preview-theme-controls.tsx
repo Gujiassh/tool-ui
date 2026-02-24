@@ -21,6 +21,7 @@ import {
   PREVIEW_FONT_SCALES,
   PREVIEW_RADII,
   PREVIEW_SURFACE_TINTS,
+  PREVIEW_THEME_PRESETS,
   type PreviewBaseColor,
   type PreviewDensity,
   type PreviewFont,
@@ -41,7 +42,7 @@ function toLabel(value: string): string {
 }
 
 export function PreviewThemeControls() {
-  const { config, availableThemes, setPreviewTheme, resetPreviewTheme } =
+  const { config, availableThemes, activePreset, setPreviewTheme, resetPreviewTheme } =
     usePreviewThemeSearchParams();
   const [copied, setCopied] = useState(false);
 
@@ -83,6 +84,26 @@ export function PreviewThemeControls() {
           </div>
         </div>
 
+        <div className="mb-3">
+          <p className="mb-1.5 text-xs font-medium text-muted-foreground">Presets</p>
+          <div className="flex flex-wrap gap-1">
+            {PREVIEW_THEME_PRESETS.map((preset) => (
+              <Button
+                key={preset.name}
+                variant={activePreset?.name === preset.name ? "default" : "outline"}
+                size="sm"
+                className="h-6 px-2 text-xs"
+                onClick={() => setPreviewTheme(preset.config)}
+              >
+                {preset.name}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-3 border-t" />
+
+        <p className="mb-1.5 text-xs font-medium text-muted-foreground">Parameters</p>
         <div className="space-y-2.5">
           <div className="grid grid-cols-[6.5rem_1fr] items-center gap-2">
             <Label htmlFor="preview-base-color" className="text-xs">

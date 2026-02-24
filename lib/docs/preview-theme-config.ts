@@ -63,6 +63,154 @@ export const DEFAULT_PREVIEW_THEME_CONFIG: PreviewThemeConfig = {
   previewFont: "geist",
 };
 
+export interface PreviewThemePreset {
+  name: string;
+  config: PreviewThemeConfig;
+}
+
+export const PREVIEW_THEME_PRESETS: PreviewThemePreset[] = [
+  {
+    name: "Default",
+    config: {
+      previewBaseColor: "neutral",
+      previewTheme: "neutral",
+      previewRadius: "default",
+      previewDensity: "default",
+      previewFontScale: "default",
+      previewSurfaceTint: "none",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "default",
+      previewFont: "geist",
+    },
+  },
+  {
+    name: "Editorial",
+    config: {
+      previewBaseColor: "stone",
+      previewTheme: "stone",
+      previewRadius: "small",
+      previewDensity: "comfortable",
+      previewFontScale: "large",
+      previewSurfaceTint: "warm",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "default",
+      previewFont: "nunito-sans",
+    },
+  },
+  {
+    name: "Linear",
+    config: {
+      previewBaseColor: "zinc",
+      previewTheme: "zinc",
+      previewRadius: "none",
+      previewDensity: "compact",
+      previewFontScale: "small",
+      previewSurfaceTint: "cool",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "default",
+      previewFont: "jetbrains-mono",
+    },
+  },
+  {
+    name: "Playful",
+    config: {
+      previewBaseColor: "neutral",
+      previewTheme: "orange",
+      previewRadius: "large",
+      previewDensity: "comfortable",
+      previewFontScale: "default",
+      previewSurfaceTint: "warm",
+      previewMenuAccent: "bold",
+      previewMenuColor: "default",
+      previewFont: "outfit",
+    },
+  },
+  {
+    name: "Corporate",
+    config: {
+      previewBaseColor: "gray",
+      previewTheme: "blue",
+      previewRadius: "medium",
+      previewDensity: "default",
+      previewFontScale: "default",
+      previewSurfaceTint: "cool",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "inverted",
+      previewFont: "inter",
+    },
+  },
+  {
+    name: "Botanical",
+    config: {
+      previewBaseColor: "stone",
+      previewTheme: "emerald",
+      previewRadius: "medium",
+      previewDensity: "comfortable",
+      previewFontScale: "default",
+      previewSurfaceTint: "sage",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "default",
+      previewFont: "figtree",
+    },
+  },
+  {
+    name: "Nightclub",
+    config: {
+      previewBaseColor: "zinc",
+      previewTheme: "fuchsia",
+      previewRadius: "large",
+      previewDensity: "default",
+      previewFontScale: "default",
+      previewSurfaceTint: "mauve",
+      previewMenuAccent: "bold",
+      previewMenuColor: "inverted",
+      previewFont: "dm-sans",
+    },
+  },
+  {
+    name: "Government",
+    config: {
+      previewBaseColor: "gray",
+      previewTheme: "gray",
+      previewRadius: "none",
+      previewDensity: "compact",
+      previewFontScale: "small",
+      previewSurfaceTint: "none",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "default",
+      previewFont: "roboto",
+    },
+  },
+  {
+    name: "Startup",
+    config: {
+      previewBaseColor: "neutral",
+      previewTheme: "violet",
+      previewRadius: "medium",
+      previewDensity: "default",
+      previewFontScale: "default",
+      previewSurfaceTint: "cool",
+      previewMenuAccent: "bold",
+      previewMenuColor: "default",
+      previewFont: "public-sans",
+    },
+  },
+  {
+    name: "Elegant",
+    config: {
+      previewBaseColor: "stone",
+      previewTheme: "rose",
+      previewRadius: "medium",
+      previewDensity: "comfortable",
+      previewFontScale: "large",
+      previewSurfaceTint: "sand",
+      previewMenuAccent: "subtle",
+      previewMenuColor: "default",
+      previewFont: "raleway",
+    },
+  },
+];
+
 const PREVIEW_RADIUS_VALUES: Record<PreviewRadius, string> = {
   default: "0.625rem",
   none: "0",

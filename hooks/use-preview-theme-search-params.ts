@@ -20,6 +20,7 @@ import {
   PREVIEW_RADII,
   PREVIEW_SURFACE_TINTS,
   PREVIEW_THEMES,
+  PREVIEW_THEME_PRESETS,
   resolveAvailableThemes,
   type PreviewThemeConfig,
 } from "@/lib/docs/preview-theme-config";
@@ -95,6 +96,12 @@ export function usePreviewThemeSearchParams() {
     () => resolveAvailableThemes(config.previewBaseColor),
     [config.previewBaseColor],
   );
+  const activePreset = useMemo(() => {
+    return PREVIEW_THEME_PRESETS.find((preset) => {
+      const keys = Object.keys(preset.config) as (keyof PreviewThemeConfig)[];
+      return keys.every((key) => config[key] === preset.config[key]);
+    }) ?? null;
+  }, [config]);
 
   const setPreviewTheme = useCallback(
     (updates: Partial<PreviewThemeConfig>) => {
@@ -115,6 +122,7 @@ export function usePreviewThemeSearchParams() {
   return {
     config,
     availableThemes,
+    activePreset,
     setPreviewTheme,
     resetPreviewTheme,
   };
@@ -123,7 +131,7 @@ export function usePreviewThemeSearchParams() {
 export function useResolvedPreviewTheme() {
   const previewTheme = usePreviewThemeSearchParams();
   const { resolvedTheme } = useTheme();
-  const resolvedAppearance = resolvedTheme === "dark" ? "dark" : ("light" as const);
+  const resolvedAppearance: "light" | "dark" = resolvedTheme === "dark" ? "dark" : "light";
 
   const previewThemeVars = useMemo(
     () => buildPreviewThemeVars(previewTheme.config),

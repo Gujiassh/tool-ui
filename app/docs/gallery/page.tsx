@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+"use client";
+
 import dynamic from "next/dynamic";
-import type { ReactNode } from "react";
+import { useState, useEffect, type CSSProperties, type ReactNode } from "react";
 
 import {
   GalleryPageAnalytics,
@@ -8,7 +9,7 @@ import {
 } from "@/app/docs/_components/gallery-analytics.client";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
 import { GalleryInstallStrip } from "@/app/docs/_components/gallery-install-strip";
-import { ThemedPreviewScope } from "@/app/docs/_components/themed-preview-scope";
+import { useResolvedPreviewTheme } from "@/hooks/use-preview-theme-search-params";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
@@ -118,13 +119,6 @@ const WeatherWidget = dynamic(() =>
   ),
 );
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description: "Browse all Tool UI components in a visual gallery",
-};
-
-export const revalidate = 3600;
-
 interface GalleryPreviewCardProps {
   componentId: GalleryComponentDocId;
   className?: string;
@@ -161,6 +155,16 @@ function GalleryPreviewCard({
 }
 
 export default function ComponentsGalleryPage() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const { resolvedAppearance, resolvedPreviewThemeVars } =
+    useResolvedPreviewTheme();
+  const { "--zoom": _zoomValue, ...themeVars } = resolvedPreviewThemeVars;
+  const themeStyle = {
+    ...themeVars,
+    fontFamily: "var(--font-sans)",
+  } as CSSProperties;
   const galleryImage = imagePresets["with-source"].data.image;
   const galleryCards: GalleryCardConfig[] = [
     {
@@ -172,19 +176,19 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "data-table",
-      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
+      className: "mb-5 flex justify-center col-span-full 2xl:mb-5",
       render: () => <DataTable {...dataTablePresets.stocks.data} />,
     },
     {
       componentId: "stats-display",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => (
         <StatsDisplay {...statsDisplayPresets["business-metrics"].data} />
       ),
     },
     {
       componentId: "weather-widget",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => (
         <WeatherWidget
           {...weatherWidgetPresets["sunny-forecast"].data}
@@ -208,14 +212,14 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "link-preview",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => (
         <LinkPreview {...linkPreviewPresets["with-image"].data.linkPreview} />
       ),
     },
     {
       componentId: "citation",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => (
         <CitationList
           id="gallery-citations"
@@ -226,7 +230,7 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "audio",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <Audio {...audioPresets.full.data.audio} />,
     },
     {
@@ -245,12 +249,12 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "message-draft",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <MessageDraft {...messageDraftPresets.email.data} />,
     },
     {
       componentId: "order-summary",
-      className: "mb-5 break-inside-avoid 2xl:mb-5",
+      className: "mb-5 2xl:mb-5",
       render: () => (
         <OrderSummary.Display
           {...orderSummaryPresets.default.data}
@@ -260,24 +264,24 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "plan",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <Plan {...planPresets.comprehensive.data} />,
     },
     {
       componentId: "progress-tracker",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => (
         <ProgressTracker {...progressTrackerPresets["in-progress"].data} />
       ),
     },
     {
       componentId: "question-flow",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <QuestionFlow {...questionFlowPresets.upfront.data} />,
     },
     {
       componentId: "parameter-slider",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => (
         <ParameterSlider
           {...parameterSliderPresets["photo-adjustments"].data}
@@ -293,37 +297,37 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "terminal",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <Terminal {...terminalPresets.success.data} />,
     },
     {
       componentId: "code-block",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <CodeBlock {...codeBlockPresets.typescript.data} />,
     },
     {
       componentId: "code-diff",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <CodeDiff {...codeDiffPresets["refactor"].data} />,
     },
     {
       componentId: "chart",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <Chart id="gallery-chart" {...chartPresets.revenue.data} />,
     },
     {
       componentId: "video",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <Video {...videoPresets["with-poster"].data.video} />,
     },
     {
       componentId: "image",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <Image {...galleryImage} alt={galleryImage.alt} />,
     },
     {
       componentId: "linkedin-post",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <LinkedInPost post={linkedInPostPresets.basic.data.post} />,
     },
     {
@@ -335,7 +339,7 @@ export default function ComponentsGalleryPage() {
     },
     {
       componentId: "x-post",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      className: "mb-5 flex justify-center 2xl:mb-5",
       render: () => <XPost post={xPostPresets.basic.data.post} />,
     },
   ];
@@ -348,18 +352,22 @@ export default function ComponentsGalleryPage() {
       >
         <h1 className="sr-only">Tool UI Component Gallery</h1>
         <GalleryPageAnalytics />
-        <div className="mx-auto columns-1 gap-5 pb-20 [column-fill:balance] md:columns-2 2xl:columns-3 2xl:gap-5">
+        <div
+          data-theme={mounted ? resolvedAppearance : "light"}
+          style={mounted ? themeStyle : undefined}
+          className="mx-auto grid grid-cols-1 gap-5 pb-20 md:grid-cols-2 2xl:grid-cols-3"
+        >
           {galleryCards.map((card) => (
             <GalleryPreviewCard
               key={card.componentId}
               componentId={card.componentId}
               className={card.className}
             >
-              <ThemedPreviewScope>{card.render()}</ThemedPreviewScope>
+              {card.render()}
             </GalleryPreviewCard>
           ))}
 
-          {/* <div className="mb-5 flex justify-center break-inside-avoid 2xl:mb-5">
+          {/* <div className="mb-5 flex justify-center 2xl:mb-5">
             <Link
               href="/builder"
               className="bg-foreground/5 text-muted-foreground bg-dot-grid hover:text-foreground hover:bg-primary/7 group flex min-h-[180px] w-full flex-row items-center justify-center gap-2 rounded-2xl p-6 text-center shadow-[inset_0_6px_20px_rgba(0,0,0,0.09)] transition-colors duration-300"
