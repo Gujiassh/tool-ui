@@ -7,16 +7,13 @@ import {
   GalleryPreviewImpression,
 } from "@/app/docs/_components/gallery-analytics.client";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
-import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
+import { GalleryCardHeader } from "@/app/docs/_components/gallery-card-header";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import { OrderSummary } from "@/components/tool-ui/order-summary";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
-import {
-  galleryComponentDocs,
-  type GalleryComponentDocId,
-} from "@/lib/docs/gallery-component-docs";
+import { type GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { approvalCardPresets } from "@/lib/presets/approval-card";
 import { audioPresets } from "@/lib/presets/audio";
 import { chartPresets } from "@/lib/presets/chart";
@@ -141,39 +138,26 @@ function GalleryPreviewCard({
   className,
   children,
 }: GalleryPreviewCardProps) {
-  const componentMeta = galleryComponentDocs[componentId];
-
   return (
-    <div className={cn("group/gallery-card relative pt-[44px]", className)}>
-      <div className="pointer-events-none absolute top-0 left-1/2 z-20 w-fit -translate-x-1/2 -translate-y-1 whitespace-nowrap rounded-xl border border-neutral-700/70 bg-neutral-900/90 px-3 py-2 text-[11px] font-medium tracking-wide text-neutral-100 opacity-0 shadow-sm backdrop-blur-sm transition-all duration-200 group-focus-within/gallery-card:translate-y-0 group-focus-within/gallery-card:opacity-100 group-hover/gallery-card:translate-y-0 group-hover/gallery-card:opacity-100 dark:border-neutral-300/80 dark:bg-neutral-100/90 dark:text-neutral-900">
-        <GalleryDocsLink
-          componentId={componentId}
-          label={componentMeta.name}
-          href={componentMeta.docsHref}
-          className="pointer-events-auto inline-flex items-center gap-1 whitespace-nowrap text-neutral-200/90 hover:text-white dark:text-neutral-700 dark:hover:text-neutral-950"
-        />
-      </div>
+    <article
+      className={cn(
+        "group/gallery-card relative flex min-w-0 max-w-full flex-col gap-2 overflow-hidden rounded-xl border border-border/60 bg-card p-3 shadow-sm",
+        className,
+      )}
+    >
+      <GalleryCardHeader componentId={componentId} hideDescription />
       <GalleryPreviewImpression componentId={componentId} />
-      {children}
-    </div>
+      <div className="scrollbar-subtle flex w-full min-w-0 max-w-full justify-center overflow-x-auto rounded-lg border border-border/50 bg-muted/20 px-4 py-3">
+        {children}
+      </div>
+    </article>
   );
 }
 
 export default function ComponentsGalleryPage() {
   const galleryImage = imagePresets["with-source"].data.image;
   const galleryCards: GalleryCardConfig[] = [
-    {
-      componentId: "item-carousel",
-      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
-      render: () => (
-        <ItemCarousel {...itemCarouselPresets.recommendations.data} />
-      ),
-    },
-    {
-      componentId: "data-table",
-      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
-      render: () => <DataTable {...dataTablePresets.stocks.data} />,
-    },
+  
     {
       componentId: "stats-display",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
@@ -337,17 +321,35 @@ export default function ComponentsGalleryPage() {
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
       render: () => <XPost post={xPostPresets.basic.data.post} />,
     },
+    {
+      componentId: "item-carousel",
+      className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
+      render: () => (
+        <div className="w-full max-w-full min-w-0">
+          <ItemCarousel {...itemCarouselPresets.recommendations.data} />
+        </div>
+      ),
+    },
+    {
+      componentId: "data-table",
+      className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
+      render: () => (
+        <div className="w-full max-w-full min-w-0">
+          <DataTable {...dataTablePresets.stocks.data} />
+        </div>
+      ),
+    },
   ];
 
   return (
     <DocsBorderedShell>
       <main
         aria-label="Tool UI component gallery"
-        className="scrollbar-subtle z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12"
+        className="scrollbar-subtle z-10 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12"
       >
         <h1 className="sr-only">Tool UI Component Gallery</h1>
         <GalleryPageAnalytics />
-        <div className="mx-auto columns-1 gap-5 pb-20 [column-fill:balance] md:columns-2 2xl:columns-3 2xl:gap-5">
+        <div className="mx-auto w-full min-w-0 max-w-full columns-1 gap-5 overflow-x-hidden pb-20 [column-fill:balance] md:columns-2">
           {galleryCards.map((card) => (
             <GalleryPreviewCard
               key={card.componentId}

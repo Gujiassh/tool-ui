@@ -26,7 +26,9 @@ export default function ContentLayout({
           />
         </div>
       ) : null}
-      <div className="flex min-h-0 w-full flex-1">{children}</div>
+      <div className="flex min-h-0 min-w-0 w-full flex-1 overflow-hidden">
+        {children}
+      </div>
     </div>
   );
 }

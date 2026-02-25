@@ -69,17 +69,20 @@ Drop this into your runtime provider so tool results render as `Plan`.
 import { type Toolkit } from "@assistant-ui/react";
 import { Plan } from "@/components/tool-ui/plan";
 import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
-import { ToolUI, createResultToolRenderer } from "@/components/tool-ui/shared";
+import { ToolUI } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showPlan: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializablePlan,
-      render: (parsedResult) => (
-        <ToolUI id={parsedResult.id}>
+    render: ({ result }) => {
+      const parsed = safeParseSerializablePlan(result);
+      if (!parsed) {
+        return null;
+      }
+      return (
+        <ToolUI id={parsed.id}>
           <ToolUI.Surface>
-            <Plan {...parsedResult} />
+            <Plan {...parsed} />
           </ToolUI.Surface>
           <ToolUI.Actions>
             <ToolUI.LocalActions
@@ -95,8 +98,8 @@ export const toolkit: Toolkit = {
             />
           </ToolUI.Actions>
         </ToolUI>
-      ),
-    }),
+      );
+    },
   },
 };
 ```

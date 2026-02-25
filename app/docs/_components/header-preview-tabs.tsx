@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { analytics } from "@/lib/analytics";
+import { getImportLine } from "@/lib/docs/gallery-usage-code";
 import {
   type ComponentId,
   getPreviewConfig,
@@ -55,7 +56,8 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
   ) : (
     preview
   );
-  const code = preset.generateExampleCode(preset.data);
+  const body = preset.generateExampleCode(preset.data);
+  const code = `${getImportLine(componentId)}\n\n${body}`;
 
   return (
     <div className="not-prose mt-6" onClickCapture={handleTabClickCapture}>

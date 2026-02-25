@@ -19,7 +19,7 @@ class ToolUiScaffoldScriptTests(unittest.TestCase):
     def test_backend_plan_scaffold(self):
         result = self.run_script("--mode", "assistant-backend", "--component", "plan")
         self.assertEqual(result.returncode, 0)
-        self.assertIn("createResultToolRenderer", result.stdout)
+        self.assertIn("render: ({ result }) =>", result.stdout)
         self.assertIn("safeParseSerializablePlan", result.stdout)
 
     def test_backend_imports_from_schema_entrypoint(self):
@@ -59,7 +59,7 @@ class ToolUiScaffoldScriptTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0)
         self.assertIn("onAction", result.stdout)
-        self.assertIn("idPrefix", result.stdout)
+        self.assertIn("toolCallId", result.stdout)
         self.assertNotIn("ToolUI.DecisionActions", result.stdout)
 
     def test_frontend_standard_uses_decision_actions(self):
@@ -70,7 +70,7 @@ class ToolUiScaffoldScriptTests(unittest.TestCase):
         self.assertIn("ToolUI.DecisionActions", result.stdout)
         self.assertIn("createDecisionResult", result.stdout)
         self.assertIn("onCommit", result.stdout)
-        self.assertIn("idPrefix", result.stdout)
+        self.assertIn("toolCallId", result.stdout)
 
     def test_frontend_imports_from_schema_entrypoint(self):
         result = self.run_script(

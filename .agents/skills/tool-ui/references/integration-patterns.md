@@ -10,15 +10,17 @@ Use when tool results are returned by the backend. No actions needed.
 import { type Toolkit } from "@assistant-ui/react";
 import { Plan } from "@/components/tool-ui/plan";
 import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showPlan: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializablePlan,
-      render: (parsedResult) => <Plan {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializablePlan(result);
+      if (!parsed) {
+        return null;
+      }
+      return <Plan {...parsed} />;
+    },
   },
 };
 ```
@@ -37,11 +39,7 @@ Use when the display component needs action buttons (export, copy, navigate) tha
 import { type Toolkit } from "@assistant-ui/react";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { safeParseSerializableDataTable } from "@/components/tool-ui/data-table/schema";
-import {
-  ToolUI,
-  createResultToolRenderer,
-  type Action,
-} from "@/components/tool-ui/shared";
+import { ToolUI, type Action } from "@/components/tool-ui/shared";
 
 const localActions: Action[] = [
   { id: "export-csv", label: "Export CSV", variant: "secondary" },
@@ -50,24 +48,27 @@ const localActions: Action[] = [
 export const toolkit: Toolkit = {
   showExpenses: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableDataTable,
-      render: (parsedResult) => (
-        <ToolUI id={parsedResult.id}>
+    render: ({ result }) => {
+      const parsed = safeParseSerializableDataTable(result);
+      if (!parsed) {
+        return null;
+      }
+      return (
+        <ToolUI id={parsed.id}>
           <ToolUI.Surface>
-            <DataTable {...parsedResult} />
+            <DataTable {...parsed} />
           </ToolUI.Surface>
           <ToolUI.Actions>
             <ToolUI.LocalActions
               actions={localActions}
               onAction={(actionId) => {
-                if (actionId === "export-csv") downloadCsv(parsedResult);
+                if (actionId === "export-csv") downloadCsv(parsed);
               }}
             />
           </ToolUI.Actions>
         </ToolUI>
-      ),
-    }),
+      );
+    },
   },
 };
 ```
@@ -85,48 +86,46 @@ import {
   SerializableOrderSummarySchema,
   safeParseSerializableOrderSummary,
 } from "@/components/tool-ui/order-summary/schema";
-import {
-  ToolUI,
-  createDecisionResult,
-  createArgsToolRenderer,
-} from "@/components/tool-ui/shared";
+import { ToolUI, createDecisionResult } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   confirmOrder: {
     description: "Present order for user confirmation.",
     parameters: SerializableOrderSummarySchema,
-    render: createArgsToolRenderer({
-      safeParse: safeParseSerializableOrderSummary,
-      idPrefix: "order-summary",
-      render: (parsedArgs, { result, addResult }) => {
-        if (result) {
-          return <OrderSummary {...parsedArgs} choice={result} />;
-        }
-
-        return (
-          <ToolUI id={parsedArgs.id}>
-            <ToolUI.Surface>
-              <OrderSummary {...parsedArgs} />
-            </ToolUI.Surface>
-            <ToolUI.Actions>
-              <ToolUI.DecisionActions
-                actions={[
-                  { id: "cancel", label: "Cancel", variant: "outline" },
-                  { id: "confirm", label: "Purchase" },
-                ]}
-                onAction={(action) =>
-                  createDecisionResult({
-                    decisionId: parsedArgs.id,
-                    action,
-                  })
-                }
-                onCommit={(decision) => addResult?.(decision)}
-              />
-            </ToolUI.Actions>
-          </ToolUI>
-        );
-      },
-    }),
+    render: ({ args, toolCallId, result, addResult }) => {
+      const parsedArgs = safeParseSerializableOrderSummary({
+        ...args,
+        id: args?.id ?? `order-summary-${toolCallId}`,
+      });
+      if (!parsedArgs) {
+        return null;
+      }
+      if (result) {
+        return <OrderSummary {...parsedArgs} choice={result} />;
+      }
+      return (
+        <ToolUI id={parsedArgs.id}>
+          <ToolUI.Surface>
+            <OrderSummary {...parsedArgs} />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.DecisionActions
+              actions={[
+                { id: "cancel", label: "Cancel", variant: "outline" },
+                { id: "confirm", label: "Purchase" },
+              ]}
+              onAction={(action) =>
+                createDecisionResult({
+                  decisionId: parsedArgs.id,
+                  action,
+                })
+              }
+              onCommit={(decision) => addResult?.(decision)}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
+      );
+    },
   },
 };
 ```
@@ -138,24 +137,26 @@ export const toolkit: Toolkit = {
 OptionList, ParameterSlider, and PreferencesPanel keep embedded action props (`actions`, `onAction`, `onBeforeAction`). Do not wrap them in a `ToolUI` compound — wire actions directly:
 
 ```tsx
-render: createArgsToolRenderer({
-  safeParse: safeParseSerializableOptionList,
-  idPrefix: "option-list",
-  render: (parsedArgs, { result, addResult }) => {
-    if (result) {
-      return <OptionList {...parsedArgs} choice={result} />;
-    }
-
-    return (
-      <OptionList
-        {...parsedArgs}
-        onAction={(actionId, selection) => {
-          if (actionId === "confirm") addResult?.(selection);
-        }}
-      />
-    );
-  },
-}),
+render: ({ args, toolCallId, result, addResult }) => {
+  const parsedArgs = safeParseSerializableOptionList({
+    ...args,
+    id: args?.id ?? `option-list-${toolCallId}`,
+  });
+  if (!parsedArgs) {
+    return null;
+  }
+  if (result) {
+    return <OptionList {...parsedArgs} choice={result} />;
+  }
+  return (
+    <OptionList
+      {...parsedArgs}
+      onAction={(actionId, selection) => {
+        if (actionId === "confirm") addResult?.(selection);
+      }}
+    />
+  );
+},
 ```
 
 Generate starter snippet:

@@ -73,15 +73,17 @@ Register this renderer so tool results display as `InstagramPost`.
 import { type Toolkit } from "@assistant-ui/react";
 import { InstagramPost } from "@/components/tool-ui/instagram-post";
 import { safeParseSerializableInstagramPost } from "@/components/tool-ui/instagram-post/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showInstagramPost: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableInstagramPost,
-      render: (parsedResult) => <InstagramPost post={parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableInstagramPost(result);
+      if (!parsed) {
+        return null;
+      }
+      return <InstagramPost post={parsed} />;
+    },
   },
 };
 ```

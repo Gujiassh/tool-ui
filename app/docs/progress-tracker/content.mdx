@@ -78,15 +78,17 @@ Register this renderer so tool results display as `ProgressTracker`.
 import { type Toolkit } from "@assistant-ui/react";
 import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
 import { safeParseSerializableProgressTracker } from "@/components/tool-ui/progress-tracker/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   trackProgress: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableProgressTracker,
-      render: (parsedResult) => <ProgressTracker {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableProgressTracker(result);
+      if (!parsed) {
+        return null;
+      }
+      return <ProgressTracker {...parsed} />;
+    },
   },
 };
 ```

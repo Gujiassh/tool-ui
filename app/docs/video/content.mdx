@@ -61,14 +61,18 @@ Registration tells assistant-ui which component to render when a tool returns vi
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
 import { Video } from "@/components/tool-ui/video";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
+import { safeParseSerializableVideo } from "@/components/tool-ui/video/schema";
 
 export const toolkit: Toolkit = {
   showVideo: {
     type: "backend",
-    render: createResultToolRenderer({
-      render: (parsedResult) => <Video {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableVideo(result);
+      if (!parsed) {
+        return null;
+      }
+      return <Video {...parsed} />;
+    },
   },
 };
 ```

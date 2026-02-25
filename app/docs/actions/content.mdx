@@ -50,10 +50,13 @@ The returned args are parsed and rendered as a display surface.
 <ActionFlowRenderVisual />
 
 ```tsx
-render: createResultToolRenderer({
-  safeParse: safeParseSerializableDataTable,
-  render: (parsed) => <DataTable {...parsed} />,
-});
+render: ({ result }) => {
+  const parsed = safeParseSerializableDataTable(result);
+  if (!parsed) {
+    return null;
+  }
+  return <DataTable {...parsed} />;
+},
 ```
 
 </Step>

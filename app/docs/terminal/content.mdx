@@ -85,19 +85,17 @@ const showTerminal = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import { Terminal } from "@/components/tool-ui/terminal";
 import { safeParseSerializableTerminal } from "@/components/tool-ui/terminal/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showTerminal: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableTerminal,
-      render: (parsedResult) => (
-        <>
-          <Terminal {...parsedResult} />
-        </>
-      ),
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableTerminal(result);
+      if (!parsed) {
+        return null;
+      }
+      return <Terminal {...parsed} />;
+    },
   },
 };
 ```

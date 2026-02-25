@@ -60,14 +60,18 @@ Registration tells assistant-ui which component to render when a tool returns au
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
 import { Audio } from "@/components/tool-ui/audio";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
+import { safeParseSerializableAudio } from "@/components/tool-ui/audio/schema";
 
 export const toolkit: Toolkit = {
   showAudio: {
     type: "backend",
-    render: createResultToolRenderer({
-      render: (parsedResult) => <Audio {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableAudio(result);
+      if (!parsed) {
+        return null;
+      }
+      return <Audio {...parsed} />;
+    },
   },
 };
 ```

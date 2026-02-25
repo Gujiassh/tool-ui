@@ -15,7 +15,7 @@ export function DocsBorderedShell({
         className,
       )}
     >
-      <div className="relative flex h-full min-h-0 w-full flex-1 flex-col">
+      <div className="relative flex h-full min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden">
         {children}
       </div>
     </div>

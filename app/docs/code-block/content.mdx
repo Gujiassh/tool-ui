@@ -82,15 +82,17 @@ const showCodeBlock = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import { CodeBlock } from "@/components/tool-ui/code-block";
 import { safeParseSerializableCodeBlock } from "@/components/tool-ui/code-block/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showCodeBlock: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableCodeBlock,
-      render: (parsedResult) => <CodeBlock {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableCodeBlock(result);
+      if (!parsed) {
+        return null;
+      }
+      return <CodeBlock {...parsed} />;
+    },
   },
 };
 ```

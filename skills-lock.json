@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "tool-ui": {
+      "source": "assistant-ui/tool-ui",
+      "sourceType": "github",
+      "computedHash": "f8f3e057c61e35900008bd03c9c65df2377f62a3cf7b9574063d61ecf71fad69"
+    }
+  }
+}

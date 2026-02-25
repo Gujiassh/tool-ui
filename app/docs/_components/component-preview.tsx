@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { ComponentPreviewShell } from "./component-preview-shell";
 import { ChatContextPreview } from "./chat-context-preview";
 import { PresetSelector } from "./preset-selector";
+import { getImportLine } from "@/lib/docs/gallery-usage-code";
 import {
   type ComponentId,
   getPreviewConfig,
@@ -49,7 +50,8 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
   const preset =
     config.presets[currentPreset] ?? config.presets[config.defaultPreset];
   const selectedPreset = config.presets[currentPreset] ?? preset;
-  const code = selectedPreset.generateExampleCode(selectedPreset.data);
+  const body = selectedPreset.generateExampleCode(selectedPreset.data);
+  const code = `${getImportLine(componentId)}\n\n${body}`;
 
   const previewContent = config.renderComponent({
     data: preset.data,

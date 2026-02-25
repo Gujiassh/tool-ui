@@ -228,9 +228,9 @@ const ProposeTweetToolUI = makeAssistantToolUI<
 
         <div className="max-w-[600px]">
           <article
-            className={\`rounded-xl border bg-card p-3 \$\{
+            className={\`rounded-xl border bg-card p-3 $\{
               isApproved ? "border-green-500" : "border-border"
-            \}\`}
+            }\`}
           >
             <div className="flex gap-3">
               <img

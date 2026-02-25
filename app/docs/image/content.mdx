@@ -61,14 +61,18 @@ Registration tells assistant-ui which component to render when a tool returns im
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
 import { Image } from "@/components/tool-ui/image";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
+import { safeParseSerializableImage } from "@/components/tool-ui/image/schema";
 
 export const toolkit: Toolkit = {
   showImage: {
     type: "backend",
-    render: createResultToolRenderer({
-      render: (parsedResult) => <Image {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableImage(result);
+      if (!parsed) {
+        return null;
+      }
+      return <Image {...parsed} />;
+    },
   },
 };
 ```

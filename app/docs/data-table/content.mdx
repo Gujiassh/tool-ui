@@ -172,19 +172,17 @@ const searchProducts = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { safeParseSerializableDataTable } from "@/components/tool-ui/data-table/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchProducts: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableDataTable,
-      render: (parsedResult) => (
-        <>
-          <DataTable rowIdKey="id" {...parsedResult} />
-        </>
-      ),
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableDataTable(result);
+      if (!parsed) {
+        return null;
+      }
+      return <DataTable rowIdKey="id" {...parsed} />;
+    },
   },
 };
 ```

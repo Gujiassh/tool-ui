@@ -1,5 +1,6 @@
 import { CopyMarkdownButton } from "./copy-markdown-button";
 import { HeaderPreviewTabs } from "./header-preview-tabs";
+import { InstallCommandLine } from "./install-command-line";
 import { getMdxAsMarkdown } from "./mdx-to-markdown";
 import { isComponentId } from "@/lib/docs/component-ids";
 
@@ -26,6 +27,9 @@ export function DocsHeader({ title, description, mdxPath }: DocsHeaderProps) {
       </div>
       {description && (
         <div className="text-muted-foreground text-lg">{description}</div>
+      )}
+      {componentId && (
+        <InstallCommandLine componentId={componentId} className="mt-2" />
       )}
       {componentId && <HeaderPreviewTabs componentId={componentId} />}
     </div>

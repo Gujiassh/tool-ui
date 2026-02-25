@@ -65,15 +65,17 @@ Register this renderer so tool results display as `LinkedInPost`.
 import { type Toolkit } from "@assistant-ui/react";
 import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
 import { safeParseSerializableLinkedInPost } from "@/components/tool-ui/linkedin-post/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showLinkedInPost: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableLinkedInPost,
-      render: (parsedResult) => <LinkedInPost post={parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableLinkedInPost(result);
+      if (!parsed) {
+        return null;
+      }
+      return <LinkedInPost post={parsed} />;
+    },
   },
 };
 ```

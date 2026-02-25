@@ -66,15 +66,17 @@ Register this renderer so tool results display as `XPost`.
 import { type Toolkit } from "@assistant-ui/react";
 import { XPost } from "@/components/tool-ui/x-post";
 import { safeParseSerializableXPost } from "@/components/tool-ui/x-post/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showXPost: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableXPost,
-      render: (parsedResult) => <XPost post={parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableXPost(result);
+      if (!parsed) {
+        return null;
+      }
+      return <XPost post={parsed} />;
+    },
   },
 };
 ```

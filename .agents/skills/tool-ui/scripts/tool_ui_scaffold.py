@@ -60,15 +60,17 @@ def render_backend(component_id: str, tool_name: str, component_symbol: str, *, 
         return f'''import {{ type Toolkit }} from "@assistant-ui/react";
 import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
 import {{ {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
-import {{ createResultToolRenderer }} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {{
   {tool_name}: {{
     type: "backend",
-    render: createResultToolRenderer({{
-      safeParse: {parser_name},
-      render: (parsedResult) => <{component_symbol} {{...parsedResult}} />,
-    }}),
+    render: ({{ result }}) => {{
+      const parsed = {parser_name}(result);
+      if (!parsed) {{
+        return null;
+      }}
+      return <{component_symbol} {{...parsed}} />;
+    }},
   }},
 }};
 '''
@@ -76,7 +78,7 @@ export const toolkit: Toolkit = {{
     return f'''import {{ type Toolkit }} from "@assistant-ui/react";
 import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
 import {{ {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
-import {{ ToolUI, createResultToolRenderer, type Action }} from "@/components/tool-ui/shared";
+import {{ ToolUI, type Action }} from "@/components/tool-ui/shared";
 
 const localActions: Action[] = [
   {{ id: "export", label: "Export", variant: "secondary" }},
@@ -85,12 +87,15 @@ const localActions: Action[] = [
 export const toolkit: Toolkit = {{
   {tool_name}: {{
     type: "backend",
-    render: createResultToolRenderer({{
-      safeParse: {parser_name},
-      render: (parsedResult) => (
-        <ToolUI id={{parsedResult.id}}>
+    render: ({{ result }}) => {{
+      const parsed = {parser_name}(result);
+      if (!parsed) {{
+        return null;
+      }}
+      return (
+        <ToolUI id={{parsed.id}}>
           <ToolUI.Surface>
-            <{component_symbol} {{...parsedResult}} />
+            <{component_symbol} {{...parsed}} />
           </ToolUI.Surface>
           <ToolUI.Actions>
             <ToolUI.LocalActions
@@ -99,8 +104,8 @@ export const toolkit: Toolkit = {{
             />
           </ToolUI.Actions>
         </ToolUI>
-      ),
-    }}),
+      );
+    }},
   }},
 }};
 '''
@@ -115,30 +120,31 @@ def render_frontend(component_id: str, tool_name: str, component_symbol: str) ->
         return f'''import {{ type Toolkit }} from "@assistant-ui/react";
 import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
 import {{ {schema_name}, {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
-import {{ createArgsToolRenderer }} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {{
   {tool_name}: {{
     description: "Describe when the model should call this tool.",
     parameters: {schema_name},
-    render: createArgsToolRenderer({{
-      safeParse: {parser_name},
-      idPrefix: "{component_id}",
-      render: (parsedArgs, {{ result, addResult }}) => {{
-        if (result) {{
-          return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
-        }}
-
-        return (
-          <{component_symbol}
-            {{...parsedArgs}}
-            onAction={{(actionId, state) => {{
-              if (actionId === "confirm") addResult?.(state);
-            }}}}
-          />
-        );
-      }},
-    }}),
+    render: ({{ args, toolCallId, result, addResult }}) => {{
+      const parsedArgs = {parser_name}({{
+        ...args,
+        id: args?.id ?? `{component_id}-${{toolCallId}}`,
+      }});
+      if (!parsedArgs) {{
+        return null;
+      }}
+      if (result) {{
+        return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
+      }}
+      return (
+        <{component_symbol}
+          {{...parsedArgs}}
+          onAction={{(actionId, state) => {{
+            if (actionId === "confirm") addResult?.(state);
+          }}}}
+        />
+      );
+    }},
   }},
 }};
 '''
@@ -147,48 +153,46 @@ export const toolkit: Toolkit = {{
     return f'''import {{ type Toolkit }} from "@assistant-ui/react";
 import {{ {component_symbol} }} from "@/components/tool-ui/{component_id}";
 import {{ {schema_name}, {parser_name} }} from "@/components/tool-ui/{component_id}/schema";
-import {{
-  ToolUI,
-  createDecisionResult,
-  createArgsToolRenderer,
-}} from "@/components/tool-ui/shared";
+import {{ ToolUI, createDecisionResult }} from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {{
   {tool_name}: {{
     description: "Describe when the model should call this tool.",
     parameters: {schema_name},
-    render: createArgsToolRenderer({{
-      safeParse: {parser_name},
-      idPrefix: "{component_id}",
-      render: (parsedArgs, {{ result, addResult }}) => {{
-        if (result) {{
-          return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
-        }}
-
-        return (
-          <ToolUI id={{parsedArgs.id}}>
-            <ToolUI.Surface>
-              <{component_symbol} {{...parsedArgs}} />
-            </ToolUI.Surface>
-            <ToolUI.Actions>
-              <ToolUI.DecisionActions
-                actions={{[
-                  {{ id: "cancel", label: "Cancel", variant: "outline" }},
-                  {{ id: "confirm", label: "Confirm" }},
-                ]}}
-                onAction={{(action) =>
-                  createDecisionResult({{
-                    decisionId: parsedArgs.id,
-                    action,
-                  }})
-                }}
-                onCommit={{(decision) => addResult?.(decision)}}
-              />
-            </ToolUI.Actions>
-          </ToolUI>
-        );
-      }},
-    }}),
+    render: ({{ args, toolCallId, result, addResult }}) => {{
+      const parsedArgs = {parser_name}({{
+        ...args,
+        id: args?.id ?? `{component_id}-${{toolCallId}}`,
+      }});
+      if (!parsedArgs) {{
+        return null;
+      }}
+      if (result) {{
+        return <{component_symbol} {{...parsedArgs}} choice={{result}} />;
+      }}
+      return (
+        <ToolUI id={{parsedArgs.id}}>
+          <ToolUI.Surface>
+            <{component_symbol} {{...parsedArgs}} />
+          </ToolUI.Surface>
+          <ToolUI.Actions>
+            <ToolUI.DecisionActions
+              actions={{[
+                {{ id: "cancel", label: "Cancel", variant: "outline" }},
+                {{ id: "confirm", label: "Confirm" }},
+              ]}}
+              onAction={{(action) =>
+                createDecisionResult({{
+                  decisionId: parsedArgs.id,
+                  action,
+                }})
+              }}
+              onCommit={{(decision) => addResult?.(decision)}}
+            />
+          </ToolUI.Actions>
+        </ToolUI>
+      );
+    }},
   }},
 }};
 '''

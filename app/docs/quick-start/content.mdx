@@ -137,19 +137,19 @@ import {
 } from "@assistant-ui/react-ai-sdk";
 import { LinkPreview } from "@/components/tool-ui/link-preview";
 import { safeParseSerializableLinkPreview } from "@/components/tool-ui/link-preview/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 // Map backend tool names to frontend renderers.
 // The key "previewLink" must match the tool name in your API route.
 const toolkit: Toolkit = {
   previewLink: {
     type: "backend",
-    render: createResultToolRenderer({
-      // Only render when the full payload is valid.
-      // While the LLM is still streaming, safeParse returns null → nothing renders.
-      safeParse: safeParseSerializableLinkPreview,
-      render: (parsed) => <LinkPreview {...parsed} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableLinkPreview(result);
+      if (!parsed) {
+        return null;
+      }
+      return <LinkPreview {...parsed} />;
+    },
   },
 };
 

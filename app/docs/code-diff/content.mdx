@@ -75,15 +75,17 @@ Register this renderer so tool results display as `CodeDiff`.
 import { type Toolkit } from "@assistant-ui/react";
 import { CodeDiff } from "@/components/tool-ui/code-diff";
 import { safeParseSerializableCodeDiff } from "@/components/tool-ui/code-diff/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   showCodeDiff: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableCodeDiff,
-      render: (parsedResult) => <CodeDiff {...parsedResult} />,
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableCodeDiff(result);
+      if (!parsed) {
+        return null;
+      }
+      return <CodeDiff {...parsed} />;
+    },
   },
 };
 ```

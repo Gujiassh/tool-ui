@@ -85,27 +85,27 @@ const searchItems = tool({
 import { type Toolkit } from "@assistant-ui/react";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import { safeParseSerializableItemCarousel } from "@/components/tool-ui/item-carousel/schema";
-import { createResultToolRenderer } from "@/components/tool-ui/shared";
 
 export const toolkit: Toolkit = {
   searchItems: {
     type: "backend",
-    render: createResultToolRenderer({
-      safeParse: safeParseSerializableItemCarousel,
-      render: (parsedResult) => (
-        <>
-          <ItemCarousel
-            {...parsedResult}
-            onItemClick={(id) => router.push(`/items/${id}`)}
-            onItemAction={(itemId, actionId) => {
-              if (actionId === "select") {
-                selectItem(itemId);
-              }
-            }}
-          />
-        </>
-      ),
-    }),
+    render: ({ result }) => {
+      const parsed = safeParseSerializableItemCarousel(result);
+      if (!parsed) {
+        return null;
+      }
+      return (
+        <ItemCarousel
+          {...parsed}
+          onItemClick={(id) => router.push(`/items/${id}`)}
+          onItemAction={(itemId, actionId) => {
+            if (actionId === "select") {
+              selectItem(itemId);
+            }
+          }}
+        />
+      );
+    },
   },
 };
 ```
