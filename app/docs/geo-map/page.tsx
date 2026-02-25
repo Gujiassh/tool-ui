@@ -4,7 +4,7 @@ import { ComponentDocsTabs } from "../_components/component-docs-tabs";
 
 export const metadata: Metadata = {
   title: "Geo Map",
-  description: "Display geolocated entities directly in chat",
+  description: "Display geolocated entities, clusters, and routes.",
 };
 
 export const revalidate = 3600;

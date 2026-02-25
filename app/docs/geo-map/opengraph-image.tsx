@@ -12,6 +12,6 @@ export const contentType = ogContentType;
 export default async function Image() {
   return generateOgImage(
     "Geo Map",
-    "Display geolocated entities directly in chat",
+    "Display geolocated entities, clusters, and routes.",
   );
 }
