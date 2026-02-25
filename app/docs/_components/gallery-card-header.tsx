@@ -115,9 +115,7 @@ export function GalleryCardHeader({
             </SheetHeader>
             <div className="scrollbar-subtle flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4">
               <section className="space-y-2">
-                <h3 className="text-foreground text-sm font-medium">
-                  Install
-                </h3>
+                <h3 className="text-foreground text-sm font-medium">Install</h3>
                 <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5">
                   <code className="text-foreground/95 min-w-0 flex-1 break-all font-mono text-sm leading-relaxed">
                     {installCommand}

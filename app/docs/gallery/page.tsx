@@ -157,7 +157,6 @@ function GalleryPreviewCard({
 export default function ComponentsGalleryPage() {
   const galleryImage = imagePresets["with-source"].data.image;
   const galleryCards: GalleryCardConfig[] = [
-  
     {
       componentId: "stats-display",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",

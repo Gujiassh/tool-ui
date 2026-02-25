@@ -641,6 +641,7 @@ export default function BuilderPage() {
             <>
               {/* Resize Handle - hidden on mobile */}
               <div
+                role="separator"
                 className="bg-border hover:bg-primary hidden w-1 cursor-col-resize transition-colors md:block"
                 onMouseDown={handleMouseDown}
               />

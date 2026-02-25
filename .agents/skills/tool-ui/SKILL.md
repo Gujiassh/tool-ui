@@ -1,9 +1,9 @@
+# Tool UI
+
 ---
 name: tool-ui
 description: Find, install, configure, and integrate Tool UI components in React apps using shadcn registry entries, compatibility checks, scaffolded runtime wiring, toolkit setup with assistant-ui, and troubleshooting workflows. Use when developers ask to add one or more Tool UI components, choose components for a use case, verify compatibility, wire a toolkit in a codebase, or integrate Tool UI payloads into assistant-ui or an existing chat/runtime stack.
 ---
-
-# Tool UI
 
 Use this skill to move from request to working Tool UI integration quickly.
 
@@ -15,23 +15,11 @@ Prefer assistant-ui when the project has no existing chat UI/runtime. Treat assi
 Read `components.json` in the user's project and verify:
 
 - `components.json` exists.
-- `components.json.aliases.utils` exists (e.g. `@/lib/utils`).
-- `components.json.registries["@tool-ui"]` equals `https://tool-ui.com/r/{name}.json`.
 
-If the registry is missing, add it. If `aliases.utils` is missing, configure it per shadcn setup.
 
-## Step 2: Discover Components
+## Step 2: Install Components
 
-Use reference docs under `.agents/skills/tool-ui/references/`:
-
-- `components-catalog.md`
-- `recipes.md`
-
-## Step 3: Install Components
-
-### Install command
-
-Run from project root (requires `components.json` with `@tool-ui` registry):
+### Install command from project root
 
 ```bash
 npx shadcn@latest add @tool-ui/<component-id>
@@ -44,67 +32,65 @@ npx shadcn@latest add @tool-ui/plan @tool-ui/progress-tracker @tool-ui/approval-
 ```
 
 
-
 ### Complete component catalog
 
 All 25 Tool UI components with install commands:
 
 **Progress**
 
-| Component         | Description                                           | Install |
-| ----------------- | ----------------------------------------------------- | ------- |
-| `plan`            | Step-by-step task workflows with status tracking       | `npx shadcn@latest add @tool-ui/plan` |
-| `progress-tracker`| Real-time status feedback for multi-step operations    | `npx shadcn@latest add @tool-ui/progress-tracker` |
+| Component          | Description                                         | Install                                           |
+| ------------------ | --------------------------------------------------- | ------------------------------------------------- |
+| `plan`             | Step-by-step task workflows with status tracking    | `npx shadcn@latest add @tool-ui/plan`             |
+| `progress-tracker` | Real-time status feedback for multi-step operations | `npx shadcn@latest add @tool-ui/progress-tracker` |
 
 **Input**
 
-| Component           | Description                                    | Install |
-| ------------------- | ---------------------------------------------- | ------- |
-| `option-list`       | Let users select from multiple choices         | `npx shadcn@latest add @tool-ui/option-list` |
-| `parameter-slider`  | Numeric parameter adjustment controls          | `npx shadcn@latest add @tool-ui/parameter-slider` |
-| `preferences-panel` | Compact settings panel for user preferences    | `npx shadcn@latest add @tool-ui/preferences-panel` |
-| `question-flow`     | Multi-step guided questions with branching     | `npx shadcn@latest add @tool-ui/question-flow` |
+| Component           | Description                                 | Install                                            |
+| ------------------- | ------------------------------------------- | -------------------------------------------------- |
+| `option-list`       | Let users select from multiple choices      | `npx shadcn@latest add @tool-ui/option-list`       |
+| `parameter-slider`  | Numeric parameter adjustment controls       | `npx shadcn@latest add @tool-ui/parameter-slider`  |
+| `preferences-panel` | Compact settings panel for user preferences | `npx shadcn@latest add @tool-ui/preferences-panel` |
+| `question-flow`     | Multi-step guided questions with branching  | `npx shadcn@latest add @tool-ui/question-flow`     |
 
 **Display**
 
-| Component       | Description                                         | Install |
-| --------------- | --------------------------------------------------- | ------- |
-| `citation`      | Display source references with attribution          | `npx shadcn@latest add @tool-ui/citation` |
-| `item-carousel` | Horizontal carousel for browsing collections        | `npx shadcn@latest add @tool-ui/item-carousel` |
-| `link-preview`  | Rich link previews with Open Graph data             | `npx shadcn@latest add @tool-ui/link-preview` |
-| `stats-display` | Key metrics and KPIs in a visual grid               | `npx shadcn@latest add @tool-ui/stats-display` |
-| `terminal`      | Show command-line output and logs                   | `npx shadcn@latest add @tool-ui/terminal` |
-| `weather-widget`| Weather display with forecasts and conditions       | `npx shadcn@latest add @tool-ui/weather-widget` |
+| Component        | Description                                   | Install                                         |
+| ---------------- | --------------------------------------------- | ----------------------------------------------- |
+| `citation`       | Display source references with attribution    | `npx shadcn@latest add @tool-ui/citation`       |
+| `item-carousel`  | Horizontal carousel for browsing collections  | `npx shadcn@latest add @tool-ui/item-carousel`  |
+| `link-preview`   | Rich link previews with Open Graph data       | `npx shadcn@latest add @tool-ui/link-preview`   |
+| `stats-display`  | Key metrics and KPIs in a visual grid         | `npx shadcn@latest add @tool-ui/stats-display`  |
+| `terminal`       | Show command-line output and logs             | `npx shadcn@latest add @tool-ui/terminal`       |
+| `weather-widget` | Weather display with forecasts and conditions | `npx shadcn@latest add @tool-ui/weather-widget` |
 
 **Artifacts**
 
-| Component      | Description                                         | Install |
-| -------------- | --------------------------------------------------- | ------- |
-| `chart`        | Visualize data with interactive charts (needs `recharts`) | `npx shadcn@latest add @tool-ui/chart` |
-| `code-block`   | Display syntax-highlighted code snippets            | `npx shadcn@latest add @tool-ui/code-block` |
-| `code-diff`    | Compare code changes with syntax-highlighted diffs (needs `@pierre/diffs`) | `npx shadcn@latest add @tool-ui/code-diff` |
-| `data-table`   | Present structured data in sortable tables          | `npx shadcn@latest add @tool-ui/data-table` |
-| `message-draft`| Review and approve messages before sending          | `npx shadcn@latest add @tool-ui/message-draft` |
-| `instagram-post` | Render Instagram post previews                    | `npx shadcn@latest add @tool-ui/instagram-post` |
-| `linkedin-post`  | Render LinkedIn post previews                     | `npx shadcn@latest add @tool-ui/linkedin-post` |
-| `x-post`       | Render X post previews                              | `npx shadcn@latest add @tool-ui/x-post` |
+| Component        | Description                                                                | Install                                         |
+| ---------------- | -------------------------------------------------------------------------- | ----------------------------------------------- |
+| `chart`          | Visualize data with interactive charts (needs `recharts`)                  | `npx shadcn@latest add @tool-ui/chart`          |
+| `code-block`     | Display syntax-highlighted code snippets                                   | `npx shadcn@latest add @tool-ui/code-block`     |
+| `code-diff`      | Compare code changes with syntax-highlighted diffs (needs `@pierre/diffs`) | `npx shadcn@latest add @tool-ui/code-diff`      |
+| `data-table`     | Present structured data in sortable tables                                 | `npx shadcn@latest add @tool-ui/data-table`     |
+| `message-draft`  | Review and approve messages before sending                                 | `npx shadcn@latest add @tool-ui/message-draft`  |
+| `instagram-post` | Render Instagram post previews                                             | `npx shadcn@latest add @tool-ui/instagram-post` |
+| `linkedin-post`  | Render LinkedIn post previews                                              | `npx shadcn@latest add @tool-ui/linkedin-post`  |
+| `x-post`         | Render X post previews                                                     | `npx shadcn@latest add @tool-ui/x-post`         |
 
 **Confirmation**
 
-| Component       | Description                               | Install |
-| --------------- | ----------------------------------------- | ------- |
-| `approval-card` | Binary confirmation for agent actions     | `npx shadcn@latest add @tool-ui/approval-card` |
-| `order-summary` | Display purchases with itemized pricing   | `npx shadcn@latest add @tool-ui/order-summary` |
+| Component       | Description                             | Install                                        |
+| --------------- | --------------------------------------- | ---------------------------------------------- |
+| `approval-card` | Binary confirmation for agent actions   | `npx shadcn@latest add @tool-ui/approval-card` |
+| `order-summary` | Display purchases with itemized pricing | `npx shadcn@latest add @tool-ui/order-summary` |
 
 **Media**
 
-| Component      | Description                                         | Install |
-| -------------- | --------------------------------------------------- | ------- |
-| `audio`        | Audio playback with artwork and metadata            | `npx shadcn@latest add @tool-ui/audio` |
-| `image`        | Display images with metadata and attribution        | `npx shadcn@latest add @tool-ui/image` |
-| `image-gallery`| Masonry grid with fullscreen lightbox viewer        | `npx shadcn@latest add @tool-ui/image-gallery` |
-| `video`        | Video playback with controls and poster             | `npx shadcn@latest add @tool-ui/video` |
-
+| Component       | Description                                  | Install                                        |
+| --------------- | -------------------------------------------- | ---------------------------------------------- |
+| `audio`         | Audio playback with artwork and metadata     | `npx shadcn@latest add @tool-ui/audio`         |
+| `image`         | Display images with metadata and attribution | `npx shadcn@latest add @tool-ui/image`         |
+| `image-gallery` | Masonry grid with fullscreen lightbox viewer | `npx shadcn@latest add @tool-ui/image-gallery` |
+| `video`         | Video playback with controls and poster      | `npx shadcn@latest add @tool-ui/video`         |
 
 ### Example installs by use case
 
@@ -124,6 +110,7 @@ npx shadcn@latest add @tool-ui/image @tool-ui/image-gallery @tool-ui/video @tool
 ```
 
 
+
 ### Toolkit setup in a codebase
 
 After installing components, wire them into assistant-ui via a `Toolkit`. This section covers the full setup: provider, runtime, toolkit file, and ID handling.
@@ -133,20 +120,23 @@ After installing components, wire them into assistant-ui via a `Toolkit`. This s
 Create an assistant wrapper that provides runtime, transport, and tools:
 
 ```tsx
-'use client'
+"use client";
 
-import { lastAssistantMessageIsCompleteWithToolCalls } from 'ai'
-import { AssistantRuntimeProvider, Tools, useAui } from '@assistant-ui/react'
-import { AssistantChatTransport, useChatRuntime } from '@assistant-ui/react-ai-sdk'
-import { Thread } from '@/components/assistant-ui/thread'
-import { toolkit } from '@/components/toolkit'
+import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { AssistantRuntimeProvider, Tools, useAui } from "@assistant-ui/react";
+import {
+  AssistantChatTransport,
+  useChatRuntime,
+} from "@assistant-ui/react-ai-sdk";
+import { Thread } from "@/components/assistant-ui/thread";
+import { toolkit } from "@/components/toolkit";
 
 export const Assistant = () => {
   const runtime = useChatRuntime({
-    transport: new AssistantChatTransport({ api: '/api/chat' }),
-    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls
-  })
-  const aui = useAui({ tools: Tools({ toolkit }) })
+    transport: new AssistantChatTransport({ api: "/api/chat" }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+  });
+  const aui = useAui({ tools: Tools({ toolkit }) });
 
   return (
     <AssistantRuntimeProvider runtime={runtime} aui={aui}>
@@ -154,8 +144,8 @@ export const Assistant = () => {
         <Thread />
       </div>
     </AssistantRuntimeProvider>
-  )
-}
+  );
+};
 ```
 
 Key points:
@@ -171,102 +161,74 @@ Create a single `toolkit.ts` (or `toolkit.tsx`) that exports a `Toolkit` object.
 **Backend tools** (model returns result; no user input):
 
 ```tsx
-import { type Toolkit } from '@assistant-ui/react'
-import { Plan } from '@/components/tool-ui/plan'
-import { safeParseSerializablePlan } from '@/components/tool-ui/plan/schema'
+import { type Toolkit } from "@assistant-ui/react";
+import { Plan } from "@/components/tool-ui/plan";
+import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
 
 export const toolkit: Toolkit = {
   showPlan: {
-    type: 'backend',
+    type: "backend",
     render: ({ result }) => {
-      const parsed = safeParseSerializablePlan(result)
-      if (!parsed) return null
-      return <Plan {...parsed} />
-    }
-  }
-}
+      const parsed = safeParseSerializablePlan(result);
+      if (!parsed) return null;
+      return <Plan {...parsed} />;
+    },
+  },
+};
 ```
 
 **Frontend tools** (model sends args; user interaction commits via `addResult`):
 
 ```tsx
-import { type Toolkit } from '@assistant-ui/react'
-import { OptionList } from '@/components/tool-ui/option-list'
+import { type Toolkit } from "@assistant-ui/react";
+import { OptionList } from "@/components/tool-ui/option-list";
 import {
   SerializableOptionListSchema,
-  safeParseSerializableOptionList
-} from '@/components/tool-ui/option-list/schema'
+  safeParseSerializableOptionList,
+} from "@/components/tool-ui/option-list/schema";
 
 const optionListTool: Toolkit[string] = {
-  description: 'Render selectable options with confirm and clear actions.',
+  description: "Render selectable options with confirm and clear actions.",
   parameters: SerializableOptionListSchema,
   render: ({ args, toolCallId, result, addResult }) => {
     const parsed = safeParseSerializableOptionList({
       ...args,
-      id: args?.id ?? `option-list-${toolCallId}`
-    })
-    if (!parsed) return null
+      id: args?.id ?? `option-list-${toolCallId}`,
+    });
+    if (!parsed) return null;
 
     if (result) {
-      return <OptionList {...parsed} choice={result} />
+      return <OptionList {...parsed} choice={result} />;
     }
     return (
       <OptionList
         {...parsed}
         onAction={async (actionId, selection) => {
-          if (actionId === 'confirm' || actionId === 'cancel') {
-            await addResult?.(selection)
+          if (actionId === "confirm" || actionId === "cancel") {
+            await addResult?.(selection);
           }
         }}
       />
-    )
-  }
-}
+    );
+  },
+};
 
 export const toolkit: Toolkit = {
   option_list: optionListTool,
-  approval_card: { /* ... */ }
-}
+  approval_card: {
+    /* ... */
+  },
+};
 ```
 
-#### 3. ID handling
 
-Tool UI components require a stable `id`. For frontend tools, merge `args` with a fallback ID:
 
-```tsx
-id: args?.id ?? `${componentId}-${toolCallId}`
-```
+#### 3. Action-centric vs compound components
 
-Example for ApprovalCard:
-
-```tsx
-const parsed = safeParseSerializableApprovalCard({
-  ...args,
-  id: args?.id ?? `approval-card-${toolCallId}`
-})
-```
-
-You can centralize this in a helper:
-
-```tsx
-function withToolId<T extends { id?: string }>(
-  args: T,
-  toolCallId: string,
-  componentId: string
-): T & { id: string } {
-  return { ...args, id: args?.id ?? `${componentId}-${toolCallId}` } as T & { id: string }
-}
-
-// Usage
-const parsed = safeParseSerializableOptionList(withToolId(args, toolCallId, 'option-list'))
-```
-
-#### 4. Action-centric vs compound components
-
-| Pattern | Components | Usage |
-| ------- | ---------- | ----- |
+| Pattern            | Components                                                          | Usage                                                                                                              |
+| ------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Action-centric** | `OptionList`, `ParameterSlider`, `PreferencesPanel`, `ApprovalCard` | Wire `onAction` or `onConfirm`/`onCancel` directly; no `ToolUI` wrapper. Pass `choice={result}` for receipt state. |
-| **Compound** | `OrderSummary`, `DataTable`, etc. | Wrap in `ToolUI` + `ToolUI.Surface` + `ToolUI.Actions`; use `DecisionActions` or `LocalActions`. |
+| **Compound**       | `OrderSummary`, `DataTable`, etc.                                   | Wrap in `ToolUI` + `ToolUI.Surface` + `ToolUI.Actions`; use `DecisionActions` or `LocalActions`.                   |
 
 Action-centric example (OptionList):
 
@@ -275,12 +237,12 @@ return (
   <OptionList
     {...parsed}
     onAction={async (actionId, selection) => {
-      if (actionId === 'confirm' || actionId === 'cancel') {
-        await addResult?.(selection)
+      if (actionId === "confirm" || actionId === "cancel") {
+        await addResult?.(selection);
       }
     }}
   />
-)
+);
 ```
 
 Compound example (OrderSummary with DecisionActions):
@@ -294,15 +256,17 @@ return (
     <ToolUI.Actions>
       <ToolUI.DecisionActions
         actions={[
-          { id: 'cancel', label: 'Cancel', variant: 'outline' },
-          { id: 'confirm', label: 'Purchase' }
+          { id: "cancel", label: "Cancel", variant: "outline" },
+          { id: "confirm", label: "Purchase" },
         ]}
-        onAction={(action) => createDecisionResult({ decisionId: parsed.id, action })}
+        onAction={(action) =>
+          createDecisionResult({ decisionId: parsed.id, action })
+        }
         onCommit={(decision) => addResult?.(decision)}
       />
     </ToolUI.Actions>
   </ToolUI>
-)
+);
 ```
 
 ApprovalCard uses embedded actions; wire `onConfirm`/`onCancel` directly:
@@ -311,35 +275,16 @@ ApprovalCard uses embedded actions; wire `onConfirm`/`onCancel` directly:
 return (
   <ApprovalCard
     {...parsed}
-    choice={result === 'approved' || result === 'denied' ? result : parsed.choice}
-    onConfirm={async () => addResult?.('approved')}
-    onCancel={async () => addResult?.('denied')}
+    choice={
+      result === "approved" || result === "denied" ? result : parsed.choice
+    }
+    onConfirm={async () => addResult?.("approved")}
+    onCancel={async () => addResult?.("denied")}
   />
-)
+);
 ```
 
 
-#### 5. Checklist for each tool
-
-1. **Import**: component from `@/components/tool-ui/{id}`, schema and `safeParseSerializable*` from `schema.ts`.
-2. **Parse**: always `safeParse*`; return `null` on failure.
-3. **Receipt**: if `result` exists, render with `choice={result}` (or equivalent) for read-only state.
-4. **ID**: ensure `id` is set via `args?.id ?? \`{component}-${toolCallId}\``.
-5. **addResult**: call only for consequential actions (confirm, approve, select); never in LocalActions handlers.
-
-See `references/integration-patterns.md` for backend vs frontend, LocalActions vs DecisionActions, and manual (non-assistant-ui) rendering.
-
-## Step 5: Validate and Troubleshoot
-
-After integration:
-
-1. Run typecheck/lint.
-2. Trigger a real tool call.
-3. Confirm UI renders and interactions complete expected flow.
-
-If broken, use:
-
-- `references/troubleshooting.md` (under `.agents/skills/tool-ui/references/`)
 
 ## Action Model
 
@@ -378,11 +323,6 @@ Three components are action-centric exceptions — they keep embedded action pro
 | `ParameterSlider`  | `SliderValue[]`               |
 | `PreferencesPanel` | `PreferencesValue`            |
 
-ESLint enforces this model:
-
-- `no-embedded-response-actions` — bans legacy `responseActions` / `onResponseAction` props.
-- `no-add-result-in-local-actions` — prevents `addResult()` inside LocalActions handlers.
-- `decision-actions-require-envelope` — requires `createDecisionResult(...)` in DecisionActions handlers.
 
 
 
@@ -403,17 +343,6 @@ Components with outcomes use a `choice` prop to render confirmed/completed state
 
 When `choice` is present, the component renders in receipt mode — read-only, no actions.
 
-
-
-
-
-
 ## Operational Rules
 
 - Install the smallest set of components that solves the request.
-
-
-
-## Maintainer Notes
-
-Component metadata lives in `references/components-catalog.md`. Sync from Tool UI source when adding or changing components.
