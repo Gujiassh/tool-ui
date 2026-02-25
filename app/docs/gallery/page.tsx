@@ -8,7 +8,7 @@ import {
   GalleryPreviewImpression,
 } from "@/app/docs/_components/gallery-analytics.client";
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
-import { GalleryInstallStrip } from "@/app/docs/_components/gallery-install-strip";
+import { GalleryDocsLink } from "@/app/docs/_components/gallery-docs-link";
 import { useResolvedPreviewTheme } from "@/hooks/use-preview-theme-search-params";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { Image } from "@/components/tool-ui/image";
@@ -68,8 +68,10 @@ const LinkPreview = dynamic(() =>
 const LinkedInPost = dynamic(() =>
   import("@/components/tool-ui/linkedin-post").then((m) => m.LinkedInPost),
 );
-const InstagramPost = dynamic(() =>
-  import("@/components/tool-ui/instagram-post").then((m) => m.InstagramPost),
+const InstagramPost = dynamic(
+  () =>
+    import("@/components/tool-ui/instagram-post").then((m) => m.InstagramPost),
+  { ssr: false },
 );
 const OptionList = dynamic(() =>
   import("@/components/tool-ui/option-list").then((m) => m.OptionList),
@@ -91,8 +93,9 @@ const CodeBlock = dynamic(() =>
 const CodeDiff = dynamic(() =>
   import("@/components/tool-ui/code-diff").then((m) => m.CodeDiff),
 );
-const Chart = dynamic(() =>
-  import("@/components/tool-ui/chart").then((m) => m.Chart),
+const Chart = dynamic(
+  () => import("@/components/tool-ui/chart").then((m) => m.Chart),
+  { ssr: false },
 );
 const PreferencesPanel = dynamic(() =>
   import("@/components/tool-ui/preferences-panel").then(
