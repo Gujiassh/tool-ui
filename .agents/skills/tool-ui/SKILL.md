@@ -158,14 +158,16 @@ Key points:
 
 Create a single `toolkit.ts` (or `toolkit.tsx`) that exports a `Toolkit` object. Each key is a tool name; each value has `type`, `description`, `parameters`, and `render`.
 
-**Frontend vs backend tools**
+ 
+-**Frontend vs backend tools**
+-
+-| | Frontend | Backend |
+-|-|----------|---------|
+-| **Implementation** | Runs in the browser; user interaction commits via `addResult` | Tool implementation lives on the server; model returns the result |
+-| **`execute`** | Required — runs the tool UI flow client-side | Not needed
+-| **`parameters`** | Required (schema for model args) | does not use, uses inputSchema instead if backend llm is done via aisdk
+-| **`render`** | Required (UI for args, status, result, `addResult`) | Required (UI for `result`) |
 
-| | Frontend | Backend |
-|-|----------|---------|
-| **Implementation** | Runs in the browser; user interaction commits via `addResult` | Tool implementation lives on the server; model returns the result |
-| **`execute`** | Required — runs the tool UI flow client-side | Not needed |
-| **`parameters`** | Required (schema for model args) | Required (schema for model args) |
-| **`render`** | Required (UI for args, status, result, `addResult`) | Required (UI for `result`) |
 
 **Backend tools** (model returns result; no user input):
 
@@ -184,6 +186,7 @@ export const toolkit: Toolkit = {
     },
   },
 };
+
 ```
 
 **Frontend tools** (model sends args; user interaction commits via `addResult`):
@@ -197,46 +200,30 @@ import {
 } from "@/components/tool-ui/option-list/schema";
 
 const optionListTool: Toolkit[string] = {
-  type: "frontend",
-  description: 'Render selectable options with confirm and clear actions.',
+  description: "Render selectable options with confirm and clear actions.",
   parameters: SerializableOptionListSchema,
-  render: ({ status, args, toolCallId, result, addResult }) => {
-    const parsed = safeParseSerializableOptionList(withToolId(args, toolCallId, 'option-list'))
+  render: ({ args, toolCallId, result, addResult }) => {
+    const parsed = safeParseSerializableOptionList({
+      ...args,
+      id: args?.id ?? `option-list-${toolCallId}`,
+    });
     if (!parsed) return null;
 
-    if(status?.type === 'incomplete' && status.reason === "error") {
-      return <div className="text-red-500">Error {status.error instanceof Error ? status.error.message : JSON.stringify(status.error)}</div>
+    if (result) {
+      return <OptionList {...parsed} choice={result} />;
     }
-
-    if(status?.type !== 'complete') {
-      return <Loader2 className="animate-spin size-4" />
-    }
-
-    return <OptionList {...parsed} choice={result} onAction={async (actionId, selection) => {
-      if (actionId === 'confirm' || actionId === 'cancel') {
-        await addResult?.(selection)
-      }
-    }} />
+    return (
+      <OptionList
+        {...parsed}
+        onAction={async (actionId, selection) => {
+          if (actionId === "confirm" || actionId === "cancel") {
+            await addResult?.(selection);
+          }
+        }}
+      />
+    );
   },
-  execute: ({ status, args, toolCallId, result, addResult }) => {
-    const parsed = safeParseSerializableOptionList(withToolId(args, toolCallId, 'option-list'))
-    if (!parsed) return null;
-
-    if(status?.type === 'incomplete' && status.reason === "error") {
-      return <div className="text-red-500">Error {status.error instanceof Error ? status.error.message : JSON.stringify(status.error)}</div>
-    }
-
-    if(status?.type !== 'complete') {
-      return <Loader2 className="animate-spin size-4" />
-    }
-
-    return <OptionList {...parsed} choice={result} onAction={async (actionId, selection) => {
-      if (actionId === 'confirm' || actionId === 'cancel') {
-        await addResult?.(selection)
-      }
-    }} />
-  }
-}
+};
 
 export const toolkit: Toolkit = {
   option_list: optionListTool,
@@ -246,9 +233,43 @@ export const toolkit: Toolkit = {
 };
 ```
 
+#### 3. API route (AI SDK)
 
+When the chat API uses the AI SDK (`streamText`), define backend tools with `tool()` from `ai`:
 
-#### 3. Action-centric vs compound components
+- Use **`inputSchema`** 
+- Backend tools use **`execute`** on the server; the result is streamed and rendered via the toolkit `render` function
+
+```ts
+import { streamText, tool, convertToModelMessages } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+
+// With frontend tools: ...frontendTools(clientTools) — clientTools come from the request body via AssistantChatTransport
+const result = streamText({
+  model: openai("gpt-4o"),
+  messages: await convertToModelMessages(messages),
+  tools: {
+    get_weather: tool({
+      description:
+        "Get the current weather and forecast for a location. Returns data to display in a weather widget.",
+      inputSchema: z.object({
+        location: z.string().describe("City name, e.g. 'San Francisco'"),
+        units: z
+          .enum(["celsius", "fahrenheit"])
+          .default("fahrenheit")
+          .describe("Temperature unit"),
+      }),
+      execute: async ({ location, units }) => {
+        // Fetch weather data, return shape matching your widget schema
+        return { location, units, /* ... */ };
+      },
+    }),
+  },
+});
+```
+
+#### 4. Action-centric vs compound components
 
 | Pattern            | Components                                                          | Usage                                                                                                              |
 | ------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -372,3 +393,8 @@ When `choice` is present, the component renders in receipt mode — read-only, n
 
 - Install the smallest set of components that solves the request.
 
+Notes: 
+Frontend tools need an execute function
+Backend tools have the tool implementation on the server side.
+Backend tool don't need either
+Ignore the generated files
