@@ -158,6 +158,15 @@ Key points:
 
 Create a single `toolkit.ts` (or `toolkit.tsx`) that exports a `Toolkit` object. Each key is a tool name; each value has `type`, `description`, `parameters`, and `render`.
 
+**Frontend vs backend tools**
+
+| | Frontend | Backend |
+|-|----------|---------|
+| **Implementation** | Runs in the browser; user interaction commits via `addResult` | Tool implementation lives on the server; model returns the result |
+| **`execute`** | Required — runs the tool UI flow client-side | Not needed |
+| **`parameters`** | Required (schema for model args) | Required (schema for model args) |
+| **`render`** | Required (UI for args, status, result, `addResult`) | Required (UI for `result`) |
+
 **Backend tools** (model returns result; no user input):
 
 ```tsx
@@ -188,30 +197,46 @@ import {
 } from "@/components/tool-ui/option-list/schema";
 
 const optionListTool: Toolkit[string] = {
-  description: "Render selectable options with confirm and clear actions.",
+  type: "frontend",
+  description: 'Render selectable options with confirm and clear actions.',
   parameters: SerializableOptionListSchema,
-  render: ({ args, toolCallId, result, addResult }) => {
-    const parsed = safeParseSerializableOptionList({
-      ...args,
-      id: args?.id ?? `option-list-${toolCallId}`,
-    });
+  render: ({ status, args, toolCallId, result, addResult }) => {
+    const parsed = safeParseSerializableOptionList(withToolId(args, toolCallId, 'option-list'))
     if (!parsed) return null;
 
-    if (result) {
-      return <OptionList {...parsed} choice={result} />;
+    if(status?.type === 'incomplete' && status.reason === "error") {
+      return <div className="text-red-500">Error {status.error instanceof Error ? status.error.message : JSON.stringify(status.error)}</div>
     }
-    return (
-      <OptionList
-        {...parsed}
-        onAction={async (actionId, selection) => {
-          if (actionId === "confirm" || actionId === "cancel") {
-            await addResult?.(selection);
-          }
-        }}
-      />
-    );
+
+    if(status?.type !== 'complete') {
+      return <Loader2 className="animate-spin size-4" />
+    }
+
+    return <OptionList {...parsed} choice={result} onAction={async (actionId, selection) => {
+      if (actionId === 'confirm' || actionId === 'cancel') {
+        await addResult?.(selection)
+      }
+    }} />
   },
-};
+  execute: ({ status, args, toolCallId, result, addResult }) => {
+    const parsed = safeParseSerializableOptionList(withToolId(args, toolCallId, 'option-list'))
+    if (!parsed) return null;
+
+    if(status?.type === 'incomplete' && status.reason === "error") {
+      return <div className="text-red-500">Error {status.error instanceof Error ? status.error.message : JSON.stringify(status.error)}</div>
+    }
+
+    if(status?.type !== 'complete') {
+      return <Loader2 className="animate-spin size-4" />
+    }
+
+    return <OptionList {...parsed} choice={result} onAction={async (actionId, selection) => {
+      if (actionId === 'confirm' || actionId === 'cancel') {
+        await addResult?.(selection)
+      }
+    }} />
+  }
+}
 
 export const toolkit: Toolkit = {
   option_list: optionListTool,
@@ -346,3 +371,4 @@ When `choice` is present, the component renders in receipt mode — read-only, n
 ## Operational Rules
 
 - Install the smallest set of components that solves the request.
+
