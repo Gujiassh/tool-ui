@@ -84,6 +84,28 @@ class ToolUiScaffoldScriptTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn('from "@/components/tool-ui/plan/schema"', result.stdout)
 
+    def test_backend_code_diff_scaffold(self):
+        result = self.run_script(
+            "--mode", "assistant-backend", "--component", "code-diff"
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("CodeDiff", result.stdout)
+        self.assertIn("safeParseSerializableCodeDiff", result.stdout)
+
+    def test_code_diff_peer_dep_note(self):
+        result = self.run_script(
+            "--mode", "assistant-backend", "--component", "code-diff"
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("@pierre/diffs", result.stdout)
+
+    def test_chart_peer_dep_note(self):
+        result = self.run_script(
+            "--mode", "manual", "--component", "chart"
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("recharts", result.stdout)
+
     def test_invalid_component_fails(self):
         result = self.run_script(
             "--mode",

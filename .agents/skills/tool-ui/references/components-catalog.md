@@ -5,7 +5,7 @@ Do not edit manually.
 
 ## Progress
 
-- `plan`: Display step-by-step task workflows
+- `plan`: Step-by-step task workflows with status tracking
 - `progress-tracker`: Real-time status feedback for multi-step operations
 
 ## Input / Decision
@@ -19,15 +19,16 @@ Do not edit manually.
 
 - `citation`: Display source references with attribution
 - `item-carousel`: Horizontal carousel for browsing collections
-- `link-preview`: Rich link previews with OG data
-- `stats-display`: Display key metrics in a grid
+- `link-preview`: Rich link previews with Open Graph data
+- `stats-display`: Key metrics and KPIs in a visual grid
 - `terminal`: Show command-line output and logs
-- `weather-widget`: Display weather conditions and forecasts
+- `weather-widget`: Probably more weather widget than anyone asked for
 
 ## Artifacts
 
 - `chart`: Visualize data with interactive charts
 - `code-block`: Display syntax-highlighted code snippets
+- `code-diff`: Compare code changes with syntax-highlighted diffs
 - `data-table`: Present structured data in sortable tables
 - `instagram-post`: Render Instagram post previews
 - `linkedin-post`: Render LinkedIn post previews
@@ -52,3 +53,5 @@ Do not edit manually.
 - Need ongoing task status: use `plan` for ordered steps, `progress-tracker` for live execution.
 - Need compact KPIs: use `stats-display`; for rows and columns use `data-table`.
 - Need social content previews: use `instagram-post`, `linkedin-post`, or `x-post`.
+- Need code display: use `code-block` for single snippets, `code-diff` for before/after changes.
+- Need command output: use `terminal` for shell logs; supports stderr, duration, and truncation.

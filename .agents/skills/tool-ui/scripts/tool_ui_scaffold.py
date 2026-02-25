@@ -15,6 +15,12 @@ SPECIAL_SYMBOLS = {
 # Components that keep dedicated action props (action-centric exceptions).
 ACTION_CENTRIC_COMPONENTS = {"option-list", "parameter-slider", "preferences-panel"}
 
+# Components requiring peer dependencies beyond shadcn/ui prerequisites.
+PEER_DEPS: dict[str, str] = {
+    "code-diff": "@pierre/diffs",
+    "chart": "recharts",
+}
+
 
 def load_component_ids() -> set[str]:
     skill_root = Path(__file__).resolve().parents[1]
@@ -241,6 +247,9 @@ def main() -> None:
         print(render_frontend(component_id, tool_name, component_symbol))
     else:
         print(render_manual(component_id, tool_name, component_symbol))
+
+    if component_id in PEER_DEPS:
+        print(f"// NOTE: {component_id} requires peer dependency: npm i {PEER_DEPS[component_id]}")
 
 
 if __name__ == "__main__":

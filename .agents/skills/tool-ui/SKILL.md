@@ -66,6 +66,13 @@ Default install pattern:
 npx shadcn@latest add https://tool-ui.com/r/<component-id>.json
 ```
 
+Peer dependencies for specific components:
+
+| Component        | Peer dependency    | Install                              |
+| ---------------- | ------------------ | ------------------------------------ |
+| `code-diff`      | `@pierre/diffs`    | `npm i @pierre/diffs`                |
+| `chart`          | `recharts`         | `npm i recharts`                     |
+
 ## Step 4: Scaffold and Integrate
 
 Generate wiring snippet:
@@ -137,6 +144,34 @@ ESLint enforces this model:
 
 ## Schema Boundary
 
+Every component schema follows the `defineToolUiContract` pattern:
+
+```tsx
+// 1. Base Zod schema (includes className)
+const XPropsSchemaBase = z.object({
+  id: ToolUIIdSchema,
+  role: ToolUIRoleSchema.optional(),
+  receipt: ToolUIReceiptSchema.optional(),
+  /* ...component props... */
+  className: z.string().optional(),
+});
+
+// 2. Props schema (may add cross-field validation via superRefine)
+export const XPropsSchema = XPropsSchemaBase.superRefine(validate);
+export type XProps = z.infer<typeof XPropsSchema>;
+
+// 3. Serializable schema (strips className, re-applies refinements)
+export const SerializableXSchema = XPropsSchemaBase
+  .omit({ className: true })
+  .superRefine(validate);
+export type SerializableX = z.infer<typeof SerializableXSchema>;
+
+// 4. Contract — typed parse + safeParse
+const contract = defineToolUiContract("X", SerializableXSchema);
+export const parseSerializableX = contract.parse;
+export const safeParseSerializableX = contract.safeParse;
+```
+
 Import from colocated entrypoints, not barrel `index.tsx`:
 
 ```tsx
@@ -149,6 +184,84 @@ import {
 } from "@/components/tool-ui/shared";
 ```
 
+Cross-field validation with `superRefine` is used by several components:
+
+- `code-diff`: patch vs. oldCode/newCode exclusivity.
+- `order-summary`: variant/choice consistency, duplicate item ID detection.
+- `progress-tracker`: duplicate step ID detection.
+
+## Compound Component Pattern
+
+Artifact and display components expose a compound API alongside a flat composed default:
+
+```tsx
+// Flat usage (composed default)
+<CodeBlock code="const x = 1" language="typescript" />
+
+// Compound usage (custom layout)
+<CodeBlock.Root code="const x = 1" language="typescript">
+  <CodeBlock.Header />
+  <CodeBlock.Content />
+  <CodeBlock.CollapseToggle />
+</CodeBlock.Root>
+```
+
+Components using the compound pattern: `CodeBlock`, `CodeDiff`, `Terminal`, `ProgressTracker`.
+
+Context is shared via `createContext` + `use()` (React 19). Subcomponents throw if used outside their Root.
+
+## Receipt and Choice Convention
+
+Components with outcomes use a `choice` prop to render confirmed/completed state:
+
+| Component          | `choice` type                          | Values / shape                                          |
+| ------------------ | -------------------------------------- | ------------------------------------------------------- |
+| `ApprovalCard`     | `"approved" \| "denied"`               | String literal                                          |
+| `OptionList`       | `string \| string[]`                   | Selected option ID(s)                                   |
+| `OrderSummary`     | `OrderDecision`                        | `{ action: "confirm", orderId?, confirmedAt? }`         |
+| `ProgressTracker`  | `ToolUIReceipt`                        | `{ outcome, summary, identifiers?, at }` (shared type)  |
+
+When `choice` is present, the component renders in receipt mode — read-only, no actions.
+
+## Component-Specific Notes
+
+### weather-widget
+
+Import from `runtime.ts`, not `index.tsx`:
+
+```tsx
+import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
+```
+
+Schema is TypeScript-only (`schema-runtime.ts`), no Zod — the payload is machine-generated. The `generated/` directory is ESLint-ignored.
+
+### code-diff
+
+Two mutually exclusive input modes (enforced by schema):
+
+- **Files mode**: provide `oldCode` and/or `newCode` strings.
+- **Patch mode**: provide a unified `patch` string.
+
+Requires peer dependency `@pierre/diffs`. Uses shared Pierre themes for syntax highlighting (same as `code-block`).
+
+### terminal
+
+Extended props beyond basic command/output:
+
+- `durationMs`: elapsed time displayed in header.
+- `cwd`: working directory prefix before command.
+- `stderr`: rendered separately in red below stdout.
+- `truncated`: shows "Output truncated..." note.
+- `maxCollapsedLines`: collapsible output with line count toggle.
+
+### code-block
+
+Uses Pierre themes (`pierre-dark` / `pierre-light`) vendored in `shared/`. Themes auto-switch based on `data-theme` attribute, `.dark`/`.light` class, or `prefers-color-scheme`. Supports `maxCollapsedLines` and `highlightLines` for focused code regions.
+
+## Adapter Pattern
+
+Every component includes `_adapter.tsx` — a re-export file for UI primitives (`cn`, `Button`, `Collapsible`, etc.). Enforced by ESLint `no-restricted-imports`: components must import UI dependencies through `_adapter`, not directly from `@/components/ui/*`. This ensures copy-paste portability across projects.
+
 ## Operational Rules
 
 - Install the smallest set of components that solves the request.
@@ -156,6 +269,7 @@ import {
 - Keep payload schemas serializable and explicit.
 - For decision flows, wire `DecisionActions` with `createDecisionResult(...)` and commit via `addResult(...)`.
 - For display components that need actions, use the compound `ToolUI` wrapper with `LocalActions`.
+- Install peer dependencies when using `code-diff` (`@pierre/diffs`) or `chart` (`recharts`).
 
 ## Maintainer Notes
 

@@ -43,6 +43,28 @@ class ToolUiComponentsScriptTests(unittest.TestCase):
         self.assertIn("plan", result.stdout)
         self.assertIn("npx shadcn@latest add", result.stdout)
 
+    def test_list_includes_code_diff(self):
+        result = self.run_script("list")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("code-diff", result.stdout)
+
+    def test_find_matches_diff(self):
+        result = self.run_script("find", "code diff changes")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("code-diff", result.stdout)
+
+    def test_bundle_code_review(self):
+        result = self.run_script("bundle", "code-review")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("code-diff", result.stdout)
+        self.assertIn("code-block", result.stdout)
+
+    def test_bundle_dashboard(self):
+        result = self.run_script("bundle", "dashboard")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("stats-display", result.stdout)
+        self.assertIn("chart", result.stdout)
+
     def test_unknown_component_fails(self):
         result = self.run_script("install", "not-a-component")
         self.assertNotEqual(result.returncode, 0)

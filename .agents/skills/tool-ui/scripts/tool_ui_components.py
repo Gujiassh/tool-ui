@@ -15,8 +15,10 @@ DOCS_BASE = "https://tool-ui.com/docs"
 
 BUNDLES: dict[str, list[str]] = {
     "planning-flow": ["plan", "progress-tracker", "approval-card"],
-    "research-output": ["citation", "link-preview", "code-block"],
+    "research-output": ["citation", "link-preview", "code-block", "code-diff"],
+    "code-review": ["code-diff", "code-block", "approval-card"],
     "commerce-flow": ["item-carousel", "order-summary", "approval-card"],
+    "dashboard": ["stats-display", "chart", "data-table"],
 }
 
 
