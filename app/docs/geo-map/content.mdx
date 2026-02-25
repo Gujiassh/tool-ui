@@ -16,7 +16,7 @@ import { DocsHeader } from "../_components/docs-header";
 
 <Step title="Install the component">
 
-Run this once from your project root.
+Run this command from your project root.
 
 ```bash
 npx shadcn@latest add @tool-ui/geo-map
@@ -24,19 +24,9 @@ npx shadcn@latest add @tool-ui/geo-map
 
 </Step>
 
-<Step title="Import Leaflet styles">
+<Step title="Add Leaflet CSS to app/layout.tsx">
 
-Leaflet requires global CSS.
-
-```tsx
-import "leaflet/dist/leaflet.css";
-```
-
-</Step>
-
-<Step title="Add the import in your root layout">
-
-In Next.js App Router projects, add it in `app/layout.tsx`.
+Open `app/layout.tsx` and add the Leaflet import next to your global CSS import.
 
 ```tsx
 import "./styles/globals.css";
@@ -46,6 +36,8 @@ import "leaflet/dist/leaflet.css";
 </Step>
 
 <Step title="Render it in your UI">
+
+Render `GeoMap` in your UI.
 
 ```tsx
 import { GeoMap } from "@/components/tool-ui/geo-map";
@@ -88,7 +80,7 @@ import { GeoMap } from "@/components/tool-ui/geo-map";
 
 <Step title="Register it in your runtime provider">
 
-Registration tells assistant-ui which component to render when a tool returns geo payloads. Without it, tool results appear as raw JSON.
+Register `GeoMap` in your runtime provider so tool results render as map UI instead of raw JSON.
 
 ```tsx
 import { type Toolkit } from "@assistant-ui/react";
