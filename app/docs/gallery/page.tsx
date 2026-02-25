@@ -21,6 +21,7 @@ import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
 import { codeDiffPresets } from "@/lib/presets/code-diff";
 import { dataTablePresets } from "@/lib/presets/data-table";
+import { geoMapPresets } from "@/lib/presets/geo-map";
 import { imagePresets } from "@/lib/presets/image";
 import { instagramPostPresets } from "@/lib/presets/instagram-post";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
@@ -88,6 +89,9 @@ const CodeDiff = dynamic(() =>
 );
 const Chart = dynamic(() =>
   import("@/components/tool-ui/chart").then((m) => m.Chart),
+);
+const GeoMap = dynamic(() =>
+  import("@/components/tool-ui/geo-map").then((m) => m.GeoMap),
 );
 const PreferencesPanel = dynamic(() =>
   import("@/components/tool-ui/preferences-panel").then(
@@ -157,6 +161,13 @@ function GalleryPreviewCard({
 export default function ComponentsGalleryPage() {
   const galleryImage = imagePresets["with-source"].data.image;
   const galleryCards: GalleryCardConfig[] = [
+    {
+      componentId: "geo-map",
+      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
+      render: () => (
+        <GeoMap id="gallery-geo-map" {...geoMapPresets.fleet.data} />
+      ),
+    },
     {
       componentId: "stats-display",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",

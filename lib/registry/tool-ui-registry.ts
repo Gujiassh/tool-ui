@@ -80,6 +80,7 @@ const COMPONENT_DESCRIPTION_OVERRIDES: Partial<Record<string, string>> = {
   citation: "Display source references with attribution.",
   "code-block": "Display syntax-highlighted code snippets.",
   "data-table": "Sortable, responsive data tables for tool call results.",
+  "geo-map": "Display geolocated entities and fleet positions.",
   image: "Display images with metadata and attribution.",
   "image-gallery": "Grid layout for browsing image collections.",
   "instagram-post": "Render Instagram post previews.",

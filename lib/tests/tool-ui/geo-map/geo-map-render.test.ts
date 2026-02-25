@@ -1,0 +1,310 @@
+// @vitest-environment jsdom
+
+import { act, render, waitFor } from "@testing-library/react";
+import { createElement, type ComponentProps, type ReactNode } from "react";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+import { GeoMap } from "@/components/tool-ui/geo-map";
+
+type MockMapEvents = {
+  moveend?: () => void;
+  zoomend?: () => void;
+};
+
+let mockMapEvents: MockMapEvents = {};
+let setViewCallCount = 0;
+let useUnstableMapReference = false;
+const popupPropsSpy = vi.fn();
+const tooltipPropsSpy = vi.fn();
+
+const mockMap = {
+  getBounds: vi.fn(() => ({
+    getWest: () => -122.5,
+    getSouth: () => 37.7,
+    getEast: () => -122.3,
+    getNorth: () => 37.9,
+  })),
+  getZoom: vi.fn(() => 12),
+  setView: vi.fn(() => {
+    setViewCallCount += 1;
+    if (setViewCallCount > 5) {
+      throw new Error("viewport-loop-detected");
+    }
+    mockMapEvents.moveend?.();
+  }),
+  fitBounds: vi.fn(() => {
+    mockMapEvents.moveend?.();
+  }),
+  flyTo: vi.fn(),
+};
+
+function DivWrapper({
+  children,
+  ...props
+}: ComponentProps<"div"> & { children?: ReactNode }) {
+  return createElement("div", props, children);
+}
+
+function LeafletWrapper({ children }: { children?: ReactNode }) {
+  return createElement("div", null, children);
+}
+
+function PopupWrapper({
+  children,
+  ...props
+}: ComponentProps<"div"> & { children?: ReactNode }) {
+  popupPropsSpy(props);
+  return createElement("div", { className: props.className }, children);
+}
+
+function TooltipWrapper({
+  children,
+  ...props
+}: ComponentProps<"div"> & { children?: ReactNode }) {
+  tooltipPropsSpy(props);
+  return createElement("div", { className: props.className }, children);
+}
+
+vi.mock("@/lib/utils", () => ({
+  cn: (...classes: Array<string | undefined | false | null>) =>
+    classes.filter(Boolean).join(" "),
+}));
+
+vi.mock("@/components/ui/card", () => ({
+  Card: DivWrapper,
+  CardContent: DivWrapper,
+  CardDescription: DivWrapper,
+  CardHeader: DivWrapper,
+  CardTitle: DivWrapper,
+}));
+
+vi.mock("leaflet", () => ({
+  divIcon: vi.fn(() => ({})),
+  latLngBounds: vi.fn(() => ({})),
+}));
+
+vi.mock("react-leaflet", () => ({
+  CircleMarker: LeafletWrapper,
+  MapContainer: LeafletWrapper,
+  Marker: LeafletWrapper,
+  Polyline: LeafletWrapper,
+  Popup: PopupWrapper,
+  TileLayer: () => null,
+  Tooltip: TooltipWrapper,
+  ZoomControl: () => null,
+  useMap: () => (useUnstableMapReference ? { ...mockMap } : mockMap),
+  useMapEvents: (events: MockMapEvents) => {
+    mockMapEvents = events;
+    return mockMap;
+  },
+}));
+
+describe("GeoMap render behavior", () => {
+  beforeEach(() => {
+    mockMapEvents = {};
+    setViewCallCount = 0;
+    useUnstableMapReference = false;
+    mockMap.setView.mockClear();
+    mockMap.fitBounds.mockClear();
+    mockMap.flyTo.mockClear();
+    mockMap.getBounds.mockClear();
+    mockMap.getZoom.mockClear();
+    popupPropsSpy.mockClear();
+    tooltipPropsSpy.mockClear();
+
+    vi.stubGlobal(
+      "MutationObserver",
+      class {
+        observe() {}
+        disconnect() {}
+      },
+    );
+
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => ({
+        matches: false,
+        media: "",
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  test("does not repeatedly re-apply viewport when routes are omitted", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-loop-regression",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+        viewport: { mode: "fit", maxZoom: 12 },
+      }),
+    );
+
+    await waitFor(() => {
+      expect(mockMap.setView).toHaveBeenCalledTimes(1);
+    });
+    expect(mockMap.fitBounds).toHaveBeenCalledTimes(0);
+  });
+
+  test("does not loop when useMap reference identity changes between renders", async () => {
+    useUnstableMapReference = true;
+
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-map-ref-loop-regression",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+        viewport: { mode: "fit", maxZoom: 12 },
+      }),
+    );
+
+    await waitFor(() => {
+      expect(mockMap.setView).toHaveBeenCalled();
+    });
+    expect(mockMap.setView.mock.calls.length).toBeLessThanOrEqual(2);
+    expect(mockMap.fitBounds).toHaveBeenCalledTimes(0);
+  });
+
+  test("applies the geo-map popup class for deterministic shell styling", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-popup-class",
+        markers: [
+          {
+            id: "truck-31",
+            lat: 32.7157,
+            lng: -117.1611,
+            label: "Truck 31",
+            description: "Returning to hub",
+          },
+        ],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(popupPropsSpy).toHaveBeenCalled();
+    });
+    const popupProps = popupPropsSpy.mock.calls[0]?.[0];
+    expect(popupProps.className).toContain("geo-map-popup");
+  });
+
+  test("accepts css variable overrides for popup and tooltip shell theming", () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-token-overrides",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+        style: {
+          "--geo-map-popup-bg": "var(--card)",
+          "--geo-map-popup-fg": "var(--card-foreground)",
+          "--geo-map-tooltip-bg": "var(--accent)",
+        },
+      }),
+    );
+
+    const root = document.querySelector(
+      '[data-tool-ui-id="geo-map-token-overrides"]',
+    ) as HTMLElement | null;
+
+    expect(root).not.toBeNull();
+    expect(root?.style.getPropertyValue("--geo-map-popup-bg")).toBe(
+      "var(--card)",
+    );
+    expect(root?.style.getPropertyValue("--geo-map-popup-fg")).toBe(
+      "var(--card-foreground)",
+    );
+    expect(root?.style.getPropertyValue("--geo-map-tooltip-bg")).toBe(
+      "var(--accent)",
+    );
+  });
+
+  test("includes scoped zoom-control shell styles", () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-zoom-controls-style",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+      }),
+    );
+
+    const root = document.querySelector(
+      '[data-tool-ui-id="geo-map-zoom-controls-style"]',
+    ) as HTMLElement | null;
+    const styleTag = root?.querySelector("style");
+
+    expect(styleTag?.textContent).toContain("--geo-map-zoom-bg");
+    expect(styleTag?.textContent).toContain(
+      '[data-slot="geo-map"] .leaflet-control-zoom a',
+    );
+    expect(styleTag?.textContent).toContain(
+      '[data-slot="geo-map"] .leaflet-control-zoom.leaflet-bar',
+    );
+    expect(styleTag?.textContent).toContain(
+      '[data-slot="geo-map"] .leaflet-control-zoom a:first-child',
+    );
+    expect(styleTag?.textContent).toContain(
+      '[data-slot="geo-map"] .leaflet-control-zoom a:last-child',
+    );
+    expect(styleTag?.textContent).toContain(
+      '[data-slot="geo-map"] .leaflet-control-zoom a + a',
+    );
+    expect(styleTag?.textContent).toContain("cursor: default");
+  });
+
+  test("hides tooltip while popup is open", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-tooltip-popup-interaction",
+        markers: [
+          {
+            id: "truck-31",
+            lat: 32.7157,
+            lng: -117.1611,
+            label: "Truck 31",
+            description: "Returning to hub",
+            tooltip: "always",
+          },
+        ],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(popupPropsSpy).toHaveBeenCalled();
+      expect(tooltipPropsSpy).toHaveBeenCalled();
+    });
+
+    const popupProps = popupPropsSpy.mock.calls[0]?.[0] as
+      | {
+          eventHandlers?: {
+            add?: () => void;
+            remove?: () => void;
+          };
+        }
+      | undefined;
+
+    expect(document.querySelector(".geo-map-tooltip")).not.toBeNull();
+    expect(popupProps?.eventHandlers?.add).toBeTypeOf("function");
+    expect(popupProps?.eventHandlers?.remove).toBeTypeOf("function");
+
+    act(() => {
+      popupProps?.eventHandlers?.add?.();
+    });
+
+    await waitFor(() => {
+      expect(document.querySelector(".geo-map-tooltip")).toBeNull();
+    });
+
+    act(() => {
+      popupProps?.eventHandlers?.remove?.();
+    });
+
+    await waitFor(() => {
+      expect(document.querySelector(".geo-map-tooltip")).not.toBeNull();
+    });
+  });
+});

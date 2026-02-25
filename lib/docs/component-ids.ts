@@ -5,6 +5,7 @@ export const componentIds = [
   "code-block",
   "code-diff",
   "data-table",
+  "geo-map",
   "image",
   "image-gallery",
   "video",

@@ -72,6 +72,13 @@ export const componentsRegistry: ComponentMeta[] = [
     category: "artifacts",
   },
   {
+    id: "geo-map",
+    label: "Geo Map",
+    description: "Display geolocated entities and fleet positions",
+    path: "/docs/geo-map",
+    category: "display",
+  },
+  {
     id: "image",
     label: "Image",
     description: "Display images with metadata and attribution",

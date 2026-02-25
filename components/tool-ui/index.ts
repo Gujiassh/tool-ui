@@ -5,6 +5,7 @@ export * as CitationToolUi from "./citation";
 export * as CodeBlockToolUi from "./code-block";
 export * as CodeDiffToolUi from "./code-diff";
 export * as DataTableToolUi from "./data-table";
+export * as GeoMapToolUi from "./geo-map";
 export * as ImageToolUi from "./image";
 export * as ImageGalleryToolUi from "./image-gallery";
 export * as InstagramPostToolUi from "./instagram-post";
