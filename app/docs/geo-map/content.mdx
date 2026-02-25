@@ -26,13 +26,22 @@ npx shadcn@latest add @tool-ui/geo-map
 
 <Step title="Import Leaflet styles">
 
-Leaflet requires global CSS in your app entry.
+Leaflet requires global CSS.
 
 ```tsx
 import "leaflet/dist/leaflet.css";
 ```
 
-If you are using the Tool UI agent skill, ask it to add the Leaflet CSS import to your root layout automatically.
+</Step>
+
+<Step title="Add the import in your root layout">
+
+In Next.js App Router projects, add it in `app/layout.tsx`.
+
+```tsx
+import "./styles/globals.css";
+import "leaflet/dist/leaflet.css";
+```
 
 </Step>
 
