@@ -68,10 +68,10 @@ npx shadcn@latest add https://tool-ui.com/r/<component-id>.json
 
 Peer dependencies for specific components:
 
-| Component        | Peer dependency    | Install                              |
-| ---------------- | ------------------ | ------------------------------------ |
-| `code-diff`      | `@pierre/diffs`    | `npm i @pierre/diffs`                |
-| `chart`          | `recharts`         | `npm i recharts`                     |
+| Component   | Peer dependency | Install               |
+| ----------- | --------------- | --------------------- |
+| `code-diff` | `@pierre/diffs` | `npm i @pierre/diffs` |
+| `chart`     | `recharts`      | `npm i recharts`      |
 
 ## Step 4: Scaffold and Integrate
 
@@ -161,9 +161,9 @@ export const XPropsSchema = XPropsSchemaBase.superRefine(validate);
 export type XProps = z.infer<typeof XPropsSchema>;
 
 // 3. Serializable schema (strips className, re-applies refinements)
-export const SerializableXSchema = XPropsSchemaBase
-  .omit({ className: true })
-  .superRefine(validate);
+export const SerializableXSchema = XPropsSchemaBase.omit({
+  className: true,
+}).superRefine(validate);
 export type SerializableX = z.infer<typeof SerializableXSchema>;
 
 // 4. Contract — typed parse + safeParse
@@ -214,12 +214,12 @@ Context is shared via `createContext` + `use()` (React 19). Subcomponents throw 
 
 Components with outcomes use a `choice` prop to render confirmed/completed state:
 
-| Component          | `choice` type                          | Values / shape                                          |
-| ------------------ | -------------------------------------- | ------------------------------------------------------- |
-| `ApprovalCard`     | `"approved" \| "denied"`               | String literal                                          |
-| `OptionList`       | `string \| string[]`                   | Selected option ID(s)                                   |
-| `OrderSummary`     | `OrderDecision`                        | `{ action: "confirm", orderId?, confirmedAt? }`         |
-| `ProgressTracker`  | `ToolUIReceipt`                        | `{ outcome, summary, identifiers?, at }` (shared type)  |
+| Component         | `choice` type            | Values / shape                                         |
+| ----------------- | ------------------------ | ------------------------------------------------------ |
+| `ApprovalCard`    | `"approved" \| "denied"` | String literal                                         |
+| `OptionList`      | `string \| string[]`     | Selected option ID(s)                                  |
+| `OrderSummary`    | `OrderDecision`          | `{ action: "confirm", orderId?, confirmedAt? }`        |
+| `ProgressTracker` | `ToolUIReceipt`          | `{ outcome, summary, identifiers?, at }` (shared type) |
 
 When `choice` is present, the component renders in receipt mode — read-only, no actions.
 

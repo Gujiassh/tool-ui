@@ -21,7 +21,7 @@
     "weather:watch": "tsx scripts/compile-weather-runtime.ts --watch",
     "weather:check": "tsx scripts/compile-weather-runtime.ts --check",
     "hooks:pre-commit": "tsx scripts/precommit-registry-sync.ts",
-    "hooks:pre-push": "pnpm registry:check",
+    "hooks:pre-push": "pnpm lint && pnpm lint:format && pnpm registry:check",
     "lint:oxlint": "oxlint",
     "lint:eslint": "eslint .",
     "lint": "pnpm lint:oxlint && pnpm lint:eslint",
