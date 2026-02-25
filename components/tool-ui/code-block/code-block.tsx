@@ -8,7 +8,11 @@ import {
   use,
   type ReactNode,
 } from "react";
-import { createHighlighter, type Highlighter } from "shiki";
+import {
+  createHighlighter,
+  createJavaScriptRegexEngine,
+  type Highlighter,
+} from "shiki";
 import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
 import pierreDarkTheme from "../shared/pierre-dark-theme.js";
 import pierreLightTheme from "../shared/pierre-light-theme.js";
@@ -27,6 +31,7 @@ function getHighlighter(): Promise<Highlighter> {
     highlighterPromise = createHighlighter({
       themes: [pierreDarkTheme as never, pierreLightTheme as never],
       langs: [],
+      engine: createJavaScriptRegexEngine(),
     });
   }
   return highlighterPromise;
