@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "tw-shimmer";
-@import "leaflet/dist/leaflet.css";
 
 /* Fumadocs UI styles */
 @import "fumadocs-ui/css/preset.css";
