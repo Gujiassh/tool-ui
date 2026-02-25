@@ -75,6 +75,31 @@ import { GeoMap } from "@/components/tool-ui/geo-map";
 
 </Step>
 
+<Step title="Register it in your runtime provider">
+
+Registration tells assistant-ui which component to render when a tool returns geo payloads. Without it, tool results appear as raw JSON.
+
+```tsx
+import { type Toolkit } from "@assistant-ui/react";
+import { GeoMap } from "@/components/tool-ui/geo-map";
+import { safeParseSerializableGeoMap } from "@/components/tool-ui/geo-map/schema";
+
+export const toolkit: Toolkit = {
+  showGeoMap: {
+    type: "backend",
+    render: ({ result }) => {
+      const parsed = safeParseSerializableGeoMap(result);
+      if (!parsed) {
+        return null;
+      }
+      return <GeoMap {...parsed} />;
+    },
+  },
+};
+```
+
+</Step>
+
 </Steps>
 
 ## Key Features
@@ -137,6 +162,10 @@ import { GeoMap } from "@/components/tool-ui/geo-map";
       description: "Tile theme mode",
       type: "'auto' | 'light' | 'dark'",
       default: "'auto'",
+    },
+    className: {
+      description: "Tailwind classes for the root wrapper",
+      type: "string",
     },
     mapClassName: {
       description: "Tailwind classes for the map frame wrapper",
@@ -361,7 +390,7 @@ Supported token keys:
 ## Accessibility
 
 - Marker and route popups provide text equivalents for map points and paths
-- Tooltips can be made persistent using `tooltip: "always"`
+- Tooltips can be made persistent using `tooltip: "always"` (and hide while the related popup is open)
 - Leaflet controls remain keyboard accessible
 
 ## Related
