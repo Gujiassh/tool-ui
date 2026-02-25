@@ -1,9 +1,9 @@
-# Tool UI
-
 ---
 name: tool-ui
 description: Find, install, configure, and integrate Tool UI components in React apps using shadcn registry entries, compatibility checks, scaffolded runtime wiring, toolkit setup with assistant-ui, and troubleshooting workflows. Use when developers ask to add one or more Tool UI components, choose components for a use case, verify compatibility, wire a toolkit in a codebase, or integrate Tool UI payloads into assistant-ui or an existing chat/runtime stack.
 ---
+
+# Tool UI
 
 Use this skill to move from request to working Tool UI integration quickly.
 
