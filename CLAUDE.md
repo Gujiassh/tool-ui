@@ -81,7 +81,7 @@ Reference: `components/tool-ui/approval-card/approval-card.tsx:183`
 
 ## Task Guides
 
-- Adding/modifying components: `.claude/docs/component-workflow.md`
+- Adding/modifying components: `.claude/docs/generator-guide.md`
 - Writing doc pages: `.claude/docs/mdx-authoring.md`
 - Copy style for examples: `.claude/docs/copy-guide.md`
 - Writing changelog entries: `docs/changelog.md`
