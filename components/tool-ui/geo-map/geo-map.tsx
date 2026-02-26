@@ -1,7 +1,14 @@
 "use client";
 
 import type { Map as LeafletMap } from "leaflet";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import Supercluster from "supercluster";
 import {
   CircleMarker,
@@ -119,6 +126,15 @@ export const GeoMap = memo(function GeoMap({
 
   const resolvedTheme = useResolvedTheme(theme);
   const tileUrl = resolvedTheme === "dark" ? DARK_TILE_URL : LIGHT_TILE_URL;
+  const resolvedRootStyle = useMemo(
+    () =>
+      ({
+        "--geo-map-canvas-bg":
+          resolvedTheme === "dark" ? "var(--background)" : "var(--muted)",
+        ...style,
+      }) satisfies CSSProperties,
+    [resolvedTheme, style],
+  );
 
   const initialView = useMemo(
     () => resolveInitialView(markers, resolvedRoutes, viewport),
@@ -300,7 +316,7 @@ export const GeoMap = memo(function GeoMap({
   return (
     <div
       className={cn("w-full min-w-80", styles.root, className)}
-      style={style}
+      style={resolvedRootStyle}
       data-slot="geo-map"
       data-tool-ui-id={id}
     >

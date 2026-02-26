@@ -168,6 +168,7 @@ export const GeoMapPropsSchema = z
   });
 
 export type GeoMapCssVariableName =
+  | "--geo-map-canvas-bg"
   | "--geo-map-tooltip-bg"
   | "--geo-map-tooltip-fg"
   | "--geo-map-tooltip-shadow"

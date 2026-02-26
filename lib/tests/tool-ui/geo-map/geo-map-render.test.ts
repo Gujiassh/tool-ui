@@ -16,6 +16,7 @@ let setViewCallCount = 0;
 let useUnstableMapReference = false;
 const popupPropsSpy = vi.fn();
 const tooltipPropsSpy = vi.fn();
+const tileLayerPropsSpy = vi.fn();
 
 const mockMap = {
   getBounds: vi.fn(() => ({
@@ -89,7 +90,10 @@ vi.mock("react-leaflet", () => ({
   Marker: LeafletWrapper,
   Polyline: LeafletWrapper,
   Popup: PopupWrapper,
-  TileLayer: () => null,
+  TileLayer: (props: unknown) => {
+    tileLayerPropsSpy(props);
+    return null;
+  },
   Tooltip: TooltipWrapper,
   ZoomControl: () => null,
   useMap: () => (useUnstableMapReference ? { ...mockMap } : mockMap),
@@ -111,6 +115,7 @@ describe("GeoMap render behavior", () => {
     mockMap.getZoom.mockClear();
     popupPropsSpy.mockClear();
     tooltipPropsSpy.mockClear();
+    tileLayerPropsSpy.mockClear();
 
     vi.stubGlobal(
       "MutationObserver",
@@ -289,5 +294,44 @@ describe("GeoMap render behavior", () => {
     await waitFor(() => {
       expect(document.querySelector(".geo-map-tooltip")).not.toBeNull();
     });
+  });
+
+  test("uses dark tiles on first render when theme is auto and app theme is dark", async () => {
+    document.documentElement.classList.add("dark");
+
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-dark-first-paint",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+        theme: "auto",
+      }),
+    );
+
+    await waitFor(() => {
+      expect(tileLayerPropsSpy).toHaveBeenCalled();
+    });
+
+    const firstTileLayerProps = tileLayerPropsSpy.mock.calls[0]?.[0] as
+      | { url?: string }
+      | undefined;
+    expect(firstTileLayerProps?.url).toContain("dark_all");
+  });
+
+  test("sets a dark map canvas fallback background token in dark theme", () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-dark-canvas-fallback",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+        theme: "dark",
+      }),
+    );
+
+    const root = document.querySelector(
+      '[data-tool-ui-id="geo-map-dark-canvas-fallback"]',
+    ) as HTMLElement | null;
+    expect(root).not.toBeNull();
+    expect(root?.style.getPropertyValue("--geo-map-canvas-bg")).toBe(
+      "var(--background)",
+    );
   });
 });

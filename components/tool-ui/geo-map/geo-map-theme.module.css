@@ -1,4 +1,5 @@
 .root[data-slot="geo-map"] {
+  --geo-map-canvas-bg: var(--muted);
   --geo-map-tooltip-bg: var(--foreground);
   --geo-map-tooltip-fg: var(--background);
   --geo-map-tooltip-shadow: 0 8px 20px oklch(from var(--foreground) l c h / 0.18);
@@ -29,6 +30,10 @@
   --geo-map-zoom-radius: 0.5rem;
   --geo-map-zoom-size: 2.25rem;
   --geo-map-zoom-font-size: 1.125rem;
+}
+
+.root[data-slot="geo-map"] :global(.leaflet-container) {
+  background: var(--geo-map-canvas-bg);
 }
 
 .root[data-slot="geo-map"] :global(.leaflet-control-zoom) {
