@@ -1,6 +1,5 @@
 import type { DivIcon } from "leaflet";
 import type { LeafletRuntime } from "./geo-map-runtime";
-import type { ResolvedTheme } from "./geo-map-theme";
 import type { GeoMapMarker } from "./schema";
 
 function isSafeHttpUrl(value: string | undefined): boolean {
@@ -27,12 +26,11 @@ function escapeHtml(value: string): string {
 
 function createEmojiIcon(
   icon: Extract<NonNullable<GeoMapMarker["icon"]>, { type: "emoji" }>,
-  theme: ResolvedTheme,
   leafletRuntime: LeafletRuntime,
 ): DivIcon {
   const size = icon.size ?? 24;
-  const background = icon.bgColor ?? (theme === "dark" ? "#111827" : "#FFFFFF");
-  const border = icon.borderColor ?? (theme === "dark" ? "#334155" : "#CBD5E1");
+  const background = icon.bgColor ?? "var(--card)";
+  const border = icon.borderColor ?? "var(--border)";
 
   return leafletRuntime.divIcon({
     className: "",
@@ -47,7 +45,7 @@ background:${background};
 border:1px solid ${border};
 font-size:${Math.round(size * 0.62)}px;
 line-height:1;
-box-shadow:0 1px 3px rgba(0,0,0,0.22);
+box-shadow:0 1px 3px oklch(from var(--foreground) l c h / 0.22);
 ">${escapeHtml(icon.value)}</span>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
@@ -58,13 +56,12 @@ box-shadow:0 1px 3px rgba(0,0,0,0.22);
 
 function createImageIcon(
   icon: Extract<NonNullable<GeoMapMarker["icon"]>, { type: "image" }>,
-  theme: ResolvedTheme,
   leafletRuntime: LeafletRuntime,
 ): DivIcon {
   const width = icon.width ?? 28;
   const height = icon.height ?? 28;
   const borderRadius = icon.borderRadius ?? Math.min(width, height) / 2;
-  const border = icon.borderColor ?? (theme === "dark" ? "#334155" : "#CBD5E1");
+  const border = icon.borderColor ?? "var(--border)";
 
   return leafletRuntime.divIcon({
     className: "",
@@ -75,8 +72,8 @@ height:${height}px;
 border-radius:${borderRadius}px;
 overflow:hidden;
 border:1px solid ${border};
-background:#fff;
-box-shadow:0 1px 3px rgba(0,0,0,0.22);
+background:var(--card);
+box-shadow:0 1px 3px oklch(from var(--foreground) l c h / 0.22);
 "><img src="${escapeHtml(icon.url)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" /></span>`,
     iconSize: [width, height],
     iconAnchor: [width / 2, height / 2],
@@ -87,12 +84,11 @@ box-shadow:0 1px 3px rgba(0,0,0,0.22);
 
 export function createClusterIcon(
   count: number,
-  theme: ResolvedTheme,
   leafletRuntime: LeafletRuntime,
 ): DivIcon {
   const size = count >= 100 ? 42 : count >= 10 ? 38 : 34;
-  const background = theme === "dark" ? "#1D4ED8" : "#2563EB";
-  const border = theme === "dark" ? "#BFDBFE" : "#DBEAFE";
+  const background = "var(--primary)";
+  const border = "var(--background)";
 
   return leafletRuntime.divIcon({
     className: "",
@@ -105,11 +101,11 @@ height:${size}px;
 border-radius:999px;
 background:${background};
 border:2px solid ${border};
-color:#FFFFFF;
+color:var(--primary-foreground);
 font-size:12px;
 font-weight:700;
 line-height:1;
-box-shadow:0 2px 6px rgba(0,0,0,0.25);
+box-shadow:0 2px 6px oklch(from var(--foreground) l c h / 0.25);
 ">${count}</span>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
@@ -120,15 +116,14 @@ box-shadow:0 2px 6px rgba(0,0,0,0.25);
 
 export function resolveMarkerIcon(
   icon: GeoMapMarker["icon"] | undefined,
-  theme: ResolvedTheme,
   leafletRuntime: LeafletRuntime,
 ): DivIcon | null {
   if (icon?.type === "emoji") {
-    return createEmojiIcon(icon, theme, leafletRuntime);
+    return createEmojiIcon(icon, leafletRuntime);
   }
 
   if (icon?.type === "image" && isSafeHttpUrl(icon.url)) {
-    return createImageIcon(icon, theme, leafletRuntime);
+    return createImageIcon(icon, leafletRuntime);
   }
 
   return null;

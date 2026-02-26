@@ -268,11 +268,7 @@ export const GeoMap = memo(function GeoMap({
         return null;
       }
 
-      const leafletIcon = resolveMarkerIcon(
-        icon,
-        resolvedTheme,
-        leafletRuntime,
-      );
+      const leafletIcon = resolveMarkerIcon(icon, leafletRuntime);
       if (leafletIcon) {
         return (
           <Marker
@@ -300,17 +296,12 @@ export const GeoMap = memo(function GeoMap({
 
       const markerStroke =
         icon?.type === "dot"
-          ? (icon.borderColor ??
-            (resolvedTheme === "dark" ? "#BFDBFE" : "#1D4ED8"))
-          : resolvedTheme === "dark"
-            ? "#BFDBFE"
-            : "#1D4ED8";
+          ? (icon.borderColor ?? "var(--border)")
+          : "var(--border)";
       const markerFill =
         icon?.type === "dot"
-          ? (icon.color ?? (resolvedTheme === "dark" ? "#60A5FA" : "#3B82F6"))
-          : resolvedTheme === "dark"
-            ? "#60A5FA"
-            : "#3B82F6";
+          ? (icon.color ?? "var(--primary)")
+          : "var(--primary)";
       const markerRadius = icon?.type === "dot" ? (icon.radius ?? 7) : 7;
 
       return (
@@ -439,11 +430,10 @@ export const GeoMap = memo(function GeoMap({
                     ) {
                       const pointCount = properties.point_count ?? 0;
                       const clusterId = properties.cluster_id;
-                      const clusterIcon = createClusterIcon(
-                        pointCount,
-                        resolvedTheme,
-                        leafletRuntime,
-                      );
+                    const clusterIcon = createClusterIcon(
+                      pointCount,
+                      leafletRuntime,
+                    );
 
                       return (
                         <Marker
