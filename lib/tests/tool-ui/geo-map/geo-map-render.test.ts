@@ -570,7 +570,7 @@ describe("GeoMap render behavior", () => {
   });
 
   test("inherits dark tiles from document theme when theme prop is omitted", async () => {
-    document.documentElement.classList.add("dark");
+    document.documentElement.setAttribute("data-theme", "dark");
 
     render(
       createElement(GeoMap, {
@@ -586,7 +586,7 @@ describe("GeoMap render behavior", () => {
       expect(lastProps?.url).toContain("dark_all");
     });
 
-    document.documentElement.classList.remove("dark");
+    document.documentElement.removeAttribute("data-theme");
   });
 
   test("sets a dark map canvas fallback background token in dark theme", () => {
