@@ -39,18 +39,18 @@ export function InstallCommandLine({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 overflow-hidden rounded-lg border border-border bg-muted/50 px-2.5 py-1.5",
+        "group/install-command-line flex items-center gap-2 overflow-hidden rounded-lg bg-muted/50 pl-4 pr-2.5 py-1.5",
         className,
       )}
     >
-      <code className="text-foreground/95 min-w-0 flex-1 break-all font-mono text-sm leading-relaxed">
+      <div className="text-muted-foreground group-hover/install-command-line:text-foreground transition-colors duration-200 min-w-0 flex-1 break-all font-mono text-xs">
         {installCommand}
-      </code>
+      </div>
       <Button
         type="button"
         variant="ghost"
         size="sm"
-        className="h-7 shrink-0 px-2"
+        className="h-7 shrink-0 px-2 opacity-60 group-hover/install-command-line:opacity-100 transition-opacity duration-200"
         onClick={onCopy}
         aria-label={checked ? "Copied" : "Copy command"}
       >
