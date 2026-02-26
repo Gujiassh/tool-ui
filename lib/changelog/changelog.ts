@@ -175,16 +175,15 @@ export function renderReleaseSection({
     lines.push("### Breaking changes", "", listToBullets(breakingChanges), "");
   }
 
+  lines.push("### Changes", "", listToBullets(changes), "");
+
   if (migrationPrompt) {
     lines.push(
       "### Migration prompt",
       "",
       toMarkdownCodeFence(migrationPrompt, "text"),
-      "",
     );
   }
-
-  lines.push("### Changes", "", listToBullets(changes));
   return `${lines.join("\n").trimEnd()}\n`;
 }
 
@@ -277,9 +276,9 @@ export function validateChangelogStructure(
       );
     }
 
-    if (idxMigration !== -1 && idxChanges !== -1 && idxMigration > idxChanges) {
+    if (idxMigration !== -1 && idxChanges !== -1 && idxMigration < idxChanges) {
       errors.push(
-        `Release "${section.heading}" must place "### Migration prompt" before "### Changes".`,
+        `Release "${section.heading}" must place "### Migration prompt" after "### Changes".`,
       );
     }
 

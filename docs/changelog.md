@@ -14,8 +14,8 @@ pnpm changelog:check      # Validate structure (runs in CI via verify:ci)
 The changelog is a single MDX file. Each release is a `## YYYY-MM-DD` section with subsections in this order:
 
 1. `### Breaking changes` (optional) — bullet list
-2. `### Migration prompt` (optional) — must contain a markdown code fence
-3. `### Changes` (required) — bullet list
+2. `### Changes` (required) — bullet list
+3. `### Migration prompt` (optional) — must contain a markdown code fence
 
 No prose between the `##` heading and first `###` subsection. MDX comments are allowed (see Marker below).
 
@@ -70,7 +70,8 @@ A prompt users copy-paste into their **coding agent** (e.g., Claude Code). Can e
 
 - Each `##` section must have a valid `YYYY-MM-DD` heading
 - `### Changes` is required in every release
-- `### Breaking changes` and `### Migration prompt` must appear before `### Changes`
+- `### Breaking changes` must appear before `### Changes`
+- `### Migration prompt` must appear after `### Changes`
 - No duplicate `### Migration prompt` headings
 - Migration prompt body must contain a markdown code fence
 - No unsupported `###` subsection headings

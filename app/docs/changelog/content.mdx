@@ -56,6 +56,17 @@ Steps:
 - Removed the error boundary layer across Tool UI components; existing error handling may no longer apply.
 - Tool UI action model migrated to bound compound action surfaces. Legacy inline response-action patterns were removed in favor of `LocalActions` / `DecisionActions`, and outlier components now use dedicated action configs. See [Actions](/docs/actions).
 
+### Changes
+
+- Tool UI: repo-wide enforcement of /schema entrypoints.
+- Tool UI action model refactor: migrated components to bound compound action surfaces via `LocalActions` and `DecisionActions`. See [Actions](/docs/actions).
+- Action-model cutover shipped across core components (including [Audio](/docs/audio), [Citation](/docs/citation), [Code Block](/docs/code-block), [Data Table](/docs/data-table), [Image](/docs/image), [Link Preview](/docs/link-preview), [Order Summary](/docs/order-summary), [Plan](/docs/plan), [Terminal](/docs/terminal), [Video](/docs/video), and social post renderers: [X Post](/docs/x-post), [Instagram Post](/docs/instagram-post), [LinkedIn Post](/docs/linkedin-post)).
+- Outlier workflows were split to component-specific action configs ([Option List](/docs/option-list), [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel)) with contracts tightened around supported action props. See [Actions](/docs/actions).
+- [Option List](/docs/option-list): receipt presets codegen updated to omit onConfirm; multi-receipt preset added; receipt spacing refined; related tests updated.
+- [Progress Tracker](/docs/progress-tracker): shipped v2 display with result-driven UI; tests updated.
+- [Plan](/docs/plan): compact variant steps-only mode implemented.
+- [Image Gallery](/docs/image-gallery) and [Item Carousel](/docs/item-carousel): aligned tool-ui contracts.
+
 ### Migration prompt
 
 ```text
@@ -80,14 +91,3 @@ Steps:
 - Regenerate artifacts (registry/public assets) and update docs accordingly.
 - Validate UI rendering with updated schema and action contracts.
 ```
-
-### Changes
-
-- Tool UI: repo-wide enforcement of /schema entrypoints.
-- Tool UI action model refactor: migrated components to bound compound action surfaces via `LocalActions` and `DecisionActions`. See [Actions](/docs/actions).
-- Action-model cutover shipped across core components (including [Audio](/docs/audio), [Citation](/docs/citation), [Code Block](/docs/code-block), [Data Table](/docs/data-table), [Image](/docs/image), [Link Preview](/docs/link-preview), [Order Summary](/docs/order-summary), [Plan](/docs/plan), [Terminal](/docs/terminal), [Video](/docs/video), and social post renderers: [X Post](/docs/x-post), [Instagram Post](/docs/instagram-post), [LinkedIn Post](/docs/linkedin-post)).
-- Outlier workflows were split to component-specific action configs ([Option List](/docs/option-list), [Parameter Slider](/docs/parameter-slider), [Preferences Panel](/docs/preferences-panel)) with contracts tightened around supported action props. See [Actions](/docs/actions).
-- [Option List](/docs/option-list): receipt presets codegen updated to omit onConfirm; multi-receipt preset added; receipt spacing refined; related tests updated.
-- [Progress Tracker](/docs/progress-tracker): shipped v2 display with result-driven UI; tests updated.
-- [Plan](/docs/plan): compact variant steps-only mode implemented.
-- [Image Gallery](/docs/image-gallery) and [Item Carousel](/docs/item-carousel): aligned tool-ui contracts.
