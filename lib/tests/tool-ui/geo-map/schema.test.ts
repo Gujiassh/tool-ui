@@ -105,6 +105,29 @@ describe("GeoMap schema", () => {
     expect(parsed).not.toBeNull();
   });
 
+  test("accepts explicit light/dark themes and rejects auto theme", () => {
+    const light = safeParseSerializableGeoMap({
+      id: "geo-map-theme-light",
+      markers: [{ lat: 37.7749, lng: -122.4194 }],
+      theme: "light",
+    });
+    expect(light).not.toBeNull();
+
+    const dark = safeParseSerializableGeoMap({
+      id: "geo-map-theme-dark",
+      markers: [{ lat: 37.7749, lng: -122.4194 }],
+      theme: "dark",
+    });
+    expect(dark).not.toBeNull();
+
+    const auto = safeParseSerializableGeoMap({
+      id: "geo-map-theme-auto",
+      markers: [{ lat: 37.7749, lng: -122.4194 }],
+      theme: "auto",
+    });
+    expect(auto).toBeNull();
+  });
+
   test("rejects invalid clustering ranges", () => {
     expect(
       safeParseSerializableGeoMap({
@@ -253,5 +276,19 @@ describe("GeoMap schema", () => {
     expect(parsed.markers).toHaveLength(1);
     expect(parsed.routes).toBeUndefined();
     expect(parsed.clustering).toBeUndefined();
+  });
+
+  test("ignores unknown presentational props from payloads", () => {
+    const parsed = parseSerializableGeoMap({
+      id: "geo-map-unknown-presentational",
+      markers: [{ id: "legacy-1", lat: 40.7128, lng: -74.006 }],
+      mapClassName: "should-be-stripped",
+      overlayClassName: "should-be-stripped",
+      popupContentClassName: "should-be-stripped",
+    });
+
+    expect(parsed).not.toHaveProperty("mapClassName");
+    expect(parsed).not.toHaveProperty("overlayClassName");
+    expect(parsed).not.toHaveProperty("popupContentClassName");
   });
 });

@@ -3,40 +3,23 @@
 import { useMemo, useState } from "react";
 
 import { Popup, Tooltip, cn } from "./_adapter";
-import { GEO_MAP_POPUP_CLASS, GEO_MAP_TOOLTIP_CLASS } from "./geo-map-styles";
 
 function GeoMapPopupContent({
   label,
   description,
-  className,
-  titleClassName,
-  descriptionClassName,
 }: {
   label?: string;
   description?: string;
-  className?: string;
-  titleClassName?: string;
-  descriptionClassName?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-0.5", className)}>
+    <div className="flex flex-col gap-0.5">
       {label && (
-        <p
-          className={cn(
-            "block text-sm leading-tight font-semibold tracking-tight text-foreground",
-            titleClassName,
-          )}
-        >
+        <p className="block text-sm leading-tight font-semibold tracking-tight text-foreground">
           {label}
         </p>
       )}
       {description && (
-        <p
-          className={cn(
-            "block text-xs leading-relaxed text-muted-foreground",
-            descriptionClassName,
-          )}
-        >
+        <p className="block text-xs leading-relaxed text-muted-foreground">
           {description}
         </p>
       )}
@@ -55,9 +38,6 @@ export function GeoMapOverlays({
   description,
   tooltipClassName,
   popupClassName,
-  popupContentClassName,
-  popupTitleClassName,
-  popupDescriptionClassName,
 }: {
   tooltipMode: "none" | "hover" | "always";
   tooltipContent?: string;
@@ -65,9 +45,6 @@ export function GeoMapOverlays({
   description?: string;
   tooltipClassName?: string;
   popupClassName?: string;
-  popupContentClassName?: string;
-  popupTitleClassName?: string;
-  popupDescriptionClassName?: string;
 }) {
   const hasPopup = Boolean(label || description);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -87,27 +64,21 @@ export function GeoMapOverlays({
         <Tooltip
           direction="top"
           permanent={tooltipMode === "always"}
-          className={cn(GEO_MAP_TOOLTIP_CLASS, tooltipClassName)}
+          className={cn("geo-map-tooltip", tooltipClassName)}
         >
           <GeoMapTooltipContent text={tooltipContent} />
         </Tooltip>
       )}
       {hasPopup && (
         <Popup
-          className={cn(GEO_MAP_POPUP_CLASS, popupClassName)}
+          className={cn("geo-map-popup", popupClassName)}
           closeButton
           closeOnEscapeKey
           minWidth={0}
           maxWidth={288}
           eventHandlers={popupEventHandlers}
         >
-          <GeoMapPopupContent
-            label={label}
-            description={description}
-            className={popupContentClassName}
-            titleClassName={popupTitleClassName}
-            descriptionClassName={popupDescriptionClassName}
-          />
+          <GeoMapPopupContent label={label} description={description} />
         </Popup>
       )}
     </>
