@@ -15,7 +15,7 @@ import {
 import { createClusterIcon, resolveMarkerIcon } from "./geo-map-icons";
 import { GeoMapOverlays } from "./geo-map-overlays";
 import type { LeafletRuntime } from "./geo-map-runtime";
-import { GEO_MAP_LEAFLET_SHELL_STYLES } from "./geo-map-styles";
+import styles from "./geo-map-theme.module.css";
 import { useResolvedTheme } from "./geo-map-theme";
 import {
   areViewportStatesEqual,
@@ -299,12 +299,11 @@ export const GeoMap = memo(function GeoMap({
 
   return (
     <div
-      className={cn("w-full min-w-80", className)}
+      className={cn("w-full min-w-80", styles.root, className)}
       style={style}
       data-slot="geo-map"
       data-tool-ui-id={id}
     >
-      <style>{GEO_MAP_LEAFLET_SHELL_STYLES}</style>
       {!isMounted || !leafletRuntime ? (
         <div className="bg-muted/30 text-muted-foreground flex h-[320px] w-full items-center justify-center rounded-lg border text-sm">
           Loading map...

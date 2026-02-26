@@ -224,7 +224,7 @@ describe("GeoMap render behavior", () => {
     );
   });
 
-  test("includes scoped zoom-control shell styles", () => {
+  test("does not inject runtime style tags for shell styles", () => {
     render(
       createElement(GeoMap, {
         id: "geo-map-zoom-controls-style",
@@ -235,25 +235,8 @@ describe("GeoMap render behavior", () => {
     const root = document.querySelector(
       '[data-tool-ui-id="geo-map-zoom-controls-style"]',
     ) as HTMLElement | null;
-    const styleTag = root?.querySelector("style");
-
-    expect(styleTag?.textContent).toContain("--geo-map-zoom-bg");
-    expect(styleTag?.textContent).toContain(
-      '[data-slot="geo-map"] .leaflet-control-zoom a',
-    );
-    expect(styleTag?.textContent).toContain(
-      '[data-slot="geo-map"] .leaflet-control-zoom.leaflet-bar',
-    );
-    expect(styleTag?.textContent).toContain(
-      '[data-slot="geo-map"] .leaflet-control-zoom a:first-child',
-    );
-    expect(styleTag?.textContent).toContain(
-      '[data-slot="geo-map"] .leaflet-control-zoom a:last-child',
-    );
-    expect(styleTag?.textContent).toContain(
-      '[data-slot="geo-map"] .leaflet-control-zoom a + a',
-    );
-    expect(styleTag?.textContent).toContain("cursor: default");
+    expect(root?.querySelector("style")).toBeNull();
+    expect(root?.getAttribute("data-slot")).toBe("geo-map");
   });
 
   test("hides tooltip while popup is open", async () => {

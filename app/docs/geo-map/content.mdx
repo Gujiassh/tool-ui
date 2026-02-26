@@ -122,6 +122,59 @@ export const toolkit: Toolkit = {
   </Feature>
 </FeatureGrid>
 
+## Popup & Tooltip Theme Tokens
+
+GeoMap shell styling is shipped with the component in a colocated CSS module (`geo-map-theme.module.css`), scoped to `[data-slot="geo-map"]`, and exposed through CSS custom properties. Import Leaflet base CSS once in your root layout, then use these token overrides to customize popup/tooltip/zoom styling.
+
+```tsx
+<GeoMap
+  id="fleet-map"
+  markers={markers}
+  style={{
+    "--geo-map-popup-bg": "var(--card)",
+    "--geo-map-popup-fg": "var(--card-foreground)",
+    "--geo-map-popup-border":
+      "color-mix(in oklch, var(--border) 88%, transparent)",
+    "--geo-map-popup-radius": "calc(var(--radius) + 4px)",
+    "--geo-map-tooltip-bg": "var(--primary)",
+    "--geo-map-tooltip-fg": "var(--primary-foreground)",
+  }}
+/>
+```
+
+Supported token keys:
+
+- `--geo-map-tooltip-bg`
+- `--geo-map-tooltip-fg`
+- `--geo-map-tooltip-shadow`
+- `--geo-map-tooltip-radius`
+- `--geo-map-tooltip-padding`
+- `--geo-map-tooltip-font-size`
+- `--geo-map-tooltip-font-weight`
+- `--geo-map-tooltip-line-height`
+- `--geo-map-popup-margin-bottom`
+- `--geo-map-popup-border`
+- `--geo-map-popup-radius`
+- `--geo-map-popup-bg`
+- `--geo-map-popup-fg`
+- `--geo-map-popup-shadow`
+- `--geo-map-popup-blur`
+- `--geo-map-popup-content-padding`
+- `--geo-map-popup-max-width`
+- `--geo-map-popup-font-family`
+- `--geo-map-zoom-bg`
+- `--geo-map-zoom-fg`
+- `--geo-map-zoom-border`
+- `--geo-map-zoom-hover-bg`
+- `--geo-map-zoom-hover-fg`
+- `--geo-map-zoom-disabled-bg`
+- `--geo-map-zoom-disabled-fg`
+- `--geo-map-zoom-shadow`
+- `--geo-map-zoom-focus-ring`
+- `--geo-map-zoom-radius`
+- `--geo-map-zoom-size`
+- `--geo-map-zoom-font-size`
+
 ## Props
 
 <TypeTable
@@ -213,59 +266,6 @@ export const toolkit: Toolkit = {
     },
   }}
 />
-
-## Popup & Tooltip Theme Tokens
-
-GeoMap shell styling is scoped to `[data-slot="geo-map"]` and uses CSS custom properties. This keeps package defaults aligned with shadcn tokens while letting you override just the pieces you need.
-
-```tsx
-<GeoMap
-  id="fleet-map"
-  markers={markers}
-  style={{
-    "--geo-map-popup-bg": "var(--card)",
-    "--geo-map-popup-fg": "var(--card-foreground)",
-    "--geo-map-popup-border":
-      "color-mix(in oklch, var(--border) 88%, transparent)",
-    "--geo-map-popup-radius": "calc(var(--radius) + 4px)",
-    "--geo-map-tooltip-bg": "var(--primary)",
-    "--geo-map-tooltip-fg": "var(--primary-foreground)",
-  }}
-/>
-```
-
-Supported token keys:
-
-- `--geo-map-tooltip-bg`
-- `--geo-map-tooltip-fg`
-- `--geo-map-tooltip-shadow`
-- `--geo-map-tooltip-radius`
-- `--geo-map-tooltip-padding`
-- `--geo-map-tooltip-font-size`
-- `--geo-map-tooltip-font-weight`
-- `--geo-map-tooltip-line-height`
-- `--geo-map-popup-margin-bottom`
-- `--geo-map-popup-border`
-- `--geo-map-popup-radius`
-- `--geo-map-popup-bg`
-- `--geo-map-popup-fg`
-- `--geo-map-popup-shadow`
-- `--geo-map-popup-blur`
-- `--geo-map-popup-content-padding`
-- `--geo-map-popup-max-width`
-- `--geo-map-popup-font-family`
-- `--geo-map-zoom-bg`
-- `--geo-map-zoom-fg`
-- `--geo-map-zoom-border`
-- `--geo-map-zoom-hover-bg`
-- `--geo-map-zoom-hover-fg`
-- `--geo-map-zoom-disabled-bg`
-- `--geo-map-zoom-disabled-fg`
-- `--geo-map-zoom-shadow`
-- `--geo-map-zoom-focus-ring`
-- `--geo-map-zoom-radius`
-- `--geo-map-zoom-size`
-- `--geo-map-zoom-font-size`
 
 ## Marker Schema
 

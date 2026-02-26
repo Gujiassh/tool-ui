@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { analytics } from "@/lib/analytics";
@@ -20,6 +20,11 @@ const EMPTY_STATE: PreviewState = {};
 export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
   const config = getPreviewConfig(componentId);
   const [state, setState] = useState<PreviewState>(EMPTY_STATE);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSetState = useCallback((partialState: Partial<PreviewState>) => {
     setState((prev) => ({ ...prev, ...partialState }));
@@ -40,7 +45,7 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
     [componentId],
   );
 
-  if (!config) {
+  if (!config || !isMounted) {
     return null;
   }
 
