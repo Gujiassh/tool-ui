@@ -146,15 +146,13 @@ function GalleryPreviewCard({
   return (
     <article
       className={cn(
-        "group/gallery-card relative flex min-w-0 max-w-full flex-col gap-2 overflow-hidden rounded-xl border border-border/60 bg-card p-3 shadow-sm",
+        "group/gallery-card relative flex items-center justify-center w-full min-w-0 max-w-full flex-col gap-3 overflow-hidden rounded-xl  bg-card/40 p-3 pb-5 shadow-sm transition-[background-color,box-shadow] duration-200 hover:bg-card/80 focus-within:bg-card/80",
         className,
       )}
     >
-      <GalleryCardHeader componentId={componentId} hideDescription />
       <GalleryPreviewImpression componentId={componentId} />
-      <div className="scrollbar-subtle flex w-full min-w-0 max-w-full justify-center overflow-x-auto rounded-lg border border-border/50 bg-muted/20 px-4 py-3">
-        {children}
-      </div>
+      <GalleryCardHeader componentId={componentId} hideDescription />
+      {children}
     </article>
   );
 }
