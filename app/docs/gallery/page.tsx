@@ -9,12 +9,17 @@ import {
 import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
 import { GalleryCardHeader } from "@/app/docs/_components/gallery-card-header";
 import { DataTable } from "@/components/tool-ui/data-table";
-import { Image } from "@/components/tool-ui/image";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import { OrderSummary } from "@/components/tool-ui/order-summary";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import { type GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
-import { GALLERY_COLUMNS_CLASS } from "@/lib/docs/gallery-layout";
+import {
+  GALLERY_COLUMN_STACK_CLASS,
+  GALLERY_DESKTOP_GRID_CLASS,
+  GALLERY_LAYOUT_CLASS,
+  GALLERY_MOBILE_STACK_CLASS,
+  GALLERY_STANDARD_PREVIEW_WRAPPER_CLASS,
+} from "@/lib/docs/gallery-layout";
 import { approvalCardPresets } from "@/lib/presets/approval-card";
 import { audioPresets } from "@/lib/presets/audio";
 import { chartPresets } from "@/lib/presets/chart";
@@ -23,7 +28,6 @@ import { codeBlockPresets } from "@/lib/presets/code-block";
 import { codeDiffPresets } from "@/lib/presets/code-diff";
 import { dataTablePresets } from "@/lib/presets/data-table";
 import { geoMapPresets } from "@/lib/presets/geo-map";
-import { imagePresets } from "@/lib/presets/image";
 import { instagramPostPresets } from "@/lib/presets/instagram-post";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
 import { itemCarouselPresets } from "@/lib/presets/item-carousel";
@@ -39,7 +43,6 @@ import { progressTrackerPresets } from "@/lib/presets/progress-tracker";
 import { questionFlowPresets } from "@/lib/presets/question-flow";
 import { statsDisplayPresets } from "@/lib/presets/stats-display";
 import { terminalPresets } from "@/lib/presets/terminal";
-import { videoPresets } from "@/lib/presets/video";
 import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
 import { xPostPresets } from "@/lib/presets/x-post";
 import { cn } from "@/lib/ui/cn";
@@ -52,9 +55,6 @@ const CitationList = dynamic(() =>
 );
 const ImageGallery = dynamic(() =>
   import("@/components/tool-ui/image-gallery").then((m) => m.ImageGallery),
-);
-const Video = dynamic(() =>
-  import("@/components/tool-ui/video").then((m) => m.Video),
 );
 const Audio = dynamic(() =>
   import("@/components/tool-ui/audio").then((m) => m.Audio),
@@ -158,14 +158,65 @@ function GalleryPreviewCard({
 }
 
 export default function ComponentsGalleryPage() {
-  const galleryImage = imagePresets["with-source"].data.image;
+  const standardPreviewWidthClass = "w-full max-w-[680px]";
+  const withStandardPreviewWidth = (node: ReactNode) => (
+    <div className={GALLERY_STANDARD_PREVIEW_WRAPPER_CLASS}>{node}</div>
+  );
+
   const galleryCards: GalleryCardConfig[] = [
     {
-      componentId: "geo-map",
-      className: "mb-5 flex justify-center [column-span:all] 2xl:mb-5",
+      componentId: "option-list",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
       render: () => (
-        <GeoMap id="gallery-geo-map" {...geoMapPresets.fleet.data} />
+        <OptionList {...optionListPresets["max-selections"].data} />
       ),
+    },
+    {
+      componentId: "question-flow",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () =>
+        withStandardPreviewWidth(
+          <QuestionFlow {...questionFlowPresets.upfront.data} />,
+        ),
+    },
+    {
+      componentId: "plan",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () =>
+        withStandardPreviewWidth(<Plan {...planPresets.comprehensive.data} />),
+    },
+    {
+      componentId: "order-summary",
+      className: "mb-5 break-inside-avoid 2xl:mb-5",
+      render: () => (
+        <OrderSummary.Display
+          {...orderSummaryPresets.default.data}
+          className={standardPreviewWidthClass}
+        />
+      ),
+    },
+    {
+      componentId: "item-carousel",
+      className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
+      render: () => (
+        <div className="w-full max-w-full min-w-0">
+          <ItemCarousel {...itemCarouselPresets.recommendations.data} />
+        </div>
+      ),
+    },
+    {
+      componentId: "data-table",
+      className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
+      render: () => (
+        <div className="w-full max-w-full min-w-0">
+          <DataTable {...dataTablePresets.stocks.data} />
+        </div>
+      ),
+    },
+    {
+      componentId: "code-diff",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => <CodeDiff {...codeDiffPresets["refactor"].data} />,
     },
     {
       componentId: "stats-display",
@@ -199,6 +250,13 @@ export default function ComponentsGalleryPage() {
       ),
     },
     {
+      componentId: "geo-map",
+      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
+      render: () => (
+        <GeoMap id="gallery-geo-map" {...geoMapPresets.fleet.data} />
+      ),
+    },
+    {
       componentId: "link-preview",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
       render: () => (
@@ -222,13 +280,6 @@ export default function ComponentsGalleryPage() {
       render: () => <Audio {...audioPresets.full.data.audio} />,
     },
     {
-      componentId: "option-list",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => (
-        <OptionList {...optionListPresets["max-selections"].data} />
-      ),
-    },
-    {
       componentId: "approval-card",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
       render: () => (
@@ -238,50 +289,28 @@ export default function ComponentsGalleryPage() {
     {
       componentId: "message-draft",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <MessageDraft {...messageDraftPresets.email.data} />,
-    },
-    {
-      componentId: "order-summary",
-      className: "mb-5 break-inside-avoid 2xl:mb-5",
-      render: () => (
-        <OrderSummary.Display
-          {...orderSummaryPresets.default.data}
-          className="max-w-none"
-        />
-      ),
-    },
-    {
-      componentId: "plan",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <Plan {...planPresets.comprehensive.data} />,
+      render: () =>
+        withStandardPreviewWidth(
+          <MessageDraft {...messageDraftPresets.email.data} />,
+        ),
     },
     {
       componentId: "progress-tracker",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => (
-        <ProgressTracker {...progressTrackerPresets["in-progress"].data} />
-      ),
-    },
-    {
-      componentId: "question-flow",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <QuestionFlow {...questionFlowPresets.upfront.data} />,
+      render: () =>
+        withStandardPreviewWidth(
+          <ProgressTracker {...progressTrackerPresets["in-progress"].data} />,
+        ),
     },
     {
       componentId: "parameter-slider",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => (
-        <ParameterSlider
-          {...parameterSliderPresets["photo-adjustments"].data}
-        />
-      ),
-    },
-    {
-      componentId: "preferences-panel",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => (
-        <PreferencesPanel {...preferencesPanelPresets.privacy.data} />
-      ),
+      render: () =>
+        withStandardPreviewWidth(
+          <ParameterSlider
+            {...parameterSliderPresets["photo-adjustments"].data}
+          />,
+        ),
     },
     {
       componentId: "terminal",
@@ -294,29 +323,22 @@ export default function ComponentsGalleryPage() {
       render: () => <CodeBlock {...codeBlockPresets.typescript.data} />,
     },
     {
-      componentId: "code-diff",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <CodeDiff {...codeDiffPresets["refactor"].data} />,
-    },
-    {
       componentId: "chart",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
       render: () => <Chart id="gallery-chart" {...chartPresets.revenue.data} />,
     },
     {
-      componentId: "video",
+      componentId: "preferences-panel",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <Video {...videoPresets["with-poster"].data.video} />,
+      render: () =>
+        withStandardPreviewWidth(
+          <PreferencesPanel {...preferencesPanelPresets.privacy.data} />,
+        ),
     },
     {
-      componentId: "image",
+      componentId: "x-post",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <Image {...galleryImage} alt={galleryImage.alt} />,
-    },
-    {
-      componentId: "linkedin-post",
-      className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <LinkedInPost post={linkedInPostPresets.basic.data.post} />,
+      render: () => <XPost post={xPostPresets.basic.data.post} />,
     },
     {
       componentId: "instagram-post",
@@ -326,29 +348,67 @@ export default function ComponentsGalleryPage() {
       ),
     },
     {
-      componentId: "x-post",
+      componentId: "linkedin-post",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <XPost post={xPostPresets.basic.data.post} />,
-    },
-    {
-      componentId: "item-carousel",
-      className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
-      render: () => (
-        <div className="w-full max-w-full min-w-0">
-          <ItemCarousel {...itemCarouselPresets.recommendations.data} />
-        </div>
-      ),
-    },
-    {
-      componentId: "data-table",
-      className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
-      render: () => (
-        <div className="w-full max-w-full min-w-0">
-          <DataTable {...dataTablePresets.stocks.data} />
-        </div>
-      ),
+      render: () => <LinkedInPost post={linkedInPostPresets.basic.data.post} />,
     },
   ];
+
+  const stackRankOrder: GalleryComponentDocId[] = [
+    "option-list",
+    "question-flow",
+    "weather-widget",
+    "plan",
+    "parameter-slider",
+    "item-carousel",
+    "code-diff",
+    "data-table",
+    "stats-display",
+    "geo-map",
+    "image-gallery",
+    "code-block",
+    "audio",
+    "terminal",
+  ];
+  const stackRankByComponentId = new Map(
+    stackRankOrder.map((componentId, rank) => [componentId, rank]),
+  );
+  const rankedGalleryCards = galleryCards
+    .map((card, originalIndex) => ({ card, originalIndex }))
+    .sort((a, b) => {
+      const aRank =
+        stackRankByComponentId.get(a.card.componentId) ??
+        Number.POSITIVE_INFINITY;
+      const bRank =
+        stackRankByComponentId.get(b.card.componentId) ??
+        Number.POSITIVE_INFINITY;
+
+      if (aRank !== bRank) {
+        return aRank - bRank;
+      }
+      return a.originalIndex - b.originalIndex;
+    })
+    .map(({ card }) => card);
+
+  const [leftColumnCards, rightColumnCards] = rankedGalleryCards.reduce<
+    [GalleryCardConfig[], GalleryCardConfig[]]
+  >(
+    (columns, card, index) => {
+      columns[index % 2].push(card);
+      return columns;
+    },
+    [[], []],
+  );
+
+  const renderGalleryCard = (card: GalleryCardConfig) => (
+    <GalleryPreviewCard
+      key={card.componentId}
+      componentId={card.componentId}
+      className={card.className}
+    >
+      <div className="flex w-full justify-center">{card.render()}</div>
+    </GalleryPreviewCard>
+  );
 
   return (
     <DocsBorderedShell>
@@ -358,16 +418,19 @@ export default function ComponentsGalleryPage() {
       >
         <h1 className="sr-only">Tool UI Component Gallery</h1>
         <GalleryPageAnalytics />
-        <div className={GALLERY_COLUMNS_CLASS}>
-          {galleryCards.map((card) => (
-            <GalleryPreviewCard
-              key={card.componentId}
-              componentId={card.componentId}
-              className={card.className}
-            >
-              {card.render()}
-            </GalleryPreviewCard>
-          ))}
+        <div className={GALLERY_LAYOUT_CLASS}>
+          <div className={GALLERY_MOBILE_STACK_CLASS}>
+            {rankedGalleryCards.map(renderGalleryCard)}
+          </div>
+
+          <div className={GALLERY_DESKTOP_GRID_CLASS}>
+            <div className={GALLERY_COLUMN_STACK_CLASS}>
+              {leftColumnCards.map(renderGalleryCard)}
+            </div>
+            <div className={GALLERY_COLUMN_STACK_CLASS}>
+              {rightColumnCards.map(renderGalleryCard)}
+            </div>
+          </div>
 
           {/* <div className="mb-5 flex justify-center break-inside-avoid 2xl:mb-5">
             <Link

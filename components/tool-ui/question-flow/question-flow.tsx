@@ -544,7 +544,7 @@ function StepContent({
           {showBack ? (
             <Button
               variant="ghost"
-              size="sm"
+              size="default"
               onClick={onBack}
               disabled={isTransitioning}
               className="gap-1 rounded-full text-muted-foreground"
@@ -557,7 +557,7 @@ function StepContent({
           )}
           <Button
             variant="default"
-            size="sm"
+            size="default"
             onClick={onNext}
             disabled={!canProceed || isTransitioning}
             className="rounded-full"

@@ -119,13 +119,13 @@ function DeltaValue({ diff }: DeltaValueProps) {
   const isBad = upIsPositive ? isNegative : isPositive;
 
   const colorClass = isGood
-    ? "text-green-600 dark:text-green-500"
+    ? "text-green-600 dark:text-green-400"
     : isBad
       ? "text-red-600 dark:text-red-500"
       : "text-muted-foreground";
 
   const bgClass = isGood
-    ? "bg-green-500/10 dark:bg-green-500/15"
+    ? "bg-green-500/10 dark:bg-green-600/15"
     : isBad
       ? "bg-red-500/10 dark:bg-red-500/15"
       : "bg-muted";
@@ -137,7 +137,7 @@ function DeltaValue({ diff }: DeltaValueProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums",
+        "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs  tabular-nums",
         colorClass,
         bgClass,
       )}

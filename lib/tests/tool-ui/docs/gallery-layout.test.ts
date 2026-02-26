@@ -1,12 +1,22 @@
 import { describe, expect, test } from "vitest";
 
-import { GALLERY_COLUMNS_CLASS } from "@/lib/docs/gallery-layout";
+import {
+  GALLERY_DESKTOP_GRID_CLASS,
+  GALLERY_LAYOUT_CLASS,
+  GALLERY_STANDARD_PREVIEW_WRAPPER_CLASS,
+} from "@/lib/docs/gallery-layout";
 
 describe("gallery page layout", () => {
-  test("keeps a single column below the lg breakpoint (~1024px)", () => {
-    expect(GALLERY_COLUMNS_CLASS).toContain("columns-1");
-    expect(GALLERY_COLUMNS_CLASS).toContain("lg:columns-2");
-    expect(GALLERY_COLUMNS_CLASS).toContain("w-full");
-    expect(GALLERY_COLUMNS_CLASS).not.toContain("md:columns-2");
+  test("uses deterministic two-stack layout at lg instead of CSS columns", () => {
+    expect(GALLERY_LAYOUT_CLASS).toContain("w-full");
+    expect(GALLERY_LAYOUT_CLASS).not.toContain("columns-");
+    expect(GALLERY_DESKTOP_GRID_CLASS).toContain("lg:grid-cols-2");
+    expect(GALLERY_DESKTOP_GRID_CLASS).not.toContain("columns-");
+  });
+
+  test("centers standardized preview wrappers for narrow components", () => {
+    expect(GALLERY_STANDARD_PREVIEW_WRAPPER_CLASS).toContain("max-w-[680px]");
+    expect(GALLERY_STANDARD_PREVIEW_WRAPPER_CLASS).toContain("flex");
+    expect(GALLERY_STANDARD_PREVIEW_WRAPPER_CLASS).toContain("justify-center");
   });
 });
