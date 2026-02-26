@@ -14,6 +14,7 @@ import { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import { OrderSummary } from "@/components/tool-ui/order-summary";
 import { StatsDisplay } from "@/components/tool-ui/stats-display";
 import { type GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
+import { GALLERY_COLUMNS_CLASS } from "@/lib/docs/gallery-layout";
 import { approvalCardPresets } from "@/lib/presets/approval-card";
 import { audioPresets } from "@/lib/presets/audio";
 import { chartPresets } from "@/lib/presets/chart";
@@ -359,7 +360,7 @@ export default function ComponentsGalleryPage() {
       >
         <h1 className="sr-only">Tool UI Component Gallery</h1>
         <GalleryPageAnalytics />
-        <div className="mx-auto w-full min-w-0 max-w-full columns-1 gap-5 overflow-x-hidden pb-20 [column-fill:balance] md:columns-2">
+        <div className={GALLERY_COLUMNS_CLASS}>
           {galleryCards.map((card) => (
             <GalleryPreviewCard
               key={card.componentId}
