@@ -1,6 +1,6 @@
 "use client";
 
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 import { Tabs, Tab } from "fumadocs-ui/components/tabs";
 import { Chart } from "@/components/tool-ui/chart";
 import { chartPresets, ChartPresetName } from "@/lib/presets/chart";
@@ -160,7 +160,11 @@ export function OptionListPresetExample({
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -216,7 +220,11 @@ export function ChartPresetExample({ preset }: ChartPresetExampleProps) {
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -240,7 +248,11 @@ export function CodeBlockPresetExample({
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -262,7 +274,11 @@ export function TerminalPresetExample({ preset }: TerminalPresetExampleProps) {
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -306,7 +322,11 @@ export function PlanPresetExample({ preset }: PlanPresetExampleProps) {
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -346,7 +366,11 @@ export function ItemCarouselPresetExample({
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -410,7 +434,11 @@ export function ApprovalCardPresetExample({
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );
@@ -434,7 +462,11 @@ export function QuestionFlowPresetExample({
         </div>
       </Tab>
       <Tab value="Code">
-        <DynamicCodeBlock lang="tsx" code={code} />
+        <TrackedDynamicCodeBlock
+          lang="tsx"
+          code={code}
+          copyButtonLabel="preset example code"
+        />
       </Tab>
     </Tabs>
   );

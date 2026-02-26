@@ -14,6 +14,7 @@ import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
 import { codeDiffPresets } from "@/lib/presets/code-diff";
 import { dataTablePresets } from "@/lib/presets/data-table";
+import { geoMapPresets } from "@/lib/presets/geo-map";
 import { imagePresets } from "@/lib/presets/image";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
 import { videoPresets } from "@/lib/presets/video";
@@ -43,6 +44,7 @@ const PRESET_REGISTRY: Record<string, PresetMap> = {
   "code-block": codeBlockPresets,
   "code-diff": codeDiffPresets,
   "data-table": dataTablePresets,
+  "geo-map": geoMapPresets,
   image: imagePresets,
   "image-gallery": imageGalleryPresets,
   video: videoPresets,

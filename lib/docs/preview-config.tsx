@@ -13,6 +13,7 @@ import type { CodeBlockComposedProps } from "@/components/tool-ui/code-block";
 import { CodeBlock } from "@/components/tool-ui/code-block";
 import type { CodeDiffComposedProps } from "@/components/tool-ui/code-diff";
 import type { DataTable } from "@/components/tool-ui/data-table";
+import type { GeoMap } from "@/components/tool-ui/geo-map";
 import type { Image } from "@/components/tool-ui/image";
 import type { ImageGallery } from "@/components/tool-ui/image-gallery";
 import type { Video } from "@/components/tool-ui/video";
@@ -65,6 +66,7 @@ import {
   type DataTablePresetName,
   type SortState,
 } from "@/lib/presets/data-table";
+import { geoMapPresets, type GeoMapPresetName } from "@/lib/presets/geo-map";
 import { imagePresets, type ImagePresetName } from "@/lib/presets/image";
 import {
   imageGalleryPresets,
@@ -149,6 +151,12 @@ const DynamicCodeDiff = dynamic(() =>
 );
 const DynamicDataTable = dynamic(() =>
   import("@/components/tool-ui/data-table").then((m) => m.DataTable),
+);
+const DynamicGeoMap = dynamic(
+  () => import("@/components/tool-ui/geo-map").then((m) => m.GeoMap),
+  {
+    ssr: false,
+  },
 );
 const DynamicImage = dynamic(() =>
   import("@/components/tool-ui/image").then((m) => m.Image),
@@ -393,6 +401,18 @@ export const previewConfigs: Record<
     renderComponent: ({ data, presetName }) => {
       const chartData = data as Omit<Parameters<typeof Chart>[0], "id">;
       return <DynamicChart id={`chart-${presetName}`} {...chartData} />;
+    },
+  },
+  "geo-map": {
+    presets: geoMapPresets as Record<string, PresetWithCodeGen<unknown>>,
+    defaultPreset: "fleet" satisfies GeoMapPresetName,
+    chatContext: {
+      userMessage: "Where are our active trucks right now?",
+      preamble: "Here's the current location map:",
+    },
+    renderComponent: ({ data, presetName }) => {
+      const geoMapData = data as Omit<Parameters<typeof GeoMap>[0], "id">;
+      return <DynamicGeoMap id={`geo-map-${presetName}`} {...geoMapData} />;
     },
   },
   citation: {

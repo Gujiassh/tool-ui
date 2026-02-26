@@ -44,6 +44,13 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
     () => componentsRegistry.find((component) => component.path === pathname),
     [pathname],
   );
+  const tabsIdBase = useMemo(
+    () =>
+      componentId
+        ? `docs-tabs-${componentId}`
+        : `docs-tabs-${pathname.replaceAll("/", "-") || "root"}`,
+    [componentId, pathname],
+  );
 
   const { activeTab, setActiveTab } = useTabSearchParam<DocsTab>({
     defaultTab: "docs",
@@ -79,8 +86,20 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
           )}
         >
           <TabsList>
-            <TabsTrigger value="docs">Docs</TabsTrigger>
-            <TabsTrigger value="examples">Examples</TabsTrigger>
+            <TabsTrigger
+              id={`${tabsIdBase}-trigger-docs`}
+              aria-controls={`${tabsIdBase}-content-docs`}
+              value="docs"
+            >
+              Docs
+            </TabsTrigger>
+            <TabsTrigger
+              id={`${tabsIdBase}-trigger-examples`}
+              aria-controls={`${tabsIdBase}-content-examples`}
+              value="examples"
+            >
+              Examples
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -90,6 +109,8 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
           className="relative flex min-h-0 flex-1 scroll-mt-16 flex-col"
         >
           <TabsContent
+            id={`${tabsIdBase}-content-docs`}
+            aria-labelledby={`${tabsIdBase}-trigger-docs`}
             value="docs"
             className="scrollbar-subtle h-full min-h-0 flex-1 overflow-y-auto"
           >
@@ -98,6 +119,8 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             </div>
           </TabsContent>
           <TabsContent
+            id={`${tabsIdBase}-content-examples`}
+            aria-labelledby={`${tabsIdBase}-trigger-examples`}
             value="examples"
             className="flex h-full min-h-0 flex-1 overflow-hidden"
           >

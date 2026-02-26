@@ -525,6 +525,100 @@
       ]
     },
     {
+      "name": "geo-map",
+      "type": "registry:block",
+      "title": "Geo Map",
+      "description": "Display geolocated entities and fleet positions.",
+      "dependencies": [
+        "leaflet",
+        "react-leaflet",
+        "supercluster",
+        "zod"
+      ],
+      "files": [
+        {
+          "path": "components/tool-ui/geo-map/_adapter.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/geo-map/_adapter.tsx"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-icons.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/geo-map/geo-map-icons.ts"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-overlays.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/geo-map/geo-map-overlays.tsx"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-runtime.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/geo-map/geo-map-runtime.ts"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-styles.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/geo-map/geo-map-styles.ts"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-theme.module.css",
+          "type": "registry:style",
+          "target": "components/tool-ui/geo-map/geo-map-theme.module.css"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-theme.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/geo-map/geo-map-theme.ts"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map-viewport.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/geo-map/geo-map-viewport.tsx"
+        },
+        {
+          "path": "components/tool-ui/geo-map/geo-map.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/geo-map/geo-map.tsx"
+        },
+        {
+          "path": "components/tool-ui/geo-map/index.tsx",
+          "type": "registry:component",
+          "target": "components/tool-ui/geo-map/index.tsx"
+        },
+        {
+          "path": "components/tool-ui/geo-map/README.md",
+          "type": "registry:file",
+          "target": "components/tool-ui/geo-map/README.md"
+        },
+        {
+          "path": "components/tool-ui/geo-map/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/geo-map/schema.ts"
+        },
+        {
+          "path": "components/tool-ui/geo-map/spatial.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/geo-map/spatial.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/contract.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/contract.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/parse.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/parse.ts"
+        },
+        {
+          "path": "components/tool-ui/shared/schema.ts",
+          "type": "registry:lib",
+          "target": "components/tool-ui/shared/schema.ts"
+        }
+      ]
+    },
+    {
       "name": "image",
       "type": "registry:block",
       "title": "Image",

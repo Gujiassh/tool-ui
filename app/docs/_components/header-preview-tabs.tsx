@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { useCallback, useEffect, useState } from "react";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { analytics } from "@/lib/analytics";
 import { getImportLine } from "@/lib/docs/gallery-usage-code";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 import {
   type ComponentId,
   getPreviewConfig,
@@ -20,6 +20,11 @@ const EMPTY_STATE: PreviewState = {};
 export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
   const config = getPreviewConfig(componentId);
   const [state, setState] = useState<PreviewState>(EMPTY_STATE);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSetState = useCallback((partialState: Partial<PreviewState>) => {
     setState((prev) => ({ ...prev, ...partialState }));
@@ -40,7 +45,7 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
     [componentId],
   );
 
-  if (!config) {
+  if (!config || !isMounted) {
     return null;
   }
 
@@ -68,7 +73,11 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
           </div>
         </Tab>
         <Tab value="Code">
-          <DynamicCodeBlock lang="tsx" code={code} />
+          <TrackedDynamicCodeBlock
+            lang="tsx"
+            code={code}
+            copyButtonLabel="header example code"
+          />
         </Tab>
       </Tabs>
     </div>

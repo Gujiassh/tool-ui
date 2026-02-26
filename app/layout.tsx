@@ -1,4 +1,5 @@
 import "./styles/globals.css";
+import "leaflet/dist/leaflet.css";
 import type { ReactNode } from "react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";

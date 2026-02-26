@@ -1,0 +1,408 @@
+import { DocsHeader } from "../_components/docs-header";
+
+<DocsHeader
+  title="Geo Map"
+  description="Display geolocated entities, clusters, and routes."
+  mdxPath="app/docs/geo-map/content.mdx"
+/>
+
+"Where is it?" is often the first question after a tool response. Geo Map renders one or many latitude/longitude markers directly in the conversation so users can see facilities, fleets, and active routes without leaving chat.
+
+**Role:** Information. For visualizing location and route data. See [Design Guidelines](/docs/design-guidelines) for role definitions.
+
+## Getting Started
+
+<Steps>
+
+<Step title="Install the component">
+
+Run this command from your project root.
+
+```bash
+npx shadcn@latest add @tool-ui/geo-map
+```
+
+</Step>
+
+<Step title="Add Leaflet CSS to app/layout.tsx">
+
+Open `app/layout.tsx` and add the Leaflet import next to your global CSS import.
+
+```tsx
+import "./styles/globals.css";
+import "leaflet/dist/leaflet.css";
+```
+
+</Step>
+
+<Step title="Render it in your UI">
+
+Render `GeoMap` in your UI.
+
+```tsx
+import { GeoMap } from "@/components/tool-ui/geo-map";
+
+<GeoMap
+  id="fleet-map"
+  title="Fleet Positions"
+  markers={[
+    {
+      id: "truck-14",
+      lat: 34.0522,
+      lng: -118.2437,
+      label: "Truck 14",
+      icon: { type: "emoji", value: "🚚" },
+    },
+    {
+      id: "truck-22",
+      lat: 36.1699,
+      lng: -115.1398,
+      label: "Truck 22",
+      icon: { type: "dot", color: "#0EA5E9" },
+    },
+  ]}
+  routes={[
+    {
+      id: "route-west-14",
+      points: [
+        { lat: 33.94, lng: -118.4 },
+        { lat: 34.0522, lng: -118.2437 },
+      ],
+      color: "#2563EB",
+    },
+  ]}
+  clustering={{ enabled: true }}
+  viewport={{ mode: "fit", target: "all", padding: 40, maxZoom: 11 }}
+/>;
+```
+
+</Step>
+
+<Step title="Register it in your runtime provider">
+
+Register `GeoMap` in your runtime provider so tool results render as map UI instead of raw JSON.
+
+```tsx
+import { type Toolkit } from "@assistant-ui/react";
+import { GeoMap } from "@/components/tool-ui/geo-map";
+import { safeParseSerializableGeoMap } from "@/components/tool-ui/geo-map/schema";
+
+export const toolkit: Toolkit = {
+  showGeoMap: {
+    type: "backend",
+    render: ({ result }) => {
+      const parsed = safeParseSerializableGeoMap(result);
+      if (!parsed) {
+        return null;
+      }
+      return <GeoMap {...parsed} />;
+    },
+  },
+};
+```
+
+</Step>
+
+</Steps>
+
+## Key Features
+
+<FeatureGrid>
+  <Feature icon="MapPin" title="Custom marker icons">
+    Dot, emoji, and image marker icon variants with schema validation
+  </Feature>
+  <Feature icon="Network" title="Marker clustering">
+    Aggregates dense markers by zoom level with click-to-expand behavior
+  </Feature>
+  <Feature icon="Route" title="Route polylines">
+    Static, styled route overlays with tooltip/popup metadata
+  </Feature>
+  <Feature icon="ScanSearch" title="Targeted fit bounds">
+    Fit markers, routes, or both using viewport target controls
+  </Feature>
+</FeatureGrid>
+
+## Accessibility & Keyboard
+
+- The map viewport is announced as a named region using `title` + `description`.
+- Marker and cluster icons expose descriptive labels for assistive tech.
+- Press `Escape` while focused in the map area to close any open popup.
+
+## Popup & Tooltip Theme Tokens
+
+GeoMap shell styling is shipped with the component in a colocated CSS module (`geo-map-theme.module.css`), scoped to `[data-slot="geo-map"]`, and exposed through CSS custom properties. Import Leaflet base CSS once in your root layout, then use these token overrides to customize popup/tooltip/zoom styling.
+
+```tsx
+<GeoMap
+  id="fleet-map"
+  markers={markers}
+  style={{
+    "--geo-map-popup-bg": "var(--card)",
+    "--geo-map-popup-fg": "var(--card-foreground)",
+    "--geo-map-popup-border": "var(--border)",
+    "--geo-map-popup-radius": "calc(var(--radius) + 4px)",
+    "--geo-map-tooltip-bg": "var(--primary)",
+    "--geo-map-tooltip-fg": "var(--primary-foreground)",
+  }}
+/>
+```
+
+Supported token keys:
+
+- `--geo-map-canvas-bg`
+- `--geo-map-tooltip-bg`
+- `--geo-map-tooltip-fg`
+- `--geo-map-tooltip-shadow`
+- `--geo-map-tooltip-radius`
+- `--geo-map-tooltip-padding`
+- `--geo-map-tooltip-font-size`
+- `--geo-map-tooltip-font-weight`
+- `--geo-map-tooltip-line-height`
+- `--geo-map-popup-margin-bottom`
+- `--geo-map-popup-border`
+- `--geo-map-popup-radius`
+- `--geo-map-popup-bg`
+- `--geo-map-popup-fg`
+- `--geo-map-popup-shadow`
+- `--geo-map-popup-blur`
+- `--geo-map-popup-content-padding`
+- `--geo-map-popup-max-width`
+- `--geo-map-popup-font-family`
+- `--geo-map-zoom-bg`
+- `--geo-map-zoom-fg`
+- `--geo-map-zoom-border`
+- `--geo-map-zoom-hover-bg`
+- `--geo-map-zoom-hover-fg`
+- `--geo-map-zoom-disabled-bg`
+- `--geo-map-zoom-disabled-fg`
+- `--geo-map-zoom-shadow`
+- `--geo-map-zoom-focus-ring`
+- `--geo-map-zoom-radius`
+- `--geo-map-zoom-size`
+- `--geo-map-zoom-font-size`
+
+## Props
+
+<TypeTable
+  type={{
+    id: {
+      description: "Unique identifier for this map instance",
+      type: "string",
+      required: true,
+    },
+    markers: {
+      description: "Markers to render",
+      type: "GeoMapMarker[]",
+      required: true,
+    },
+    routes: {
+      description: "Optional route polylines",
+      type: "GeoMapRoute[]",
+    },
+    clustering: {
+      description: "Marker clustering behavior",
+      type: "GeoMapClustering",
+    },
+    title: {
+      description: "Optional map title",
+      type: "string",
+    },
+    description: {
+      description: "Optional subtitle/description",
+      type: "string",
+    },
+    viewport: {
+      description: "Map viewport behavior",
+      type: "GeoMapViewport",
+    },
+    showZoomControl: {
+      description: "Whether zoom controls are visible",
+      type: "boolean",
+      default: "true",
+    },
+    theme: {
+      description: "Tile theme mode",
+      type: "'auto' | 'light' | 'dark'",
+      default: "'auto'",
+    },
+    className: {
+      description: "Tailwind classes for the root wrapper",
+      type: "string",
+    },
+    mapClassName: {
+      description: "Tailwind classes for the map frame wrapper",
+      type: "string",
+    },
+    style: {
+      description:
+        "Inline style overrides for GeoMap CSS custom properties (for popup/tooltip shell theming)",
+      type: "GeoMapStyle",
+    },
+    overlayClassName: {
+      description: "Tailwind classes for the title/description overlay panel",
+      type: "string",
+    },
+    popupClassName: {
+      description: "Tailwind classes applied to the Leaflet popup shell",
+      type: "string",
+    },
+    popupContentClassName: {
+      description: "Tailwind classes for popup content layout container",
+      type: "string",
+    },
+    popupTitleClassName: {
+      description: "Tailwind classes for popup title text",
+      type: "string",
+    },
+    popupDescriptionClassName: {
+      description: "Tailwind classes for popup description text",
+      type: "string",
+    },
+    tooltipClassName: {
+      description: "Tailwind classes for marker/route tooltip shell",
+      type: "string",
+    },
+    onMarkerClick: {
+      description: "Client callback when a marker is clicked",
+      type: "(marker: GeoMapMarker) => void",
+    },
+    onRouteClick: {
+      description: "Client callback when a route polyline is clicked",
+      type: "(route: GeoMapRoute) => void",
+    },
+  }}
+/>
+
+## Marker Schema
+
+<TypeTable
+  type={{
+    id: {
+      description: "Optional stable marker ID",
+      type: "string",
+    },
+    lat: {
+      description: "Latitude in decimal degrees",
+      type: "number (-90 to 90)",
+      required: true,
+    },
+    lng: {
+      description: "Longitude in decimal degrees",
+      type: "number (-180 to 180)",
+      required: true,
+    },
+    label: {
+      description: "Primary marker label",
+      type: "string",
+    },
+    description: {
+      description: "Optional detail text shown in popup",
+      type: "string",
+    },
+    tooltip: {
+      description: "Tooltip behavior",
+      type: "'none' | 'hover' | 'always'",
+    },
+    icon: {
+      description: "Marker icon configuration",
+      type: "GeoMapMarkerIcon",
+    },
+  }}
+/>
+
+## Marker Icon Variants
+
+`GeoMapMarkerIcon` supports:
+
+1. `dot` — optional `color`, `borderColor`, and `radius`.
+2. `emoji` — required `value`, optional `size`, `bgColor`, `borderColor`.
+3. `image` — required `url` (`http/https`), optional size and border styling.
+
+## Route Schema
+
+<TypeTable
+  type={{
+    id: {
+      description: "Optional stable route ID",
+      type: "string",
+    },
+    points: {
+      description: "Ordered coordinates making up the route",
+      type: "Array<{ lat: number; lng: number }> (min 2)",
+      required: true,
+    },
+    label: {
+      description: "Route label for tooltip/popup",
+      type: "string",
+    },
+    description: {
+      description: "Route detail text",
+      type: "string",
+    },
+    tooltip: {
+      description: "Tooltip behavior",
+      type: "'none' | 'hover' | 'always'",
+    },
+    color: {
+      description: "Polyline color",
+      type: "string",
+    },
+    weight: {
+      description: "Polyline stroke width",
+      type: "number (1..12)",
+    },
+    opacity: {
+      description: "Polyline opacity",
+      type: "number (0..1)",
+    },
+    dashArray: {
+      description: "SVG dash pattern",
+      type: "string (e.g. '6 4')",
+    },
+  }}
+/>
+
+## Clustering Schema
+
+<TypeTable
+  type={{
+    enabled: {
+      description: "Enable marker clustering",
+      type: "boolean",
+      default: "false",
+    },
+    radius: {
+      description: "Cluster radius in pixels",
+      type: "number (20..120)",
+      default: "60",
+    },
+    maxZoom: {
+      description: "Maximum zoom level at which clustering applies",
+      type: "number (1..22)",
+      default: "16",
+    },
+    minPoints: {
+      description: "Minimum points required to form a cluster",
+      type: "number (2..20)",
+      default: "2",
+    },
+  }}
+/>
+
+## Viewport Schema
+
+`viewport` supports two modes:
+
+1. `fit` — auto-fit points in `target` (`markers`, `routes`, or `all`). Supports optional `padding` and `maxZoom`.
+2. `center` — fixed `center` + `zoom`.
+
+## Accessibility
+
+- Marker and route popups provide text equivalents for map points and paths
+- Tooltips can be made persistent using `tooltip: "always"` (and hide while the related popup is open)
+- Leaflet controls remain keyboard accessible
+
+## Related
+
+- [Chart](/docs/chart): compare numeric time-series
+- [Data Table](/docs/data-table): inspect structured marker and route metadata

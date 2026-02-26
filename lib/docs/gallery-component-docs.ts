@@ -27,6 +27,10 @@ export const galleryComponentDocs = {
     name: "Data Table",
     docsHref: "/docs/data-table",
   },
+  "geo-map": {
+    name: "Geo Map",
+    docsHref: "/docs/geo-map",
+  },
   image: {
     name: "Image",
     docsHref: "/docs/image",

@@ -84,6 +84,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
   return {
     ...defaultMdxComponents,
+    ...components,
 
     // Auto-link text mentions in common containers
     p: P,
@@ -145,6 +146,5 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     QuestionFlowPresetExample,
     FeatureGrid,
     Feature,
-    ...components,
   };
 }

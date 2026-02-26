@@ -11,7 +11,7 @@ import {
   type PreviewState,
 } from "@/lib/docs/preview-config";
 import { usePresetParam } from "@/hooks/use-preset-param";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 
 interface ComponentPreviewProps {
   componentId: ComponentId;
@@ -91,7 +91,11 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
       chatPanel={chatPanel}
       codePanel={
         <div className="code-panel-fullbleed scrollbar-subtle">
-          <DynamicCodeBlock lang="tsx" code={code} />
+          <TrackedDynamicCodeBlock
+            lang="tsx"
+            code={code}
+            copyButtonLabel="component example code"
+          />
         </div>
       }
       code={code}
