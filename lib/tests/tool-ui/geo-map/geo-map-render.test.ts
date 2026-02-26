@@ -569,6 +569,28 @@ describe("GeoMap render behavior", () => {
     expect(firstTileLayerProps?.url).toContain("dark_all");
   });
 
+  test("inherits dark tiles from document theme when theme prop is omitted", async () => {
+    document.documentElement.classList.add("dark");
+
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-document-theme-dark",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(tileLayerPropsSpy).toHaveBeenCalled();
+    });
+
+    const firstTileLayerProps = tileLayerPropsSpy.mock.calls[0]?.[0] as
+      | { url?: string }
+      | undefined;
+    expect(firstTileLayerProps?.url).toContain("dark_all");
+
+    document.documentElement.classList.remove("dark");
+  });
+
   test("sets a dark map canvas fallback background token in dark theme", () => {
     render(
       createElement(GeoMap, {
