@@ -9,7 +9,7 @@
   --geo-map-tooltip-font-weight: 500;
   --geo-map-tooltip-line-height: 1.2;
   --geo-map-popup-margin-bottom: 12px;
-  --geo-map-popup-border: oklch(from var(--border) l c h / 0.85);
+  --geo-map-popup-border: var(--border);
   --geo-map-popup-radius: calc(var(--radius) + 2px);
   --geo-map-popup-bg: oklch(from var(--popover) l c h / 0.96);
   --geo-map-popup-fg: var(--popover-foreground);
