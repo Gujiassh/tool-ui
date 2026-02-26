@@ -14,6 +14,7 @@ import * as React from "react";
 import dynamic from "next/dynamic";
 import { AutoLinkChildren, withAutoLink } from "@/lib/docs/auto-link";
 import { TrackedDynamicCodeBlock } from "@/app/docs/_components/tracked-dynamic-codeblock";
+import { FeatureGrid, Feature } from "@/app/components/mdx/features";
 
 const Mermaid = dynamic(() =>
   import("@/app/components/mdx/mermaid").then((m) => m.Mermaid),
@@ -57,12 +58,6 @@ const QuestionFlowPresetExample = dynamic(() =>
   import("@/app/docs/_components/preset-example").then(
     (m) => m.QuestionFlowPresetExample,
   ),
-);
-const FeatureGrid = dynamic(() =>
-  import("@/app/components/mdx/features").then((m) => m.FeatureGrid),
-);
-const Feature = dynamic(() =>
-  import("@/app/components/mdx/features").then((m) => m.Feature),
 );
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {

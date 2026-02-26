@@ -76,16 +76,19 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
-        className="flex h-full min-h-0 flex-col gap-0"
+        className="relative flex h-full min-h-0 flex-col gap-0"
       >
         <div
           className={cn(
-            "z-20 flex shrink-0 items-center justify-center",
+            "absolute inset-x-0 top-0 z-20 flex items-center justify-center",
             "px-3 py-2 sm:px-6 sm:py-3",
-            "bg-background/50 supports-backdrop-filter:bg-background/60 backdrop-blur",
           )}
         >
-          <TabsList>
+          <div
+            className="from-background pointer-events-none absolute inset-x-0 top-0 -bottom-4 bg-linear-to-b to-transparent"
+            aria-hidden="true"
+          />
+          <TabsList className="relative">
             <TabsTrigger
               id={`${tabsIdBase}-trigger-docs`}
               aria-controls={`${tabsIdBase}-content-docs`}
@@ -112,9 +115,9 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             id={`${tabsIdBase}-content-docs`}
             aria-labelledby={`${tabsIdBase}-trigger-docs`}
             value="docs"
-            className="scrollbar-subtle h-full min-h-0 flex-1 overflow-y-auto"
+            className="scrollbar-subtle h-full min-h-0 flex-1 overflow-y-auto pt-[52px] sm:pt-[60px]"
           >
-            <div className="z-0 min-h-0 min-w-0 flex-1 px-4 pt-12 pb-24 sm:px-6 sm:pt-6 lg:px-10 lg:pt-10 xl:px-12 xl:pt-12">
+            <div className="z-0 min-h-0 min-w-0 flex-1 px-4 pt-8 pb-24 sm:px-6 lg:px-10 xl:px-12 xl:pt-12">
               <DocsContent>{docs}</DocsContent>
             </div>
           </TabsContent>
@@ -122,7 +125,7 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             id={`${tabsIdBase}-content-examples`}
             aria-labelledby={`${tabsIdBase}-trigger-examples`}
             value="examples"
-            className="flex h-full min-h-0 flex-1 overflow-hidden"
+            className="flex h-full min-h-0 flex-1 overflow-hidden pt-[52px] sm:pt-[60px]"
           >
             {activeTab === "examples"
               ? (examples ??
