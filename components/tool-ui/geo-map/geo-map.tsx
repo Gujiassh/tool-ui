@@ -55,6 +55,8 @@ const EMPTY_ROUTES: GeoMapRoute[] = [];
 const CLUSTER_RADIUS_DEFAULT = 60;
 const CLUSTER_MAX_ZOOM_DEFAULT = 16;
 const CLUSTER_MIN_POINTS_DEFAULT = 2;
+const LOADING_MESSAGE_DELAY_MS = 1000;
+const LOADING_FADE_DURATION_MS = 250;
 
 type MarkerClusterPointProperties = GeoMapClusterProperties & {
   markerId?: string;
@@ -87,6 +89,9 @@ export const GeoMap = memo(function GeoMap({
 }: GeoMapProps) {
   const resolvedRoutes = routes ?? EMPTY_ROUTES;
   const [isMounted, setIsMounted] = useState(false);
+  const [showLoadingOverlay, setShowLoadingOverlay] = useState(true);
+  const [isLoadingOverlayVisible, setIsLoadingOverlayVisible] = useState(false);
+  const [showLoadingLabel, setShowLoadingLabel] = useState(false);
   const [leafletRuntime, setLeafletRuntime] = useState<LeafletRuntime | null>(
     null,
   );
@@ -126,6 +131,7 @@ export const GeoMap = memo(function GeoMap({
 
   const resolvedTheme = useResolvedTheme(theme);
   const tileUrl = resolvedTheme === "dark" ? DARK_TILE_URL : LIGHT_TILE_URL;
+  const isMapReady = isMounted && leafletRuntime !== null;
   const resolvedRootStyle = useMemo(
     () =>
       ({
@@ -135,6 +141,41 @@ export const GeoMap = memo(function GeoMap({
       }) satisfies CSSProperties,
     [resolvedTheme, style],
   );
+
+  useEffect(() => {
+    let labelTimer: ReturnType<typeof setTimeout> | undefined;
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    let fadeInTimer: ReturnType<typeof setTimeout> | undefined;
+
+    if (!isMapReady) {
+      setShowLoadingOverlay(true);
+      setShowLoadingLabel(false);
+      fadeInTimer = setTimeout(() => {
+        setIsLoadingOverlayVisible(true);
+      }, 0);
+      labelTimer = setTimeout(() => {
+        setShowLoadingLabel(true);
+      }, LOADING_MESSAGE_DELAY_MS);
+    } else {
+      setShowLoadingLabel(false);
+      setIsLoadingOverlayVisible(false);
+      hideTimer = setTimeout(() => {
+        setShowLoadingOverlay(false);
+      }, LOADING_FADE_DURATION_MS);
+    }
+
+    return () => {
+      if (fadeInTimer !== undefined) {
+        clearTimeout(fadeInTimer);
+      }
+      if (labelTimer !== undefined) {
+        clearTimeout(labelTimer);
+      }
+      if (hideTimer !== undefined) {
+        clearTimeout(hideTimer);
+      }
+    };
+  }, [isMapReady]);
 
   const initialView = useMemo(
     () => resolveInitialView(markers, resolvedRoutes, viewport),
@@ -320,159 +361,180 @@ export const GeoMap = memo(function GeoMap({
       data-slot="geo-map"
       data-tool-ui-id={id}
     >
-      {!isMounted || !leafletRuntime ? (
-        <div className="bg-muted/30 text-muted-foreground flex h-[320px] w-full items-center justify-center rounded-lg border text-sm">
-          Loading map...
-        </div>
-      ) : (
-        <div
-          className={cn(
-            "relative h-[320px] w-full overflow-hidden rounded-lg border",
-            mapClassName,
-          )}
-        >
-          <MapContainer
-            center={initialView.center}
-            zoom={initialView.zoom}
-            zoomControl={false}
-            className="h-full w-full"
-            scrollWheelZoom
-          >
-            <TileLayer attribution={TILE_ATTRIBUTION} url={tileUrl} />
-            {showZoomControl && <ZoomControl position="topright" />}
-            <MapObserver
-              onMapReady={setMapInstance}
-              onViewportChange={handleViewportChange}
-            />
-            <ViewportController
-              leafletRuntime={leafletRuntime}
-              markers={markers}
-              routes={resolvedRoutes}
-              viewport={viewport}
-            />
-
-            {resolvedRoutes.map((route, routeIndex) => {
-              const routeKey = route.id ?? `${id}-route-${routeIndex}`;
-              const positions = route.points.map((point) => [
-                point.lat,
-                point.lng,
-              ]) as [number, number][];
-              const tooltipMode = route.tooltip ?? "hover";
-              const tooltipContent = route.label ?? route.description;
-
-              return (
-                <Polyline
-                  key={routeKey}
-                  positions={positions}
-                  pathOptions={{
-                    color: route.color ?? ROUTE_DEFAULT_COLOR,
-                    weight: route.weight ?? ROUTE_DEFAULT_WEIGHT,
-                    opacity: route.opacity ?? ROUTE_DEFAULT_OPACITY,
-                    dashArray: route.dashArray,
-                  }}
-                  eventHandlers={{
-                    click: () => onRouteClick?.(route),
-                  }}
-                >
-                  <GeoMapOverlays
-                    tooltipMode={tooltipMode}
-                    tooltipContent={tooltipContent}
-                    label={route.label}
-                    description={route.description}
-                    tooltipClassName={tooltipClassName}
-                    popupClassName={popupClassName}
-                    popupContentClassName={popupContentClassName}
-                    popupTitleClassName={popupTitleClassName}
-                    popupDescriptionClassName={popupDescriptionClassName}
-                  />
-                </Polyline>
-              );
-            })}
-
-            {clusterConfig.enabled && clusterIndex && viewportState
-              ? clusteredFeatures.map((feature, index) => {
-                  const [lng, lat] = feature.geometry.coordinates;
-                  const properties = (feature.properties ??
-                    {}) as MarkerClusterPointProperties;
-
-                  if (
-                    properties.cluster &&
-                    typeof properties.cluster_id === "number"
-                  ) {
-                    const pointCount = properties.point_count ?? 0;
-                    const clusterId = properties.cluster_id;
-                    const clusterIcon = createClusterIcon(
-                      pointCount,
-                      resolvedTheme,
-                      leafletRuntime,
-                    );
-
-                    return (
-                      <Marker
-                        key={`cluster-${clusterId}`}
-                        position={[lat, lng]}
-                        icon={clusterIcon}
-                        eventHandlers={{
-                          click: () => {
-                            if (!mapInstance) {
-                              return;
-                            }
-
-                            const expansionZoom = toSafeExpansionZoom(
-                              clusterIndex.getClusterExpansionZoom(clusterId),
-                              {
-                                maxZoom: 22,
-                                fallback:
-                                  (viewportState.zoom ?? DEFAULT_VIEW_ZOOM) + 2,
-                              },
-                            );
-                            mapInstance.flyTo([lat, lng], expansionZoom);
-                          },
-                        }}
-                      />
-                    );
-                  }
-
-                  const marker =
-                    properties.marker ??
-                    markerById.get(properties.markerId ?? `marker-${index}`);
-                  if (!marker) {
-                    return null;
-                  }
-
-                  const markerKey =
-                    marker.id ??
-                    properties.markerId ??
-                    `${id}-cluster-leaf-${index}`;
-                  return renderMarker(marker, markerKey, [lat, lng]);
-                })
-              : markers.map((marker, index) =>
-                  renderMarker(marker, marker.id ?? `${id}-marker-${index}`),
-                )}
-          </MapContainer>
-          {(title || description) && (
-            <div
-              className={cn(
-                "pointer-events-none absolute top-3 left-3 z-[900]",
-                "max-w-[min(75%,22rem)] rounded-lg border border-border/70 bg-background/85 px-3 py-2",
-                "shadow-sm backdrop-blur",
-                overlayClassName,
-              )}
+      <div
+        className={cn(
+          "bg-muted/20 relative h-[320px] w-full overflow-hidden rounded-lg border",
+          mapClassName,
+        )}
+      >
+        {isMapReady && (
+          <>
+            <MapContainer
+              center={initialView.center}
+              zoom={initialView.zoom}
+              zoomControl={false}
+              className="h-full w-full"
+              scrollWheelZoom
             >
-              {title && (
-                <p className="text-foreground text-sm leading-tight font-semibold">
-                  {title}
-                </p>
+              <TileLayer attribution={TILE_ATTRIBUTION} url={tileUrl} />
+              {showZoomControl && <ZoomControl position="topright" />}
+              <MapObserver
+                onMapReady={setMapInstance}
+                onViewportChange={handleViewportChange}
+              />
+              <ViewportController
+                leafletRuntime={leafletRuntime}
+                markers={markers}
+                routes={resolvedRoutes}
+                viewport={viewport}
+              />
+
+              {resolvedRoutes.map((route, routeIndex) => {
+                const routeKey = route.id ?? `${id}-route-${routeIndex}`;
+                const positions = route.points.map((point) => [
+                  point.lat,
+                  point.lng,
+                ]) as [number, number][];
+                const tooltipMode = route.tooltip ?? "hover";
+                const tooltipContent = route.label ?? route.description;
+
+                return (
+                  <Polyline
+                    key={routeKey}
+                    positions={positions}
+                    pathOptions={{
+                      color: route.color ?? ROUTE_DEFAULT_COLOR,
+                      weight: route.weight ?? ROUTE_DEFAULT_WEIGHT,
+                      opacity: route.opacity ?? ROUTE_DEFAULT_OPACITY,
+                      dashArray: route.dashArray,
+                    }}
+                    eventHandlers={{
+                      click: () => onRouteClick?.(route),
+                    }}
+                  >
+                    <GeoMapOverlays
+                      tooltipMode={tooltipMode}
+                      tooltipContent={tooltipContent}
+                      label={route.label}
+                      description={route.description}
+                      tooltipClassName={tooltipClassName}
+                      popupClassName={popupClassName}
+                      popupContentClassName={popupContentClassName}
+                      popupTitleClassName={popupTitleClassName}
+                      popupDescriptionClassName={popupDescriptionClassName}
+                    />
+                  </Polyline>
+                );
+              })}
+
+              {clusterConfig.enabled && clusterIndex && viewportState
+                ? clusteredFeatures.map((feature, index) => {
+                    const [lng, lat] = feature.geometry.coordinates;
+                    const properties = (feature.properties ??
+                      {}) as MarkerClusterPointProperties;
+
+                    if (
+                      properties.cluster &&
+                      typeof properties.cluster_id === "number"
+                    ) {
+                      const pointCount = properties.point_count ?? 0;
+                      const clusterId = properties.cluster_id;
+                      const clusterIcon = createClusterIcon(
+                        pointCount,
+                        resolvedTheme,
+                        leafletRuntime,
+                      );
+
+                      return (
+                        <Marker
+                          key={`cluster-${clusterId}`}
+                          position={[lat, lng]}
+                          icon={clusterIcon}
+                          eventHandlers={{
+                            click: () => {
+                              if (!mapInstance) {
+                                return;
+                              }
+
+                              const expansionZoom = toSafeExpansionZoom(
+                                clusterIndex.getClusterExpansionZoom(clusterId),
+                                {
+                                  maxZoom: 22,
+                                  fallback:
+                                    (viewportState.zoom ?? DEFAULT_VIEW_ZOOM) +
+                                    2,
+                                },
+                              );
+                              mapInstance.flyTo([lat, lng], expansionZoom);
+                            },
+                          }}
+                        />
+                      );
+                    }
+
+                    const marker =
+                      properties.marker ??
+                      markerById.get(properties.markerId ?? `marker-${index}`);
+                    if (!marker) {
+                      return null;
+                    }
+
+                    const markerKey =
+                      marker.id ??
+                      properties.markerId ??
+                      `${id}-cluster-leaf-${index}`;
+                    return renderMarker(marker, markerKey, [lat, lng]);
+                  })
+                : markers.map((marker, index) =>
+                    renderMarker(marker, marker.id ?? `${id}-marker-${index}`),
+                  )}
+            </MapContainer>
+            {(title || description) && (
+              <div
+                className={cn(
+                  "pointer-events-none absolute top-3 left-3 z-[900]",
+                  "max-w-[min(75%,22rem)] rounded-lg border border-border/70 bg-background/85 px-3 py-2",
+                  "shadow-sm backdrop-blur",
+                  overlayClassName,
+                )}
+              >
+                {title && (
+                  <p className="text-foreground text-sm leading-tight font-semibold">
+                    {title}
+                  </p>
+                )}
+                {description && (
+                  <p className="text-muted-foreground mt-1 text-xs leading-snug">
+                    {description}
+                  </p>
+                )}
+              </div>
+            )}
+          </>
+        )}
+        {showLoadingOverlay && (
+          <div
+            data-slot="geo-map-loading"
+            className={cn(
+              "bg-muted/30 text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity",
+              isLoadingOverlayVisible ? "opacity-100" : "opacity-0",
+            )}
+            style={{ transitionDuration: `${LOADING_FADE_DURATION_MS}ms` }}
+          >
+            <span
+              data-slot="geo-map-loading-label"
+              aria-hidden={!showLoadingLabel}
+              className={cn(
+                "transition-opacity",
+                showLoadingLabel ? "opacity-100" : "opacity-0",
               )}
-              {description && (
-                <p className="text-muted-foreground mt-1 text-xs leading-snug">
-                  {description}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+              style={{ transitionDuration: `${LOADING_FADE_DURATION_MS}ms` }}
+            >
+              Loading map...
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 });
