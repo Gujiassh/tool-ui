@@ -63,6 +63,22 @@ type MarkerClusterPointProperties = GeoMapClusterProperties & {
   marker?: GeoMapMarker;
 };
 
+function resolveMapAriaLabel(title?: string, description?: string): string {
+  if (title && description) {
+    return `${title}. ${description}`;
+  }
+
+  return title ?? description ?? "Geographic map";
+}
+
+function resolveMarkerAriaLabel(marker: GeoMapMarker): string {
+  return (
+    marker.label ??
+    marker.description ??
+    `Marker at ${marker.lat.toFixed(4)}, ${marker.lng.toFixed(4)}`
+  );
+}
+
 export const GeoMap = memo(function GeoMap({
   id,
   role: _role,
@@ -132,6 +148,10 @@ export const GeoMap = memo(function GeoMap({
   const resolvedTheme = useResolvedTheme(theme);
   const tileUrl = resolvedTheme === "dark" ? DARK_TILE_URL : LIGHT_TILE_URL;
   const isMapReady = isMounted && leafletRuntime !== null;
+  const mapAriaLabel = useMemo(
+    () => resolveMapAriaLabel(title, description),
+    [description, title],
+  );
   const resolvedRootStyle = useMemo(
     () =>
       ({
@@ -141,6 +161,33 @@ export const GeoMap = memo(function GeoMap({
       }) satisfies CSSProperties,
     [resolvedTheme, style],
   );
+
+  useEffect(() => {
+    if (!mapInstance) {
+      return;
+    }
+
+    const container = mapInstance.getContainer();
+    container.setAttribute("role", "region");
+    container.setAttribute("aria-label", mapAriaLabel);
+  }, [mapAriaLabel, mapInstance]);
+
+  useEffect(() => {
+    if (!mapInstance) {
+      return;
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        mapInstance.closePopup();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [mapInstance]);
 
   useEffect(() => {
     let labelTimer: ReturnType<typeof setTimeout> | undefined;
@@ -263,6 +310,7 @@ export const GeoMap = memo(function GeoMap({
       const tooltipMode = marker.tooltip ?? "hover";
       const tooltipContent = marker.label ?? marker.description;
       const icon = marker.icon;
+      const markerAriaLabel = resolveMarkerAriaLabel(marker);
 
       if (!leafletRuntime) {
         return null;
@@ -275,6 +323,8 @@ export const GeoMap = memo(function GeoMap({
             key={markerKey}
             position={markerPosition}
             icon={leafletIcon}
+            title={markerAriaLabel}
+            alt={markerAriaLabel}
             eventHandlers={{
               click: () => onMarkerClick?.(marker),
             }}
@@ -340,7 +390,6 @@ export const GeoMap = memo(function GeoMap({
       popupContentClassName,
       popupDescriptionClassName,
       popupTitleClassName,
-      resolvedTheme,
       tooltipClassName,
     ],
   );
@@ -357,6 +406,8 @@ export const GeoMap = memo(function GeoMap({
           "bg-muted/20 relative h-[320px] w-full overflow-hidden rounded-lg border",
           mapClassName,
         )}
+        role="region"
+        aria-label={mapAriaLabel}
       >
         {isMapReady && (
           <>
@@ -430,16 +481,19 @@ export const GeoMap = memo(function GeoMap({
                     ) {
                       const pointCount = properties.point_count ?? 0;
                       const clusterId = properties.cluster_id;
-                    const clusterIcon = createClusterIcon(
-                      pointCount,
-                      leafletRuntime,
-                    );
+                      const clusterIcon = createClusterIcon(
+                        pointCount,
+                        leafletRuntime,
+                      );
+                      const clusterAriaLabel = `Cluster containing ${pointCount} locations`;
 
                       return (
                         <Marker
                           key={`cluster-${clusterId}`}
                           position={[lat, lng]}
                           icon={clusterIcon}
+                          title={clusterAriaLabel}
+                          alt={clusterAriaLabel}
                           eventHandlers={{
                             click: () => {
                               if (!mapInstance) {

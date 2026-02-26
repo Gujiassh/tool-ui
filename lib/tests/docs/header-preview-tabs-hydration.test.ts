@@ -31,7 +31,7 @@ vi.mock("@/lib/docs/preview-config", async () => {
       presets: {
         default: {
           data: {},
-          generateExampleCode: () => "<GeoMap id=\"demo\" markers={markers} />",
+          generateExampleCode: () => '<GeoMap id="demo" markers={markers} />',
         },
       },
       defaultPreset: "default",

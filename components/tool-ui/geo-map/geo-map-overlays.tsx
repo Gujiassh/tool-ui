@@ -95,7 +95,8 @@ export function GeoMapOverlays({
       {hasPopup && (
         <Popup
           className={cn(GEO_MAP_POPUP_CLASS, popupClassName)}
-          closeButton={false}
+          closeButton
+          closeOnEscapeKey
           minWidth={0}
           maxWidth={288}
           eventHandlers={popupEventHandlers}

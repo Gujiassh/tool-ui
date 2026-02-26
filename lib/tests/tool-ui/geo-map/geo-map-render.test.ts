@@ -17,8 +17,15 @@ let useUnstableMapReference = false;
 const popupPropsSpy = vi.fn();
 const tooltipPropsSpy = vi.fn();
 const tileLayerPropsSpy = vi.fn();
+const markerPropsSpy = vi.fn();
+const mapContainerPropsSpy = vi.fn();
+const mapContainerAttributeSpy = vi.fn();
 
 const mockMap = {
+  closePopup: vi.fn(),
+  getContainer: vi.fn(() => ({
+    setAttribute: mapContainerAttributeSpy,
+  })),
   getBounds: vi.fn(() => ({
     getWest: () => -122.5,
     getSouth: () => 37.7,
@@ -46,7 +53,9 @@ function DivWrapper({
   return createElement("div", props, children);
 }
 
-function LeafletWrapper({ children }: { children?: ReactNode }) {
+function LeafletWrapper({
+  children,
+}: ComponentProps<"div"> & { children?: ReactNode }) {
   return createElement("div", null, children);
 }
 
@@ -86,8 +95,28 @@ vi.mock("leaflet", () => ({
 
 vi.mock("react-leaflet", () => ({
   CircleMarker: LeafletWrapper,
-  MapContainer: LeafletWrapper,
-  Marker: LeafletWrapper,
+  MapContainer: ({
+    children,
+    ...props
+  }: ComponentProps<"div"> & { children?: ReactNode }) => {
+    mapContainerPropsSpy(props);
+    return createElement(
+      "div",
+      {
+        className: props.className,
+        role: props.role,
+        "aria-label": props["aria-label"],
+      },
+      children,
+    );
+  },
+  Marker: ({
+    children,
+    ...props
+  }: ComponentProps<"div"> & { children?: ReactNode }) => {
+    markerPropsSpy(props);
+    return createElement("div", null, children);
+  },
   Polyline: LeafletWrapper,
   Popup: PopupWrapper,
   TileLayer: (props: unknown) => {
@@ -111,11 +140,16 @@ describe("GeoMap render behavior", () => {
     mockMap.setView.mockClear();
     mockMap.fitBounds.mockClear();
     mockMap.flyTo.mockClear();
+    mockMap.closePopup.mockClear();
+    mockMap.getContainer.mockClear();
     mockMap.getBounds.mockClear();
     mockMap.getZoom.mockClear();
     popupPropsSpy.mockClear();
     tooltipPropsSpy.mockClear();
     tileLayerPropsSpy.mockClear();
+    markerPropsSpy.mockClear();
+    mapContainerPropsSpy.mockClear();
+    mapContainerAttributeSpy.mockClear();
 
     vi.stubGlobal(
       "MutationObserver",
@@ -198,6 +232,108 @@ describe("GeoMap render behavior", () => {
     });
     const popupProps = popupPropsSpy.mock.calls[0]?.[0];
     expect(popupProps.className).toContain("geo-map-popup");
+  });
+
+  test("keeps popup keyboard dismissible and exposes a close button", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-popup-a11y",
+        markers: [
+          {
+            id: "truck-31",
+            lat: 32.7157,
+            lng: -117.1611,
+            label: "Truck 31",
+            description: "Returning to hub",
+          },
+        ],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(popupPropsSpy).toHaveBeenCalled();
+    });
+
+    const popupProps = popupPropsSpy.mock.calls[0]?.[0] as
+      | { closeButton?: boolean; closeOnEscapeKey?: boolean }
+      | undefined;
+    expect(popupProps?.closeButton).toBe(true);
+    expect(popupProps?.closeOnEscapeKey).toBe(true);
+  });
+
+  test("announces map region with an accessible label", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-map-aria",
+        title: "Fleet Positions",
+        description: "Last telemetry update: 30s ago",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(mapContainerPropsSpy).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(mockMap.getContainer).toHaveBeenCalled();
+    });
+    expect(mapContainerAttributeSpy).toHaveBeenCalledWith("role", "region");
+    expect(mapContainerAttributeSpy).toHaveBeenCalledWith(
+      "aria-label",
+      "Fleet Positions. Last telemetry update: 30s ago",
+    );
+  });
+
+  test("adds descriptive marker title and alt text for icon markers", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-marker-aria",
+        markers: [
+          {
+            id: "truck-31",
+            lat: 32.7157,
+            lng: -117.1611,
+            label: "Truck 31",
+            description: "Returning to hub",
+            icon: { type: "emoji", value: "🚚" },
+          },
+        ],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(markerPropsSpy).toHaveBeenCalled();
+    });
+
+    const markerProps = markerPropsSpy.mock.calls[0]?.[0] as
+      | { title?: string; alt?: string }
+      | undefined;
+    expect(markerProps?.title).toBe("Truck 31");
+    expect(markerProps?.alt).toBe("Truck 31");
+  });
+
+  test("closes popups when escape is pressed", async () => {
+    render(
+      createElement(GeoMap, {
+        id: "geo-map-popup-escape-close",
+        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
+      }),
+    );
+
+    await waitFor(() => {
+      expect(mockMap.getContainer).toHaveBeenCalled();
+    });
+
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: "Escape",
+        }),
+      );
+    });
+
+    expect(mockMap.closePopup).toHaveBeenCalledTimes(1);
   });
 
   test("accepts css variable overrides for popup and tooltip shell theming", () => {
