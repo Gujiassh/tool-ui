@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicolo-ribaudo/oxfmt/main/npm/oxfmt/schema.json",
-  "ignorePatterns": [".agents/skills/**", "dogfood-output/**"],
+  "ignorePatterns": [".agents/skills/**"],
 
   // Match existing Prettier settings
   "semi": true,
