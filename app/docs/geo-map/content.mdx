@@ -122,6 +122,12 @@ export const toolkit: Toolkit = {
   </Feature>
 </FeatureGrid>
 
+## Accessibility & Keyboard
+
+- The map viewport is announced as a named region using `title` + `description`.
+- Marker and cluster icons expose descriptive labels for assistive tech.
+- Press `Escape` while focused in the map area to close any open popup.
+
 ## Popup & Tooltip Theme Tokens
 
 GeoMap shell styling is shipped with the component in a colocated CSS module (`geo-map-theme.module.css`), scoped to `[data-slot="geo-map"]`, and exposed through CSS custom properties. Import Leaflet base CSS once in your root layout, then use these token overrides to customize popup/tooltip/zoom styling.

@@ -285,7 +285,7 @@ describe("GeoMap render behavior", () => {
     );
   });
 
-  test("adds descriptive marker title and alt text for icon markers", async () => {
+  test("adds descriptive marker title and alt text with label and description", async () => {
     render(
       createElement(GeoMap, {
         id: "geo-map-marker-aria",
@@ -309,8 +309,8 @@ describe("GeoMap render behavior", () => {
     const markerProps = markerPropsSpy.mock.calls[0]?.[0] as
       | { title?: string; alt?: string }
       | undefined;
-    expect(markerProps?.title).toBe("Truck 31");
-    expect(markerProps?.alt).toBe("Truck 31");
+    expect(markerProps?.title).toBe("Truck 31. Returning to hub");
+    expect(markerProps?.alt).toBe("Truck 31. Returning to hub");
   });
 
   test("closes popups when escape is pressed", async () => {

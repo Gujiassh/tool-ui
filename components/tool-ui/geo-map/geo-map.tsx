@@ -72,6 +72,10 @@ function resolveMapAriaLabel(title?: string, description?: string): string {
 }
 
 function resolveMarkerAriaLabel(marker: GeoMapMarker): string {
+  if (marker.label && marker.description) {
+    return `${marker.label}. ${marker.description}`;
+  }
+
   return (
     marker.label ??
     marker.description ??
