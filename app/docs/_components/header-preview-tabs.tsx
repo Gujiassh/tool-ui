@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { analytics } from "@/lib/analytics";
 import { getImportLine } from "@/lib/docs/gallery-usage-code";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 import {
   type ComponentId,
   getPreviewConfig,
@@ -73,7 +73,11 @@ export function HeaderPreviewTabs({ componentId }: HeaderPreviewTabsProps) {
           </div>
         </Tab>
         <Tab value="Code">
-          <DynamicCodeBlock lang="tsx" code={code} />
+          <TrackedDynamicCodeBlock
+            lang="tsx"
+            code={code}
+            copyButtonLabel="header example code"
+          />
         </Tab>
       </Tabs>
     </div>

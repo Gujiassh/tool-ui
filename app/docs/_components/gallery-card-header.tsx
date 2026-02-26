@@ -4,7 +4,6 @@ import type { MouseEventHandler, SVGProps } from "react";
 import Link from "next/link";
 import { Check, Copy as CopyIcon } from "lucide-react";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -19,6 +18,7 @@ import { getGalleryUsageCode } from "@/lib/docs/gallery-usage-code";
 import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { analytics } from "@/lib/analytics";
 import { cn } from "@/lib/ui/cn";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 
 function InfoIconWithoutCircle({
   className,
@@ -142,7 +142,11 @@ export function GalleryCardHeader({
                     Example
                   </h3>
                   <div className="scrollbar-subtle min-h-[200px] flex-1 overflow-auto rounded-lg border border-border/60 bg-muted/50 [&_pre]:!rounded-lg [&_pre]:!border-0 [&_pre]:!bg-transparent [&_pre]:!p-4 [&_pre]:!text-sm [&_pre]:!leading-relaxed">
-                    <DynamicCodeBlock lang="tsx" code={usageCode} />
+                    <TrackedDynamicCodeBlock
+                      lang="tsx"
+                      code={usageCode}
+                      copyButtonLabel="gallery usage example"
+                    />
                   </div>
                 </section>
               )}
