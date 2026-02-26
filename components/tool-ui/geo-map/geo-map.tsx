@@ -483,8 +483,8 @@ export const GeoMap = memo(function GeoMap({
               <div
                 className={cn(
                   "pointer-events-none absolute top-3 left-3 z-[900]",
-                  "max-w-[min(75%,22rem)] rounded-lg border border-border/70 bg-background/85 px-3 py-2",
-                  "shadow-sm backdrop-blur",
+                  "max-w-[min(75%,22rem)] rounded-lg border border-border/70 bg-background/70 px-3 py-2",
+                  "shadow-sm backdrop-blur-md",
                   overlayClassName,
                 )}
               >

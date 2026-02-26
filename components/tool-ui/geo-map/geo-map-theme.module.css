@@ -18,12 +18,12 @@
   --geo-map-popup-content-padding: 0.625rem 0.75rem;
   --geo-map-popup-max-width: min(80vw, 18rem);
   --geo-map-popup-font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
-  --geo-map-zoom-bg: var(--background);
+  --geo-map-zoom-bg: oklch(from var(--background) l c h / 0.78);
   --geo-map-zoom-fg: var(--foreground);
   --geo-map-zoom-border: var(--border);
-  --geo-map-zoom-hover-bg: var(--accent);
+  --geo-map-zoom-hover-bg: oklch(from var(--accent) l c h / 0.82);
   --geo-map-zoom-hover-fg: var(--accent-foreground);
-  --geo-map-zoom-disabled-bg: var(--muted);
+  --geo-map-zoom-disabled-bg: oklch(from var(--muted) l c h / 0.72);
   --geo-map-zoom-disabled-fg: var(--muted-foreground);
   --geo-map-zoom-shadow: 0 1px 2px oklch(from var(--foreground) l c h / 0.08);
   --geo-map-zoom-focus-ring: var(--ring);
@@ -40,6 +40,8 @@
   border: 1px solid var(--geo-map-zoom-border);
   box-shadow: var(--geo-map-zoom-shadow);
   background: var(--geo-map-zoom-bg);
+  backdrop-filter: blur(var(--geo-map-popup-blur));
+  -webkit-backdrop-filter: blur(var(--geo-map-popup-blur));
 }
 
 .root[data-slot="geo-map"] :global(.leaflet-control-zoom.leaflet-bar) {
