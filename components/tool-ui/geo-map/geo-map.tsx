@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { cn } from "./_adapter";
 import { GeoMapEngine } from "./geo-map-engine";
 import styles from "./geo-map-theme.module.css";
@@ -10,6 +10,56 @@ const LIGHT_TILE_URL =
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const DARK_TILE_URL =
   "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+
+function getSystemTheme(): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function getDocumentTheme(): "light" | "dark" | null {
+  if (typeof document === "undefined") return null;
+
+  const root = document.documentElement;
+  const dataTheme = root.getAttribute("data-theme")?.toLowerCase();
+  if (dataTheme === "dark") return "dark";
+  if (dataTheme === "light") return "light";
+  if (root.classList.contains("dark")) return "dark";
+  if (root.classList.contains("light")) return "light";
+
+  return null;
+}
+
+function useInheritedTheme(): "light" | "dark" {
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    return getDocumentTheme() ?? getSystemTheme();
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof document === "undefined") {
+      return;
+    }
+
+    const update = () => setTheme(getDocumentTheme() ?? getSystemTheme());
+
+    const mql = window.matchMedia?.("(prefers-color-scheme: dark)");
+    mql?.addEventListener("change", update);
+
+    const observer = new MutationObserver(update);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme"],
+    });
+
+    return () => {
+      mql?.removeEventListener("change", update);
+      observer.disconnect();
+    };
+  }, []);
+
+  return theme;
+}
 
 function resolveMapAriaLabel(title?: string, description?: string): string {
   if (title && description) {
@@ -30,7 +80,7 @@ export const GeoMap = memo(function GeoMap({
   clustering,
   viewport,
   showZoomControl = true,
-  theme = "light",
+  theme,
   className,
   style,
   tooltipClassName,
@@ -38,12 +88,14 @@ export const GeoMap = memo(function GeoMap({
   onMarkerClick,
   onRouteClick,
 }: GeoMapProps) {
+  const inheritedTheme = useInheritedTheme();
+  const resolvedTheme = theme ?? inheritedTheme;
   const [isMapReady, setIsMapReady] = useState(false);
-  const tileUrl = theme === "dark" ? DARK_TILE_URL : LIGHT_TILE_URL;
+  const tileUrl = resolvedTheme === "dark" ? DARK_TILE_URL : LIGHT_TILE_URL;
   const mapAriaLabel = resolveMapAriaLabel(title, description);
   const resolvedRootStyle: GeoMapStyle = {
     "--geo-map-canvas-bg":
-      theme === "dark" ? "var(--background)" : "var(--muted)",
+      resolvedTheme === "dark" ? "var(--background)" : "var(--muted)",
     ...style,
   };
 
