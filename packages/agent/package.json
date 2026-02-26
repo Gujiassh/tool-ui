@@ -2,7 +2,6 @@
   "name": "tool-agent",
   "version": "0.1.0",
   "description": "CLI for setting up Tool UI coding agent integrations",
-  "type": "module",
   "bin": {
     "tool-agent": "./dist/cli.mjs"
   },
@@ -10,6 +9,7 @@
     "dist",
     "plugin"
   ],
+  "type": "module",
   "scripts": {
     "build": "tsup"
   },
