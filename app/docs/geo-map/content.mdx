@@ -132,6 +132,12 @@ export const toolkit: Toolkit = {
 
 GeoMap shell styling is shipped with the component in a colocated CSS module (`geo-map-theme.module.css`), scoped to `[data-slot="geo-map"]`, and exposed through CSS custom properties. Import Leaflet base CSS once in your root layout, then use these token overrides to customize popup/tooltip/zoom styling.
 
+Theme behavior:
+
+- When `theme` is omitted, GeoMap inherits the environment theme (`.dark`/`.light` class or `data-theme`) and falls back to `prefers-color-scheme`.
+- Pass `theme="light"` or `theme="dark"` to force a tile theme.
+- `--geo-map-canvas-bg` is set by default from the resolved theme (`var(--background)` in dark mode, `var(--muted)` in light mode), and can still be overridden via `style`.
+
 ```tsx
 <GeoMap
   id="fleet-map"
@@ -222,9 +228,9 @@ Supported token keys:
     },
     theme: {
       description:
-        "Explicit tile theme (pass your app-resolved light/dark theme)",
+        "Optional explicit tile theme override. If omitted, GeoMap inherits document/system theme.",
       type: "'light' | 'dark'",
-      default: "'light'",
+      default: "inherits environment",
     },
     className: {
       description: "Tailwind classes for the root wrapper",

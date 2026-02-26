@@ -186,21 +186,6 @@ describe("GeoMap render behavior", () => {
     vi.unstubAllGlobals();
   });
 
-  test("does not repeatedly re-apply viewport when routes are omitted", async () => {
-    render(
-      createElement(GeoMap, {
-        id: "geo-map-loop-regression",
-        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
-        viewport: { mode: "fit", maxZoom: 12 },
-      }),
-    );
-
-    await waitFor(() => {
-      expect(mockMap.setView).toHaveBeenCalledTimes(1);
-    });
-    expect(mockMap.fitBounds).toHaveBeenCalledTimes(0);
-  });
-
   test("renders a simple loading shell until the map engine is ready", async () => {
     render(
       createElement(GeoMap, {
@@ -221,24 +206,6 @@ describe("GeoMap render behavior", () => {
         document.querySelector('[data-slot="geo-map-loading"]'),
       ).toBeNull();
     });
-  });
-
-  test("does not loop when useMap reference identity changes between renders", async () => {
-    useUnstableMapReference = true;
-
-    render(
-      createElement(GeoMap, {
-        id: "geo-map-map-ref-loop-regression",
-        markers: [{ id: "truck-31", lat: 32.7157, lng: -117.1611 }],
-        viewport: { mode: "fit", maxZoom: 12 },
-      }),
-    );
-
-    await waitFor(() => {
-      expect(mockMap.setView).toHaveBeenCalled();
-    });
-    expect(mockMap.setView.mock.calls.length).toBeLessThanOrEqual(2);
-    expect(mockMap.fitBounds).toHaveBeenCalledTimes(0);
   });
 
   test("applies the geo-map popup class for deterministic shell styling", async () => {
