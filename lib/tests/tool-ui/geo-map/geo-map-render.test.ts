@@ -580,13 +580,11 @@ describe("GeoMap render behavior", () => {
     );
 
     await waitFor(() => {
-      expect(tileLayerPropsSpy).toHaveBeenCalled();
+      const lastProps = tileLayerPropsSpy.mock.calls.at(-1)?.[0] as
+        | { url?: string }
+        | undefined;
+      expect(lastProps?.url).toContain("dark_all");
     });
-
-    const firstTileLayerProps = tileLayerPropsSpy.mock.calls[0]?.[0] as
-      | { url?: string }
-      | undefined;
-    expect(firstTileLayerProps?.url).toContain("dark_all");
 
     document.documentElement.classList.remove("dark");
   });
