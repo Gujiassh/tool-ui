@@ -2,3 +2,10 @@
 set -eu
 
 pnpm hooks:pre-commit
+
+# Auto-fix formatting on staged files and re-stage them
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+if [ -n "$STAGED" ]; then
+  echo "$STAGED" | xargs oxfmt 2>/dev/null || true
+  echo "$STAGED" | xargs git add
+fi
