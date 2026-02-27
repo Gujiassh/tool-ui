@@ -26,11 +26,11 @@ interface InstallCommandBlockProps {
 
 function CopyableCommand({
   command,
-  source,
+  location,
   variant,
 }: {
   command: string;
-  source: "docs_installation" | "docs_code_block";
+  location: "docs_code_block" | "docs_header";
   variant: "compact" | "block";
 }) {
   const installSnippetType = detectInstallSnippetType(command);
@@ -43,7 +43,7 @@ function CopyableCommand({
   const onCopy: MouseEventHandler<HTMLButtonElement> = (event) => {
     analytics.code.blockCopied("bash", copySource);
     if (installSnippetType) {
-      analytics.docs.installSnippetCopied(installSnippetType, source);
+      analytics.docs.installSnippetCopied(installSnippetType, location);
     }
     copyCommand(event);
   };
@@ -108,14 +108,14 @@ export function InstallCommandBlock({
         <Tab value="tool-agent">
           <CopyableCommand
             command={toolAgentCommand}
-            source="docs_header"
+            location="docs_header"
             variant={variant}
           />
         </Tab>
         <Tab value="shadcn">
           <CopyableCommand
             command={shadcnCommand}
-            source="docs_header"
+            location="docs_header"
             variant={variant}
           />
         </Tab>

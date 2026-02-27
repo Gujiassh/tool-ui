@@ -19,6 +19,16 @@ Read `components.json` in the user's project and verify:
 
 ### Install command from project root
 
+**Preferred (AI-assisted integration):**
+
+```bash
+npx tool-agent "integrate the <component> component"
+```
+
+Use component-specific prompts from the catalog below (e.g. `integrate the plan component for step-by-step task workflows with status tracking`).
+
+**Alternative (direct registry):**
+
 ```bash
 npx shadcn@latest add @tool-ui/<component-id>
 ```
@@ -26,83 +36,99 @@ npx shadcn@latest add @tool-ui/<component-id>
 Multiple components:
 
 ```bash
+npx tool-agent "integrate the plan, progress-tracker, and approval-card components for planning flows"
+```
+
+Or via shadcn:
+
+```bash
 npx shadcn@latest add @tool-ui/plan @tool-ui/progress-tracker @tool-ui/approval-card
 ```
 
 ### Complete component catalog
 
-All 25 Tool UI components with install commands:
+All 25 Tool UI components with tool-agent prompts and shadcn install commands:
 
 **Progress**
 
-| Component          | Description                                         | Install                                           |
-| ------------------ | --------------------------------------------------- | ------------------------------------------------- |
-| `plan`             | Step-by-step task workflows with status tracking    | `npx shadcn@latest add @tool-ui/plan`             |
-| `progress-tracker` | Real-time status feedback for multi-step operations | `npx shadcn@latest add @tool-ui/progress-tracker` |
+| Component          | Description                                         | tool-agent prompt                                                                                 | shadcn                                            |
+| ------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `plan`             | Step-by-step task workflows with status tracking    | `integrate the plan component for step-by-step task workflows with status tracking`               | `npx shadcn@latest add @tool-ui/plan`             |
+| `progress-tracker` | Real-time status feedback for multi-step operations | `integrate the progress tracker component for real-time status feedback on multi-step operations` | `npx shadcn@latest add @tool-ui/progress-tracker` |
 
 **Input**
 
-| Component           | Description                                 | Install                                            |
-| ------------------- | ------------------------------------------- | -------------------------------------------------- |
-| `option-list`       | Let users select from multiple choices      | `npx shadcn@latest add @tool-ui/option-list`       |
-| `parameter-slider`  | Numeric parameter adjustment controls       | `npx shadcn@latest add @tool-ui/parameter-slider`  |
-| `preferences-panel` | Compact settings panel for user preferences | `npx shadcn@latest add @tool-ui/preferences-panel` |
-| `question-flow`     | Multi-step guided questions with branching  | `npx shadcn@latest add @tool-ui/question-flow`     |
+| Component           | Description                                 | tool-agent prompt                                                                      | shadcn                                             |
+| ------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `option-list`       | Let users select from multiple choices      | `integrate the option list component to let users select from multiple choices`        | `npx shadcn@latest add @tool-ui/option-list`       |
+| `parameter-slider`  | Numeric parameter adjustment controls       | `integrate the parameter slider component for numeric parameter adjustment controls`   | `npx shadcn@latest add @tool-ui/parameter-slider`  |
+| `preferences-panel` | Compact settings panel for user preferences | `integrate the preferences panel component for compact user settings`                  | `npx shadcn@latest add @tool-ui/preferences-panel` |
+| `question-flow`     | Multi-step guided questions with branching  | `integrate the question flow component for multi-step guided questions with branching` | `npx shadcn@latest add @tool-ui/question-flow`     |
 
 **Display**
 
-| Component        | Description                                   | Install                                         |
-| ---------------- | --------------------------------------------- | ----------------------------------------------- |
-| `citation`       | Display source references with attribution    | `npx shadcn@latest add @tool-ui/citation`       |
-| `item-carousel`  | Horizontal carousel for browsing collections  | `npx shadcn@latest add @tool-ui/item-carousel`  |
-| `link-preview`   | Rich link previews with Open Graph data       | `npx shadcn@latest add @tool-ui/link-preview`   |
-| `stats-display`  | Key metrics and KPIs in a visual grid         | `npx shadcn@latest add @tool-ui/stats-display`  |
-| `terminal`       | Show command-line output and logs             | `npx shadcn@latest add @tool-ui/terminal`       |
-| `weather-widget` | Weather display with forecasts and conditions | `npx shadcn@latest add @tool-ui/weather-widget` |
+| Component        | Description                                   | tool-agent prompt                                                                          | shadcn                                          |
+| ---------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| `citation`       | Display source references with attribution    | `integrate the citation component to display source references with attribution`           | `npx shadcn@latest add @tool-ui/citation`       |
+| `item-carousel`  | Horizontal carousel for browsing collections  | `integrate the item carousel component for horizontal browsing of collections`             | `npx shadcn@latest add @tool-ui/item-carousel`  |
+| `link-preview`   | Rich link previews with Open Graph data       | `integrate the link preview component for rich link previews with Open Graph data`         | `npx shadcn@latest add @tool-ui/link-preview`   |
+| `stats-display`  | Key metrics and KPIs in a visual grid         | `integrate the stats display component for key metrics and KPIs in a visual grid`          | `npx shadcn@latest add @tool-ui/stats-display`  |
+| `terminal`       | Show command-line output and logs             | `integrate the terminal component to show command-line output and logs`                    | `npx shadcn@latest add @tool-ui/terminal`       |
+| `weather-widget` | Weather display with forecasts and conditions | `integrate the weather widget component for weather display with forecasts and conditions` | `npx shadcn@latest add @tool-ui/weather-widget` |
 
 **Artifacts**
 
-| Component        | Description                                                                | Install                                         |
-| ---------------- | -------------------------------------------------------------------------- | ----------------------------------------------- |
-| `chart`          | Visualize data with interactive charts (needs `recharts`)                  | `npx shadcn@latest add @tool-ui/chart`          |
-| `code-block`     | Display syntax-highlighted code snippets                                   | `npx shadcn@latest add @tool-ui/code-block`     |
-| `code-diff`      | Compare code changes with syntax-highlighted diffs (needs `@pierre/diffs`) | `npx shadcn@latest add @tool-ui/code-diff`      |
-| `data-table`     | Present structured data in sortable tables                                 | `npx shadcn@latest add @tool-ui/data-table`     |
-| `message-draft`  | Review and approve messages before sending                                 | `npx shadcn@latest add @tool-ui/message-draft`  |
-| `instagram-post` | Render Instagram post previews                                             | `npx shadcn@latest add @tool-ui/instagram-post` |
-| `linkedin-post`  | Render LinkedIn post previews                                              | `npx shadcn@latest add @tool-ui/linkedin-post`  |
-| `x-post`         | Render X post previews                                                     | `npx shadcn@latest add @tool-ui/x-post`         |
+| Component        | Description                                                                | tool-agent prompt                                                                         | shadcn                                          |
+| ---------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `chart`          | Visualize data with interactive charts (needs `recharts`)                  | `integrate the chart component to visualize data with interactive charts`                 | `npx shadcn@latest add @tool-ui/chart`          |
+| `code-block`     | Display syntax-highlighted code snippets                                   | `integrate the code block component for syntax-highlighted code snippets`                 | `npx shadcn@latest add @tool-ui/code-block`     |
+| `code-diff`      | Compare code changes with syntax-highlighted diffs (needs `@pierre/diffs`) | `integrate the code diff component to compare code changes with syntax-highlighted diffs` | `npx shadcn@latest add @tool-ui/code-diff`      |
+| `data-table`     | Present structured data in sortable tables                                 | `integrate the data table component to present structured data in sortable tables`        | `npx shadcn@latest add @tool-ui/data-table`     |
+| `message-draft`  | Review and approve messages before sending                                 | `integrate the message draft component to review and approve messages before sending`     | `npx shadcn@latest add @tool-ui/message-draft`  |
+| `instagram-post` | Render Instagram post previews                                             | `integrate the instagram post component to render Instagram post previews`                | `npx shadcn@latest add @tool-ui/instagram-post` |
+| `linkedin-post`  | Render LinkedIn post previews                                              | `integrate the linkedin post component to render LinkedIn post previews`                  | `npx shadcn@latest add @tool-ui/linkedin-post`  |
+| `x-post`         | Render X post previews                                                     | `integrate the x post component to render X/Twitter post previews`                        | `npx shadcn@latest add @tool-ui/x-post`         |
 
 **Confirmation**
 
-| Component       | Description                             | Install                                        |
-| --------------- | --------------------------------------- | ---------------------------------------------- |
-| `approval-card` | Binary confirmation for agent actions   | `npx shadcn@latest add @tool-ui/approval-card` |
-| `order-summary` | Display purchases with itemized pricing | `npx shadcn@latest add @tool-ui/order-summary` |
+| Component       | Description                             | tool-agent prompt                                                                  | shadcn                                         |
+| --------------- | --------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `approval-card` | Binary confirmation for agent actions   | `integrate the approval card component for binary confirmation of agent actions`   | `npx shadcn@latest add @tool-ui/approval-card` |
+| `order-summary` | Display purchases with itemized pricing | `integrate the order summary component to display purchases with itemized pricing` | `npx shadcn@latest add @tool-ui/order-summary` |
 
 **Media**
 
-| Component       | Description                                  | Install                                        |
-| --------------- | -------------------------------------------- | ---------------------------------------------- |
-| `audio`         | Audio playback with artwork and metadata     | `npx shadcn@latest add @tool-ui/audio`         |
-| `image`         | Display images with metadata and attribution | `npx shadcn@latest add @tool-ui/image`         |
-| `image-gallery` | Masonry grid with fullscreen lightbox viewer | `npx shadcn@latest add @tool-ui/image-gallery` |
-| `video`         | Video playback with controls and poster      | `npx shadcn@latest add @tool-ui/video`         |
+| Component       | Description                                  | tool-agent prompt                                                               | shadcn                                         |
+| --------------- | -------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `audio`         | Audio playback with artwork and metadata     | `integrate the audio component for audio playback with artwork and metadata`    | `npx shadcn@latest add @tool-ui/audio`         |
+| `image`         | Display images with metadata and attribution | `integrate the image component to display images with metadata and attribution` | `npx shadcn@latest add @tool-ui/image`         |
+| `image-gallery` | Masonry grid with fullscreen lightbox viewer | `integrate the image gallery component with masonry grid and lightbox viewer`   | `npx shadcn@latest add @tool-ui/image-gallery` |
+| `video`         | Video playback with controls and poster      | `integrate the video component for video playback with controls and poster`     | `npx shadcn@latest add @tool-ui/video`         |
+
+**Display (Geo Map)**
+
+| Component | Description                                     | tool-agent prompt                                                                    | shadcn                                   |
+| --------- | ----------------------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| `geo-map` | Display geolocated entities and fleet positions | `integrate the geo map component to display geolocated entities and fleet positions` | `npx shadcn@latest add @tool-ui/geo-map` |
 
 ### Example installs by use case
 
+**tool-agent (recommended):**
+
 ```bash
-# Planning flow (plan + progress + approval)
+npx tool-agent "integrate the plan, progress-tracker, and approval-card components for planning flows"
+npx tool-agent "integrate citation, link-preview, code-block, and code-diff for research output"
+npx tool-agent "integrate data-table, chart, and stats-display for data visualization"
+npx tool-agent "integrate image, image-gallery, video, and audio for media display"
+```
+
+**shadcn (direct):**
+
+```bash
 npx shadcn@latest add @tool-ui/plan @tool-ui/progress-tracker @tool-ui/approval-card
-
-# Research output (citation + link preview + code)
 npx shadcn@latest add @tool-ui/citation @tool-ui/link-preview @tool-ui/code-block @tool-ui/code-diff
-
-# Data display (table + chart + stats)
 npx shadcn@latest add @tool-ui/data-table @tool-ui/chart @tool-ui/stats-display
 # npm i recharts  # peer for chart
-
-# Media (images + video + audio)
 npx shadcn@latest add @tool-ui/image @tool-ui/image-gallery @tool-ui/video @tool-ui/audio
 ```
 
@@ -153,7 +179,7 @@ Key points:
 
 Create a single `toolkit.ts` (or `toolkit.tsx`) that exports a `Toolkit` object. Each key is a tool name; each value has `type`, `description`, `parameters`, and `render`.
 
-**Tool descriptions** — Always include a `description` on every tool. Describe *when* to call the tool and what role it plays, not the visible content. The Tool UI component already renders the payload (options, plan, chart, etc.) to the user; a description that repeats that content is redundant. Prefer model-oriented guidance (e.g. "Present a plan for the user to follow" or "Let the user pick one option") over content echo (e.g. "Shows a list of options with labels and descriptions").
+**Tool descriptions** — Always include a `description` on every tool. Describe _when_ to call the tool and what role it plays, not the visible content. The Tool UI component already renders the payload (options, plan, chart, etc.) to the user; a description that repeats that content is redundant. Prefer model-oriented guidance (e.g. "Present a plan for the user to follow" or "Let the user pick one option") over content echo (e.g. "Shows a list of options with labels and descriptions").
 
 ## -**Frontend vs backend tools**
 

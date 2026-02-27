@@ -125,7 +125,7 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
             id={`${tabsIdBase}-content-examples`}
             aria-labelledby={`${tabsIdBase}-trigger-examples`}
             value="examples"
-            className="flex h-full min-h-0 flex-1 overflow-hidden pt-[52px] sm:pt-[60px]"
+            className="flex h-full min-h-0 flex-1 flex-col overflow-hidden pt-[52px] sm:pt-[60px]"
           >
             {activeTab === "examples"
               ? (examples ??

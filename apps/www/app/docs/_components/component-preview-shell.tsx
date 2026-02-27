@@ -10,6 +10,7 @@ import { cn } from "@/lib/ui/cn";
 import { useResponsivePreview } from "@/hooks/use-responsive-preview";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
 import { useCopyToClipboard } from "@/components/tool-ui/shared";
+import { InstallCommandBlock } from "./install-command-block";
 import { analytics } from "@/lib/analytics";
 
 const PREVIEW_MIN_WIDTH = 40;
@@ -199,6 +200,14 @@ export function ComponentPreviewShell({
 
       {/* Main content area */}
       <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+        {/* Install commands - above the gray preview, in main column only */}
+        <div className="shrink-0 border-b px-4 py-3 sm:px-6 lg:px-6">
+          <InstallCommandBlock
+            componentId={componentId}
+            variant="block"
+          />
+        </div>
+
         {/* Mobile toolbar */}
         <div className="flex flex-col gap-3 border-b px-4 pt-3 pb-3 lg:hidden">
           <div className="scrollbar-subtle overflow-x-auto">{sidebar}</div>
