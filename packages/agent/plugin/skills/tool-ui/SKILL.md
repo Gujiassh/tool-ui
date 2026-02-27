@@ -9,13 +9,11 @@ Use this skill to move from request to working Tool UI integration quickly.
 
 Prefer assistant-ui when the project has no existing chat UI/runtime. Treat assistant-ui as optional when the app already has a working runtime.
 
-
 ## Step 1: Compatibility and Doctor
 
 Read `components.json` in the user's project and verify:
 
 - `components.json` exists.
-
 
 ## Step 2: Install Components
 
@@ -30,7 +28,6 @@ Multiple components:
 ```bash
 npx shadcn@latest add @tool-ui/plan @tool-ui/progress-tracker @tool-ui/approval-card
 ```
-
 
 ### Complete component catalog
 
@@ -109,8 +106,6 @@ npx shadcn@latest add @tool-ui/data-table @tool-ui/chart @tool-ui/stats-display
 npx shadcn@latest add @tool-ui/image @tool-ui/image-gallery @tool-ui/video @tool-ui/audio
 ```
 
-
-
 ### Toolkit setup in a codebase
 
 After installing components, wire them into assistant-ui via a `Toolkit`. This section covers the full setup: provider, runtime, toolkit file, and ID handling.
@@ -158,16 +153,14 @@ Key points:
 
 Create a single `toolkit.ts` (or `toolkit.tsx`) that exports a `Toolkit` object. Each key is a tool name; each value has `type`, `description`, `parameters`, and `render`.
 
- 
--**Frontend vs backend tools**
--
--| | Frontend | Backend |
--|-|----------|---------|
--| **Implementation** | Runs in the browser; user interaction commits via `addResult` | Tool implementation lives on the server; model returns the result |
--| **`execute`** | Required — runs the tool UI flow client-side | Not needed
--| **`parameters`** | Required (schema for model args) | does not use, uses inputSchema instead if backend llm is done via aisdk
--| **`render`** | Required (UI for args, status, result, `addResult`) | Required (UI for `result`) |
+## -**Frontend vs backend tools**
 
+| -   |                    | Frontend                                                      | Backend                                                                 |
+| --- | ------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| -   | **Implementation** | Runs in the browser; user interaction commits via `addResult` | Tool implementation lives on the server; model returns the result       |
+| -   | **`execute`**      | Required — runs the tool UI flow client-side                  | Not needed                                                              |
+| -   | **`parameters`**   | Required (schema for model args)                              | does not use, uses inputSchema instead if backend llm is done via aisdk |
+| -   | **`render`**       | Required (UI for args, status, result, `addResult`)           | Required (UI for `result`)                                              |
 
 **Backend tools** (model returns result; no user input):
 
@@ -186,7 +179,6 @@ export const toolkit: Toolkit = {
     },
   },
 };
-
 ```
 
 **Frontend tools** (model sends args; user interaction commits via `addResult`):
@@ -237,7 +229,7 @@ export const toolkit: Toolkit = {
 
 When the chat API uses the AI SDK (`streamText`), define backend tools with `tool()` from `ai`:
 
-- Use **`inputSchema`** 
+- Use **`inputSchema`**
 - Backend tools use **`execute`** on the server; the result is streamed and rendered via the toolkit `render` function
 
 ```ts
@@ -262,7 +254,7 @@ const result = streamText({
       }),
       execute: async ({ location, units }) => {
         // Fetch weather data, return shape matching your widget schema
-        return { location, units, /* ... */ };
+        return { location, units /* ... */ };
       },
     }),
   },
@@ -330,8 +322,6 @@ return (
 );
 ```
 
-
-
 ## Action Model
 
 Tool UI uses two action surfaces, rendered as compound siblings outside the display component:
@@ -369,9 +359,6 @@ Three components are action-centric exceptions — they keep embedded action pro
 | `ParameterSlider`  | `SliderValue[]`               |
 | `PreferencesPanel` | `PreferencesValue`            |
 
-
-
-
 Components using the compound pattern: `CodeBlock`, `CodeDiff`, `Terminal`, `ProgressTracker`.
 
 Context is shared via `createContext` + `use()` (React 19). Subcomponents throw if used outside their Root.
@@ -393,7 +380,7 @@ When `choice` is present, the component renders in receipt mode — read-only, n
 
 - Install the smallest set of components that solves the request.
 
-Notes: 
+Notes:
 Frontend tools need an execute function
 Backend tools have the tool implementation on the server side.
 Backend tool don't need either
