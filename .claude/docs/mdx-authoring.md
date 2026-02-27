@@ -1,10 +1,10 @@
 # MDX Authoring
 
-Guide for writing doc pages in Tool UI (`app/docs/{component}/content.mdx`).
+Guide for writing doc pages in Tool UI (`apps/www/app/docs/{component}/content.mdx`).
 
 ## Configuration
 
-MDX is configured in `next.config.ts:14` with `@next/mdx` and `remark-gfm`.
+MDX is configured in `apps/www/next.config.ts:14` with `@next/mdx` and `remark-gfm`.
 
 **Turbopack limitation:** Plugins must be strings (`"remark-gfm"`) not function imports. Turbopack requires serializable config.
 
@@ -22,7 +22,7 @@ Standard markdown table syntax works:
 
 ### Custom Components
 
-Available via `mdx-components.tsx`:
+Available via `apps/www/mdx-components.tsx`:
 
 - `TypeTable` - Props documentation
 - `Files`, `Folder`, `File` - Directory trees
@@ -43,7 +43,7 @@ Content wraps in `.prose` class from `docs-content.tsx`. Use `not-prose` class t
 
 ### Auto-linking
 
-Tool UI component names in text auto-link to their docs pages. Configured in `lib/mdx/with-auto-link.ts`.
+Tool UI component names in text auto-link to their docs pages. Configured in `apps/www/lib/mdx/with-auto-link.ts`.
 
 ## Page Structure
 
@@ -53,4 +53,4 @@ Each doc page needs:
 2. `content.mdx` - The actual documentation
 3. `opengraph-image.tsx` - OG image generation
 
-See `app/docs/approval-card/` for reference implementation.
+See `apps/www/app/docs/approval-card/` for reference implementation.

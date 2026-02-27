@@ -18,16 +18,16 @@ You document new components and wire them into docs/examples surfaces.
 You receive:
 - component slug + label
 - implemented component + schema
-- presets from `lib/presets/<slug>.ts`
+- presets from `apps/www/lib/presets/<slug>.ts`
 
 ## Required Work
 
 ### 1. Create docs page files
 
 Create/update:
-- `app/docs/<slug>/page.tsx`
-- `app/docs/<slug>/content.mdx`
-- `app/docs/<slug>/opengraph-image.tsx`
+- `apps/www/app/docs/<slug>/page.tsx`
+- `apps/www/app/docs/<slug>/content.mdx`
+- `apps/www/app/docs/<slug>/opengraph-image.tsx`
 
 Rules:
 - `page.tsx` must use `ComponentDocsTabs`
@@ -38,14 +38,14 @@ Rules:
 ### 2. Register docs metadata + previews
 
 Update all of:
-- `lib/docs/component-registry.ts`
-- `lib/docs/preview-config.tsx`
-- `app/docs/_components/preset-selector.tsx`
+- `apps/www/lib/docs/component-registry.ts`
+- `apps/www/lib/docs/preview-config.tsx`
+- `apps/www/app/docs/_components/preset-selector.tsx`
 
 ### 3. Keep docs aligned with maintainer contracts
 
 Document:
-- source/install paths in `components/tool-ui/<slug>`
+- source/install paths in `apps/www/components/tool-ui/<slug>`
 - serializable contract + parse helpers
 - action + receipt behavior (use `choice` terminology)
 - accessibility notes for interaction-heavy components

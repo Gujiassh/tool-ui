@@ -1,7 +1,10 @@
 import { spawnSync } from "node:child_process";
 
-const WATCHED_PREFIXES = ["components/tool-ui/", "lib/registry/"];
-const WATCHED_FILES = new Set(["scripts/build-tool-ui-registry.ts"]);
+const WATCHED_PREFIXES = [
+  "apps/www/components/tool-ui/",
+  "apps/www/lib/registry/",
+];
+const WATCHED_FILES = new Set(["apps/www/scripts/build-tool-ui-registry.ts"]);
 
 function runCapture(command: string, args: string[]): string {
   const result = spawnSync(command, args, { encoding: "utf8" });

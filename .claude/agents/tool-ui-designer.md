@@ -16,7 +16,7 @@ You design new Tool UI components for this repo.
 ## Context
 
 Tool UI is a copy/paste component library for AI assistant interfaces.
-The product is the source code inside `components/tool-ui/*`, so APIs must be explicit and easy to modify.
+The product is the source code inside `apps/www/components/tool-ui/*`, so APIs must be explicit and easy to modify.
 
 ## Process
 
@@ -40,12 +40,12 @@ Ask deeper questions only when needed:
 ### 3. Pattern Exploration
 
 Before finalizing, inspect current patterns:
-- `components/tool-ui/*` similar components
-- `components/tool-ui/shared/schema.ts`
-- `components/tool-ui/shared/contract.ts`
-- `components/tool-ui/shared/actions-config.ts`
-- `components/tool-ui/shared/action-buttons.tsx`
-- `components/tool-ui/option-list/*` and `components/tool-ui/plan/*`
+- `apps/www/components/tool-ui/*` similar components
+- `apps/www/components/tool-ui/shared/schema.ts`
+- `apps/www/components/tool-ui/shared/contract.ts`
+- `apps/www/components/tool-ui/shared/actions-config.ts`
+- `apps/www/components/tool-ui/shared/action-buttons.tsx`
+- `apps/www/components/tool-ui/option-list/*` and `apps/www/components/tool-ui/plan/*`
 
 ### 4. Produce Design Spec
 

@@ -24,7 +24,7 @@ You receive:
 
 ### 1. Create Presets
 
-Create `lib/presets/<slug>.ts` with 4-5 presets.
+Create `apps/www/lib/presets/<slug>.ts` with 4-5 presets.
 
 Requirements:
 - use believable, specific scenarios
@@ -35,11 +35,11 @@ Requirements:
 
 ### 2. Gallery Entry
 
-Update `app/docs/gallery/page.tsx` with the most representative visual preset when appropriate.
+Update `apps/www/app/docs/gallery/page.tsx` with the most representative visual preset when appropriate.
 
 ### 3. Landing Showcase (Optional)
 
-Update `app/components/home/chat-showcase.tsx` only if the component is visually distinctive and improves landing clarity.
+Update `apps/www/app/components/home/chat-showcase.tsx` only if the component is visually distinctive and improves landing clarity.
 
 ## Preset Quality Bar
 

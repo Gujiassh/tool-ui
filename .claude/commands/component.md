@@ -5,7 +5,7 @@ description: Create new React component
 Create a new component: $ARGUMENTS
 
 Follow project patterns:
-- **Location**: `app/components/` (or specify subdirectory)
+- **Location**: `apps/www/app/components/` (or specify subdirectory)
 - **Style**: Functional component with TypeScript
 - **Props**: Properly typed interface
 - **Styling**: Tailwind CSS classes
@@ -20,4 +20,4 @@ Include:
 4. Responsive design considerations
 5. Error boundaries if needed
 
-Check `app/components/` for similar patterns to follow.
+Check `apps/www/app/components/` for similar patterns to follow.

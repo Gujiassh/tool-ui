@@ -1,37 +1,41 @@
-'use client'
+"use client";
 
-import { useMemo } from 'react'
+import { useMemo } from "react";
 import {
   AssistantRuntimeProvider,
   ThreadPrimitive,
   Tools,
   useAui,
-} from '@assistant-ui/react'
+} from "@assistant-ui/react";
 import {
   AssistantChatTransport,
   useChatRuntime,
-} from '@assistant-ui/react-ai-sdk'
-import { lastAssistantMessageIsCompleteWithToolCalls } from 'ai'
-import { DEMO_CHAT_TOOLKIT } from '@/lib/demo-chat/toolkit'
-import { AssistantMessage, Composer, UserMessage } from '@/app/playground/chat-ui'
+} from "@assistant-ui/react-ai-sdk";
+import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import { DEMO_CHAT_TOOLKIT } from "@/lib/demo-chat/toolkit";
+import {
+  AssistantMessage,
+  Composer,
+  UserMessage,
+} from "@/app/playground/chat-ui";
 
 export function DemoChat() {
   const transport = useMemo(
     () =>
       new AssistantChatTransport({
-        api: '/api/chat',
+        api: "/api/chat",
       }),
     [],
-  )
+  );
 
   const runtime = useChatRuntime({
     transport,
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-  })
+  });
 
   const aui = useAui({
     tools: Tools({ toolkit: DEMO_CHAT_TOOLKIT }),
-  })
+  });
 
   return (
     <AssistantRuntimeProvider runtime={runtime} aui={aui}>
@@ -39,9 +43,7 @@ export function DemoChat() {
         <ThreadPrimitive.Viewport className="scrollbar-subtle flex flex-1 flex-col overflow-y-auto px-6 pt-20 pb-6">
           <ThreadPrimitive.If empty>
             <div className="text-muted-foreground mx-auto flex max-w-md flex-1 flex-col items-center justify-center gap-4 text-center">
-              <p className="text-base font-medium">
-                Try the Tool UI demo
-              </p>
+              <p className="text-base font-medium">Try the Tool UI demo</p>
               <p className="text-sm">
                 Ask to see a plan, support tickets, metrics, or run a command.
                 Each response uses a different Tool UI component.
@@ -66,7 +68,7 @@ export function DemoChat() {
         </div>
       </ThreadPrimitive.Root>
     </AssistantRuntimeProvider>
-  )
+  );
 }
 
 function SuggestionChip({ children }: { children: React.ReactNode }) {
@@ -74,5 +76,5 @@ function SuggestionChip({ children }: { children: React.ReactNode }) {
     <span className="bg-muted/50 rounded-full border px-3 py-1.5 text-left">
       {children}
     </span>
-  )
+  );
 }

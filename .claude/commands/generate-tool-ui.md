@@ -39,7 +39,7 @@ Implementation must follow current repo contracts:
 - schema contract via `defineToolUiContract` + `parseSerializableX` + `safeParseSerializableX`
 - receipt prop is `choice` (never `confirmed` / `decision`)
 - maintain component directory file contract (including `README.md`)
-- update aggregate exports in `components/tool-ui/index.ts`
+- update aggregate exports in `apps/www/components/tool-ui/index.ts`
 
 ### 3. Examples + Docs (Parallel)
 
@@ -70,10 +70,10 @@ The documenter/reviewer must ensure all of these are wired:
 
 | File | Purpose |
 |------|---------|
-| `lib/docs/component-registry.ts` | Component metadata + docs nav categorization |
-| `lib/docs/preview-config.tsx` | Interactive preview config + `ComponentId` coverage |
-| `app/docs/_components/preset-selector.tsx` | Examples tab preset mapping |
-| `app/docs/{name}/page.tsx` | `ComponentDocsTabs` docs/examples surface |
+| `apps/www/lib/docs/component-registry.ts` | Component metadata + docs nav categorization |
+| `apps/www/lib/docs/preview-config.tsx` | Interactive preview config + `ComponentId` coverage |
+| `apps/www/app/docs/_components/preset-selector.tsx` | Examples tab preset mapping |
+| `apps/www/app/docs/{name}/page.tsx` | `ComponentDocsTabs` docs/examples surface |
 
 ## Notes
 

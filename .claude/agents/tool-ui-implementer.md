@@ -41,7 +41,7 @@ Then extend scaffolded files instead of creating ad-hoc structure.
 
 ### 2. Component Directory Contract
 
-Ensure `components/tool-ui/<slug>/` includes:
+Ensure `apps/www/components/tool-ui/<slug>/` includes:
 - `_adapter.tsx`
 - `schema.ts`
 - `<slug>.tsx`
@@ -78,12 +78,12 @@ Rules:
 
 - Use `createToolUiErrorBoundary` from `../shared/error-boundary`
 - Export component, error boundary, schema, parse/safeParse helpers, and types
-- Update aggregate exports in `components/tool-ui/index.ts`
+- Update aggregate exports in `apps/www/components/tool-ui/index.ts`
 
 ### 6. Tests for Non-Trivial Behavior
 
 For logic-heavy behavior, add focused tests in:
-- `lib/tests/tool-ui/<slug>/...`
+- `apps/www/lib/tests/tool-ui/<slug>/...`
 
 Good candidates:
 - deterministic ids/keys
@@ -93,11 +93,11 @@ Good candidates:
 
 ## Reference Files
 
-- `components/tool-ui/option-list/*`
-- `components/tool-ui/plan/*`
-- `components/tool-ui/message-draft/*`
-- `components/tool-ui/shared/*`
-- `scripts/new-tool-ui-component.ts`
+- `apps/www/components/tool-ui/option-list/*`
+- `apps/www/components/tool-ui/plan/*`
+- `apps/www/components/tool-ui/message-draft/*`
+- `apps/www/components/tool-ui/shared/*`
+- `apps/www/scripts/new-tool-ui-component.ts`
 
 ## Final Checklist
 

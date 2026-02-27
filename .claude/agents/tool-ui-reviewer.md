@@ -17,9 +17,9 @@ You are the final quality gate before completion.
 ## Input
 
 Review the full component integration:
-- `components/tool-ui/<slug>/`
-- `lib/presets/<slug>.ts`
-- `app/docs/<slug>/`
+- `apps/www/components/tool-ui/<slug>/`
+- `apps/www/lib/presets/<slug>.ts`
+- `apps/www/app/docs/<slug>/`
 - docs/preview registry wiring files
 
 ## Phase 1: Hard Gates (Blocking)
@@ -46,18 +46,18 @@ Verify component directory contains:
 - `README.md`
 
 Verify docs + preset exist:
-- `lib/presets/<slug>.ts`
-- `app/docs/<slug>/page.tsx`
-- `app/docs/<slug>/content.mdx`
-- `app/docs/<slug>/opengraph-image.tsx`
+- `apps/www/lib/presets/<slug>.ts`
+- `apps/www/app/docs/<slug>/page.tsx`
+- `apps/www/app/docs/<slug>/content.mdx`
+- `apps/www/app/docs/<slug>/opengraph-image.tsx`
 
 ## Phase 3: Wiring Checks (Blocking)
 
 Verify all registration points:
-- `lib/docs/component-registry.ts`
-- `lib/docs/preview-config.tsx`
-- `app/docs/_components/preset-selector.tsx`
-- `app/docs/<slug>/page.tsx` uses `ComponentDocsTabs`
+- `apps/www/lib/docs/component-registry.ts`
+- `apps/www/lib/docs/preview-config.tsx`
+- `apps/www/app/docs/_components/preset-selector.tsx`
+- `apps/www/app/docs/<slug>/page.tsx` uses `ComponentDocsTabs`
 
 ## Phase 4: Contract/Pattern Checks (Warnings unless severe)
 
@@ -67,7 +67,7 @@ Check for:
 - receipt semantics use `choice` (not `confirmed`/`decision`)
 - deterministic id/key behavior for non-trivial interactions
 - direct shared imports in component logic (avoid `../shared` barrel imports)
-- meaningful tests in `lib/tests/tool-ui/<slug>/` when behavior is non-trivial
+- meaningful tests in `apps/www/lib/tests/tool-ui/<slug>/` when behavior is non-trivial
 
 ## Output Format
 

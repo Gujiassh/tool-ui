@@ -15,8 +15,8 @@ pnpm test         # Run tests (Vitest)
 
 ## Tooling
 
-- **Formatter**: Oxfmt (config: `.oxfmtrc.jsonc`) — Tailwind class sorting + import sorting
-- **Linter**: Oxlint (`.oxlintrc.json`) handles standard rules; ESLint (`eslint.config.ts`) retained only for `no-restricted-syntax`, `no-restricted-imports`, custom `tool-ui/*` rules, and React Compiler hooks
+- **Formatter**: Oxfmt (config: `apps/www/.oxfmtrc.jsonc`) — Tailwind class sorting + import sorting
+- **Linter**: Oxlint (`apps/www/.oxlintrc.json`) handles standard rules; ESLint (`apps/www/eslint.config.ts`) retained only for `no-restricted-syntax`, `no-restricted-imports`, custom `tool-ui/*` rules, and React Compiler hooks
 - **Typecheck**: tsgo (`@typescript/native-preview`) — native TypeScript compiler
 - **Parallel checks**: `pnpm check` runs typecheck + all linters + format in parallel via `npm-run-all2`
 
@@ -29,7 +29,7 @@ pnpm test         # Run tests (Vitest)
 
 ### Component Structure
 
-Each component lives in `components/tool-ui/{name}/`. Reference: `components/tool-ui/approval-card/`
+Each component lives in `apps/www/components/tool-ui/{name}/`. Reference: `apps/www/components/tool-ui/approval-card/`
 
 Key files:
 
@@ -44,11 +44,11 @@ The `shared/` directory contains utilities all components need.
 
 Interconnected registries:
 
-- Component metadata: `lib/docs/component-registry.ts`
-- Presets (example data): `lib/presets/{component}.ts`
-- Preview rendering: `lib/docs/preview-config.tsx`
-- Doc pages: `app/docs/{component}/content.mdx`
-- Gallery: `app/docs/gallery/page.tsx`
+- Component metadata: `apps/www/lib/docs/component-registry.ts`
+- Presets (example data): `apps/www/lib/presets/{component}.ts`
+- Preview rendering: `apps/www/lib/docs/preview-config.tsx`
+- Doc pages: `apps/www/app/docs/{component}/content.mdx`
+- Gallery: `apps/www/app/docs/gallery/page.tsx`
 
 ## Key Patterns
 
@@ -62,7 +62,7 @@ Interconnected registries:
 
 ### Main Component Structure
 
-Reference: `components/tool-ui/approval-card/approval-card.tsx:183`
+Reference: `apps/www/components/tool-ui/approval-card/approval-card.tsx:183`
 
 - Outer `<article>` with `data-slot`, `data-tool-ui-id`, `lang="en"`, `aria-busy`
 - Loading skeleton via `isLoading` prop
@@ -70,18 +70,18 @@ Reference: `components/tool-ui/approval-card/approval-card.tsx:183`
 
 ## Discovery
 
-| What                    | Where                                  |
-| ----------------------- | -------------------------------------- |
-| Tool UI components      | `components/tool-ui/` (scan barrels)   |
-| Component docs metadata | `lib/docs/component-registry.ts`       |
-| Preset configurations   | `lib/presets/*.ts`                     |
-| Types & validation      | Colocated `schema.ts` files            |
-| assistant-ui reference  | `private/reference-docs/assistant-ui/` |
-| Design system specs     | `private/design-system/`               |
+| What                    | Where                                            |
+| ----------------------- | ------------------------------------------------ |
+| Tool UI components      | `apps/www/components/tool-ui/` (scan barrels)    |
+| Component docs metadata | `apps/www/lib/docs/component-registry.ts`        |
+| Preset configurations   | `apps/www/lib/presets/*.ts`                      |
+| Types & validation      | Colocated `schema.ts` files                      |
+| assistant-ui reference  | `private/reference-docs/assistant-ui/`           |
+| Design system specs     | `private/design-system/`                         |
 
 ## Task Guides
 
 - Adding/modifying components: `.claude/docs/component-workflow.md`
 - Writing doc pages: `.claude/docs/mdx-authoring.md`
 - Copy style for examples: `.claude/docs/copy-guide.md`
-- Writing changelog entries: `docs/changelog.md`
+- Writing changelog entries: `apps/www/docs/changelog.md`

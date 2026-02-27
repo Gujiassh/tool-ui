@@ -96,7 +96,9 @@ export function InstallCommandBlock({
 }: InstallCommandBlockProps) {
   const meta = registryById.get(componentId);
   const toolAgentPrompt =
-    promptOverride ?? meta?.toolAgentPrompt ?? `integrate the ${componentId} component`;
+    promptOverride ??
+    meta?.toolAgentPrompt ??
+    `integrate the ${componentId} component`;
   const toolAgentCommand = `npx tool-agent "${toolAgentPrompt}"`;
   const shadcnCommand = `npx shadcn@latest add @tool-ui/${componentId}`;
 
