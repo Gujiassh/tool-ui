@@ -139,11 +139,27 @@ export const toolkit: Toolkit = {
       type: "boolean",
       default: "true",
     },
+    href: {
+      description: "Makes video clickable with this URL",
+      type: "string",
+    },
+    domain: {
+      description: "Source domain label shown on the video",
+      type: "string",
+    },
     source: {
       description: "Source attribution",
       type: "{ label: string; iconUrl?: string; url?: string }",
     },
     createdAt: { description: "Creation timestamp (ISO 8601)", type: "string" },
+    onNavigate: {
+      description: "Called when user clicks the video link",
+      type: "(href: string, video: SerializableVideo) => void",
+    },
+    onMediaEvent: {
+      description: "Called on play, pause, mute, or unmute",
+      type: "(type: 'play' | 'pause' | 'mute' | 'unmute') => void",
+    },
   }}
 />
 

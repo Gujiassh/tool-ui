@@ -78,8 +78,10 @@ Two pieces connect the component to the conversation: a **backend tool** that re
 Create (or update) your API route to include a tool the LLM can call. This tool accepts a URL, fetches metadata, and returns JSON matching the LinkPreview schema.
 
 ```ts title="app/api/chat/route.ts"
-import { streamText, tool, convertToModelMessages, jsonSchema } from "ai";
+import { streamText, tool, convertToModelMessages } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
+import { SerializableLinkPreviewSchema } from "@/components/tool-ui/link-preview/schema";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
@@ -91,12 +93,9 @@ export async function POST(req: Request) {
       // The LLM decides when to call this tool based on the description.
       previewLink: tool({
         description: "Show a preview card for a URL",
-        inputSchema: jsonSchema<{ url: string }>({
-          type: "object",
-          properties: { url: { type: "string", format: "uri" } },
-          required: ["url"],
-          additionalProperties: false,
-        }),
+        inputSchema: z.object({ url: z.url() }),
+        // outputSchema validates the result against the component's schema.
+        outputSchema: SerializableLinkPreviewSchema,
         // execute() runs on the server when the LLM calls the tool.
         // It returns JSON that matches the LinkPreview component's schema.
         async execute({ url }) {

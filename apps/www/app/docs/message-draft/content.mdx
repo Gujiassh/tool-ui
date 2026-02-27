@@ -203,6 +203,10 @@ Pass `outcome` to render a one-line receipt. Useful for showing the final state 
       type: "string",
       required: true,
     },
+    from: {
+      description: "Sender address",
+      type: "string",
+    },
     to: {
       description: "Primary recipients",
       type: "string[]",
@@ -225,7 +229,7 @@ Pass `outcome` to render a one-line receipt. Useful for showing the final state 
   type={{
     target: {
       description: "Slack destination",
-      type: "{ type: 'channel' | 'dm', name: string }",
+      type: "{ type: 'channel' | 'dm', name: string, memberCount?: number }",
       required: true,
     },
   }}

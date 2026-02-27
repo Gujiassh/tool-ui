@@ -123,6 +123,11 @@ The receipt shows only the selected option(s) with a checkmark. Unselected optio
 
 <TypeTable
   type={{
+    id: {
+      description: "Unique identifier for this component instance",
+      type: "string",
+      required: true,
+    },
     options: {
       description: "List of selectable options",
       type: "OptionListOption[]",

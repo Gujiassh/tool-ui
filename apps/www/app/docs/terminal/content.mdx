@@ -173,6 +173,18 @@ export const toolkit: Toolkit = {
       description: "Auto-collapse if output exceeds this many lines",
       type: "number",
     },
+    expanded: {
+      description: "Controlled expand state (for collapsible mode)",
+      type: "boolean",
+    },
+    defaultExpanded: {
+      description: "Initial expand state (for collapsible mode)",
+      type: "boolean",
+    },
+    onExpandedChange: {
+      description: "Called when expand state changes",
+      type: "(expanded: boolean) => void",
+    },
   }}
 />
 

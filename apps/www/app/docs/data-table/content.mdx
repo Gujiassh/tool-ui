@@ -224,6 +224,11 @@ import { DataTable } from "@/components/tool-ui/data-table";
 
 <TypeTable
   type={{
+    id: {
+      description: "Unique identifier for this component instance",
+      type: "string",
+      required: true,
+    },
     columns: {
       description: "Column definitions",
       type: "Column[]",
@@ -239,6 +244,14 @@ import { DataTable } from "@/components/tool-ui/data-table";
         "Unique key per row (strongly recommended for stable reconciliation)",
       type: "keyof T",
       required: false,
+    },
+    emptyMessage: {
+      description: "Message to display when data is empty",
+      type: "string",
+    },
+    maxHeight: {
+      description: "Max height for scrollable table body (CSS value)",
+      type: "string",
     },
     locale: { description: "Intl locale", type: "string", default: '"en-US"' },
   }}
@@ -264,7 +277,19 @@ import { DataTable } from "@/components/tool-ui/data-table";
       description: "Text alignment",
       type: "'left' | 'right' | 'center'",
     },
+    abbr: {
+      description: "Abbreviated header text for narrow columns",
+      type: "string",
+    },
+    width: {
+      description: "CSS width for the column (e.g., '120px', '20%')",
+      type: "string",
+    },
     truncate: { description: "Truncate with ellipsis", type: "boolean" },
+    hideOnMobile: {
+      description: "Hide this column in the mobile card layout",
+      type: "boolean",
+    },
   }}
 />
 

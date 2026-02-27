@@ -168,6 +168,10 @@ The receipt shows a "Complete" badge with a summary of all choices listed. It is
       type: "'single' | 'multi'",
       default: "'single'",
     },
+    defaultValue: {
+      description: "Pre-selected option IDs for this step",
+      type: "string[]",
+    },
     onSelect: {
       description: "Called when user selects option(s) and clicks Next",
       type: "(optionIds: string[]) => void | Promise<void>",
@@ -192,6 +196,10 @@ The receipt shows a "Complete" badge with a summary of all choices listed. It is
       description: "All step definitions",
       type: "QuestionFlowDefinition[]",
       required: true,
+    },
+    onStepChange: {
+      description: "Called when the active step changes",
+      type: "(stepId: string) => void",
     },
     onComplete: {
       description: "Called with all answers when wizard finishes",
