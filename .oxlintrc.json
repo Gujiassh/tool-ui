@@ -58,8 +58,7 @@
     "**/.next/**",
     "**/out/**",
     "**/next-env.d.ts",
-    "components/tool-ui/weather-widget/generated/**",
-    ".agents/skills/**"
+    "components/tool-ui/weather-widget/generated/**"
   ],
   "settings": {
     "next": {

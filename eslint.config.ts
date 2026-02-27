@@ -28,7 +28,6 @@ const eslintConfig = defineConfig([
     "**/out/**",
     "**/next-env.d.ts",
     "components/tool-ui/weather-widget/generated/**",
-    ".agents/skills/**",
   ]),
 
   // TypeScript parser + plugin (plugin registered for disable comment

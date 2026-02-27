@@ -1,6 +1,6 @@
 {
   "name": "tool-agent",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "CLI for setting up Tool UI coding agent integrations",
   "bin": {
     "tool-agent": "./dist/cli.mjs"

@@ -101,7 +101,7 @@ async function main(): Promise<void> {
 
   if (config.agent === "claude-code") {
     const claudeArgs = ["--plugin-dir", config.pluginPath];
-    if (prompt) claudeArgs.unshift(prompt);
+    if (prompt) claudeArgs.unshift(`/tool-ui ${prompt}`);
     if (dry) {
       const cmd = ["claude", ...claudeArgs];
       const escaped = cmd.map((a) => (a.includes(" ") ? `"${a}"` : a));
