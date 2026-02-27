@@ -60,16 +60,22 @@ import { Chart } from "@/components/tool-ui/chart";
 Register this renderer so tool results display as `Chart`.
 
 ```tsx
-<Chart
-  id="clickable"
-  type="line"
-  data={data}
-  xKey="time"
-  series={[{ key: "value", label: "Value" }]}
-  onDataPointClick={(point) => {
-    console.log("Clicked:", point.xValue, point.yValue);
-  }}
-/>
+import { type Toolkit } from "@assistant-ui/react";
+import { Chart } from "@/components/tool-ui/chart";
+import { safeParseSerializableChart } from "@/components/tool-ui/chart/schema";
+
+export const toolkit: Toolkit = {
+  showChart: {
+    type: "backend",
+    render: ({ result }) => {
+      const parsed = safeParseSerializableChart(result);
+      if (!parsed) {
+        return null;
+      }
+      return <Chart {...parsed} />;
+    },
+  },
+};
 ```
 
 </Step>

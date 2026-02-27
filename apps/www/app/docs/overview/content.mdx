@@ -50,15 +50,7 @@ Tool UI is a component library built for this. Each component turns a specific k
   </MockThread>
 </div>
 
-Same data, different experience. The left side either dumps JSON to the user or, with a markdown renderer like MDX, gives you a plain text link. The right side renders a clickable card that looks and behaves like a native part of the conversation.
-
-## What is tool calling?
-
-Tool calling happens when the assistant _does_ something instead of _saying_ something. The user asks "find me flights to Tokyo," and instead of describing options in a paragraph, the assistant calls a search tool and returns structured results.
-
-You define the functions the model can invoke: searching a database, fetching a URL, running a calculation. The model decides when to call them based on the conversation. It sends structured arguments, your server executes the function, and a result comes back.
-
-Usually that result is plain text or JSON dumped into the chat. Tool UI handles what comes after: **rendering those results as real UI**.
+Same data, different experience.
 
 ## What if tool results could render UI?
 
@@ -121,15 +113,7 @@ flowchart LR
 
 `} />
 
-1. **The assistant calls a tool.** Based on the conversation, the model invokes a tool you've defined (e.g., `previewLink`, `searchFlights`).
-2. **The tool returns JSON.** Your server-side function executes and returns structured data matching an `outputSchema`.
-3. **The schema matches. A component renders.** On the client, a registered renderer parses the JSON against the component's schema. If it matches, the component renders inline in the chat message.
-4. **The user interacts.** For display components, this is the end. For interactive components (decisions, approvals), the user takes an action.
-5. **The result returns.** The user's choice is sent back to the assistant as a tool result via `addResult`, continuing the conversation.
-
 ### Minimal example
-
-The server defines a tool with a typed output schema. The client registers a renderer that maps that output to a component.
 
 **Server:** define a tool that returns structured data.
 

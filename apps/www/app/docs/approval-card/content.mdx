@@ -142,7 +142,7 @@ Set `variant="destructive"` for dangerous or irreversible actions. The icon back
     },
     icon: {
       description:
-        'Lucide icon name in kebab-case (e.g., "rocket", "trash-2", "alert-triangle")',
+        'Lucide icon name (e.g., "Rocket", "trash-2"). Accepts PascalCase or kebab-case.',
       type: "string",
     },
     metadata: {
@@ -205,7 +205,6 @@ Long metadata values are automatically truncated with an ellipsis. Keep values c
   - `Tab` to move between buttons
   - `Enter` or `Space` to activate focused button
   - `Escape` triggers the cancel action
-- Loading state disables both buttons to prevent double-submission
 - Receipt state uses `role="status"` for screen reader announcements
 - Fade-in animation respects `prefers-reduced-motion`
 

@@ -6,7 +6,7 @@ import { DocsHeader } from "../_components/docs-header";
   mdxPath="app/docs/terminal/content.mdx"
 />
 
-Raw terminal output was not designed for conversation. Shell results lose their ANSI colors, exit codes, and stderr separation the moment they land in a chat message. Terminal renders command output the way you would see it in a real shell, colored, structured, and auto-collapsed when it gets long, so it does not take over the conversation.
+Terminal renders command output with ANSI colors, exit codes, and stderr separation preserved. Long output can be collapsed with `maxCollapsedLines`.
 
 **Role:** Information. For displaying data without user input. See [Design Guidelines](/docs/design-guidelines) for how component roles work.
 
@@ -205,42 +205,6 @@ export const toolkit: Toolkit = {
 />
 
 Use [`ToolUI.LocalActions`](/docs/actions) to compose external actions next to `Terminal`.
-
-## ANSI Color Support
-
-Terminal automatically renders ANSI escape codes for colored output:
-
-```tsx
-import { Terminal } from "@/components/tool-ui/terminal";
-
-const coloredOutput = "\x1b[32m✔\x1b[0m Success\n\x1b[31m✗\x1b[0m Error";
-
-<Terminal
-  id="my-terminal"
-  command="npm test"
-  stdout={coloredOutput}
-  exitCode={0}
-/>;
-```
-
-Common ANSI codes:
-
-- `\x1b[32m` - Green text
-- `\x1b[31m` - Red text
-- `\x1b[33m` - Yellow text
-- `\x1b[36m` - Cyan text
-- `\x1b[1m` - Bold text
-- `\x1b[0m` - Reset formatting
-
-## Exit Code Meanings
-
-- `0` - Success (green)
-- `1` - General error (red)
-- `2` - Misuse of shell builtins (red)
-- `126` - Command not executable (red)
-- `127` - Command not found (red)
-- `130` - Interrupted with Ctrl+C (red)
-- Any non-zero - Error (red)
 
 ## Accessibility
 

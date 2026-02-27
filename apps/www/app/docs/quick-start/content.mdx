@@ -19,9 +19,7 @@ import { Bot } from "lucide-react";
   </AlertDescription>
 </Alert>
 
-Add a Tool UI component to a chat app. By the end you'll have an assistant that renders a rich link preview card instead of raw JSON.
-
-**What you'll build:** A backend tool that fetches link metadata, and a frontend renderer that turns the JSON response into an interactive LinkPreview card, all wired together through [assistant-ui](https://www.assistant-ui.com/).
+Add a Tool UI component to a chat app powered by [assistant-ui](https://www.assistant-ui.com/).
 
 ## Install
 
@@ -68,8 +66,6 @@ This copies the source files into your project. The code is yours - change it ho
 </Steps>
 
 ## Wire it up
-
-Two pieces connect the component to the conversation: a **backend tool** that returns structured data when the model calls it, and a **frontend renderer** that turns that data into the LinkPreview component.
 
 <Steps>
 
@@ -203,16 +199,6 @@ The example above is a **display-only** component. The tool returns data, and th
 Components like [Option List](/docs/option-list) and [Approval Card](/docs/approval-card) support this pattern through **frontend tools**, where the model calls a tool, your UI renders the component, and the user's response is sent back via `addResult(...)`.
 
 For the full implementation pattern, including how to forward frontend tools through your API route and enable auto-continue after user decisions, see the [Advanced](/docs/advanced) page.
-
-## Other frameworks
-
-Tool UI components work with any React app. Without assistant-ui, you manually parse tool outputs and render components. Use assistant-ui for the best experience.
-
-Tool UI components are installed from registry entries, and each entry includes `components/tool-ui/shared` automatically.
-
-## Runtime options
-
-[assistant-ui](https://www.assistant-ui.com/) supports multiple runtimes: [AI SDK](https://ai-sdk.dev/), [LangGraph](https://langchain-ai.github.io/langgraphjs/), LangServe, [Mastra](https://mastra.dev/), or custom backends. The examples above use AI SDK v6.
 
 ## Next steps
 

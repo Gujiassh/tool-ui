@@ -181,8 +181,7 @@ import { PreferencesPanel } from "@/components/tool-ui/preferences-panel";
       type: "string",
     },
     sections: {
-      description:
-        "Preference sections with controls (max 2 sections, max 5 total items)",
+      description: "Preference sections with controls",
       type: "PreferenceSection[]",
       required: true,
     },
@@ -262,8 +261,7 @@ Use the receipt variant to display confirmed preferences or validation errors.
       type: "string",
     },
     items: {
-      description:
-        "Preference controls in this section. Each section supports 1-3 items.",
+      description: "Preference controls in this section",
       type: "PreferenceItem[]",
       required: true,
     },
@@ -290,7 +288,7 @@ Use the receipt variant to display confirmed preferences or validation errors.
     },
     type: {
       description:
-        "Control type: switch (binary), toggle (2-4 options), select (5+ options)",
+        "Control type: switch (binary), toggle (2+ options), select (5+ options)",
       type: '"switch" | "toggle" | "select"',
       required: true,
     },
@@ -333,13 +331,10 @@ Use the receipt variant to display confirmed preferences or validation errors.
   }}
 />
 
-## Limits
+## Control Type Guide
 
-- **Sections**: 2 maximum per panel
-- **Items per section**: 3 maximum
-- **Total items**: 5 maximum across all sections
-- **Toggle options**: 2-4 choices (use select for more)
-- **Select options**: 5+ choices (use toggle for fewer)
+- **Toggle options**: minimum 2 choices (use select for 5+)
+- **Select options**: minimum 5 choices (use toggle for fewer)
 
 ## Accessibility
 

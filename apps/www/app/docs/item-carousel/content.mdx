@@ -129,22 +129,6 @@ export const toolkit: Toolkit = {
   </Feature>
 </FeatureGrid>
 
-## Design Details
-
-How the carousel handles common interaction patterns:
-
-**Responsive button layout:** Each card is a container (`@container/card`). Narrow cards stack buttons vertically with the primary on top. Above 176px, buttons flow horizontally with the primary on the right. `flex-col-reverse` keeps DOM order consistent while adapting visual hierarchy.
-
-**Equal card heights:** Cards use CSS Grid (`grid-flow-col` with `auto-cols-max`). Grid cells match heights automatically, so a two-line title aligns with one-line neighbors.
-
-**Smooth scroll animation:** Custom JavaScript scrolling with a cubic-bezier ease-out curve. Respects `prefers-reduced-motion` with an instant-scroll fallback. Snap positions are calculated dynamically from card offsets.
-
-**Image handling:** Accepts image URLs or hex color fallbacks. Images use `loading="lazy"` and `decoding="async"`. On hover, images scale up 5% with a `duration-200` transform transition.
-
-**Overlay click target:** Interactive cards render a full-card overlay button (`absolute inset-0`, `z-10`) for `onItemClick`, while action buttons sit above it (`z-20`) so primary actions stay independently clickable.
-
-**Touch optimization:** `touch-manipulation` eliminates the 300ms tap delay on iOS. Navigation buttons appear only on hover/focus (desktop) with backdrop blur.
-
 ## Props
 
 <TypeTable
