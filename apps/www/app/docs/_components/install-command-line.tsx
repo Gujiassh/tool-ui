@@ -1,7 +1,6 @@
 "use client";
 
 import { InstallCommandBlock } from "./install-command-block";
-import { cn } from "@/lib/ui/cn";
 
 interface InstallCommandLineProps {
   componentId: string;
