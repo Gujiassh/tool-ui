@@ -1,9 +1,6 @@
 "use client";
 
-import type { MouseEventHandler } from "react";
 import Link from "next/link";
-import { Check, Copy as CopyIcon } from "lucide-react";
-import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -19,6 +16,7 @@ import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { analytics } from "@/lib/analytics";
 import { cn } from "@/lib/ui/cn";
 import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
+import { InstallCommandBlock } from "./install-command-block";
 
 const registryById = new Map(componentsRegistry.map((c) => [c.id, c]));
 
@@ -37,18 +35,7 @@ export function GalleryCardHeader({
   const name = meta?.label ?? componentId;
   const description = meta?.description;
   const docsHref = (meta?.path ?? `/docs/${componentId}`) as `/docs/${string}`;
-  const installCommand = `npx shadcn@latest add @tool-ui/${componentId}`;
   const usageCode = getGalleryUsageCode(componentId);
-
-  const [checked, copyCommand] = useCopyButton(async () => {
-    await navigator.clipboard.writeText(installCommand);
-  });
-
-  const onCopy: MouseEventHandler<HTMLButtonElement> = (event) => {
-    analytics.code.blockCopied("bash", "docs_header");
-    analytics.docs.installSnippetCopied("registry", "docs_header");
-    copyCommand(event);
-  };
 
   return (
     <header
@@ -65,7 +52,7 @@ export function GalleryCardHeader({
         >
           <h2>{name}</h2>
         </Link>
-        <div className="pointer-events-none translate-y-0.5 opacity-0 transition-all duration-200 focus-within:pointer-events-auto focus-within:translate-y-0 focus-within:opacity-100 group-focus-within/gallery-card:pointer-events-auto group-focus-within/gallery-card:translate-y-0 group-focus-within/gallery-card:opacity-100 group-hover/gallery-card:pointer-events-auto group-hover/gallery-card:translate-y-0 group-hover/gallery-card:opacity-100">
+        <div>
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -92,25 +79,10 @@ export function GalleryCardHeader({
                   <h3 className="text-foreground text-sm font-medium">
                     Install
                   </h3>
-                  <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5">
-                    <code className="text-foreground/95 min-w-0 flex-1 break-all font-mono text-sm leading-relaxed">
-                      {installCommand}
-                    </code>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 shrink-0 px-2.5"
-                      onClick={onCopy}
-                      aria-label={checked ? "Copied" : "Copy command"}
-                    >
-                      {checked ? (
-                        <Check className="size-4 text-green-600" />
-                      ) : (
-                        <CopyIcon className="size-4" />
-                      )}
-                    </Button>
-                  </div>
+                  <InstallCommandBlock
+                    componentId={componentId}
+                    variant="block"
+                  />
                 </section>
                 {usageCode && (
                   <section className="flex min-h-0 flex-1 flex-col space-y-2">

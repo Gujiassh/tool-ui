@@ -26,6 +26,8 @@ export interface ComponentMeta {
   description: string;
   path: string;
   category: ComponentCategory;
+  /** Prompt for npx tool-agent to integrate this component */
+  toolAgentPrompt: string;
 }
 
 export const componentsRegistry: ComponentMeta[] = [
@@ -35,6 +37,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Binary confirmation for agent actions",
     path: "/docs/approval-card",
     category: "confirmation",
+    toolAgentPrompt:
+      "integrate the approval card component for binary confirmation of agent actions",
   },
   {
     id: "chart",
@@ -42,6 +46,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Visualize data with interactive charts",
     path: "/docs/chart",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the chart component to visualize data with interactive charts",
   },
   {
     id: "citation",
@@ -49,6 +55,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Display source references with attribution",
     path: "/docs/citation",
     category: "display",
+    toolAgentPrompt:
+      "integrate the citation component to display source references with attribution",
   },
   {
     id: "code-block",
@@ -56,6 +64,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Display syntax-highlighted code snippets",
     path: "/docs/code-block",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the code block component for syntax-highlighted code snippets",
   },
   {
     id: "code-diff",
@@ -63,6 +73,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Compare code changes with syntax-highlighted diffs",
     path: "/docs/code-diff",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the code diff component to compare code changes with syntax-highlighted diffs",
   },
   {
     id: "data-table",
@@ -70,6 +82,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Present structured data in sortable tables",
     path: "/docs/data-table",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the data table component to present structured data in sortable tables",
   },
   {
     id: "geo-map",
@@ -77,6 +91,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Display geolocated entities and fleet positions",
     path: "/docs/geo-map",
     category: "display",
+    toolAgentPrompt:
+      "integrate the geo map component to display geolocated entities and fleet positions",
   },
   {
     id: "image",
@@ -84,6 +100,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Display images with metadata and attribution",
     path: "/docs/image",
     category: "media",
+    toolAgentPrompt:
+      "integrate the image component to display images with metadata and attribution",
   },
   {
     id: "image-gallery",
@@ -91,6 +109,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Masonry grid with fullscreen lightbox viewer",
     path: "/docs/image-gallery",
     category: "media",
+    toolAgentPrompt:
+      "integrate the image gallery component with masonry grid and lightbox viewer",
   },
   {
     id: "video",
@@ -98,6 +118,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Video playback with controls and poster",
     path: "/docs/video",
     category: "media",
+    toolAgentPrompt:
+      "integrate the video component for video playback with controls and poster",
   },
   {
     id: "audio",
@@ -105,6 +127,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Audio playback with artwork and metadata",
     path: "/docs/audio",
     category: "media",
+    toolAgentPrompt:
+      "integrate the audio component for audio playback with artwork and metadata",
   },
   {
     id: "link-preview",
@@ -112,6 +136,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Rich link previews with Open Graph data",
     path: "/docs/link-preview",
     category: "display",
+    toolAgentPrompt:
+      "integrate the link preview component for rich link previews with Open Graph data",
   },
   {
     id: "message-draft",
@@ -119,6 +145,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Review and approve messages before sending",
     path: "/docs/message-draft",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the message draft component to review and approve messages before sending",
   },
   {
     id: "option-list",
@@ -126,6 +154,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Let users select from multiple choices",
     path: "/docs/option-list",
     category: "input",
+    toolAgentPrompt:
+      "integrate the option list component to let users select from multiple choices",
   },
   {
     id: "order-summary",
@@ -133,6 +163,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Display purchases with itemized pricing",
     path: "/docs/order-summary",
     category: "confirmation",
+    toolAgentPrompt:
+      "integrate the order summary component to display purchases with itemized pricing",
   },
   {
     id: "parameter-slider",
@@ -140,6 +172,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Numeric parameter adjustment controls",
     path: "/docs/parameter-slider",
     category: "input",
+    toolAgentPrompt:
+      "integrate the parameter slider component for numeric parameter adjustment controls",
   },
   {
     id: "plan",
@@ -147,6 +181,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Step-by-step task workflows with status tracking",
     path: "/docs/plan",
     category: "progress",
+    toolAgentPrompt:
+      "integrate the plan component for step-by-step task workflows with status tracking",
   },
   {
     id: "preferences-panel",
@@ -154,6 +190,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Compact settings panel for user preferences",
     path: "/docs/preferences-panel",
     category: "input",
+    toolAgentPrompt:
+      "integrate the preferences panel component for compact user settings",
   },
   {
     id: "progress-tracker",
@@ -161,6 +199,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Real-time status feedback for multi-step operations",
     path: "/docs/progress-tracker",
     category: "progress",
+    toolAgentPrompt:
+      "integrate the progress tracker component for real-time status feedback on multi-step operations",
   },
   {
     id: "item-carousel",
@@ -168,6 +208,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Horizontal carousel for browsing collections",
     path: "/docs/item-carousel",
     category: "display",
+    toolAgentPrompt:
+      "integrate the item carousel component for horizontal browsing of collections",
   },
   {
     id: "instagram-post",
@@ -175,6 +217,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Render Instagram post previews",
     path: "/docs/instagram-post",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the instagram post component to render Instagram post previews",
   },
   {
     id: "linkedin-post",
@@ -182,6 +226,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Render LinkedIn post previews",
     path: "/docs/linkedin-post",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the linkedin post component to render LinkedIn post previews",
   },
   {
     id: "x-post",
@@ -189,6 +235,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Render X post previews",
     path: "/docs/x-post",
     category: "artifacts",
+    toolAgentPrompt:
+      "integrate the x post component to render X/Twitter post previews",
   },
   {
     id: "stats-display",
@@ -196,6 +244,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Key metrics and KPIs in a visual grid",
     path: "/docs/stats-display",
     category: "display",
+    toolAgentPrompt:
+      "integrate the stats display component for key metrics and KPIs in a visual grid",
   },
   {
     id: "terminal",
@@ -203,6 +253,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Show command-line output and logs",
     path: "/docs/terminal",
     category: "display",
+    toolAgentPrompt:
+      "integrate the terminal component to show command-line output and logs",
   },
   {
     id: "question-flow",
@@ -210,6 +262,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Multi-step guided questions with branching",
     path: "/docs/question-flow",
     category: "input",
+    toolAgentPrompt:
+      "integrate the question flow component for multi-step guided questions with branching",
   },
   {
     id: "weather-widget",
@@ -217,6 +271,8 @@ export const componentsRegistry: ComponentMeta[] = [
     description: "Probably more weather widget than anyone asked for",
     path: "/docs/weather-widget",
     category: "display",
+    toolAgentPrompt:
+      "integrate the weather widget component for weather display with forecasts and conditions",
   },
 ];
 

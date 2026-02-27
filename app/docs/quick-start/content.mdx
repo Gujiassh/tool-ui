@@ -55,9 +55,11 @@ Run `pnpm dev` and confirm you see a working chat interface before continuing.
 
 <Step title="Add a Tool UI component">
 
-```bash
-npx shadcn@latest add https://tool-ui.com/r/link-preview.json
-```
+<InstallCommandBlock
+  componentId="link-preview"
+  toolAgentPrompt="integrate the link preview component for rich link previews with Open Graph data in the chat experience"
+  variant="block"
+/>
 
 This copies the source files into your project. The code is yours - change it however you want.
 
@@ -182,9 +184,11 @@ Same pattern for any component:
 
 1. Install from the registry:
 
-```bash
-npx shadcn@latest add https://tool-ui.com/r/approval-card.json
-```
+<InstallCommandBlock
+  componentId="approval-card"
+  toolAgentPrompt="integrate the approval card component for binary confirmation of agent actions"
+  variant="block"
+/>
 
 2. Define a backend tool that returns data matching the component's schema.
 3. Register a renderer in your toolkit that maps the tool name to the component.

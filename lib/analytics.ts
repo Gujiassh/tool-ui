@@ -137,7 +137,11 @@ export const analytics = {
 
     /** Installation command copy intent (high-conversion docs action) */
     installSnippetCopied: (
-      snippetType: "skills" | "registry" | "package_manager",
+      snippetType:
+        | "skills"
+        | "registry"
+        | "package_manager"
+        | "tool_agent",
       location: "docs_code_block" | "docs_header",
     ) =>
       trackEvent("install_snippet_copied", {

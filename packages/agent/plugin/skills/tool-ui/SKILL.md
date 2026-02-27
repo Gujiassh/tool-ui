@@ -153,6 +153,8 @@ Key points:
 
 Create a single `toolkit.ts` (or `toolkit.tsx`) that exports a `Toolkit` object. Each key is a tool name; each value has `type`, `description`, `parameters`, and `render`.
 
+**Tool descriptions** — Always include a `description` on every tool. Describe *when* to call the tool and what role it plays, not the visible content. The Tool UI component already renders the payload (options, plan, chart, etc.) to the user; a description that repeats that content is redundant. Prefer model-oriented guidance (e.g. "Present a plan for the user to follow" or "Let the user pick one option") over content echo (e.g. "Shows a list of options with labels and descriptions").
+
 ## -**Frontend vs backend tools**
 
 | -   |                    | Frontend                                                      | Backend                                                                 |
@@ -379,9 +381,14 @@ When `choice` is present, the component renders in receipt mode — read-only, n
 ## Operational Rules
 
 - Install the smallest set of components that solves the request.
+- Every tool must have a `description`; write it for the model (when to call, what role) — avoid repeating content the component will render.
 
 Notes:
 Frontend tools need an execute function
 Backend tools have the tool implementation on the server side.
 Backend tool don't need either
 Ignore the generated files
+After setup:
+
+- Ensure the required package dependencies are installed so the first experience of running after the changes is magical
+- Notify the user if env variables are not set that should be for a successful run of the feature that was just implemented, most likely mainly variables required by the api chat endpoint.

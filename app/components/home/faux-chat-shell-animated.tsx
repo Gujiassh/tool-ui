@@ -113,7 +113,7 @@ export function FauxChatShellAnimated() {
           transformOrigin: `${originX}% ${originY}%`,
         }}
       >
-        <FauxChatShellNoLightOverlay />
+        <FauxChatShellNoLightOverlay live />
 
         {/* Lighting overlay - fades in from 0 to full opacity */}
         <motion.div

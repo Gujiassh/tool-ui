@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/ui/cn";
 import { ChatShowcase } from "./chat-showcase";
+import { DemoChat } from "./demo-chat";
 
 type FauxChatShellProps = {
   className?: string;
+  /** When true, renders live DemoChat instead of static ChatShowcase */
+  live?: boolean;
 };
 
 export function generateSineEasedGradient(
@@ -119,6 +122,7 @@ function ComposerBar() {
 function FauxChatShellBase({
   className,
   showLightOverlay,
+  live = false,
 }: FauxChatShellProps & { showLightOverlay: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gradientStyle = useDirectionalLight(containerRef);
@@ -160,18 +164,28 @@ function FauxChatShellBase({
         </div>
         <div className="gradient-line-header h-px" />
       </div>
-      <div className="scrollbar-subtle relative z-0 grow overflow-y-auto px-6 pt-24">
-        <ChatShowcase />
-      </div>
       <div
-        className="pointer-events-none absolute inset-x-0 right-3 bottom-0 z-10 h-24"
-        style={{
-          background:
-            "linear-gradient(to top, var(--glow-surface-to) 0%, transparent 100%)",
-        }}
-        aria-hidden="true"
-      />
-      <ComposerBar />
+        className={
+          live
+            ? "relative z-0 flex min-h-0 flex-1 flex-col overflow-hidden"
+            : "scrollbar-subtle relative z-0 grow overflow-y-auto px-6 pt-24"
+        }
+      >
+        {live ? <DemoChat /> : <ChatShowcase />}
+      </div>
+      {!live && (
+        <>
+          <div
+            className="pointer-events-none absolute inset-x-0 right-3 bottom-0 z-10 h-24"
+            style={{
+              background:
+                "linear-gradient(to top, var(--glow-surface-to) 0%, transparent 100%)",
+            }}
+            aria-hidden="true"
+          />
+          <ComposerBar />
+        </>
+      )}
     </div>
   );
 }
