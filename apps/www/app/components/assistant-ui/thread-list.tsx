@@ -1,13 +1,12 @@
-import { useCallback, type FC } from "react";
 import {
   ThreadListItemPrimitive,
   ThreadListPrimitive,
   useAuiState,
 } from "@assistant-ui/react";
 import { ArchiveIcon, HistoryIcon, PlusIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { type FC, useCallback } from "react";
 import { TooltipIconButton } from "@/app/components/assistant-ui/tooltip-icon-button";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export type ThreadListProps = {
@@ -39,7 +38,7 @@ const ThreadListNew: FC<{ label: string }> = ({ label }) => {
   return (
     <ThreadListPrimitive.New asChild>
       <Button
-        className="aui-thread-list-new hover:bg-muted data-active:bg-muted flex items-center justify-start gap-1 rounded-lg px-2.5 py-2 text-start"
+        className="aui-thread-list-new flex items-center justify-start gap-1 rounded-lg px-2.5 py-2 text-start hover:bg-muted data-active:bg-muted"
         variant="ghost"
       >
         <PlusIcon />
@@ -73,7 +72,7 @@ const ThreadListItems: FC<ThreadListItemsProps> = ({
     .filter(({ id }) => !allowedThreadIds || allowedThreadIds.has(id));
 
   if (indexMap.length === 0) {
-    return emptyState ? <>{emptyState}</> : null;
+    return emptyState ? emptyState : null;
   }
 
   return indexMap.map(({ id, index }) => (
@@ -109,7 +108,7 @@ const ThreadListItem: FC<{ onReplay?: (threadId: string) => void }> = ({
   onReplay,
 }) => {
   return (
-    <ThreadListItemPrimitive.Root className="aui-thread-list-item hover:bg-muted focus-visible:bg-muted focus-visible:ring-ring data-active:bg-muted flex items-center gap-2 rounded-lg transition-all focus-visible:ring-2 focus-visible:outline-none">
+    <ThreadListItemPrimitive.Root className="aui-thread-list-item flex items-center gap-2 rounded-lg transition-all hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-active:bg-muted">
       <ThreadListItemPrimitive.Trigger className="aui-thread-list-item-trigger grow px-3 py-2 text-start">
         <ThreadListItemTitle />
       </ThreadListItemPrimitive.Trigger>
@@ -135,7 +134,7 @@ const ThreadListItemActions: FC<{ onReplay?: (threadId: string) => void }> = ({
     <div className="flex items-center gap-1 pr-2">
       {onReplay && (
         <TooltipIconButton
-          className="aui-thread-list-item-replay text-foreground hover:text-primary size-4 p-0"
+          className="aui-thread-list-item-replay size-4 p-0 text-foreground hover:text-primary"
           variant="ghost"
           tooltip="Replay with another instance"
           onClick={(event) => {
@@ -148,7 +147,7 @@ const ThreadListItemActions: FC<{ onReplay?: (threadId: string) => void }> = ({
       )}
       <ThreadListItemPrimitive.Archive asChild>
         <TooltipIconButton
-          className="aui-thread-list-item-archive text-foreground hover:text-primary size-4 p-0"
+          className="aui-thread-list-item-archive size-4 p-0 text-foreground hover:text-primary"
           variant="ghost"
           tooltip="Archive thread"
         >

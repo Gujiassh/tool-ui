@@ -1,33 +1,33 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
 import {
-  Sun,
   Cloud,
-  CloudSun,
-  CloudFog,
   CloudDrizzle,
-  CloudRain,
-  CloudLightning,
-  Snowflake,
+  CloudFog,
   CloudHail,
-  Wind,
+  CloudLightning,
+  CloudRain,
+  CloudSun,
   type LucideIcon,
+  Snowflake,
+  Sun,
+  Wind,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "./_adapter";
-import type {
-  ForecastDay,
-  TemperatureUnit,
-  WeatherConditionCode,
-} from "./schema";
+import { useGlassStyles } from "./effects/glass-panel-svg";
+import { resolveGlassBackdropFilterStyles } from "./effects/glass-style-resolver";
 import {
   getSceneBrightnessFromTimeOfDay,
   getTimeOfDay,
   getWeatherTheme,
   type WeatherTheme,
 } from "./effects/parameter-mapper";
-import { resolveGlassBackdropFilterStyles } from "./effects/glass-style-resolver";
-import { useGlassStyles } from "./effects/glass-panel-svg";
+import type {
+  ForecastDay,
+  TemperatureUnit,
+  WeatherConditionCode,
+} from "./schema";
 
 function getPeakIntensity(timeOfDay: number): number {
   const noonDistance = Math.abs(timeOfDay - 0.5);

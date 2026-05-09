@@ -1,11 +1,11 @@
 "use client";
 
 import { Suspense } from "react";
-import { StagingToolbar } from "./_components/staging-toolbar";
 import { StagingCanvas } from "./_components/staging-canvas";
 import { StagingShowcase } from "./_components/staging-showcase";
-import { useStagingState } from "./_components/use-staging-state";
+import { StagingToolbar } from "./_components/staging-toolbar";
 import { useKeyboardShortcuts } from "./_components/use-keyboard-shortcuts";
+import { useStagingState } from "./_components/use-staging-state";
 
 function StagingContent() {
   const { componentId, presetName, debugLevel, viewMode } = useStagingState();

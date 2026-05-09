@@ -1,27 +1,27 @@
 "use client";
 
-import * as React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
+  Code2,
+  Database,
+  ExternalLink,
+  File,
   FileText,
   Globe,
-  Code2,
   Newspaper,
-  Database,
-  File,
-  ExternalLink,
 } from "lucide-react";
-import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
-import { Citation } from "./citation";
-import type {
-  SerializableCitation,
-  CitationType,
-  CitationVariant,
-} from "./schema";
+import * as React from "react";
 import {
   openSafeNavigationHref,
   resolveSafeNavigationHref,
 } from "../shared/media";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
+import { Citation } from "./citation";
+import type {
+  CitationType,
+  CitationVariant,
+  SerializableCitation,
+} from "./schema";
 
 const TYPE_ICONS: Record<CitationType, LucideIcon> = {
   webpage: Globe,
@@ -231,7 +231,7 @@ function OverflowIndicator({
               "bg-muted/60 text-sm tabular-nums",
               "transition-colors duration-150",
               "hover:bg-muted",
-              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             )}
           >
             <span className="text-muted-foreground">+{count} more</span>
@@ -261,10 +261,10 @@ function OverflowIndicator({
           onMouseLeave={handleMouseLeave}
           className={cn(
             "flex items-center justify-center rounded-xl px-4 py-3",
-            "border-border bg-card border border-dashed",
+            "border border-border border-dashed bg-card",
             "transition-colors duration-150",
             "hover:border-foreground/25 hover:bg-muted/50",
-            "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           )}
         >
           <span className="text-muted-foreground text-sm tabular-nums">
@@ -298,7 +298,7 @@ function OverflowItem({ citation, onClick }: OverflowItemProps) {
     <button
       type="button"
       onClick={onClick}
-      className="group hover:bg-muted focus-visible:bg-muted flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors focus-visible:outline-none"
+      className="group flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2 py-2 text-left transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
     >
       {citation.favicon ? (
         <img
@@ -307,23 +307,23 @@ function OverflowItem({ citation, onClick }: OverflowItemProps) {
           aria-hidden="true"
           width={16}
           height={16}
-          className="bg-muted size-4 shrink-0 rounded object-cover"
+          className="size-4 shrink-0 rounded bg-muted object-cover"
         />
       ) : (
         <TypeIcon
-          className="text-muted-foreground size-4 shrink-0"
+          className="size-4 shrink-0 text-muted-foreground"
           aria-hidden="true"
         />
       )}
       <div className="min-w-0 flex-1">
-        <p className="group-hover:decoration-foreground/30 truncate text-sm font-medium group-hover:underline group-hover:underline-offset-2">
+        <p className="truncate font-medium text-sm group-hover:underline group-hover:decoration-foreground/30 group-hover:underline-offset-2">
           {citation.title}
         </p>
-        <p className="text-muted-foreground truncate text-xs">
+        <p className="truncate text-muted-foreground text-xs">
           {citation.domain}
         </p>
       </div>
-      <ExternalLink className="text-muted-foreground mt-0.5 size-3.5 shrink-0 self-start opacity-0 transition-opacity group-hover:opacity-100" />
+      <ExternalLink className="mt-0.5 size-3.5 shrink-0 self-start text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
     </button>
   );
 }
@@ -384,7 +384,7 @@ function StackedCitations({
               "bg-muted/40 outline-none",
               "transition-colors duration-150",
               "hover:bg-muted/70",
-              "focus-visible:ring-ring focus-visible:ring-2",
+              "focus-visible:ring-2 focus-visible:ring-ring",
               className,
             )}
           >
@@ -396,7 +396,7 @@ function StackedCitations({
                   <div
                     key={citation.id}
                     className={cn(
-                      "border-border bg-background dark:border-foreground/20 relative flex size-6 items-center justify-center rounded-full border shadow-xs",
+                      "relative flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-xs dark:border-foreground/20",
                       index > 0 && "-ml-2",
                     )}
                     style={{ zIndex: maxIcons - index }}
@@ -412,7 +412,7 @@ function StackedCitations({
                       />
                     ) : (
                       <TypeIcon
-                        className="text-muted-foreground size-3"
+                        className="size-3 text-muted-foreground"
                         aria-hidden="true"
                       />
                     )}
@@ -421,10 +421,10 @@ function StackedCitations({
               })}
               {remainingCount > 0 && (
                 <div
-                  className="border-border bg-background dark:border-foreground/20 relative -ml-2 flex size-6 items-center justify-center rounded-full border shadow-xs"
+                  className="relative -ml-2 flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-xs dark:border-foreground/20"
                   style={{ zIndex: 0 }}
                 >
-                  <span className="text-muted-foreground text-[10px] font-medium tracking-tight">
+                  <span className="font-medium text-[10px] text-muted-foreground tracking-tight">
                     •••
                   </span>
                 </div>

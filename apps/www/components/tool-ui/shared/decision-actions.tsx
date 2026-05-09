@@ -1,24 +1,40 @@
 "use client";
 
 import { useCallback } from "react";
+import { cn } from "./_adapter";
 import { ActionButtons } from "./action-buttons";
 import {
-  DecisionResultSchema,
+  createDecisionResult,
   type DecisionAction,
   type DecisionResult,
+  DecisionResultSchema,
 } from "./schema";
-import { cn } from "./_adapter";
 import { useOptionalToolUI } from "./tool-ui-context";
 
 export interface DecisionActionsProps<
   TPayload extends Record<string, unknown> = Record<string, unknown>,
 > {
+  /** Stable identifier for the decision surface. Defaults to `id` from <ToolUI> context. */
   id?: string;
+  /**
+   * Stable decision identifier used to deduplicate the decision envelope across
+   * retries / re-renders. Pass any string unique to the surface.
+   */
+  decisionId: string;
   actions: DecisionAction[];
+  /**
+   * Returns an optional payload for the decision. The library wraps it in a
+   * typed `DecisionResult` envelope before invoking `onCommit` — callers cannot
+   * forget required envelope fields.
+   */
   onAction: (action: {
     id: string;
     label: string;
-  }) => DecisionResult<TPayload> | Promise<DecisionResult<TPayload>>;
+  }) =>
+    | TPayload
+    | undefined
+    | undefined
+    | Promise<TPayload | undefined | undefined>;
   onCommit: (result: DecisionResult<TPayload>) => void | Promise<void>;
   onBeforeAction?: (actionId: string) => boolean | Promise<boolean>;
   confirmTimeout?: number;
@@ -31,6 +47,7 @@ export function DecisionActions<
   TPayload extends Record<string, unknown> = Record<string, unknown>,
 >({
   id: explicitId,
+  decisionId,
   actions,
   onAction,
   onCommit,
@@ -54,18 +71,24 @@ export function DecisionActions<
       const action = actions.find((item) => item.id === actionId);
       if (!action) return;
 
-      const result = await onAction({ id: action.id, label: action.label });
-      const parsed = DecisionResultSchema.safeParse(result);
+      const payload = await onAction({ id: action.id, label: action.label });
 
+      const envelope = createDecisionResult<TPayload>({
+        decisionId,
+        action: { id: action.id, label: action.label },
+        payload: payload ?? undefined,
+      });
+
+      const parsed = DecisionResultSchema.safeParse(envelope);
       if (!parsed.success) {
         throw new Error(
-          `DecisionActions expected a valid DecisionResult envelope for action "${action.id}".`,
+          `DecisionActions built an invalid DecisionResult envelope for action "${action.id}".`,
         );
       }
 
-      await onCommit(parsed.data as DecisionResult<TPayload>);
+      await onCommit(envelope);
     },
-    [actions, onAction, onCommit],
+    [actions, decisionId, onAction, onCommit],
   );
 
   return (

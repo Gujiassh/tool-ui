@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/ui/cn";
 import type { GlassParams } from "../../weather-compositor/presets";
 
@@ -86,7 +86,7 @@ export function GlassControls({ params, onChange }: GlassControlsProps) {
                 : "text-muted-foreground/30",
             )}
           />
-          <span className="text-[11px] font-medium text-foreground/70">
+          <span className="font-medium text-[11px] text-foreground/70">
             Glass Effect
           </span>
           {!params.enabled && (
@@ -104,7 +104,7 @@ export function GlassControls({ params, onChange }: GlassControlsProps) {
       </button>
 
       {isExpanded && (
-        <div className="border-t border-border/30 px-3 py-2.5 space-y-2.5">
+        <div className="space-y-2.5 border-border/30 border-t px-3 py-2.5">
           <div className="flex items-center gap-2">
             <label className="flex cursor-pointer items-center gap-2">
               <input

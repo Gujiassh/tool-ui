@@ -1,5 +1,6 @@
 "use client";
 
+import * as SliderPrimitive from "@radix-ui/react-slider";
 import {
   useCallback,
   useEffect,
@@ -8,19 +9,17 @@ import {
   useRef,
   useState,
 } from "react";
-import * as SliderPrimitive from "@radix-ui/react-slider";
-import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";
 import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import { useControllableState } from "../shared/use-controllable-state";
 import { useSignatureReset } from "../shared/use-signature-reset";
-
 import { cn } from "./_adapter";
 import {
   createSliderSignature,
   createSliderValueSnapshot,
   sliderRangeToPercent,
 } from "./math";
+import type { ParameterSliderProps, SliderConfig, SliderValue } from "./schema";
 
 function formatSignedValue(
   value: number,
@@ -497,7 +496,7 @@ function SliderRow({
       <SliderPrimitive.Root
         id={id}
         className={cn(
-          "group/slider relative flex w-full touch-none items-center select-none",
+          "group/slider relative flex w-full touch-none select-none items-center",
           "isolate h-12",
           isDragging
             ? "[&>span]:transition-[left,transform] [&>span]:duration-45 [&>span]:ease-linear"
@@ -522,7 +521,7 @@ function SliderRow({
           ref={trackRef}
           className={cn(
             "squircle relative h-12 w-full grow overflow-hidden rounded-sm",
-            "ring-border ring-1 ring-inset",
+            "ring-1 ring-border ring-inset",
             "dark:ring-white/10",
             resolvedTrackClassName ?? "bg-muted",
           )}
@@ -591,7 +590,7 @@ function SliderRow({
             "group/thumb z-0 block w-3 shrink-0 cursor-grab rounded-sm",
             "relative bg-transparent outline-none",
             "transition-[height,opacity] duration-150 ease-[var(--cubic-ease-in-out)]",
-            "focus-visible:outline-ring focus-visible:outline-2 focus-visible:outline-offset-1",
+            "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-1",
             "active:cursor-grabbing",
             "disabled:pointer-events-none disabled:opacity-50",
             // Height morphs: rest (track height) → hover → active
@@ -675,13 +674,13 @@ function SliderRow({
         >
           <span
             ref={labelRef}
-            className="text-primary -mt-px rounded-full px-2 py-px text-sm font-normal tracking-wide"
+            className="-mt-px rounded-full px-2 py-px font-normal text-primary text-sm tracking-wide"
           >
             {label}
           </span>
           <span
             ref={valueRef}
-            className="text-foreground -mt-px -mb-0.5 flex h-6 items-center rounded-full px-2 font-mono text-xs tabular-nums"
+            className="-mt-px -mb-0.5 flex h-6 items-center rounded-full px-2 font-mono text-foreground text-xs tabular-nums"
           >
             {formatSignedValue(value, min, max, precision, unit)}
           </span>
@@ -778,7 +777,7 @@ export function ParameterSlider({
   return (
     <article
       className={cn(
-        "@container/parameter-slider isolate flex w-full max-w-md min-w-80 flex-col gap-3",
+        "@container/parameter-slider isolate flex w-full min-w-80 max-w-md flex-col gap-3",
         "text-foreground",
         className,
       )}
@@ -787,7 +786,7 @@ export function ParameterSlider({
     >
       <div
         className={cn(
-          "bg-card flex w-full flex-col overflow-hidden rounded-2xl border px-5 py-3 shadow-xs",
+          "flex w-full flex-col overflow-hidden rounded-2xl border bg-card px-5 py-3 shadow-xs",
         )}
       >
         {sliders.map((slider) => (

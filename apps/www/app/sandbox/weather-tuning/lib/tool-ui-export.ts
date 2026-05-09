@@ -1,4 +1,3 @@
-import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   TIME_CHECKPOINTS,
   type TimeCheckpoint,
@@ -6,6 +5,7 @@ import {
   type WeatherEffectsOverrides,
   type WeatherEffectsTunedPresets,
 } from "@/lib/weather-authoring/weather-widget/effects/tuning";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import type {
   CheckpointOverrides,
   ConditionOverrides,

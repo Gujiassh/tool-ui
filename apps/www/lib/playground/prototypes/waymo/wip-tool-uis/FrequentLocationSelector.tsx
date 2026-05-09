@@ -1,9 +1,9 @@
 "use client";
 
 import type { ToolCallMessagePartProps } from "@assistant-ui/react";
-import { Card } from "@/components/ui/card";
+import { Briefcase, CheckCircle2, Clock, Home, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Home, Briefcase, MapPin, Clock, CheckCircle2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { DEFAULT_FAVORITES, DEFAULT_RECENTS } from "../shared";
 
 type FrequentLocation = {
@@ -84,7 +84,7 @@ export const FrequentLocationSelector = ({
   return (
     <Card className="max-w-md space-y-4 p-4">
       <div className="space-y-1">
-        <h3 className="text-lg font-semibold">{prompt}</h3>
+        <h3 className="font-semibold text-lg">{prompt}</h3>
         <p className="text-muted-foreground text-sm">
           Select a frequent location or search for a new one
         </p>
@@ -92,7 +92,7 @@ export const FrequentLocationSelector = ({
 
       {favorites.length > 0 && (
         <div className="space-y-2">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
             <MapPin className="h-3.5 w-3.5" />
             <span>Favorites</span>
           </div>
@@ -101,7 +101,7 @@ export const FrequentLocationSelector = ({
               <Button
                 key={location.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-4 py-3 text-left"
+                className="h-auto w-full justify-start px-4 py-3 text-left hover:bg-accent"
                 onClick={() =>
                   addResult({
                     selectedLocation: location,
@@ -109,12 +109,12 @@ export const FrequentLocationSelector = ({
                 }
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getLocationIcon(location.label)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{location.label}</div>
-                    <div className="text-muted-foreground truncate text-sm">
+                    <div className="truncate text-muted-foreground text-sm">
                       {location.address}
                     </div>
                   </div>
@@ -127,7 +127,7 @@ export const FrequentLocationSelector = ({
 
       {recents.length > 0 && (
         <div className="space-y-2">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
             <Clock className="h-3.5 w-3.5" />
             <span>Recent</span>
           </div>
@@ -136,7 +136,7 @@ export const FrequentLocationSelector = ({
               <Button
                 key={location.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-4 py-3 text-left"
+                className="h-auto w-full justify-start px-4 py-3 text-left hover:bg-accent"
                 onClick={() =>
                   addResult({
                     selectedLocation: location,
@@ -144,12 +144,12 @@ export const FrequentLocationSelector = ({
                 }
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getLocationIcon(location.label)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{location.label}</div>
-                    <div className="text-muted-foreground truncate text-sm">
+                    <div className="truncate text-muted-foreground text-sm">
                       {location.address}
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export const FrequentLocationSelector = ({
         </div>
       )}
 
-      <div className="text-muted-foreground text-center text-sm">
+      <div className="text-center text-muted-foreground text-sm">
         or type a different location
       </div>
     </Card>

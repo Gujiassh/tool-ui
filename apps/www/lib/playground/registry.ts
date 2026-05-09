@@ -1,10 +1,9 @@
-import type { Prototype } from "./types";
-
 import {
   foodOrderingPrototype,
   waymoPrototype,
   waymoV2Prototype,
 } from "./prototypes";
+import type { Prototype } from "./types";
 
 export const PROTOTYPES: Prototype[] = [
   waymoV2Prototype,

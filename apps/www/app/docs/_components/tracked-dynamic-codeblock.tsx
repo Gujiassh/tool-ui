@@ -1,17 +1,17 @@
 "use client";
 
 import {
-  Children,
-  cloneElement,
-  isValidElement,
-  useCallback,
-  type ReactElement,
-  type ReactNode,
-} from "react";
-import {
   DynamicCodeBlock,
   type DynamicCodeblockProps,
 } from "fumadocs-ui/components/dynamic-codeblock";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+} from "react";
 import { analytics } from "@/lib/analytics";
 import {
   detectInstallSnippetType,
@@ -72,7 +72,7 @@ function resolveCopyContextLabel({
   installSnippetType: InstallSnippetType;
   copyButtonLabel?: string;
 }): string {
-  if (copyButtonLabel && copyButtonLabel.trim()) {
+  if (copyButtonLabel?.trim()) {
     return copyButtonLabel.trim();
   }
 

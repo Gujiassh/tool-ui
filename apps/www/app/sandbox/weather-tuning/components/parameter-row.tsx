@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { RotateCcw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/ui/cn";
 
@@ -47,7 +47,7 @@ export function ParameterRow({
 
   const commitEdit = () => {
     const parsed = parseFloat(editValue);
-    if (!isNaN(parsed)) {
+    if (!Number.isNaN(parsed)) {
       const clamped = Math.max(min, Math.min(max, parsed));
       onChange(clamped);
     }
@@ -107,7 +107,7 @@ export function ParameterRow({
           min={min}
           max={max}
           step={step}
-          className="relative w-full [&_[data-slot=slider-track]]:h-0.5 [&_[data-slot=slider-range]]:bg-foreground/20"
+          className="relative w-full [&_[data-slot=slider-range]]:bg-foreground/20 [&_[data-slot=slider-track]]:h-0.5"
         />
       </div>
 
@@ -124,7 +124,7 @@ export function ParameterRow({
             aria-label={`${label} value`}
             className={cn(
               "w-12 rounded border border-blue-500/50 bg-blue-500/10 px-1 py-0.5",
-              "font-mono text-[10px] tabular-nums text-blue-600 dark:text-blue-400",
+              "font-mono text-[10px] text-blue-600 tabular-nums dark:text-blue-400",
               "outline-none ring-1 ring-blue-500/30",
             )}
           />

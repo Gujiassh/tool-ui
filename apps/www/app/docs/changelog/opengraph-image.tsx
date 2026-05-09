@@ -1,6 +1,6 @@
 import {
-  contentType as ogContentType,
   generateOgImage,
+  contentType as ogContentType,
   size as ogSize,
 } from "@/lib/og/og-image";
 

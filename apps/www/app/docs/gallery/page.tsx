@@ -27,8 +27,8 @@ import { codeBlockPresets } from "@/lib/presets/code-block";
 import { codeDiffPresets } from "@/lib/presets/code-diff";
 import { dataTablePresets } from "@/lib/presets/data-table";
 import { geoMapPresets } from "@/lib/presets/geo-map";
-import { instagramPostPresets } from "@/lib/presets/instagram-post";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
+import { instagramPostPresets } from "@/lib/presets/instagram-post";
 import { itemCarouselPresets } from "@/lib/presets/item-carousel";
 import { linkPreviewPresets } from "@/lib/presets/link-preview";
 import { linkedInPostPresets } from "@/lib/presets/linkedin-post";
@@ -145,7 +145,7 @@ function GalleryPreviewCard({
   return (
     <article
       className={cn(
-        "group/gallery-card relative flex w-full min-w-0 max-w-full flex-col gap-4 overflow-hidden rounded-xl border border-border/40 bg-card p-4 pb-6 transition-colors hover:border-border/70 focus-within:border-border/70",
+        "group/gallery-card relative flex w-full min-w-0 max-w-full flex-col gap-4 overflow-hidden rounded-xl border border-border/40 bg-card p-4 pb-6 transition-colors focus-within:border-border/70 hover:border-border/70",
         className,
       )}
     >
@@ -200,7 +200,7 @@ export default function ComponentsGalleryPage() {
       componentId: "item-carousel",
       className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
       render: () => (
-        <div className="w-full max-w-full min-w-0">
+        <div className="w-full min-w-0 max-w-full">
           <ItemCarousel {...itemCarouselPresets.recommendations.data} />
         </div>
       ),
@@ -209,7 +209,7 @@ export default function ComponentsGalleryPage() {
       componentId: "data-table",
       className: "mb-5 flex justify-center 2xl:col-span-full 2xl:mb-5",
       render: () => (
-        <div className="w-full max-w-full min-w-0">
+        <div className="w-full min-w-0 max-w-full">
           <DataTable {...dataTablePresets.stocks.data} />
         </div>
       ),
@@ -217,7 +217,7 @@ export default function ComponentsGalleryPage() {
     {
       componentId: "code-diff",
       className: "mb-5 flex break-inside-avoid justify-center 2xl:mb-5",
-      render: () => <CodeDiff {...codeDiffPresets["refactor"].data} />,
+      render: () => <CodeDiff {...codeDiffPresets.refactor.data} />,
     },
     {
       componentId: "stats-display",

@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import { useCallback, useEffect, useState } from "react";
 import { analytics } from "@/lib/analytics";
 import { getImportLine } from "@/lib/docs/gallery-usage-code";
-import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 import {
   type ComponentId,
   getPreviewConfig,
   type PreviewState,
 } from "@/lib/docs/preview-config";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 
 interface HeaderPreviewTabsProps {
   componentId: ComponentId;

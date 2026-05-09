@@ -1,7 +1,7 @@
+import type { CheckpointOverrides } from "../../weather-compositor/interpolation";
+import { getInterpolatedOverrides } from "../../weather-compositor/interpolation";
 import type { FullCompositorParams } from "../../weather-compositor/presets";
 import { mergeWithOverrides } from "../../weather-compositor/presets";
-import { getInterpolatedOverrides } from "../../weather-compositor/interpolation";
-import type { CheckpointOverrides } from "../../weather-compositor/interpolation";
 import type { TimeCheckpoint } from "../types";
 
 type BaseGetter = (checkpoint: TimeCheckpoint) => FullCompositorParams;

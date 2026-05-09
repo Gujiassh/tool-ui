@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn, ImageOff } from "./_adapter";
 import { useImageGallery } from "./context";
 import type { ImageGalleryItem } from "./schema";
@@ -30,7 +30,7 @@ export function GalleryGrid({ onImageClick }: GalleryGridProps) {
 
   return (
     <div
-      className="grid grid-cols-2 gap-2 @md:grid-cols-3 @lg:grid-cols-4"
+      className="grid @lg:grid-cols-4 @md:grid-cols-3 grid-cols-2 gap-2"
       role="list"
     >
       {images.map((image, index) => (
@@ -92,7 +92,7 @@ function GridImageCard({ image, index, onClick }: GridImageCardProps) {
 
       <div
         ref={wrapperRef}
-        className="bg-muted relative h-full w-full overflow-hidden rounded-lg transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.02] group-active:scale-[0.98]"
+        className="relative h-full w-full overflow-hidden rounded-lg bg-muted transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.02] group-active:scale-[0.98]"
       >
         {hasError ? (
           <ImageErrorState alt={image.alt} />
@@ -124,8 +124,8 @@ function isPortraitImage(image: GridImage): boolean {
 function ImageErrorState({ alt }: { alt: string }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4">
-      <ImageOff className="text-muted-foreground h-8 w-8" />
-      <span className="text-muted-foreground line-clamp-2 text-center text-xs">
+      <ImageOff className="h-8 w-8 text-muted-foreground" />
+      <span className="line-clamp-2 text-center text-muted-foreground text-xs">
         {alt}
       </span>
     </div>

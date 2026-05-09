@@ -1,12 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { getAllDocsPageLinks } from "./docs-pages";
-import { cn } from "@/lib/ui/cn";
+import * as React from "react";
 import { analytics } from "@/lib/analytics";
+import { cn } from "@/lib/ui/cn";
+import { getAllDocsPageLinks } from "./docs-pages";
 
 function useDocsPagination() {
   const pathname = usePathname();
@@ -63,7 +63,7 @@ export function DocsPager() {
   return (
     <nav
       aria-label="Pagination"
-      className="not-prose mt-16 flex flex-row items-center justify-between gap-4 border-t border-border/40 pt-6"
+      className="not-prose mt-16 flex flex-row items-center justify-between gap-4 border-border/40 border-t pt-6"
     >
       {prev ? (
         <PagerLink href={prev.path} label={prev.label} direction="prev" />

@@ -1,5 +1,5 @@
-export { ItemCarousel } from "./item-carousel";
 export { ItemCard } from "./item-card";
+export { ItemCarousel } from "./item-carousel";
 export type {
   Item,
   ItemCarouselProps,

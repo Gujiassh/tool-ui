@@ -2,24 +2,10 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import {
-  releaseWeatherWebglBudgetSlotOnInitFailure,
-  releaseWeatherWebglCanvasBudgetSlot,
-  tryAcquireWeatherWebglCanvasBudgetSlot,
-} from "./weather-webgl-budget";
-import {
-  CELESTIAL_FRAGMENT,
-  CLOUD_FRAGMENT,
-  COMPOSITE_FRAGMENT,
-  FULLSCREEN_VERTEX,
-  LIGHTNING_FRAGMENT,
-  RAIN_FRAGMENT,
-  SNOW_FRAGMENT,
-} from "./weather-effect-shaders";
-import {
   createFramebuffer,
   createProgram,
-  resizeFramebuffer,
   type Framebuffer,
+  resizeFramebuffer,
 } from "./weather-effect-gl";
 import {
   clearOffscreenPass,
@@ -31,7 +17,21 @@ import {
   renderRainPass,
   renderSnowPass,
 } from "./weather-effect-render-passes";
+import {
+  CELESTIAL_FRAGMENT,
+  CLOUD_FRAGMENT,
+  COMPOSITE_FRAGMENT,
+  FULLSCREEN_VERTEX,
+  LIGHTNING_FRAGMENT,
+  RAIN_FRAGMENT,
+  SNOW_FRAGMENT,
+} from "./weather-effect-shaders";
 import type { ResolvedWeatherEffectsCanvasProps } from "./weather-effects-types";
+import {
+  releaseWeatherWebglBudgetSlotOnInitFailure,
+  releaseWeatherWebglCanvasBudgetSlot,
+  tryAcquireWeatherWebglCanvasBudgetSlot,
+} from "./weather-webgl-budget";
 
 interface WeatherEffectsPrograms {
   celestial: WebGLProgram | null;

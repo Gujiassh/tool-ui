@@ -1,12 +1,4 @@
 import { describe, expect, test } from "vitest";
-
-import {
-  TIME_CHECKPOINTS,
-  TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
-  resolveWeatherEffectsCanvasProps,
-  type TimeCheckpoint,
-} from "@/lib/weather-authoring/weather-widget/effects";
-import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   getRawBaseParamsForCondition,
   mergeWithOverrides,
@@ -15,6 +7,13 @@ import { mapCompositorParamsToCanvasProps } from "@/app/sandbox/weather-tuning/l
 import { resolveCompositorParamsAtTime } from "@/app/sandbox/weather-tuning/lib/resolve-params";
 import { createStudioTimestamp } from "@/app/sandbox/weather-tuning/lib/studio-timestamp";
 import { mapToolUiPresetsToCompositor } from "@/app/sandbox/weather-tuning/lib/tool-ui-import";
+import {
+  resolveWeatherEffectsCanvasProps,
+  TIME_CHECKPOINTS,
+  type TimeCheckpoint,
+  TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
+} from "@/lib/weather-authoring/weather-widget/effects";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 
 const REFERENCE_DATE = new Date("2026-01-01T00:00:00Z");
 const REPO_CHECKPOINT_OVERRIDES = mapToolUiPresetsToCompositor(
@@ -61,23 +60,23 @@ describe("shared weather canvas resolver parity", () => {
     { condition: "clear" as const, timeOfDay: 0.37 },
     { condition: "cloudy" as const, timeOfDay: 0.62 },
     { condition: "rain" as const, timeOfDay: 0.88 },
-  ])(
-    "matches studio preview for $condition at $timeOfDay (interpolated mode)",
-    ({ condition, timeOfDay }) => {
-      const timestamp = createStudioTimestamp(timeOfDay, REFERENCE_DATE);
-      const shared = resolveWeatherEffectsCanvasProps({
-        conditionCode: condition,
-        timestamp,
-        timeOfDay,
-        tunedPresets: TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
-        checkpointMode: "interpolated",
-      });
+  ])("matches studio preview for $condition at $timeOfDay (interpolated mode)", ({
+    condition,
+    timeOfDay,
+  }) => {
+    const timestamp = createStudioTimestamp(timeOfDay, REFERENCE_DATE);
+    const shared = resolveWeatherEffectsCanvasProps({
+      conditionCode: condition,
+      timestamp,
+      timeOfDay,
+      tunedPresets: TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES,
+      checkpointMode: "interpolated",
+    });
 
-      const studio = resolveStudioCanvasProps(condition, timeOfDay);
+    const studio = resolveStudioCanvasProps(condition, timeOfDay);
 
-      expect(shared).toEqual(studio);
-    },
-  );
+    expect(shared).toEqual(studio);
+  });
 
   test("checkpoint mode changes output between keyframes", () => {
     const condition: WeatherConditionCode = "cloudy";

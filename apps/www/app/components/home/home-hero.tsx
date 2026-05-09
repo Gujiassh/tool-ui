@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 
@@ -24,7 +24,7 @@ export function HomeHero() {
   return (
     <div className="flex max-w-[680px] flex-col gap-6">
       <motion.h1
-        className="text-[28px] font-normal leading-[1.2] tracking-[-0.02em] text-foreground sm:text-[32px]"
+        className="font-normal text-[28px] text-foreground leading-[1.2] tracking-[-0.02em] sm:text-[32px]"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...smoothSpring, delay: 0.05 }}

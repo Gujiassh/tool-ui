@@ -1,12 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Column,
   DataTable,
   DataTableRowData,
 } from "@/components/tool-ui/data-table";
 import { getMockTasks } from "@/lib/mocks/tasks";
-import { useEffect, useState } from "react";
 
 export function TasksDemo() {
   const [rows, setRows] = useState<DataTableRowData[] | null>(null);

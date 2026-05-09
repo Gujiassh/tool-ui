@@ -15,10 +15,10 @@ const trackEvent = (event: string, properties?: AnalyticsProperties) => {
 };
 
 let posthogLoader: Promise<
-  (typeof import("posthog-js"))["default"] | null
+  typeof import("posthog-js")["default"] | null
 > | null = null;
 let vercelTrackLoader: Promise<
-  (typeof import("@vercel/analytics"))["track"] | null
+  typeof import("@vercel/analytics")["track"] | null
 > | null = null;
 
 function loadPostHog() {

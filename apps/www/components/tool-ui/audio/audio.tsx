@@ -1,11 +1,11 @@
 "use client";
 
-import * as React from "react";
 import { Pause, Play } from "lucide-react";
-import { cn, Button, Slider } from "./_adapter";
+import * as React from "react";
+import { Button, cn, Slider } from "./_adapter";
 
 import { AudioProvider, useAudio } from "./context";
-import type { SerializableAudio, AudioVariant } from "./schema";
+import type { AudioVariant, SerializableAudio } from "./schema";
 
 const FALLBACK_LOCALE = "en-US";
 
@@ -56,7 +56,7 @@ function FullPlayer({
   return (
     <div className="flex w-full flex-col">
       {artwork && (
-        <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
           <img
             src={artwork}
             alt=""
@@ -71,12 +71,12 @@ function FullPlayer({
         {(title || description) && (
           <div className="space-y-0.5">
             {title && (
-              <div className="text-foreground line-clamp-2 font-semibold leading-snug">
+              <div className="line-clamp-2 font-semibold text-foreground leading-snug">
                 {title}
               </div>
             )}
             {description && (
-              <div className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+              <div className="line-clamp-2 text-muted-foreground text-sm leading-snug">
                 {description}
               </div>
             )}
@@ -94,7 +94,7 @@ function FullPlayer({
               className="cursor-pointer [&_[data-slot=range]]:bg-foreground [&_[data-slot=thumb]]:size-3 [&_[data-slot=thumb]]:border-2 [&_[data-slot=thumb]]:border-background [&_[data-slot=thumb]]:bg-foreground"
               aria-label="Audio progress"
             />
-            <div className="text-muted-foreground flex items-center justify-between text-xs tabular-nums">
+            <div className="flex items-center justify-between text-muted-foreground text-xs tabular-nums">
               <span>{formatTime(controls.currentTime)}</span>
               <span>{formatTime(controls.duration)}</span>
             </div>
@@ -109,7 +109,7 @@ function FullPlayer({
             {controls.isPlaying ? (
               <Pause className="size-4" fill="currentColor" />
             ) : (
-              <Play className="size-4 ml-0.5" fill="currentColor" />
+              <Play className="ml-0.5 size-4" fill="currentColor" />
             )}
           </Button>
         </div>
@@ -144,13 +144,13 @@ function CompactPlayer({
             src={artwork}
             alt=""
             aria-hidden="true"
-            className="pointer-events-none absolute -left-1/4 top-1/2 h-[200%] w-auto -translate-y-1/2 object-cover opacity-40 blur-2xl saturate-150"
+            className="pointer-events-none absolute top-1/2 -left-1/4 h-[200%] w-auto -translate-y-1/2 object-cover opacity-40 blur-2xl saturate-150"
           />
-          <div className="from-card/60 to-card/90 pointer-events-none absolute inset-0 bg-gradient-to-r" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-card/60 to-card/90" />
         </>
       )}
       {artwork && (
-        <div className="ring-background/20 relative size-12 shrink-0 overflow-hidden rounded-lg shadow-lg ring-1">
+        <div className="relative size-12 shrink-0 overflow-hidden rounded-lg shadow-lg ring-1 ring-background/20">
           <img
             src={artwork}
             alt=""
@@ -163,20 +163,20 @@ function CompactPlayer({
       )}
       <div className="relative flex min-w-0 flex-1 flex-col justify-center">
         {title && (
-          <div className="text-foreground truncate text-sm font-semibold leading-tight">
+          <div className="truncate font-semibold text-foreground text-sm leading-tight">
             {title}
           </div>
         )}
         {description && (
-          <div className="text-muted-foreground mt-0.5 truncate text-xs leading-tight">
+          <div className="mt-0.5 truncate text-muted-foreground text-xs leading-tight">
             {description}
           </div>
         )}
         {controls.duration > 0 && (
           <div className="mt-1 flex items-center gap-2">
-            <div className="bg-foreground/20 relative h-1 flex-1 overflow-hidden rounded-full">
+            <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-foreground/20">
               <div
-                className="bg-foreground absolute inset-y-0 left-0 rounded-full transition-all duration-150"
+                className="absolute inset-y-0 left-0 rounded-full bg-foreground transition-all duration-150"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -196,7 +196,7 @@ function CompactPlayer({
         {controls.isPlaying ? (
           <Pause className="size-4" fill="currentColor" />
         ) : (
-          <Play className="size-4 ml-0.5" fill="currentColor" />
+          <Play className="ml-0.5 size-4" fill="currentColor" />
         )}
       </Button>
     </div>
@@ -290,7 +290,7 @@ function AudioInner(props: AudioProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden",
-          "border-border bg-card border text-sm shadow-xs",
+          "border border-border bg-card text-sm shadow-xs",
           "rounded-xl",
         )}
       >

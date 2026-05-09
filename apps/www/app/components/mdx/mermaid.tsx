@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
 import { useTheme } from "next-themes";
+import { useEffect, useId, useRef, useState } from "react";
 
 interface MermaidProps {
   chart: string;
@@ -104,7 +104,7 @@ export function Mermaid({ chart }: MermaidProps) {
       />
       {!mounted ? (
         <div className="flex items-center justify-center rounded-lg border border-border bg-muted/50 p-8">
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             Loading diagram...
           </span>
         </div>

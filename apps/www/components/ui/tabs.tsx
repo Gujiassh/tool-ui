@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as React from "react";
 
 import { cn } from "@/lib/ui/cn";
 
@@ -26,7 +26,7 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "bg-foreground/5 text-muted-foreground inline-flex h-8 w-fit items-center justify-center rounded-md p-0.5",
+        "inline-flex h-8 w-fit items-center justify-center rounded-md bg-foreground/5 p-0.5 text-muted-foreground",
         className,
       )}
       {...props}
@@ -42,7 +42,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "data-[state=active]:bg-background data-[state=active]:text-foreground focus-visible:ring-2 focus-visible:ring-brand/30 text-muted-foreground hover:text-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-[5px] px-2.5 py-1 text-[13px] font-medium whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[5px] px-2.5 py-1 font-medium text-[13px] text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-brand/30 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
       {...props}
@@ -63,4 +63,4 @@ function TabsContent({
   );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent };
+export { Tabs, TabsContent, TabsList, TabsTrigger };

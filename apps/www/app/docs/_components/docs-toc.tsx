@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { usePathname } from "next/navigation";
 import { PencilIcon } from "lucide-react";
-import { cn } from "@/lib/ui/cn";
-import { useDocsToc } from "./docs-toc-context";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useTocKeyboardNav } from "@/hooks/use-toc-keyboard-nav";
 import { analytics } from "@/lib/analytics";
 import { getDocsEditUrl, getDocsSlug } from "@/lib/site-config";
+import { cn } from "@/lib/ui/cn";
+import { useDocsToc } from "./docs-toc-context";
 
 const HEADER_OFFSET = 80;
 
@@ -81,7 +81,7 @@ export function DocsToc() {
     >
       {headings.length > 0 && (
         <>
-          <p className="mb-3 text-[13px] font-medium text-foreground">
+          <p className="mb-3 font-medium text-[13px] text-foreground">
             On this page
           </p>
           <div className="flex flex-col">
@@ -115,7 +115,7 @@ export function DocsToc() {
         <div
           className={cn(
             "flex flex-col gap-2",
-            headings.length > 0 && "mt-6 border-t border-border/30 pt-4",
+            headings.length > 0 && "mt-6 border-border/30 border-t pt-4",
           )}
         >
           <a

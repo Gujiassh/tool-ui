@@ -1,11 +1,11 @@
+import type { LucideIcon } from "lucide-react";
+import { AlertCircle, Check, Loader2, Timer, X } from "lucide-react";
 import { cn } from "./_adapter";
 import type {
   ProgressStep,
   ProgressTrackerChoice,
   ProgressTrackerProps,
 } from "./schema";
-import { Check, X, Loader2, Timer, AlertCircle } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 function formatElapsedTime(milliseconds: number): string {
   const roundedSeconds = Math.round(Math.max(0, milliseconds) / 100) / 10;
@@ -92,7 +92,7 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "pending") {
     return (
       <span
-        className="bg-card border-border flex size-6 shrink-0 items-center justify-center rounded-full border motion-safe:transition-all motion-safe:duration-200"
+        className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card motion-safe:transition-all motion-safe:duration-200"
         aria-hidden="true"
       />
     );
@@ -101,10 +101,10 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "in-progress") {
     return (
       <span
-        className="bg-card border-border flex size-6 shrink-0 items-center justify-center rounded-full border shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
+        className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-card shadow-[0_0_0_4px_hsl(var(--primary)/0.1)] motion-safe:transition-all motion-safe:duration-300"
         aria-hidden="true"
       >
-        <Loader2 className="text-primary size-5 motion-safe:animate-spin" />
+        <Loader2 className="size-5 text-primary motion-safe:animate-spin" />
       </span>
     );
   }
@@ -112,11 +112,11 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "completed") {
     return (
       <span
-        className="bg-primary text-primary-foreground border-primary flex size-6 shrink-0 items-center justify-center rounded-full border shadow-sm motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out"
+        className="motion-safe:fade-in motion-safe:zoom-in-75 flex size-6 shrink-0 items-center justify-center rounded-full border border-primary bg-primary text-primary-foreground shadow-sm motion-safe:animate-in motion-safe:duration-300 motion-safe:ease-out"
         aria-hidden="true"
       >
         <Check
-          className="size-4 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:delay-75 motion-safe:duration-200 motion-safe:fill-mode-both"
+          className="motion-safe:fade-in motion-safe:zoom-in-75 size-4 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:delay-75 motion-safe:duration-200"
           strokeWidth={3}
         />
       </span>
@@ -126,11 +126,11 @@ function StepIndicator({ status }: StepIndicatorProps) {
   if (status === "failed") {
     return (
       <span
-        className="bg-destructive border-destructive flex size-6 shrink-0 items-center justify-center rounded-full border text-white shadow-sm motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out dark:border-red-600 dark:bg-red-600"
+        className="motion-safe:fade-in motion-safe:zoom-in-75 flex size-6 shrink-0 items-center justify-center rounded-full border border-destructive bg-destructive text-white shadow-sm motion-safe:animate-in motion-safe:duration-300 motion-safe:ease-out dark:border-red-600 dark:bg-red-600"
         aria-hidden="true"
       >
         <X
-          className="size-4 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:delay-75 motion-safe:duration-200 motion-safe:fill-mode-both"
+          className="motion-safe:fade-in motion-safe:zoom-in-75 size-4 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:delay-75 motion-safe:duration-200"
           strokeWidth={3}
         />
       </span>
@@ -146,7 +146,7 @@ function ElapsedTimeBadge({ elapsedTime }: { elapsedTime?: number }) {
   }
 
   return (
-    <div className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs">
+    <div className="flex items-center gap-1.5 font-mono text-muted-foreground text-xs">
       <Timer className="-mt-px size-3.5" />
       <time dateTime={formatElapsedTimeDateTime(elapsedTime)}>
         {formatElapsedTime(elapsedTime)}
@@ -175,9 +175,9 @@ function ProgressTrackerReceipt({
   return (
     <div
       className={cn(
-        "isolate flex w-full max-w-md min-w-80 flex-col",
-        "text-foreground select-none",
-        "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:zoom-in-95 motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both",
+        "isolate flex w-full min-w-80 max-w-md flex-col",
+        "select-none text-foreground",
+        "motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:blur-in-sm motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)]",
         className,
       )}
       data-slot="progress-tracker"
@@ -186,12 +186,12 @@ function ProgressTrackerReceipt({
       role="status"
       aria-label={choice.summary}
     >
-      <div className="bg-card/60 flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
+      <div className="flex w-full flex-col gap-4 rounded-2xl border bg-card/60 p-5 shadow-xs">
         <div className="flex items-center justify-between">
           <ElapsedTimeBadge elapsedTime={elapsedTime} />
           <span
             className={cn(
-              "flex items-center gap-1.5 text-xs font-medium",
+              "flex items-center gap-1.5 font-medium text-xs",
               receiptState.toneClassName,
             )}
           >
@@ -208,7 +208,7 @@ function ProgressTrackerReceipt({
             >
               {index < steps.length - 1 && (
                 <div
-                  className="bg-border absolute top-8 left-5 w-px"
+                  className="absolute top-8 left-5 w-px bg-border"
                   style={{
                     height: "calc(100% + 0.5rem)",
                   }}
@@ -219,7 +219,7 @@ function ProgressTrackerReceipt({
                 <StepIndicator status={step.status} />
               </div>
               <div className="flex flex-1 flex-col gap-0.5">
-                <span className="text-sm leading-6 font-medium">
+                <span className="font-medium text-sm leading-6">
                   {step.label}
                 </span>
                 {step.description && (
@@ -248,8 +248,8 @@ function ProgressTrackerLive({
   return (
     <article
       className={cn(
-        "isolate flex w-full max-w-md min-w-80 flex-col gap-3",
-        "text-foreground select-none",
+        "isolate flex w-full min-w-80 max-w-md flex-col gap-3",
+        "select-none text-foreground",
         className,
       )}
       data-slot="progress-tracker"
@@ -258,7 +258,7 @@ function ProgressTrackerLive({
       aria-live="polite"
       aria-busy={hasInProgress}
     >
-      <div className="bg-card flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
+      <div className="flex w-full flex-col gap-4 rounded-2xl border bg-card p-5 shadow-xs">
         <ElapsedTimeBadge elapsedTime={elapsedTime} />
 
         <ol className="m-0 flex list-none flex-col gap-3 p-0">
@@ -278,7 +278,7 @@ function ProgressTrackerLive({
                 {index < steps.length - 1 && (
                   <div
                     className={cn(
-                      "bg-border absolute top-6 left-5 w-px",
+                      "absolute top-6 left-5 w-px bg-border",
                       "motion-safe:transition-all motion-safe:duration-300",
                     )}
                     style={{
@@ -303,7 +303,7 @@ function ProgressTrackerLive({
                   <div className="flex flex-1 flex-col">
                     <span
                       className={cn(
-                        "text-sm leading-6 font-medium",
+                        "font-medium text-sm leading-6",
                         step.status === "pending" && "text-muted-foreground",
                         step.status === "in-progress" &&
                           "motion-safe:shimmer shimmer-invert text-foreground",
@@ -322,7 +322,7 @@ function ProgressTrackerLive({
                         aria-hidden={!shouldShowDescription}
                       >
                         <div className="overflow-hidden">
-                          <span className="text-muted-foreground block pt-0.5 text-sm">
+                          <span className="block pt-0.5 text-muted-foreground text-sm">
                             {step.description}
                           </span>
                         </div>

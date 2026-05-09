@@ -10,19 +10,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { componentsRegistry } from "@/lib/docs/component-registry";
-import { getGalleryUsageCode } from "@/lib/docs/gallery-usage-code";
-import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { analytics } from "@/lib/analytics";
+import { componentsRegistry } from "@/lib/docs/component-registry";
+import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
+import { getGalleryUsageCode } from "@/lib/docs/gallery-usage-code";
 import { cn } from "@/lib/ui/cn";
-import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 import { InstallCommandBlock } from "./install-command-block";
+import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 
 const registryById = new Map(componentsRegistry.map((c) => [c.id, c]));
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+    <p className="font-medium text-[11px] text-muted-foreground uppercase tracking-[0.08em]">
       {children}
     </p>
   );
@@ -52,7 +52,7 @@ export function GalleryCardHeader({
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <Link
           href={docsHref}
-          className="text-muted-foreground shrink-0 rounded-md px-0.5 text-xs font-mono tracking-wide underline-offset-4 hover:text-foreground hover:underline"
+          className="shrink-0 rounded-md px-0.5 font-mono text-muted-foreground text-xs tracking-wide underline-offset-4 hover:text-foreground hover:underline"
           onClick={() => {
             analytics.gallery.componentClicked(componentId);
             analytics.docs.navigationClicked(name, docsHref);
@@ -76,8 +76,8 @@ export function GalleryCardHeader({
               side="right"
               className="flex w-full flex-col gap-0 sm:max-w-2xl"
             >
-              <SheetHeader className="shrink-0 border-b border-border/30 px-6 py-5 pr-12">
-                <SheetTitle className="text-[15px] font-medium tracking-tight">
+              <SheetHeader className="shrink-0 border-border/30 border-b px-6 py-5 pr-12">
+                <SheetTitle className="font-medium text-[15px] tracking-tight">
                   {name}
                 </SheetTitle>
                 {description && (
@@ -97,7 +97,7 @@ export function GalleryCardHeader({
                 {usageCode && (
                   <section className="flex min-h-0 flex-1 flex-col gap-3">
                     <SectionLabel>Example</SectionLabel>
-                    <div className="scrollbar-subtle relative flex min-h-[200px] flex-1 flex-col overflow-hidden rounded-lg border border-border/40 bg-muted/40 [&_figure]:!my-0 [&_figure]:!rounded-none [&_figure]:!border-0 [&_figure]:!bg-transparent [&_pre]:!my-0 [&_pre]:!rounded-none [&_pre]:!border-0 [&_pre]:!bg-transparent [&_pre]:!p-4 [&_pre]:!text-[13px] [&_pre]:!leading-[1.6]">
+                    <div className="scrollbar-subtle [&_figure]:!my-0 [&_figure]:!rounded-none [&_figure]:!border-0 [&_figure]:!bg-transparent [&_pre]:!my-0 [&_pre]:!rounded-none [&_pre]:!border-0 [&_pre]:!bg-transparent [&_pre]:!p-4 [&_pre]:!text-[13px] [&_pre]:!leading-[1.6] relative flex min-h-[200px] flex-1 flex-col overflow-hidden rounded-lg border border-border/40 bg-muted/40">
                       <TrackedDynamicCodeBlock
                         lang="tsx"
                         code={usageCode}

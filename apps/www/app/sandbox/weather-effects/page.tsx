@@ -1,15 +1,15 @@
 "use client";
 
-import { useControls, button } from "leva";
+import { button, useControls } from "leva";
 import {
-  WeatherEffectsCanvas,
   type CelestialParams,
   type CloudParams,
-  type RainParams,
-  type LightningParams,
-  type SnowParams,
   type InteractionParams,
   type LayerToggles,
+  type LightningParams,
+  type RainParams,
+  type SnowParams,
+  WeatherEffectsCanvas,
 } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 
 export default function WeatherEffectsSandbox() {

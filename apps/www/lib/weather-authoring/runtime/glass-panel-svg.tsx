@@ -25,14 +25,14 @@
 "use client";
 
 import {
+  type CSSProperties,
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
   useRef,
   useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  type ReactNode,
-  type CSSProperties,
-  type RefObject,
 } from "react";
 
 // =============================================================================
@@ -132,7 +132,7 @@ function buildDisplacementMapSvg({
     </g>
   </svg>`;
 
-  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 interface DisplacementFilterParams extends DisplacementMapParams {
@@ -192,7 +192,7 @@ function buildDisplacementFilterUrl({
     </defs>
   </svg>`;
 
-  return "data:image/svg+xml;utf8," + encodeURIComponent(svg) + "#displace";
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}#displace`;
 }
 
 // =============================================================================

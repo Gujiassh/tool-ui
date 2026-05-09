@@ -1,24 +1,24 @@
 "use client";
 
-import {
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  createContext,
-  use,
-  type ReactNode,
-} from "react";
+import type { FileDiffMetadata, ThemesType } from "@pierre/diffs";
+import { parseDiffFromFile, RegisteredCustomThemes } from "@pierre/diffs";
 import {
   FileDiff as PierreFileDiff,
   PatchDiff as PierrePatchDiff,
 } from "@pierre/diffs/react";
-import { parseDiffFromFile, RegisteredCustomThemes } from "@pierre/diffs";
-import type { FileDiffMetadata, ThemesType } from "@pierre/diffs";
-import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
-import type { CodeDiffProps } from "./schema";
+import { Check, ChevronDown, ChevronUp, Copy } from "lucide-react";
+import {
+  createContext,
+  type ReactNode,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
-import { Button, cn, Collapsible, CollapsibleTrigger } from "./_adapter";
+import { Button, Collapsible, CollapsibleTrigger, cn } from "./_adapter";
+import type { CodeDiffProps } from "./schema";
 
 /*
  * Pierre's shared_highlighter registers custom themes with dynamic imports
@@ -287,7 +287,7 @@ function CodeDiffRoot({
         data-tool-ui-id={id}
         data-slot="code-diff"
       >
-        <div className="border-border bg-card overflow-hidden rounded-lg border shadow-xs">
+        <div className="overflow-hidden rounded-lg border border-border bg-card shadow-xs">
           <Collapsible open={!isCollapsed}>{children}</Collapsible>
         </div>
       </div>
@@ -306,7 +306,7 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
   return (
     <div
       className={cn(
-        "bg-card flex items-center justify-between gap-2 border-b px-4 py-2",
+        "flex items-center justify-between gap-2 border-b bg-card px-4 py-2",
         className,
       )}
     >
@@ -317,14 +317,14 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
         {filename && (
           <>
             <span className="text-muted-foreground/50">&bull;</span>
-            <span className="text-foreground text-sm font-medium">
+            <span className="font-medium text-foreground text-sm">
               {filename}
             </span>
           </>
         )}
       </div>
       {hasChanges && (
-        <span className="ml-auto text-xs font-mono tabular-nums">
+        <span className="ml-auto font-mono text-xs tabular-nums">
           {additions > 0 && (
             <span style={{ color: "#00cab1" }}>+{additions}</span>
           )}
@@ -344,7 +344,7 @@ function CodeDiffHeader({ className }: CodeDiffSectionProps) {
         {isCopied ? (
           <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
         ) : (
-          <Copy className="text-muted-foreground h-4 w-4" />
+          <Copy className="h-4 w-4 text-muted-foreground" />
         )}
       </Button>
     </div>
@@ -412,7 +412,7 @@ function CodeDiffCollapseToggle({ className }: CodeDiffSectionProps) {
         variant="ghost"
         onClick={toggleExpanded}
         className={cn(
-          "text-muted-foreground w-full rounded-none border-t font-normal",
+          "w-full rounded-none border-t font-normal text-muted-foreground",
           className,
         )}
       >

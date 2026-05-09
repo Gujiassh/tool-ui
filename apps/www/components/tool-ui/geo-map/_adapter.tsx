@@ -8,7 +8,6 @@
  *   Leaflet → map primitives from react-leaflet
  */
 
-export { cn } from "@/lib/utils";
 export {
   CircleMarker,
   MapContainer,
@@ -17,7 +16,8 @@ export {
   Popup,
   TileLayer,
   Tooltip,
-  ZoomControl,
   useMap,
   useMapEvents,
+  ZoomControl,
 } from "react-leaflet";
+export { cn } from "@/lib/utils";

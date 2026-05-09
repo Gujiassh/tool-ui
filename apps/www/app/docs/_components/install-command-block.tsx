@@ -1,16 +1,16 @@
 "use client";
 
-import type { MouseEventHandler } from "react";
-import { Check, Copy as CopyIcon } from "lucide-react";
+import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Tabs, Tab } from "fumadocs-ui/components/tabs";
+import { Check, Copy as CopyIcon } from "lucide-react";
+import type { MouseEventHandler } from "react";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
+import { componentsRegistry } from "@/lib/docs/component-registry";
 import {
   detectInstallSnippetType,
   getDocsCodeCopySource,
 } from "@/lib/docs/install-snippet-analytics";
-import { componentsRegistry } from "@/lib/docs/component-registry";
 import { cn } from "@/lib/ui/cn";
 
 const registryById = new Map(componentsRegistry.map((c) => [c.id, c]));
@@ -55,13 +55,13 @@ function CopyableCommand({
       className={cn(
         "group/install flex items-center gap-2 overflow-hidden rounded-lg",
         isCompact
-          ? "bg-muted/50 pl-4 pr-2.5 py-1.5"
+          ? "bg-muted/50 py-1.5 pr-2.5 pl-4"
           : "border border-border/60 bg-muted/40 px-3 py-2.5",
       )}
     >
       <code
         className={cn(
-          "text-muted-foreground group-hover/install:text-foreground min-w-0 flex-1 break-all font-mono transition-colors duration-200",
+          "min-w-0 flex-1 break-all font-mono text-muted-foreground transition-colors duration-200 group-hover/install:text-foreground",
           isCompact ? "text-xs" : "text-sm leading-relaxed",
         )}
       >
@@ -72,7 +72,7 @@ function CopyableCommand({
         variant="ghost"
         size="sm"
         className={cn(
-          "shrink-0 px-2 opacity-60 group-hover/install:opacity-100 transition-opacity duration-200",
+          "shrink-0 px-2 opacity-60 transition-opacity duration-200 group-hover/install:opacity-100",
           isCompact ? "h-7" : "h-8 px-2.5",
         )}
         onClick={onCopy}

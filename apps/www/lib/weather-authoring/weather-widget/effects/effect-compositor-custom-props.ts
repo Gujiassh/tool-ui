@@ -1,11 +1,11 @@
 import type {
-  LayerToggles,
-  WeatherEffectsCanvasProps,
-} from "./weather-effects-types";
-import type {
   CustomEffectProps,
   WeatherEffectLayer,
 } from "./custom-effect-props";
+import type {
+  LayerToggles,
+  WeatherEffectsCanvasProps,
+} from "./weather-effects-types";
 
 function sunAltitudeToLightIntensity(sunAltitude: number): number {
   const light =

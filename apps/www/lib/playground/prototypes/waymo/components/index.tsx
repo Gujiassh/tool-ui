@@ -1,2 +1,2 @@
-export { RideQuote } from "./RideQuote";
 export { BookingConfirmation } from "./BookingConfirmation";
+export { RideQuote } from "./RideQuote";

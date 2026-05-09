@@ -1,13 +1,14 @@
-import type { WeatherEffectParams } from "./types";
 import { buildCanvasBaseFromWeather } from "./canvas-resolver-base";
 import {
   applyWeatherEffectsOverrides,
   getNearestCheckpoint,
   type WeatherEffectsTunedPresets,
 } from "./tuning";
+import type { WeatherEffectParams } from "./types";
 import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
 
-export interface ResolveRuntimeWeatherEffectsCanvasPropsInput extends WeatherEffectParams {
+export interface ResolveRuntimeWeatherEffectsCanvasPropsInput
+  extends WeatherEffectParams {
   tunedPresets?: WeatherEffectsTunedPresets;
   /**
    * Optional explicit time-of-day (0-1) used for nearest checkpoint selection.

@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/ui/cn";
 import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
 import { codeToHtml } from "shiki";
+import { cn } from "@/lib/ui/cn";
 
 export type CodeBlockProps = {
   children?: React.ReactNode;
@@ -15,7 +15,7 @@ function CodeBlock({ children, className, ...props }: CodeBlockProps) {
     <div
       className={cn(
         "not-prose flex w-full flex-col overflow-clip border",
-        "border-border bg-card text-card-foreground rounded",
+        "rounded border-border bg-card text-card-foreground",
         className,
       )}
       {...props}
@@ -95,4 +95,4 @@ function CodeBlockGroup({
   );
 }
 
-export { CodeBlockGroup, CodeBlockCode, CodeBlock };
+export { CodeBlock, CodeBlockCode, CodeBlockGroup };

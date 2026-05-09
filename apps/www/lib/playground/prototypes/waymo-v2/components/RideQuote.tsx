@@ -10,21 +10,21 @@
  */
 
 import type { ToolCallMessagePartProps } from "@assistant-ui/react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
-  MapPin,
-  Clock,
-  CreditCard,
+  ArrowLeft,
+  Briefcase,
   Car,
   CheckCircle2,
-  Loader2,
-  Navigation,
+  Clock,
+  CreditCard,
   Home,
-  Briefcase,
-  ArrowLeft,
+  Loader2,
+  MapPin,
+  Navigation,
 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { GetRideQuoteResult, RideQuote as RideQuoteType } from "../types";
 import { MOCK_LOCATIONS, MOCK_PICKUP } from "../types";
 
@@ -180,10 +180,10 @@ export function RideQuote({
           </div>
           <div className="flex-1">
             <div className="font-semibold">Ride confirmed</div>
-            <div className="text-muted-foreground mt-1 text-sm">
+            <div className="mt-1 text-muted-foreground text-sm">
               {quote.pickup.label} → {quote.destination.label}
             </div>
-            <div className="text-muted-foreground mt-1 text-xs">
+            <div className="mt-1 text-muted-foreground text-xs">
               {quote.etaMinutes} min •{" "}
               {formatPrice(quote.price.amount, quote.price.currency)}
             </div>
@@ -217,18 +217,18 @@ export function RideQuote({
           <Button
             variant="ghost"
             size="sm"
-            className="text-muted-foreground -ml-2 h-8 w-8 p-0"
+            className="-ml-2 h-8 w-8 p-0 text-muted-foreground"
             onClick={() => setMode("quote")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm font-medium">Select pickup location</span>
+          <span className="font-medium text-sm">Select pickup location</span>
         </div>
 
         {/* Current Location */}
         {currentOptions.length > 0 && (
           <div className="mb-3 space-y-2">
-            <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
+            <div className="flex items-center gap-2 font-medium text-muted-foreground text-xs">
               <Navigation className="h-3.5 w-3.5" />
               <span>Current Location</span>
             </div>
@@ -236,16 +236,16 @@ export function RideQuote({
               <Button
                 key={option.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-3 py-2.5 text-left"
+                className="h-auto w-full justify-start px-3 py-2.5 text-left hover:bg-accent"
                 onClick={() => handleSelectPickup(option)}
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getPickupIcon(option)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{option.label}</div>
-                    <div className="text-muted-foreground truncate text-xs">
+                    <div className="font-medium text-sm">{option.label}</div>
+                    <div className="truncate text-muted-foreground text-xs">
                       {option.address}
                     </div>
                   </div>
@@ -258,7 +258,7 @@ export function RideQuote({
         {/* Saved Places */}
         {savedOptions.length > 0 && (
           <div className="space-y-2">
-            <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
+            <div className="flex items-center gap-2 font-medium text-muted-foreground text-xs">
               <MapPin className="h-3.5 w-3.5" />
               <span>Saved Places</span>
             </div>
@@ -266,16 +266,16 @@ export function RideQuote({
               <Button
                 key={option.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-3 py-2.5 text-left"
+                className="h-auto w-full justify-start px-3 py-2.5 text-left hover:bg-accent"
                 onClick={() => handleSelectPickup(option)}
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getPickupIcon(option)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{option.label}</div>
-                    <div className="text-muted-foreground truncate text-xs">
+                    <div className="font-medium text-sm">{option.label}</div>
+                    <div className="truncate text-muted-foreground text-xs">
                       {option.address}
                     </div>
                   </div>
@@ -302,18 +302,18 @@ export function RideQuote({
               Pickup
             </div>
             <div className="font-medium">{quote.pickup.label}</div>
-            <div className="text-muted-foreground truncate text-sm">
+            <div className="truncate text-muted-foreground text-sm">
               {quote.pickup.address}
             </div>
           </div>
         </div>
 
-        <div className="border-muted-foreground/30 ml-[5px] h-6 w-0 border-l-2 border-dashed" />
+        <div className="ml-[5px] h-6 w-0 border-muted-foreground/30 border-l-2 border-dashed" />
 
         {/* Destination */}
         <div className="flex items-start gap-3">
           <div className="mt-1">
-            <MapPin className="text-muted-foreground h-4 w-4" />
+            <MapPin className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="flex-1">
             <div className="text-muted-foreground text-xs uppercase tracking-wide">
@@ -328,22 +328,22 @@ export function RideQuote({
       </div>
 
       {/* Details */}
-      <div className="bg-muted/50 mb-4 rounded-lg p-4">
+      <div className="mb-4 rounded-lg bg-muted/50 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             {isPriceLoading ? (
               <>
-                <div className="bg-muted-foreground/20 h-5 w-16 animate-pulse rounded" />
-                <div className="bg-muted-foreground/20 h-6 w-20 animate-pulse rounded" />
+                <div className="h-5 w-16 animate-pulse rounded bg-muted-foreground/20" />
+                <div className="h-6 w-20 animate-pulse rounded bg-muted-foreground/20" />
               </>
             ) : (
               <>
                 <div className="flex items-center gap-2">
-                  <Clock className="text-muted-foreground h-4 w-4" />
+                  <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="font-medium">{quote.etaMinutes} min</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold">
+                  <span className="font-semibold text-lg">
                     {formatPrice(quote.price.amount, quote.price.currency)}
                   </span>
                 </div>
@@ -351,7 +351,7 @@ export function RideQuote({
             )}
           </div>
         </div>
-        <div className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
+        <div className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
           <Car className="h-4 w-4" />
           <span>{quote.vehicle.type}</span>
         </div>
@@ -360,10 +360,10 @@ export function RideQuote({
       {/* Payment */}
       <div className="mb-5 flex items-center justify-between rounded-lg border p-3">
         <div className="flex items-center gap-2">
-          <CreditCard className="text-muted-foreground h-4 w-4" />
+          <CreditCard className="h-4 w-4 text-muted-foreground" />
           <span className="text-muted-foreground text-sm">Payment</span>
         </div>
-        <span className="text-sm font-medium">{quote.payment.method}</span>
+        <span className="font-medium text-sm">{quote.payment.method}</span>
       </div>
 
       {/* Actions */}
@@ -392,7 +392,7 @@ export function RideQuote({
           variant="ghost"
           onClick={() => setMode("selecting-pickup")}
           disabled={isPriceLoading || isConfirming}
-          className="text-muted-foreground w-full"
+          className="w-full text-muted-foreground"
           size="sm"
         >
           Change pickup location

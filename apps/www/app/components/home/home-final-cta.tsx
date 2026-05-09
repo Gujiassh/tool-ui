@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 import { SITE_LINKS } from "@/lib/site-config";
@@ -9,10 +9,10 @@ import { SITE_LINKS } from "@/lib/site-config";
 export function HomeFinalCta() {
   return (
     <div className="flex flex-col items-center gap-5 py-16 text-center">
-      <h2 className="text-2xl font-medium tracking-tight text-foreground md:text-3xl">
+      <h2 className="font-medium text-2xl text-foreground tracking-tight md:text-3xl">
         Render JSON, not data dumps.
       </h2>
-      <p className="max-w-md text-[14px] leading-[1.7] text-muted-foreground">
+      <p className="max-w-md text-[14px] text-muted-foreground leading-[1.7]">
         Browse the gallery, copy what you need, ship better assistant interfaces
         today.
       </p>

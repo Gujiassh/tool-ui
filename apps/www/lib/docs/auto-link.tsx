@@ -122,10 +122,7 @@ function cloneWithChildren(
     (el.props as { href?: unknown } | undefined)?.href !== undefined;
   const skip =
     (typeof type === "string" && SKIP_TYPES.has(type)) || hasHrefProp;
-  const hasChildren = Object.prototype.hasOwnProperty.call(
-    el.props as object,
-    "children",
-  );
+  const hasChildren = Object.hasOwn(el.props as object, "children");
   if (
     skip ||
     !hasChildren ||

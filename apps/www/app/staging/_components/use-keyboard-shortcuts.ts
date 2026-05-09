@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useStagingStore, usePresetNames } from "./use-staging-state";
+import { usePresetNames, useStagingStore } from "./use-staging-state";
 
 export function useKeyboardShortcuts() {
   const { setPreset, cycleDebugLevel } = useStagingStore();

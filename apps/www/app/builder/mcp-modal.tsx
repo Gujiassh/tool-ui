@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, type FC } from "react";
 import { useAui } from "@assistant-ui/react";
 import { Loader2 } from "lucide-react";
+import { type FC, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -137,14 +137,14 @@ ${JSON.stringify(tool.inputSchema, null, 2)}
         </div>
 
         {error && (
-          <div className="text-destructive bg-destructive/10 mb-4 rounded-md p-3 text-sm">
+          <div className="mb-4 rounded-md bg-destructive/10 p-3 text-destructive text-sm">
             {error}
           </div>
         )}
 
         <div className="flex-1 overflow-y-auto rounded-md border">
           {tools.length === 0 ? (
-            <div className="text-muted-foreground flex h-32 items-center justify-center text-sm">
+            <div className="flex h-32 items-center justify-center text-muted-foreground text-sm">
               {loading ? "Loading tools..." : "No tools loaded"}
             </div>
           ) : (
@@ -152,12 +152,12 @@ ${JSON.stringify(tool.inputSchema, null, 2)}
               {tools.map((tool) => (
                 <div
                   key={tool.name}
-                  className="hover:bg-muted/50 flex items-center justify-between p-4 transition-colors"
+                  className="flex items-center justify-between p-4 transition-colors hover:bg-muted/50"
                 >
                   <div className="mr-4 min-w-0 flex-1">
-                    <div className="text-sm font-medium">{tool.name}</div>
+                    <div className="font-medium text-sm">{tool.name}</div>
                     {tool.description && (
-                      <div className="text-muted-foreground mt-1 truncate text-xs">
+                      <div className="mt-1 truncate text-muted-foreground text-xs">
                         {tool.description}
                       </div>
                     )}

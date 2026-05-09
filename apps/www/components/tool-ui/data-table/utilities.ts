@@ -165,7 +165,7 @@ export function createDataTableRowKeys(
 
   const usedKeys = new Map<string, number>();
 
-  return rows.map((row, index) => {
+  return rows.map((_row, index) => {
     const baseKey = baseKeys[index];
     if ((baseCounts.get(baseKey) ?? 0) === 1) {
       return baseKey;

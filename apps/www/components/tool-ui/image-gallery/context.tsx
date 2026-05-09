@@ -3,10 +3,10 @@
 import {
   createContext,
   use,
-  useState,
   useCallback,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { flushSync } from "react-dom";
 import type { ImageGalleryItem } from "./schema";

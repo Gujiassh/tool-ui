@@ -1,17 +1,17 @@
 "use client";
 import {
-  cn,
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
+  cn,
 } from "./_adapter";
 import type {
-  StatsDisplayProps,
-  StatItem,
-  StatFormat,
   StatDiff,
+  StatFormat,
+  StatItem,
+  StatsDisplayProps,
 } from "./schema";
 import { Sparkline } from "./sparkline";
 
@@ -99,7 +99,6 @@ function FormattedValue({ value, format, locale }: FormattedValueProps) {
         </span>
       );
     }
-    case "text":
     default:
       return <span className="font-light tabular-nums">{String(value)}</span>;
   }
@@ -137,7 +136,7 @@ function DeltaValue({ diff }: DeltaValueProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs  tabular-nums",
+        "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs tabular-nums",
         colorClass,
         bgClass,
       )}
@@ -147,7 +146,7 @@ function DeltaValue({ diff }: DeltaValueProps) {
       )}
       {display}
       {label && (
-        <span className="text-muted-foreground font-normal">{label}</span>
+        <span className="font-normal text-muted-foreground">{label}</span>
       )}
     </span>
   );
@@ -179,22 +178,22 @@ function StatCard({
     >
       {hasSparkline && (
         <Sparkline
-          data={stat.sparkline!.data}
+          data={stat.sparkline?.data ?? []}
           color={sparklineColor}
           showFill
           fillOpacity={0.09}
-          className="pointer-events-none absolute inset-x-0 top-2 bottom-2 animate-in fade-in slide-in-from-bottom-12 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] fill-mode-both"
+          className="fade-in slide-in-from-bottom-12 pointer-events-none absolute inset-x-0 top-2 bottom-2 animate-in fill-mode-both duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ animationDelay: `${baseDelay}ms` }}
         />
       )}
       <span
-        className="text-muted-foreground relative text-xs font-normal tracking-wider uppercase opacity-90 animate-in fade-in slide-in-from-bottom-1 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] fill-mode-both"
+        className="fade-in slide-in-from-bottom-1 relative animate-in fill-mode-both font-normal text-muted-foreground text-xs uppercase tracking-wider opacity-90 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{ animationDelay: `${baseDelay + 75}ms` }}
       >
         {stat.label}
       </span>
       <div
-        className="relative flex items-baseline gap-2 pb-2 animate-in fade-in slide-in-from-bottom-2 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] fill-mode-both"
+        className="fade-in slide-in-from-bottom-2 relative flex animate-in items-baseline gap-2 fill-mode-both pb-2 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{ animationDelay: `${baseDelay + 150}ms` }}
       >
         <span
@@ -239,9 +238,9 @@ export function StatsDisplay({
         className,
       )}
     >
-      <Card className={cn("overflow-clip !pb-0 !pt-2", hasHeader && "!gap-0")}>
+      <Card className={cn("!pb-0 !pt-2 overflow-clip", hasHeader && "!gap-0")}>
         {hasHeader && (
-          <CardHeader className="border-b border-border !pt-3 !pb-4">
+          <CardHeader className="!pt-3 !pb-4 border-border border-b">
             {title && <CardTitle className="text-pretty">{title}</CardTitle>}
             {description && (
               <CardDescription className="text-pretty">
@@ -252,7 +251,7 @@ export function StatsDisplay({
         )}
         <CardContent className="@container overflow-hidden p-0">
           <div
-            className="grid @[440px]:-ml-px @[440px]:-mt-px"
+            className="@[440px]:-mt-px @[440px]:-ml-px grid"
             style={{
               gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             }}
@@ -261,7 +260,7 @@ export function StatsDisplay({
               <div
                 key={stat.key}
                 className={cn(
-                  "overflow-clip py-3 first:pt-0 @[440px]:py-3 @[440px]:first:pt-3 @[440px]:border-l @[440px]:border-t @[440px]:border-border",
+                  "overflow-clip @[440px]:border-border @[440px]:border-t @[440px]:border-l @[440px]:py-3 py-3 @[440px]:first:pt-3 first:pt-0",
                   index > 0 && "border-border border-t",
                 )}
               >

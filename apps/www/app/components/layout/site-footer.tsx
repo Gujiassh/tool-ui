@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { LogoMark } from "@/components/ui/logo";
@@ -44,12 +44,12 @@ const FOOTER_LINKS: Record<string, FooterLinkItem[]> = {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/30 py-12 md:py-16">
+    <footer className="border-border/30 border-t py-12 md:py-16">
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-10 px-6 md:flex-row md:justify-between lg:px-10">
         <div className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-4 md:order-2 lg:gap-x-14">
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
             <div key={category} className="flex flex-col gap-3">
-              <p className="text-[13px] font-medium text-foreground">
+              <p className="font-medium text-[13px] text-foreground">
                 {category}
               </p>
               {links.map((link) => (
@@ -68,10 +68,10 @@ export function SiteFooter() {
         <div className="flex flex-col gap-4 md:order-1 md:max-w-[280px]">
           <Link href="/" className="flex w-fit items-center gap-2">
             <LogoMark className="size-5" />
-            <span className="text-sm font-medium tracking-tight">Tool UI</span>
+            <span className="font-medium text-sm tracking-tight">Tool UI</span>
           </Link>
 
-          <p className="text-[13px] leading-[1.6] text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground leading-[1.6]">
             UI components for AI assistants. Render JSON tool results as real
             interfaces, not data dumps.
           </p>

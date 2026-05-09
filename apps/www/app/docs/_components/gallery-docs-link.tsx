@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { analytics } from "@/lib/analytics";
 import type { GalleryComponentDocId } from "@/lib/docs/gallery-component-docs";
 import { cn } from "@/lib/ui/cn";
@@ -33,7 +33,7 @@ export function GalleryDocsLink({
       )}
       onClick={handleClick}
     >
-      <span className="whitespace-nowrap text-sm font-semibold">{label}</span>
+      <span className="whitespace-nowrap font-semibold text-sm">{label}</span>
       <span
         className="text-neutral-400 dark:text-neutral-500"
         aria-hidden="true"

@@ -126,7 +126,7 @@ export function RoundedRectOverlay({
         {label && (
           <span
             className={cn(
-              "absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium",
+              "absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap font-medium text-[10px]",
               styles.text,
             )}
           >

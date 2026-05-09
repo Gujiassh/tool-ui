@@ -1,9 +1,9 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect } from "react";
 import { create } from "zustand";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useEffect, useCallback } from "react";
-import { previewConfigs, type ComponentId } from "@/lib/docs/preview-config";
+import { type ComponentId, previewConfigs } from "@/lib/docs/preview-config";
 import type { DebugLevel } from "@/lib/staging/types";
 
 type ViewMode = "static" | "showcase";

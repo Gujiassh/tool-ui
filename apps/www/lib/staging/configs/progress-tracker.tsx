@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { StagingConfig } from "../types";
+import { useEffect, useState } from "react";
 import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
 import type { ProgressStep } from "@/components/tool-ui/progress-tracker/schema";
 import { Button } from "@/components/ui/button";
+import type { StagingConfig } from "../types";
 
 const SAMPLE_STEPS: ProgressStep[] = [
   {
@@ -104,7 +104,7 @@ function ProgressTrackerTuningPanel() {
 
       <div className="border-t pt-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Animation Controls</h3>
+          <h3 className="font-semibold text-lg">Animation Controls</h3>
           <div className="flex gap-2">
             <Button onClick={startAnimation} disabled={isAnimating} size="sm">
               {isAnimating ? "Animating..." : "Play Animation"}
@@ -121,7 +121,7 @@ function ProgressTrackerTuningPanel() {
         <div className="grid gap-4 sm:grid-cols-3">
           {steps.map((step) => (
             <div key={step.id} className="rounded-lg border p-4">
-              <div className="mb-3 text-sm font-medium">{step.label}</div>
+              <div className="mb-3 font-medium text-sm">{step.label}</div>
               <div className="flex flex-col gap-2">
                 <Button
                   onClick={() => setStepStatus(step.id, "pending")}
@@ -163,8 +163,8 @@ function ProgressTrackerTuningPanel() {
         </div>
 
         <div className="mt-6 rounded-lg bg-muted p-4">
-          <h4 className="mb-2 text-sm font-medium">Animation Features</h4>
-          <ul className="text-muted-foreground space-y-1 text-sm">
+          <h4 className="mb-2 font-medium text-sm">Animation Features</h4>
+          <ul className="space-y-1 text-muted-foreground text-sm">
             <li>
               • Spring bounce animation on completion with cubic-bezier timing
             </li>

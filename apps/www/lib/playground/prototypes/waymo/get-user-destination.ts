@@ -13,8 +13,7 @@ type GetUserDestinationResult = {
 export const getUserDestination = async ({
   promptHint,
 }: GetUserDestinationArgs): Promise<GetUserDestinationResult> => {
-  const useHome =
-    promptHint !== undefined && promptHint.toLowerCase().includes("home");
+  const useHome = promptHint?.toLowerCase().includes("home");
   const destination = useHome ? DESTINATIONS.home : DESTINATIONS.ferry;
   return { destination };
 };

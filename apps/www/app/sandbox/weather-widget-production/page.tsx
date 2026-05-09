@@ -1,20 +1,19 @@
 "use client";
 
-import { useMemo } from "react";
 import { Leva, useControls } from "leva";
-
-import {
-  WeatherWidget,
-  type PrecipitationLevel,
-  type TemperatureUnit,
-  type WeatherConditionCode,
-  type WeatherWidgetPayload,
-} from "@/components/tool-ui/weather-widget/runtime";
-import type { EffectQuality } from "@/components/tool-ui/weather-widget/schema-runtime";
+import { useMemo } from "react";
 import {
   getSceneBrightnessFromTimeOfDay,
   getWeatherTheme,
 } from "@/components/tool-ui/weather-widget/generated/weather-runtime-core.generated";
+import {
+  type PrecipitationLevel,
+  type TemperatureUnit,
+  type WeatherConditionCode,
+  WeatherWidget,
+  type WeatherWidgetPayload,
+} from "@/components/tool-ui/weather-widget/runtime";
+import type { EffectQuality } from "@/components/tool-ui/weather-widget/schema-runtime";
 import { WeatherDataOverlay } from "@/components/tool-ui/weather-widget/weather-data-overlay";
 import { cn } from "@/lib/utils";
 import { resolveWeatherEffectsCanvasRuntimeProps as resolveBaseCanvasProps } from "@/lib/weather-authoring/weather-widget/effects/canvas-resolver-runtime";
@@ -25,8 +24,8 @@ import {
 import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/lib/weather-authoring/weather-widget/effects/generated/tuned-presets.generated";
 import { getNearestCheckpoint } from "@/lib/weather-authoring/weather-widget/effects/tuning";
 import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
-import type { WeatherEffectsCanvasProps } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-types";
 import { resolveWeatherEffectsCanvasRuntimeProps as resolveRuntimeDefaults } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-props";
+import type { WeatherEffectsCanvasProps } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-types";
 import { createProductionHarnessRuntimeInput } from "./runtime-input";
 
 const CONDITION_OPTIONS: WeatherConditionCode[] = [
@@ -102,7 +101,7 @@ function UntunedPreview({
       <div
         data-slot="card"
         className={cn(
-          "@container/weather [container-type:size] relative aspect-[4/3] overflow-clip rounded-2xl border-0 p-0 shadow-none",
+          "@container/weather relative aspect-[4/3] overflow-clip rounded-2xl border-0 p-0 shadow-none [container-type:size]",
           isDarkTheme
             ? "bg-gradient-to-b from-zinc-950 via-zinc-900/70 to-zinc-950"
             : "bg-gradient-to-b from-sky-50 via-sky-100/70 to-white",
@@ -321,15 +320,15 @@ export default function WeatherWidgetProductionHarnessPage() {
 
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <header className="space-y-2">
-          <h1 className="text-xl font-semibold tracking-tight">
+          <h1 className="font-semibold text-xl tracking-tight">
             Weather Widget Production Harness
           </h1>
-          <p className="max-w-3xl text-sm text-slate-300">
+          <p className="max-w-3xl text-slate-300 text-sm">
             Left card is the production component with tuned checkpoint
             overrides. Right card uses the same payload but skips tuned
             overrides to expose baseline behavior.
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-slate-400 text-xs">
             Active checkpoint:{" "}
             <span className="font-semibold text-slate-200">{checkpoint}</span> ·
             condition:{" "}
@@ -341,7 +340,7 @@ export default function WeatherWidgetProductionHarnessPage() {
 
         <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           <div className="space-y-3">
-            <h2 className="text-sm font-medium text-slate-200">
+            <h2 className="font-medium text-slate-200 text-sm">
               Production (tuned overrides on)
             </h2>
             <WeatherWidget
@@ -354,7 +353,7 @@ export default function WeatherWidgetProductionHarnessPage() {
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-sm font-medium text-slate-200">
+            <h2 className="font-medium text-slate-200 text-sm">
               Untuned baseline (same payload)
             </h2>
             <UntunedPreview
@@ -368,7 +367,7 @@ export default function WeatherWidgetProductionHarnessPage() {
         </section>
 
         <section className="overflow-hidden rounded-xl border border-white/10 bg-black/30 backdrop-blur">
-          <div className="border-b border-white/10 px-4 py-3 text-sm font-medium text-slate-100">
+          <div className="border-white/10 border-b px-4 py-3 font-medium text-slate-100 text-sm">
             Runtime post-process diagnostics (untuned vs tuned)
           </div>
           <table className="w-full text-left text-xs">

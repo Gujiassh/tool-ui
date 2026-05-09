@@ -209,9 +209,7 @@ export function upsertReleaseSection({
   const insertAt = sections[0]?.start ?? content.length;
   const before = content.slice(0, insertAt).trimEnd();
   const after = content.slice(insertAt).replace(/^\s+/, "");
-  return (
-    `${before}\n\n${nextSection}\n${after ? `\n${after}` : ""}`.trimEnd() + "\n"
-  );
+  return `${`${before}\n\n${nextSection}\n${after ? `\n${after}` : ""}`.trimEnd()}\n`;
 }
 
 export function validateChangelogStructure(

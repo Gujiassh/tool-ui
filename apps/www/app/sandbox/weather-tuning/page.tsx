@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ArrowLeft, Download } from "lucide-react";
-import { useTuningState } from "./hooks/use-tuning-state";
-import { TimeDial } from "./components/time-dial";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { WEATHER_CONDITIONS } from "../weather-compositor/presets";
 import { ConditionSidebar } from "./components/condition-sidebar";
 import { DetailEditor } from "./components/detail-editor";
 import { ExportPanel } from "./components/export-panel";
-import { ViewModeToggle, type ViewMode } from "./components/view-mode-toggle";
 import { ParameterMatrixView } from "./components/parameter-matrix-view";
+import { TimeDial } from "./components/time-dial";
 import { TimeMatrixView } from "./components/time-matrix-view";
+import { type ViewMode, ViewModeToggle } from "./components/view-mode-toggle";
+import { useTuningState } from "./hooks/use-tuning-state";
 import { TIME_CHECKPOINT_ORDER } from "./lib/constants";
-import { WEATHER_CONDITIONS } from "../weather-compositor/presets";
 import type { TimeCheckpoint } from "./types";
 
 export default function WeatherTuningPage() {
@@ -57,7 +57,7 @@ export default function WeatherTuningPage() {
 
       if (key >= "1" && key <= "4") {
         e.preventDefault();
-        const index = parseInt(key) - 1;
+        const index = parseInt(key, 10) - 1;
         const checkpoint = TIME_CHECKPOINT_ORDER[index];
         if (checkpoint) {
           goToCheckpoint(selectedCondition, checkpoint);
@@ -87,11 +87,11 @@ export default function WeatherTuningPage() {
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-background">
-      <header className="relative z-10 flex items-center justify-between border-b border-border/50 px-5 py-2">
+      <header className="relative z-10 flex items-center justify-between border-border/50 border-b px-5 py-2">
         <div className="flex items-center gap-4">
           <Link
             href="/sandbox"
-            className="group flex items-center gap-1.5 text-xs text-muted-foreground/70 transition-colors hover:text-foreground"
+            className="group flex items-center gap-1.5 text-muted-foreground/70 text-xs transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
             <span>Exit</span>
@@ -100,7 +100,7 @@ export default function WeatherTuningPage() {
           <div className="h-4 w-px bg-border/50" />
 
           <div className="flex items-center gap-3">
-            <h1 className="text-sm font-medium text-foreground/80">
+            <h1 className="font-medium text-foreground/80 text-sm">
               Weather Tuning Studio
             </h1>
             <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export default function WeatherTuningPage() {
 
         <main className="flex min-h-0 min-w-0 flex-1 flex-col">
           {viewMode === "condition" && (
-            <div className="flex items-center justify-center border-b border-border/40 px-6 py-3">
+            <div className="flex items-center justify-center border-border/40 border-b px-6 py-3">
               <TimeDial
                 value={state.globalTimeOfDay}
                 isPreviewing={state.isPreviewing}
@@ -183,7 +183,7 @@ export default function WeatherTuningPage() {
                     <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-border bg-muted">
                       <Download className="size-7 text-muted-foreground" />
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Select a condition from the sidebar to begin tuning
                     </p>
                   </div>
@@ -251,7 +251,7 @@ export default function WeatherTuningPage() {
                     <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-border bg-muted">
                       <Download className="size-7 text-muted-foreground" />
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       Select a condition from the sidebar to begin tuning
                     </p>
                   </div>

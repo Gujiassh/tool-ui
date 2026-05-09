@@ -1,5 +1,8 @@
 "use client";
 
+import { useWeatherEffectsRenderer } from "./use-weather-effects-renderer";
+import { resolveWeatherEffectsCanvasRuntimeProps } from "./weather-effects-props";
+import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
 import {
   __resetWeatherWebglCanvasBudgetForTests,
   getAllocatedWeatherWebglCanvasCount,
@@ -9,9 +12,6 @@ import {
   setMaxConcurrentWeatherWebglCanvases,
   tryAcquireWeatherWebglCanvasBudgetSlot,
 } from "./weather-webgl-budget";
-import { useWeatherEffectsRenderer } from "./use-weather-effects-renderer";
-import { resolveWeatherEffectsCanvasRuntimeProps } from "./weather-effects-props";
-import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
 
 export type {
   CelestialParams,

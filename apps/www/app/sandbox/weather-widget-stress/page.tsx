@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Leva, useControls, button } from "leva";
+import { button, Leva, useControls } from "leva";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
-  WeatherWidget,
   ForecastDay,
   PrecipitationLevel,
   TemperatureUnit,
   WeatherConditionCode,
+  WeatherWidget,
 } from "@/components/tool-ui/weather-widget/runtime";
 import { cn } from "@/lib/ui/cn";
 
@@ -351,7 +351,7 @@ export default function WeatherWidgetStressPage() {
 
       <div className="mx-auto flex max-w-6xl flex-col gap-6 p-8 pb-24">
         <header className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-white">
+          <h1 className="font-semibold text-2xl text-white tracking-tight">
             Weather Widget Stress Lab
           </h1>
           <p className="max-w-3xl text-sm text-zinc-400">
@@ -407,7 +407,7 @@ export default function WeatherWidgetStressPage() {
 
         <section className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-medium tracking-wider text-zinc-500 uppercase">
+            <h2 className="font-medium text-sm text-zinc-500 uppercase tracking-wider">
               WebGL-safe condition sampler
             </h2>
             <div className="flex items-center gap-2 text-xs text-zinc-500">
@@ -426,7 +426,7 @@ export default function WeatherWidgetStressPage() {
           >
             {gridItems.map((item) => (
               <div key={item.key} className="space-y-1">
-                <div className="text-[10px] tracking-wider text-zinc-600 uppercase">
+                <div className="text-[10px] text-zinc-600 uppercase tracking-wider">
                   {item.label}
                 </div>
                 {item.widget}

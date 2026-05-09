@@ -1,0 +1,2 @@
+pnpm hooks:pre-commit
+pnpm exec lint-staged

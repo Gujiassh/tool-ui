@@ -104,9 +104,9 @@ function useDirectionalLight(
 function WindowDots() {
   return (
     <div className="flex items-center gap-1.5" aria-hidden="true">
-      <span className="border-gradient-glow border-gradient-glow-dot size-3.5 rounded-full" />
-      <span className="border-gradient-glow border-gradient-glow-dot size-3.5 rounded-full" />
-      <span className="border-gradient-glow border-gradient-glow-dot size-3.5 rounded-full" />
+      <span className="size-3.5 rounded-full border-gradient-glow border-gradient-glow-dot" />
+      <span className="size-3.5 rounded-full border-gradient-glow border-gradient-glow-dot" />
+      <span className="size-3.5 rounded-full border-gradient-glow border-gradient-glow-dot" />
     </div>
   );
 }
@@ -114,7 +114,7 @@ function WindowDots() {
 function ComposerBar() {
   return (
     <div className="absolute inset-x-0 bottom-0 z-20 px-4 pb-4">
-      <div className="border-gradient-glow border-gradient-glow-composer h-10 w-full rounded-full" />
+      <div className="h-10 w-full rounded-full border-gradient-glow border-gradient-glow-composer" />
     </div>
   );
 }
@@ -131,7 +131,7 @@ function FauxChatShellBase({
     <div
       ref={containerRef}
       className={cn(
-        "border-gradient-glow relative flex h-full w-full flex-col overflow-hidden rounded-2xl backdrop-blur-lg",
+        "relative flex h-full w-full flex-col overflow-hidden rounded-2xl border-gradient-glow backdrop-blur-lg",
         className,
       )}
       style={{
@@ -158,7 +158,7 @@ function FauxChatShellBase({
         />
       )}
 
-      <div className="bg-background/80 absolute z-20 w-full rounded-t-2xl backdrop-blur-lg">
+      <div className="absolute z-20 w-full rounded-t-2xl bg-background/80 backdrop-blur-lg">
         <div className="flex h-10 shrink-0 items-center px-4 pt-0.5">
           <WindowDots />
         </div>

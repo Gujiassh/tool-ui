@@ -1,4 +1,4 @@
-import { existsSync, statSync, promises as fs } from "fs";
+import { existsSync, promises as fs, statSync } from "fs";
 import path from "path";
 import ts from "typescript";
 

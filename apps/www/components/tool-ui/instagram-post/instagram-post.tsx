@@ -1,16 +1,16 @@
 "use client";
 
-import * as React from "react";
 import { BadgeCheck, Heart, Share } from "lucide-react";
+import * as React from "react";
+import { formatRelativeTime } from "../shared/utils";
 import {
-  cn,
   Button,
+  cn,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./_adapter";
-import { formatRelativeTime } from "../shared/utils";
 
 import type { InstagramPostData, InstagramPostMedia } from "./schema";
 
@@ -94,7 +94,7 @@ function Header({
         className="size-8 rounded-full object-cover"
       />
       <div className="flex min-w-0 flex-1 items-center gap-1.5">
-        <span className="truncate text-sm font-semibold">{author.handle}</span>
+        <span className="truncate font-semibold text-sm">{author.handle}</span>
         {author.verified && (
           <BadgeCheck
             aria-label="Verified"
@@ -128,7 +128,7 @@ function MediaGrid({
     <button
       key={index}
       type="button"
-      className="bg-muted relative block size-full overflow-hidden"
+      className="relative block size-full overflow-hidden bg-muted"
       onClick={() => onOpen?.(index)}
     >
       {item.type === "image" ? (
@@ -182,7 +182,7 @@ function MediaGrid({
           {renderItem(item, index)}
           {index === 3 && media.length > 4 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/50">
-              <span className="text-2xl font-semibold text-white">
+              <span className="font-semibold text-2xl text-white">
                 +{media.length - 4}
               </span>
             </div>
@@ -196,7 +196,7 @@ function MediaGrid({
 function PostBody({ text }: { text?: string }) {
   if (!text) return null;
   return (
-    <span className="text-sm leading-relaxed text-pretty wrap-break-word whitespace-pre-wrap">
+    <span className="wrap-break-word whitespace-pre-wrap text-pretty text-sm leading-relaxed">
       {text}
     </span>
   );
@@ -278,7 +278,7 @@ export function InstagramPost({
       data-tool-ui-id={post.id}
       data-slot="instagram-post"
     >
-      <article className="bg-card overflow-hidden rounded-lg border shadow-sm">
+      <article className="overflow-hidden rounded-lg border bg-card shadow-sm">
         <Header author={post.author} createdAt={post.createdAt} />
 
         {post.media && post.media.length > 0 && (
@@ -292,7 +292,7 @@ export function InstagramPost({
           />
           {post.text && (
             <div>
-              <span className="text-sm font-semibold">
+              <span className="font-semibold text-sm">
                 {post.author.handle}
               </span>{" "}
               <PostBody text={post.text} />

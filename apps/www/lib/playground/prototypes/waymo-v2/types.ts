@@ -36,9 +36,7 @@ export interface Vehicle {
 // Pattern: Selection
 // ============================================================================
 
-export interface SelectDestinationArgs {
-  // No args - only used when destination is unknown
-}
+export type SelectDestinationArgs = {};
 
 export interface SelectDestinationResult {
   locations: Location[];

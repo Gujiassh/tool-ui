@@ -1,15 +1,15 @@
 "use client";
 
+import { Check, ChevronDown } from "lucide-react";
 import * as React from "react";
-import { cn, Button } from "./_adapter";
+import { ActionButtons } from "../shared/action-buttons";
+import type { Action } from "../shared/schema";
+import { Button, cn } from "./_adapter";
 import type {
   MessageDraftProps,
   SerializableEmailDraft,
   SerializableSlackDraft,
 } from "./schema";
-import { ActionButtons } from "../shared/action-buttons";
-import type { Action } from "../shared/schema";
-import { Check, ChevronDown } from "lucide-react";
 
 type DraftState = "review" | "sending" | "sent" | "cancelled";
 type DraftOutcome = MessageDraftProps["outcome"];
@@ -35,7 +35,7 @@ function RecipientRow({
 
   return (
     <tr className="text-sm">
-      <td className="text-muted-foreground w-0 pr-4 pb-1 text-right align-top font-medium whitespace-nowrap">
+      <td className="w-0 whitespace-nowrap pr-4 pb-1 text-right align-top font-medium text-muted-foreground">
         {label}
       </td>
       <td className={cn("pb-1 align-top", muted && "text-muted-foreground")}>
@@ -56,7 +56,7 @@ interface SingleFieldRowProps {
 function SingleFieldRow({ label, value }: SingleFieldRowProps) {
   return (
     <tr className="text-sm">
-      <td className="text-muted-foreground w-0 pr-4 pb-1 text-right align-top font-medium whitespace-nowrap">
+      <td className="w-0 whitespace-nowrap pr-4 pb-1 text-right align-top font-medium text-muted-foreground">
         {label}
       </td>
       <td className="pb-1 align-top">{value}</td>
@@ -106,12 +106,12 @@ function ExpandableBody({
                 : `${COLLAPSED_BODY_HEIGHT}px`,
         }}
       >
-        <p className="pt-1 whitespace-pre-wrap">{body}</p>
+        <p className="whitespace-pre-wrap pt-1">{body}</p>
       </div>
       {needsExpansion && (
         <div
           className={cn(
-            "from-card pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t to-transparent transition-[height] duration-300 ease-in-out",
+            "pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-card to-transparent transition-[height] duration-300 ease-in-out",
             isExpanded ? "h-0" : "h-12",
           )}
         />
@@ -135,7 +135,7 @@ function EmailDraftContent({
 }: EmailDraftContentProps) {
   return (
     <>
-      <h2 id={titleId} className="pt-2 text-base leading-tight font-semibold">
+      <h2 id={titleId} className="pt-2 font-semibold text-base leading-tight">
         {draft.subject}
       </h2>
 
@@ -152,7 +152,7 @@ function EmailDraftContent({
         </tbody>
       </table>
 
-      <div className="bg-border -mx-5 h-px" role="separator" />
+      <div className="-mx-5 h-px bg-border" role="separator" />
 
       <ExpandableBody
         body={draft.body}
@@ -210,18 +210,18 @@ function SlackDraftContent({
     <>
       <div
         id={titleId}
-        className="flex items-center gap-1.5 text-sm font-medium"
+        className="flex items-center gap-1.5 font-medium text-sm"
       >
         <SlackLogo className="size-4" />
         <span>{targetDisplay}</span>
         {memberCount !== undefined && (
-          <span className="text-muted-foreground ml-auto text-sm font-normal">
+          <span className="ml-auto font-normal text-muted-foreground text-sm">
             {memberCount.toLocaleString()} members
           </span>
         )}
       </div>
 
-      <div className="bg-border -mx-5 h-px" role="separator" />
+      <div className="-mx-5 h-px bg-border" role="separator" />
 
       <ExpandableBody
         body={draft.body}
@@ -270,7 +270,7 @@ function SentConfirmation({ sentAt }: SentConfirmationProps) {
       <span className="text-muted-foreground">
         Sent at {formatSentTime(sentAt)}
       </span>
-      <span className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-full">
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
         <Check className="size-3.5" />
       </span>
     </div>
@@ -475,7 +475,7 @@ export function MessageDraft(props: MessageDraftProps) {
   return (
     <article
       className={cn(
-        "flex w-full max-w-lg min-w-64 flex-col gap-3",
+        "flex w-full min-w-64 max-w-lg flex-col gap-3",
         "text-foreground",
         className,
       )}
@@ -485,7 +485,7 @@ export function MessageDraft(props: MessageDraftProps) {
       aria-labelledby={`${id}-title`}
       onKeyDown={handleKeyDown}
     >
-      <div className="bg-card flex w-full flex-col gap-3 rounded-2xl border px-5 pt-3 pb-5 shadow-xs transition-none">
+      <div className="flex w-full flex-col gap-3 rounded-2xl border bg-card px-5 pt-3 pb-5 shadow-xs transition-none">
         {props.channel === "email" ? (
           <EmailDraftContent
             draft={props}

@@ -1,15 +1,15 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { memo, useCallback, useMemo, useRef, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { cn } from "@/lib/ui/cn";
-import { DocsContent } from "./docs-content";
-import type { ComponentId } from "@/lib/docs/component-ids";
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
+import { memo, type ReactNode, useCallback, useMemo, useRef } from "react";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
 import { analytics } from "@/lib/analytics";
+import type { ComponentId } from "@/lib/docs/component-ids";
 import { componentsRegistry } from "@/lib/docs/component-registry";
+import { cn } from "@/lib/ui/cn";
+import { DocsContent } from "./docs-content";
 
 type DocsTab = "docs" | "examples";
 
@@ -25,7 +25,7 @@ const LazyComponentPreview = dynamic(
   () => import("./component-preview").then((m) => m.ComponentPreview),
   {
     loading: () => (
-      <div className="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-full w-full items-center justify-center text-muted-foreground text-sm">
         Loading examples...
       </div>
     ),
@@ -33,7 +33,7 @@ const LazyComponentPreview = dynamic(
 );
 
 const tabTriggerClass = cn(
-  "relative inline-flex items-center px-3 py-2.5 text-[13px] font-medium transition-colors outline-none",
+  "relative inline-flex items-center px-3 py-2.5 font-medium text-[13px] outline-none transition-colors",
   "text-muted-foreground hover:text-foreground",
   "data-[state=active]:text-foreground",
   "after:absolute after:inset-x-0 after:-bottom-px after:h-[2px]",
@@ -84,7 +84,7 @@ export const ComponentDocsTabs = memo(function ComponentDocsTabs({
       onValueChange={handleTabChange}
       className="flex w-full flex-1 flex-col"
     >
-      <div className="sticky top-12 z-30 flex items-center justify-center border-b border-border/40 bg-background/85 backdrop-blur-md">
+      <div className="sticky top-12 z-30 flex items-center justify-center border-border/40 border-b bg-background/85 backdrop-blur-md">
         <TabsPrimitive.List className="flex">
           <TabsPrimitive.Trigger
             id={`${tabsIdBase}-trigger-docs`}

@@ -1,6 +1,7 @@
 {
-  "extends": "@tool-ui/tsconfig/nextjs.json",
+  "extends": "../../packages/tsconfig/nextjs.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
     "paths": {
       "@/*": ["./*"],
       "@/components/*": ["./components/*"],

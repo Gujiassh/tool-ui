@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useCallback } from "react";
-import { cn, Button, X } from "./_adapter";
+import { useCallback, useRef } from "react";
+import { resolveSafeNavigationHref } from "../shared/media";
+import { Button, cn, X } from "./_adapter";
 import { useImageGallery } from "./context";
 import type { ImageGalleryItem } from "./schema";
-import { resolveSafeNavigationHref } from "../shared/media";
 
 type LightboxImage = Pick<ImageGalleryItem, "title" | "caption" | "source">;
 
@@ -68,7 +68,7 @@ export function GalleryLightbox() {
             className={cn(
               "pointer-events-auto relative w-fit max-w-full overflow-hidden rounded-lg shadow-2xl",
               "[&>img]:block [&>img]:max-h-[80vh] [&>img]:max-w-full",
-              "[&>img]:h-auto [&>img]:w-auto [&>img]:object-contain [&>img]:select-none",
+              "[&>img]:h-auto [&>img]:w-auto [&>img]:select-none [&>img]:object-contain",
             )}
           />
           {currentImage && <Metadata image={currentImage} />}
@@ -108,7 +108,7 @@ function Metadata({ image }: { image: LightboxImage }) {
   return (
     <div className="text-center">
       {hasTitle && (
-        <h3 className="text-base font-medium tracking-tight text-white">
+        <h3 className="font-medium text-base text-white tracking-tight">
           {title}
         </h3>
       )}

@@ -26,14 +26,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Format check
-        run: pnpm lint:format
-
-      - name: Lint - Oxlint
-        run: pnpm lint:oxlint
-
-      - name: Lint - ESLint custom rules
-        run: pnpm lint:eslint
+      - name: Lint and format (Biome)
+        run: pnpm check
 
       - name: Typecheck
         run: pnpm typecheck

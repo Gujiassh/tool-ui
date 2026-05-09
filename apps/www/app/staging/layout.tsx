@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
+import type { ReactNode } from "react";
 
 export default function StagingLayout({ children }: { children: ReactNode }) {
   return (
@@ -9,7 +9,7 @@ export default function StagingLayout({ children }: { children: ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <div className="bg-background text-foreground min-h-screen">
+      <div className="min-h-screen bg-background text-foreground">
         {children}
       </div>
     </ThemeProvider>

@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-set -eu
-
-pnpm hooks:pre-commit
-
-pnpm lint-staged

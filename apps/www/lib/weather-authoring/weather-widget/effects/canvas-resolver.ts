@@ -1,4 +1,3 @@
-import type { WeatherEffectParams } from "./types";
 import {
   buildCanvasBaseFromWeather,
   createStudioTimestamp,
@@ -11,6 +10,7 @@ import {
   type TimeCheckpoint,
   type WeatherEffectsTunedPresets,
 } from "./tuning";
+import type { WeatherEffectParams } from "./types";
 import type {
   CloudParams,
   InteractionParams,
@@ -20,13 +20,14 @@ import type {
   WeatherEffectsCanvasProps,
 } from "./weather-effects-types";
 
-export { mapWeatherCompositorParamsToCanvasProps } from "./canvas-resolver-base";
 export type { WeatherStudioCompositorParams } from "./canvas-resolver-base";
+export { mapWeatherCompositorParamsToCanvasProps } from "./canvas-resolver-base";
 export { resolveConditionCheckpointOverridesForTime } from "./checkpoint-overrides";
 
 export type WeatherEffectsCheckpointMode = "nearest" | "interpolated";
 
-export interface ResolveWeatherEffectsCanvasPropsInput extends WeatherEffectParams {
+export interface ResolveWeatherEffectsCanvasPropsInput
+  extends WeatherEffectParams {
   tunedPresets?: WeatherEffectsTunedPresets;
   checkpointMode?: WeatherEffectsCheckpointMode;
   /**

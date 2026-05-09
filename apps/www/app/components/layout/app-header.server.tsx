@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
 import Link from "next/link";
+import { ReactNode } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { LogoMark } from "@/components/ui/logo";
-import { cn } from "@/lib/ui/cn";
 import { SITE_LINKS } from "@/lib/site-config";
+import { cn } from "@/lib/ui/cn";
 import { NavMenu } from "./nav-menu.client";
 import { TrackedExternalAnchor } from "./tracked-external-anchor.client";
 
@@ -14,7 +14,7 @@ interface ResponsiveHeaderProps {
 
 const iconButtonClass = cn(
   "flex size-8 items-center justify-center rounded-md text-muted-foreground",
-  "hover:bg-accent/40 hover:text-foreground transition-colors",
+  "transition-colors hover:bg-accent/40 hover:text-foreground",
 );
 
 export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
@@ -25,7 +25,7 @@ export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
         className="flex items-center gap-2 transition-opacity hover:opacity-80"
       >
         <LogoMark className="size-5" />
-        <span className="text-sm font-medium tracking-tight">Tool UI</span>
+        <span className="font-medium text-sm tracking-tight">Tool UI</span>
       </Link>
 
       <NavMenu />

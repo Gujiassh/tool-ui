@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Heading } from "./use-extract-headings";
 
 export function useTocKeyboardNav(

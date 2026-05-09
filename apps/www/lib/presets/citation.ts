@@ -1,6 +1,6 @@
 import type {
-  SerializableCitation,
   CitationVariant,
+  SerializableCitation,
 } from "@/components/tool-ui/citation";
 import type { SerializableAction } from "@/components/tool-ui/shared";
 import type { PresetWithCodeGen } from "./types";

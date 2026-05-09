@@ -12,8 +12,8 @@
 
 "use client";
 
+import { CheckCircle, Clock, DollarSign, MapPin } from "lucide-react";
 import type { RideQuoteProps } from "../types";
-import { MapPin, Clock, DollarSign, CheckCircle } from "lucide-react";
 
 export function RideQuote({
   state,
@@ -51,11 +51,11 @@ export function RideQuote({
             Ride confirmed
           </span>
         </div>
-        <div className="mt-2 text-sm text-green-800 dark:text-green-200">
+        <div className="mt-2 text-green-800 text-sm dark:text-green-200">
           <div>
             {quote.pickup.name} → {quote.dropoff.name}
           </div>
-          <div className="mt-1 text-xs text-green-700 dark:text-green-300">
+          <div className="mt-1 text-green-700 text-xs dark:text-green-300">
             {quote.etaMinutes} min •{" "}
             {formatPrice(quote.price.amount, quote.price.currency)}
           </div>
@@ -66,10 +66,10 @@ export function RideQuote({
 
   // Interactive mode - full card
   return (
-    <div className="bg-card rounded-lg border p-6 shadow-sm">
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-foreground text-lg font-semibold">
+        <h3 className="font-semibold text-foreground text-lg">
           Waymo Ride Quote
         </h3>
       </div>
@@ -89,11 +89,11 @@ export function RideQuote({
           </div>
         </div>
 
-        <div className="border-muted-foreground/30 ml-1 h-8 w-0 border-l-2 border-dashed" />
+        <div className="ml-1 h-8 w-0 border-muted-foreground/30 border-l-2 border-dashed" />
 
         <div className="flex items-start gap-3">
           <div className="mt-1">
-            <MapPin className="text-muted-foreground h-4 w-4" />
+            <MapPin className="h-4 w-4 text-muted-foreground" />
           </div>
           <div className="flex-1">
             <div className="text-muted-foreground text-sm">Dropoff</div>
@@ -106,19 +106,19 @@ export function RideQuote({
       </div>
 
       {/* Details */}
-      <div className="bg-muted/50 mb-4 rounded-lg p-4">
+      <div className="mb-4 rounded-lg bg-muted/50 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Clock className="text-muted-foreground h-4 w-4" />
+              <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="font-medium">{quote.etaMinutes} minutes</span>
             </div>
             <div className="flex items-center gap-2">
-              <DollarSign className="text-muted-foreground h-4 w-4" />
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
               <span className="font-medium">
                 {formatPrice(quote.price.amount, quote.price.currency)}
                 {quote.price.isEstimate && (
-                  <span className="text-muted-foreground ml-1 text-xs">
+                  <span className="ml-1 text-muted-foreground text-xs">
                     (estimate)
                   </span>
                 )}
@@ -126,21 +126,21 @@ export function RideQuote({
             </div>
           </div>
         </div>
-        <div className="text-muted-foreground mt-2 text-sm">
+        <div className="mt-2 text-muted-foreground text-sm">
           {quote.vehicleInfo.type} • Seats {quote.vehicleInfo.capacity}
         </div>
       </div>
 
       {/* Payment */}
-      <div className="bg-background mb-6 flex items-center justify-between rounded-lg border p-3">
+      <div className="mb-6 flex items-center justify-between rounded-lg border bg-background p-3">
         <span className="text-muted-foreground text-sm">Payment</span>
-        <span className="text-sm font-medium">{formatPayment()}</span>
+        <span className="font-medium text-sm">{formatPayment()}</span>
       </div>
 
       {/* Confirm button */}
       <button
         onClick={onConfirm}
-        className="bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary w-full rounded-lg px-4 py-3 font-medium transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
+        className="w-full rounded-lg bg-primary px-4 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       >
         Confirm Ride
       </button>

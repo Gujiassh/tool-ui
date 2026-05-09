@@ -1,36 +1,22 @@
 "use client";
 
 import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import { cn } from "@/lib/ui/cn";
-import {
-  Sun,
   Cloud,
   CloudRain,
-  Zap,
-  Snowflake,
-  Sparkles,
-  Pencil,
   Copy,
   Eye,
+  Pencil,
+  Snowflake,
+  Sparkles,
+  Sun,
+  Zap,
 } from "lucide-react";
-import type { FullCompositorParams } from "../../weather-compositor/presets";
 import {
-  WEATHER_CONDITIONS,
-  CONDITION_LABELS,
-} from "../../weather-compositor/presets";
-import { ParameterRow, ParameterToggleRow } from "./parameter-row";
-import type { TimeCheckpoint } from "../types";
-import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
-import {
-  RAIN_PARAM_LIMITS,
-  SNOW_FALL_SPEED_MAX,
-  TIME_CHECKPOINTS,
-} from "../lib/constants";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +24,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/ui/cn";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
+import type { FullCompositorParams } from "../../weather-compositor/presets";
+import {
+  CONDITION_LABELS,
+  WEATHER_CONDITIONS,
+} from "../../weather-compositor/presets";
+import {
+  RAIN_PARAM_LIMITS,
+  SNOW_FALL_SPEED_MAX,
+  TIME_CHECKPOINTS,
+} from "../lib/constants";
+import type { TimeCheckpoint } from "../types";
+import { ParameterRow, ParameterToggleRow } from "./parameter-row";
 
 type LayerKey =
   | "layers"
@@ -130,7 +130,7 @@ function CopyToDropdown({
         <div
           role="button"
           tabIndex={0}
-          className="text-muted-foreground/40 hover:bg-accent/50 hover:text-muted-foreground cursor-pointer rounded p-1 transition-colors"
+          className="cursor-pointer rounded p-1 text-muted-foreground/40 transition-colors hover:bg-accent/50 hover:text-muted-foreground"
           title={`Copy ${layerLabel} settings to another condition`}
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => {
@@ -143,14 +143,14 @@ function CopyToDropdown({
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[160px]">
-        <div className="text-muted-foreground/60 px-2 py-1.5 text-[10px] font-medium tracking-wider uppercase">
+        <div className="px-2 py-1.5 font-medium text-[10px] text-muted-foreground/60 uppercase tracking-wider">
           Copy {layerLabel} to…
         </div>
         {onCopyToAll && (
           <>
             <DropdownMenuItem
               onClick={onCopyToAll}
-              className="text-xs font-medium"
+              className="font-medium text-xs"
             >
               All Conditions
             </DropdownMenuItem>
@@ -246,22 +246,22 @@ export function ParameterPanel({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-border/30 bg-card/80 sticky top-0 z-10 border-b px-3 py-2.5 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-border/30 border-b bg-card/80 px-3 py-2.5 backdrop-blur-xl">
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-muted-foreground/40 text-[10px] font-medium tracking-wider uppercase">
+          <span className="font-medium text-[10px] text-muted-foreground/40 uppercase tracking-wider">
             Layers
           </span>
           {isPreviewing ? (
             <div className="flex items-center gap-1.5 rounded bg-amber-500/10 px-1.5 py-0.5">
               <Eye className="size-2.5 text-amber-500/70" />
-              <span className="text-[9px] font-medium text-amber-600/70 dark:text-amber-400/70">
+              <span className="font-medium text-[9px] text-amber-600/70 dark:text-amber-400/70">
                 Preview Mode
               </span>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 rounded bg-blue-500/10 px-1.5 py-0.5">
               <Pencil className="size-2.5 text-blue-500/70" />
-              <span className="text-[9px] font-medium text-blue-600/70 dark:text-blue-400/70">
+              <span className="font-medium text-[9px] text-blue-600/70 dark:text-blue-400/70">
                 Editing {checkpointInfo.label}
               </span>
             </div>
@@ -292,7 +292,7 @@ export function ParameterPanel({
                     className={cn(
                       "flex size-3.5 items-center justify-center rounded transition-all",
                       isEnabled
-                        ? "bg-linear-to-br " + config.color
+                        ? `bg-linear-to-br${config.color}`
                         : "bg-muted/50",
                     )}
                   >
@@ -331,7 +331,7 @@ export function ParameterPanel({
       >
         {params.layers.celestial && (
           <AccordionItem value="celestial" className="border-border/30">
-            <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
+            <AccordionTrigger className="py-2.5 text-muted-foreground text-xs hover:text-foreground hover:no-underline [&[data-state=open]>svg]:rotate-180">
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-amber-500 to-orange-500">
@@ -360,11 +360,11 @@ export function ParameterPanel({
             <AccordionContent>
               <div className="space-y-1">
                 <div
-                  className="text-muted-foreground/50 flex items-center gap-2.5 rounded px-1.5 py-1.5 text-[10px]"
+                  className="flex items-center gap-2.5 rounded px-1.5 py-1.5 text-[10px] text-muted-foreground/50"
                   title="Time of day is controlled by the dial above."
                 >
                   <div className="w-28 shrink-0">
-                    <span className="text-muted-foreground/60 text-[11px]">
+                    <span className="text-[11px] text-muted-foreground/60">
                       Time of Day
                     </span>
                   </div>
@@ -628,7 +628,7 @@ export function ParameterPanel({
 
         {params.layers.clouds && (
           <AccordionItem value="cloud" className="border-border/30">
-            <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
+            <AccordionTrigger className="py-2.5 text-muted-foreground text-xs hover:text-foreground hover:no-underline [&[data-state=open]>svg]:rotate-180">
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-slate-400 to-slate-500">
@@ -795,7 +795,7 @@ export function ParameterPanel({
 
         {params.layers.rain && (
           <AccordionItem value="rain" className="border-border/30">
-            <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
+            <AccordionTrigger className="py-2.5 text-muted-foreground text-xs hover:text-foreground hover:no-underline [&[data-state=open]>svg]:rotate-180">
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-blue-500 to-cyan-500">
@@ -912,7 +912,7 @@ export function ParameterPanel({
 
         {params.layers.lightning && (
           <AccordionItem value="lightning" className="border-border/30">
-            <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
+            <AccordionTrigger className="py-2.5 text-muted-foreground text-xs hover:text-foreground hover:no-underline [&[data-state=open]>svg]:rotate-180">
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-purple-500 to-indigo-500">
@@ -1027,7 +1027,7 @@ export function ParameterPanel({
 
         {params.layers.snow && (
           <AccordionItem value="snow" className="border-border/30">
-            <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
+            <AccordionTrigger className="py-2.5 text-muted-foreground text-xs hover:text-foreground hover:no-underline [&[data-state=open]>svg]:rotate-180">
               <div className="flex flex-1 items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-slate-200 to-blue-300">
@@ -1124,7 +1124,7 @@ export function ParameterPanel({
         )}
 
         <AccordionItem value="post" className="border-border/30">
-          <AccordionTrigger className="text-muted-foreground hover:text-foreground py-2.5 text-xs hover:no-underline [&[data-state=open]>svg]:rotate-180">
+          <AccordionTrigger className="py-2.5 text-muted-foreground text-xs hover:text-foreground hover:no-underline [&[data-state=open]>svg]:rotate-180">
             <div className="flex flex-1 items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="flex size-5 items-center justify-center rounded bg-linear-to-br from-violet-500 to-fuchsia-500">
@@ -1206,7 +1206,7 @@ export function ParameterPanel({
                 }
               />
 
-              <div className="border-border/30 my-2 border-t" />
+              <div className="my-2 border-border/30 border-t" />
 
               <ParameterRow
                 label="Bloom Intensity"
@@ -1266,9 +1266,9 @@ export function ParameterPanel({
                 }
               />
 
-              <div className="border-border/30 my-2 border-t" />
+              <div className="my-2 border-border/30 border-t" />
 
-              <p className="text-muted-foreground/40 px-1.5 py-1 text-[10px] italic">
+              <p className="px-1.5 py-1 text-[10px] text-muted-foreground/40 italic">
                 Lightning flash response — requires lightning enabled
               </p>
               <ParameterRow
@@ -1315,9 +1315,9 @@ export function ParameterPanel({
                 }
               />
 
-              <div className="border-border/30 my-2 border-t" />
+              <div className="my-2 border-border/30 border-t" />
 
-              <p className="text-muted-foreground/40 px-1.5 py-1 text-[10px] italic">
+              <p className="px-1.5 py-1 text-[10px] text-muted-foreground/40 italic">
                 Crepuscular rays — only visible at dawn &amp; dusk
               </p>
               <ParameterRow

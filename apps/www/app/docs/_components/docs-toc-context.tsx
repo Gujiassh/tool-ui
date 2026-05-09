@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
-import { useExtractHeadings, type Heading } from "@/hooks/use-extract-headings";
+import { createContext, type ReactNode, useContext } from "react";
+import { type Heading, useExtractHeadings } from "@/hooks/use-extract-headings";
 import { useHeadingsObserver } from "@/hooks/use-headings-observer";
 
 type DocsTocContextValue = {

@@ -3,9 +3,10 @@
 import { render, waitFor } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-import { observeCardDimensions } from "@/lib/weather-authoring/weather-widget/weather-data-overlay";
-import { WeatherDataOverlay } from "@/lib/weather-authoring/weather-widget/weather-data-overlay";
+import {
+  observeCardDimensions,
+  WeatherDataOverlay,
+} from "@/lib/weather-authoring/weather-widget/weather-data-overlay";
 
 function installCssSupportsStub() {
   vi.stubGlobal("CSS", {
@@ -36,7 +37,6 @@ describe("weather-data-overlay resize observer guard", () => {
     const disconnect = vi.fn();
 
     class MockResizeObserver {
-      constructor(_callback: ResizeObserverCallback) {}
       observe(target: Element) {
         observe(target);
       }
@@ -63,7 +63,6 @@ describe("weather-data-overlay resize observer guard", () => {
     const disconnect = vi.fn();
 
     class MockResizeObserver {
-      constructor(_callback: ResizeObserverCallback) {}
       observe(target: Element) {
         observe(target);
       }

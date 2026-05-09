@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, Button, Card } from "./_adapter";
+import { Button, Card, cn } from "./_adapter";
 import type { Item } from "./schema";
 
 interface ItemCardProps {
@@ -25,7 +25,7 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
   return (
     <Card
       className={cn(
-        "group @container/card relative flex w-52 min-w-48 flex-col gap-0 self-stretch overflow-clip rounded-md p-0 @lg:w-56",
+        "group @container/card relative flex @lg:w-56 w-52 min-w-48 flex-col gap-0 self-stretch overflow-clip rounded-md p-0",
         isCardInteractive && "cursor-pointer hover:shadow",
         "touch-manipulation",
       )}
@@ -37,13 +37,13 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
           className={cn(
             "absolute inset-0 z-10 rounded-md",
             "cursor-pointer touch-manipulation",
-            "focus-visible:ring-ring focus-visible:ring-offset-background focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           )}
           onClick={handleCardClick}
         />
       )}
 
-      <div className="bg-muted relative aspect-square w-full overflow-hidden">
+      <div className="relative aspect-square w-full overflow-hidden bg-muted">
         {image ? (
           <img
             src={image}
@@ -71,12 +71,12 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
 
       <div className="flex flex-1 flex-col gap-1 p-3">
         <div className="flex flex-col gap-1">
-          <h3 className="line-clamp-2 text-sm leading-tight font-medium">
+          <h3 className="line-clamp-2 font-medium text-sm leading-tight">
             {name}
           </h3>
 
           {subtitle && (
-            <p className="text-muted-foreground line-clamp-1 text-sm">
+            <p className="line-clamp-1 text-muted-foreground text-sm">
               {subtitle}
             </p>
           )}
@@ -85,7 +85,7 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
         {actions && actions.length > 0 && (
           <div
             className={cn(
-              "relative z-20 mt-auto flex flex-col-reverse gap-2 pt-2 @[176px]/card:flex-row",
+              "relative z-20 mt-auto flex @[176px]/card:flex-row flex-col-reverse gap-2 pt-2",
             )}
           >
             {actions.map((action) => (
@@ -95,7 +95,7 @@ export function ItemCard({ item, onItemClick, onItemAction }: ItemCardProps) {
                 variant={action.variant ?? "default"}
                 size="sm"
                 disabled={action.disabled}
-                className="min-h-11 w-full px-3 md:min-h-8 @[176px]/card:h-8 @[176px]/card:w-auto @[176px]/card:flex-1"
+                className="@[176px]/card:h-8 min-h-11 @[176px]/card:w-auto w-full @[176px]/card:flex-1 px-3 md:min-h-8"
                 onClick={() => handleActionClick(action.id)}
               >
                 {action.icon}

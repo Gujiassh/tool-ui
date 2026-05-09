@@ -13,7 +13,13 @@
  *   Table        → shadcn/ui Table
  */
 
-export { cn } from "@/lib/utils";
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+export { Badge } from "@/components/ui/badge";
 export { Button } from "@/components/ui/button";
 export {
   DropdownMenu,
@@ -22,23 +28,17 @@ export {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 export {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 export {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-export { Badge } from "@/components/ui/badge";
-export {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
+export { cn } from "@/lib/utils";

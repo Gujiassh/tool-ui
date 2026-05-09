@@ -1,8 +1,8 @@
 "use client";
 
+import { ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDownIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -148,7 +148,7 @@ function NavDropdownItem({
             className="cursor-pointer rounded-md px-2.5 py-2"
           >
             <Link href={sub.href} className="flex flex-col gap-0.5">
-              <span className="text-[13.5px] font-medium text-foreground">
+              <span className="font-medium text-[13.5px] text-foreground">
                 {sub.label}
               </span>
               {sub.description && (

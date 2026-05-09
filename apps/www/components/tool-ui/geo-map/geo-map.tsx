@@ -107,7 +107,7 @@ export const GeoMap = memo(function GeoMap({
       data-tool-ui-id={id}
     >
       <div
-        className="bg-muted/20 relative h-[320px] w-full overflow-hidden rounded-lg border"
+        className="relative h-[320px] w-full overflow-hidden rounded-lg border bg-muted/20"
         role="region"
         aria-label={mapAriaLabel}
       >
@@ -136,12 +136,12 @@ export const GeoMap = memo(function GeoMap({
             )}
           >
             {title && (
-              <p className="text-foreground text-sm leading-tight font-semibold">
+              <p className="font-semibold text-foreground text-sm leading-tight">
                 {title}
               </p>
             )}
             {description && (
-              <p className="text-muted-foreground mt-1 text-xs leading-snug">
+              <p className="mt-1 text-muted-foreground text-xs leading-snug">
                 {description}
               </p>
             )}
@@ -151,7 +151,7 @@ export const GeoMap = memo(function GeoMap({
         {!isMapReady && (
           <div
             data-slot="geo-map-loading"
-            className="bg-muted/30 text-muted-foreground pointer-events-none absolute inset-0 flex items-center justify-center"
+            className="pointer-events-none absolute inset-0 flex items-center justify-center bg-muted/30 text-muted-foreground"
           >
             <span data-slot="geo-map-loading-label">Loading map...</span>
           </div>

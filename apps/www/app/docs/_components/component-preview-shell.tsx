@@ -1,17 +1,17 @@
 "use client";
 
-import { memo, useCallback, type ReactNode } from "react";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import type { ImperativePanelGroupHandle } from "react-resizable-panels";
 import { Check, Code, Copy, Eye, MessageCircle } from "lucide-react";
+import { memo, type ReactNode, useCallback } from "react";
+import type { ImperativePanelGroupHandle } from "react-resizable-panels";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { useCopyToClipboard } from "@/components/tool-ui/shared";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/lib/ui/cn";
 import { useResponsivePreview } from "@/hooks/use-responsive-preview";
 import { useTabSearchParam } from "@/hooks/use-tab-search-param";
-import { useCopyToClipboard } from "@/components/tool-ui/shared";
-import { InstallCommandBlock } from "./install-command-block";
 import { analytics } from "@/lib/analytics";
+import { cn } from "@/lib/ui/cn";
+import { InstallCommandBlock } from "./install-command-block";
 
 const PREVIEW_MIN_WIDTH = 40;
 const PREVIEW_MAX_WIDTH = 100;
@@ -29,7 +29,7 @@ function toStablePanelIdSegment(value: string): string {
 
 const toggleItemClass = cn(
   "size-7 rounded-md border-0 bg-transparent text-muted-foreground",
-  "hover:text-foreground hover:bg-accent/40",
+  "hover:bg-accent/40 hover:text-foreground",
   "data-[state=on]:bg-accent/60 data-[state=on]:text-foreground",
 );
 
@@ -193,7 +193,7 @@ export function ComponentPreviewShell({
       <aside
         className={cn(
           "scrollbar-subtle hidden w-64 shrink-0 flex-col",
-          "border-r border-border/40",
+          "border-border/40 border-r",
           "lg:flex",
         )}
       >
@@ -203,12 +203,12 @@ export function ComponentPreviewShell({
       {/* Main content area */}
       <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
         {/* Install commands */}
-        <div className="shrink-0 border-b border-border/40 px-4 py-3 sm:px-6">
+        <div className="shrink-0 border-border/40 border-b px-4 py-3 sm:px-6">
           <InstallCommandBlock componentId={componentId} variant="block" />
         </div>
 
         {/* Mobile toolbar */}
-        <div className="flex flex-col gap-3 border-b border-border/40 px-4 pt-3 pb-3 lg:hidden">
+        <div className="flex flex-col gap-3 border-border/40 border-b px-4 pt-3 pb-3 lg:hidden">
           <div className="scrollbar-subtle overflow-x-auto">{sidebar}</div>
           <div className="flex items-center justify-end">
             <ViewModeToggle
@@ -226,7 +226,7 @@ export function ComponentPreviewShell({
         >
           {viewMode === "canvas" && (
             <div
-              className="bg-dot-grid pointer-events-none absolute inset-0 z-0 dark:opacity-60"
+              className="pointer-events-none absolute inset-0 z-0 bg-dot-grid dark:opacity-60"
               aria-hidden="true"
             />
           )}

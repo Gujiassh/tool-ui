@@ -12,7 +12,7 @@ export default function ContentLayout({
   return (
     <div className="flex w-full flex-1">
       {sidebar ? (
-        <aside className="scrollbar-subtle sticky top-12 hidden h-[calc(100vh-3rem)] w-[260px] shrink-0 overflow-y-auto border-r border-border/30 md:block">
+        <aside className="scrollbar-subtle sticky top-12 hidden h-[calc(100vh-3rem)] w-[260px] shrink-0 overflow-y-auto border-border/30 border-r md:block">
           {sidebar}
         </aside>
       ) : null}

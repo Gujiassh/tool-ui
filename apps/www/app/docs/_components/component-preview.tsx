@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { ComponentPreviewShell } from "./component-preview-shell";
-import { ChatContextPreview } from "./chat-context-preview";
-import { PresetSelector } from "./preset-selector";
+import { usePresetParam } from "@/hooks/use-preset-param";
 import { getImportLine } from "@/lib/docs/gallery-usage-code";
 import {
   type ComponentId,
   getPreviewConfig,
   type PreviewState,
 } from "@/lib/docs/preview-config";
-import { usePresetParam } from "@/hooks/use-preset-param";
+import { ChatContextPreview } from "./chat-context-preview";
+import { ComponentPreviewShell } from "./component-preview-shell";
+import { PresetSelector } from "./preset-selector";
 import { TrackedDynamicCodeBlock } from "./tracked-dynamic-codeblock";
 
 interface ComponentPreviewProps {

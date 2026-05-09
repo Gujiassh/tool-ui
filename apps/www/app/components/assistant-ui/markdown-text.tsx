@@ -8,9 +8,9 @@ import {
   unstable_memoizeMarkdownComponents as memoizeMarkdownComponents,
   useIsMarkdownCodeBlock,
 } from "@assistant-ui/react-markdown";
-import remarkGfm from "remark-gfm";
-import { type FC, memo, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import { type FC, memo, useState } from "react";
+import remarkGfm from "remark-gfm";
 
 import { TooltipIconButton } from "@/app/components/assistant-ui/tooltip-icon-button";
 import { cn } from "@/lib/ui/cn";
@@ -35,7 +35,7 @@ const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
   };
 
   return (
-    <div className="aui-code-header-root bg-muted-foreground/15 text-foreground dark:bg-muted-foreground/20 mt-4 flex items-center justify-between gap-4 rounded-t-lg px-4 py-2 text-sm font-semibold">
+    <div className="aui-code-header-root mt-4 flex items-center justify-between gap-4 rounded-t-lg bg-muted-foreground/15 px-4 py-2 font-semibold text-foreground text-sm dark:bg-muted-foreground/20">
       <span className="aui-code-header-language lowercase [&>span]:text-xs">
         {language}
       </span>
@@ -70,7 +70,7 @@ const defaultComponents = memoizeMarkdownComponents({
   h1: ({ className, ...props }) => (
     <h1
       className={cn(
-        "aui-md-h1 mb-8 scroll-m-20 text-4xl font-extrabold last:mb-0",
+        "aui-md-h1 mb-8 scroll-m-20 font-extrabold text-4xl last:mb-0",
         className,
       )}
       {...props}
@@ -79,7 +79,7 @@ const defaultComponents = memoizeMarkdownComponents({
   h2: ({ className, ...props }) => (
     <h2
       className={cn(
-        "aui-md-h2 mt-8 mb-4 scroll-m-20 text-3xl font-semibold first:mt-0 last:mb-0",
+        "aui-md-h2 mt-8 mb-4 scroll-m-20 font-semibold text-3xl first:mt-0 last:mb-0",
         className,
       )}
       {...props}
@@ -88,7 +88,7 @@ const defaultComponents = memoizeMarkdownComponents({
   h3: ({ className, ...props }) => (
     <h3
       className={cn(
-        "aui-md-h3 mt-6 mb-4 scroll-m-20 text-2xl font-semibold first:mt-0 last:mb-0",
+        "aui-md-h3 mt-6 mb-4 scroll-m-20 font-semibold text-2xl first:mt-0 last:mb-0",
         className,
       )}
       {...props}
@@ -97,7 +97,7 @@ const defaultComponents = memoizeMarkdownComponents({
   h4: ({ className, ...props }) => (
     <h4
       className={cn(
-        "aui-md-h4 mt-6 mb-4 scroll-m-20 text-xl font-semibold first:mt-0 last:mb-0",
+        "aui-md-h4 mt-6 mb-4 scroll-m-20 font-semibold text-xl first:mt-0 last:mb-0",
         className,
       )}
       {...props}
@@ -106,7 +106,7 @@ const defaultComponents = memoizeMarkdownComponents({
   h5: ({ className, ...props }) => (
     <h5
       className={cn(
-        "aui-md-h5 my-4 text-lg font-semibold first:mt-0 last:mb-0",
+        "aui-md-h5 my-4 font-semibold text-lg first:mt-0 last:mb-0",
         className,
       )}
       {...props}
@@ -130,7 +130,7 @@ const defaultComponents = memoizeMarkdownComponents({
   a: ({ className, ...props }) => (
     <a
       className={cn(
-        "aui-md-a text-primary font-medium underline underline-offset-4",
+        "aui-md-a font-medium text-primary underline underline-offset-4",
         className,
       )}
       {...props}
@@ -205,7 +205,7 @@ const defaultComponents = memoizeMarkdownComponents({
   pre: ({ className, ...props }) => (
     <pre
       className={cn(
-        "aui-md-pre overflow-x-auto !rounded-t-none rounded-b-lg bg-black p-4 text-white",
+        "aui-md-pre !rounded-t-none overflow-x-auto rounded-b-lg bg-black p-4 text-white",
         className,
       )}
       {...props}
@@ -217,7 +217,7 @@ const defaultComponents = memoizeMarkdownComponents({
       <code
         className={cn(
           !isCodeBlock &&
-            "aui-md-inline-code bg-muted rounded border font-semibold",
+            "aui-md-inline-code rounded border bg-muted font-semibold",
           className,
         )}
         {...props}

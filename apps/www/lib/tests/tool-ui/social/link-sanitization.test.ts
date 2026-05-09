@@ -1,11 +1,10 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
-
-import { XPost } from "@/components/tool-ui/x-post";
-import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
-import { ImageGallery } from "@/components/tool-ui/image-gallery";
 import { LinkValue } from "@/components/tool-ui/data-table/formatters";
+import { ImageGallery } from "@/components/tool-ui/image-gallery";
+import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
+import { XPost } from "@/components/tool-ui/x-post";
 
 describe("tool-ui social/media link sanitization", () => {
   test("does not render unsafe X post link-preview href", () => {

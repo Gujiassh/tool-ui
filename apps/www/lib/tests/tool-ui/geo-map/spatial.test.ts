@@ -22,11 +22,11 @@ vi.mock("@/components/tool-ui/geo-map/geo-map-overlays", () => ({
 
 import {
   collectFitPoints,
+  type GeoMapClusterFeature,
   getClustersForDatelineAwareBbox,
   resolveFitPointsWithFallback,
   splitDatelineBbox,
   toSafeExpansionZoom,
-  type GeoMapClusterFeature,
 } from "@/components/tool-ui/geo-map/geo-map-engine";
 
 const markers = [

@@ -1,8 +1,8 @@
 import type { WeatherConditionCode } from "../schema";
 import {
   getNearestCheckpoint,
-  TIME_CHECKPOINTS,
   TIME_CHECKPOINT_ORDER,
+  TIME_CHECKPOINTS,
   type TimeCheckpoint,
   type WeatherEffectsCheckpointOverrides,
   type WeatherEffectsOverrides,

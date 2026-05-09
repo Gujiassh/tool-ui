@@ -39,10 +39,10 @@ export function HomeFeatures() {
       {FEATURES.map(({ icon: Icon, title, description }) => (
         <div key={title} className="flex flex-col gap-2">
           <Icon className="size-4 text-muted-foreground" />
-          <h3 className="text-[15px] font-medium tracking-tight text-foreground">
+          <h3 className="font-medium text-[15px] text-foreground tracking-tight">
             {title}
           </h3>
-          <p className="text-[13px] leading-[1.6] text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground leading-[1.6]">
             {description}
           </p>
         </div>

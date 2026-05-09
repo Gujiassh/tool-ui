@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type ActionsProp } from "../shared/actions-config";
-import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import { defineToolUiContract } from "../shared/contract";
+import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import {
   SerializableActionSchema,
   SerializableActionsConfigSchema,
@@ -124,10 +124,8 @@ export interface PreferencesValue {
   [itemId: string]: string | boolean;
 }
 
-export interface PreferencesPanelProps extends Omit<
-  SerializablePreferencesPanel,
-  "actions"
-> {
+export interface PreferencesPanelProps
+  extends Omit<SerializablePreferencesPanel, "actions"> {
   className?: string;
   value?: PreferencesValue;
   onChange?: (value: PreferencesValue) => void;
@@ -136,7 +134,8 @@ export interface PreferencesPanelProps extends Omit<
   onBeforeAction?: EmbeddedActionsProps<PreferencesValue>["onBeforeAction"];
 }
 
-export interface PreferencesPanelReceiptProps extends SerializablePreferencesPanelReceipt {
+export interface PreferencesPanelReceiptProps
+  extends SerializablePreferencesPanelReceipt {
   className?: string;
 }
 

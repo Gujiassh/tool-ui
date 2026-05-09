@@ -1,8 +1,8 @@
+import { isComponentId } from "@/lib/docs/component-ids";
 import { CopyMarkdownButton } from "./copy-markdown-button";
 import { HeaderPreviewTabs } from "./header-preview-tabs";
 import { InstallCommandLine } from "./install-command-line";
 import { getMdxAsMarkdown } from "./mdx-to-markdown";
-import { isComponentId } from "@/lib/docs/component-ids";
 
 type DocsHeaderProps = {
   title: string;
@@ -22,13 +22,13 @@ export function DocsHeader({ title, description, mdxPath }: DocsHeaderProps) {
   return (
     <header className="not-prose mb-8 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
-        <h1 className="text-[32px] font-normal leading-[1.2] tracking-[-0.02em]">
+        <h1 className="font-normal text-[32px] leading-[1.2] tracking-[-0.02em]">
           {title}
         </h1>
         {markdown && <CopyMarkdownButton markdown={markdown} />}
       </div>
       {description && (
-        <p className="text-[15px] leading-[1.5] text-muted-foreground">
+        <p className="text-[15px] text-muted-foreground leading-[1.5]">
           {description}
         </p>
       )}

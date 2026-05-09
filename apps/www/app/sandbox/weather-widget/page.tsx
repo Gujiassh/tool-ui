@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useControls, Leva } from "leva";
+import { Leva, useControls } from "leva";
+import { useMemo, useState } from "react";
 import {
-  WeatherWidget,
   type TemperatureUnit,
+  WeatherWidget,
   type WeatherWidgetCurrent,
   type WeatherWidgetPayload,
 } from "@/components/tool-ui/weather-widget/runtime";
@@ -347,7 +347,7 @@ function LocationPill({ preset, isActive, onClick }: LocationPillProps) {
   return (
     <button
       onClick={onClick}
-      className={`relative rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all ${
+      className={`relative whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-xs transition-all ${
         isActive
           ? "bg-white/20 text-white ring-1 ring-white/30"
           : "bg-white/10 text-white/60 hover:bg-white/15 hover:text-white/80"

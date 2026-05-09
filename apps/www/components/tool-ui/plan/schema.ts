@@ -1,10 +1,10 @@
 import { z } from "zod";
+import { defineToolUiContract } from "../shared/contract";
 import {
   ToolUIIdSchema,
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
 } from "../shared/schema";
-import { defineToolUiContract } from "../shared/contract";
 
 export const PlanTodoStatusSchema = z.enum([
   "pending",

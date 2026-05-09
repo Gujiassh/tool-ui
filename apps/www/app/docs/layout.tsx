@@ -1,12 +1,12 @@
-import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import ContentLayout from "@/app/components/layout/page-shell";
-import { HeaderFrame } from "@/app/components/layout/app-shell";
+import type { ReactNode } from "react";
 import { ThemeToggle } from "@/app/components/builder/theme-toggle";
+import { HeaderFrame } from "@/app/components/layout/app-shell";
+import ContentLayout from "@/app/components/layout/page-shell";
 import { DocsNav } from "./_components/docs-nav";
-import { DocsTocProvider } from "./_components/docs-toc-context";
 import { DocsSearch } from "./_components/docs-search.client";
+import { DocsTocProvider } from "./_components/docs-toc-context";
 
 export const metadata: Metadata = {
   title: {

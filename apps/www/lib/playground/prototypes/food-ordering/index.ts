@@ -1,10 +1,9 @@
 import { z } from "zod";
-
-import { searchRestaurants } from "./search-restaurants";
-import { getRestaurantDetails } from "./get-restaurant-details";
-import { getMenu } from "./get-menu";
-import { placeOrder } from "./place-order";
 import type { Prototype } from "../../types";
+import { getMenu } from "./get-menu";
+import { getRestaurantDetails } from "./get-restaurant-details";
+import { placeOrder } from "./place-order";
+import { searchRestaurants } from "./search-restaurants";
 
 const searchRestaurantsInput = z.object({
   query: z.string().optional(),

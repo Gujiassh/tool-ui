@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/ui/cn";
 
@@ -48,13 +48,13 @@ export function ThemeToggle() {
       <Sun
         className={cn(
           "size-4 transition-all",
-          isDark ? "scale-0 rotate-90" : "scale-100 rotate-0",
+          isDark ? "rotate-90 scale-0" : "rotate-0 scale-100",
         )}
       />
       <Moon
         className={cn(
           "absolute size-4 transition-all",
-          isDark ? "scale-100 rotate-0" : "scale-0 -rotate-90",
+          isDark ? "rotate-0 scale-100" : "-rotate-90 scale-0",
         )}
       />
       <span className="sr-only">Toggle theme</span>

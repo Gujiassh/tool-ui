@@ -1,9 +1,9 @@
-export { LinkedInPost } from "./linkedin-post";
 export type { LinkedInPostProps } from "./linkedin-post";
+export { LinkedInPost } from "./linkedin-post";
 export type {
-  LinkedInPostData,
   LinkedInPostAuthor,
-  LinkedInPostMedia,
+  LinkedInPostData,
   LinkedInPostLinkPreview,
+  LinkedInPostMedia,
   LinkedInPostStats,
 } from "./schema";

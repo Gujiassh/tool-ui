@@ -1,6 +1,6 @@
 "use client";
 
-import { useControls, Leva } from "leva";
+import { Leva, useControls } from "leva";
 import { CelestialCanvas } from "./celestial-canvas";
 
 export default function CelestialEffectSandbox() {

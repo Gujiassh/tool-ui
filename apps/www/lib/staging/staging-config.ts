@@ -1,8 +1,8 @@
-import type { ComponentId, StagingConfig } from "./types";
 import { parameterSliderStagingConfig } from "./configs/parameter-slider";
-import { statsDisplayStagingConfig } from "./configs/stats-display";
-import { progressTrackerStagingConfig } from "./configs/progress-tracker";
 import { planStagingConfig } from "./configs/plan";
+import { progressTrackerStagingConfig } from "./configs/progress-tracker";
+import { statsDisplayStagingConfig } from "./configs/stats-display";
+import type { ComponentId, StagingConfig } from "./types";
 
 const stagingConfigs: Partial<Record<ComponentId, StagingConfig>> = {
   "parameter-slider": parameterSliderStagingConfig,

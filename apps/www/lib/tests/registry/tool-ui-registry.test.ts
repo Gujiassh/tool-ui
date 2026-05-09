@@ -1,7 +1,7 @@
+import { promises as fs } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { describe, expect, it } from "vitest";
-import { promises as fs } from "fs";
 import { buildToolUiRegistryArtifacts } from "@/lib/registry/tool-ui-registry";
 
 function getProjectRoot(): string {
@@ -33,9 +33,7 @@ describe("Tool UI registry artifacts", () => {
 
     for (const indexItem of artifacts.index.items) {
       for (const file of indexItem.files ?? []) {
-        expect(Object.prototype.hasOwnProperty.call(file, "content")).toBe(
-          false,
-        );
+        expect(Object.hasOwn(file, "content")).toBe(false);
       }
     }
 

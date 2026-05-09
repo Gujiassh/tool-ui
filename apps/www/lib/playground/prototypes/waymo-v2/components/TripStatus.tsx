@@ -8,13 +8,13 @@
  */
 
 import type { ToolCallMessagePartProps } from "@assistant-ui/react";
-import { Card } from "@/components/ui/card";
+import { Car, CheckCircle2, Circle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Circle, Car, XCircle } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import type {
   GetTripStatusResult,
-  TripStep,
   TripStatus as TripStatusType,
+  TripStep,
 } from "../types";
 import { MOCK_VEHICLE } from "../types";
 
@@ -25,14 +25,14 @@ const StepIcon = ({ status }: { status: TripStep["status"] }) => {
   if (status === "current") {
     return (
       <div className="relative">
-        <Circle className="h-5 w-5 text-blue-600 fill-blue-600" />
+        <Circle className="h-5 w-5 fill-blue-600 text-blue-600" />
         <div className="absolute inset-0 animate-ping">
           <Circle className="h-5 w-5 text-blue-600 opacity-50" />
         </div>
       </div>
     );
   }
-  return <Circle className="text-muted-foreground/40 h-5 w-5" />;
+  return <Circle className="h-5 w-5 text-muted-foreground/40" />;
 };
 
 // Generate initial trip status
@@ -97,7 +97,7 @@ export function TripStatus({
           </div>
           <div className="flex-1">
             <div className="font-semibold">Ride cancelled</div>
-            <div className="text-muted-foreground mt-1 text-sm">
+            <div className="mt-1 text-muted-foreground text-sm">
               Your ride has been cancelled. No charge.
             </div>
           </div>
@@ -116,7 +116,7 @@ export function TripStatus({
           </div>
           <div className="flex-1">
             <div className="font-semibold">Trip completed</div>
-            <div className="text-muted-foreground mt-1 text-sm">
+            <div className="mt-1 text-muted-foreground text-sm">
               Thanks for riding with Waymo!
             </div>
           </div>
@@ -135,7 +135,7 @@ export function TripStatus({
   return (
     <Card className="max-w-md p-5">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold">Your ride</h3>
+        <h3 className="font-semibold text-lg">Your ride</h3>
         {status.etaMinutes && (
           <p className="text-muted-foreground text-sm">
             {status.etaMinutes} min away
@@ -151,7 +151,7 @@ export function TripStatus({
               <StepIcon status={step.status} />
               {index < status.steps.length - 1 && (
                 <div
-                  className={`w-0.5 flex-1 my-1 ${
+                  className={`my-1 w-0.5 flex-1 ${
                     step.status === "completed"
                       ? "bg-green-600"
                       : "bg-muted-foreground/20"
@@ -181,10 +181,10 @@ export function TripStatus({
 
       {/* Vehicle info */}
       {status.vehicle && (
-        <div className="bg-muted/50 mb-4 flex items-center gap-3 rounded-lg p-3">
-          <Car className="text-muted-foreground h-5 w-5" />
+        <div className="mb-4 flex items-center gap-3 rounded-lg bg-muted/50 p-3">
+          <Car className="h-5 w-5 text-muted-foreground" />
           <div>
-            <div className="text-sm font-medium">
+            <div className="font-medium text-sm">
               {status.vehicle.color} {status.vehicle.make}{" "}
               {status.vehicle.model}
             </div>

@@ -10,23 +10,23 @@
  *   Collapsible → shadcn/ui Collapsible
  */
 
-export { cn } from "@/lib/utils";
 export {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
 } from "@/components/ui/accordion";
 export {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 export {
   Collapsible,
-  CollapsibleTrigger,
   CollapsibleContent,
+  CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+export { cn } from "@/lib/utils";

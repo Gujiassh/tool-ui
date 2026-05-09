@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/ui/cn";
-import type { ConditionCheckpoints } from "../types";
 import { TIME_CHECKPOINT_ORDER } from "../lib/constants";
+import type { ConditionCheckpoints } from "../types";
 
 interface CheckpointDotsProps {
   checkpoints?: ConditionCheckpoints;

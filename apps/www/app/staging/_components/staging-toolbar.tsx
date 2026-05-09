@@ -1,12 +1,15 @@
 "use client";
 
-import { Settings, Sun, Moon, Monitor, Play, Eye } from "lucide-react";
+import { Eye, Monitor, Moon, Play, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { cn } from "@/lib/ui/cn";
-import { previewConfigs, type ComponentId } from "@/lib/docs/preview-config";
-import { getStagingConfig } from "@/lib/staging/staging-config";
-import { useStagingStore, usePresetNames } from "./use-staging-state";
-import type { DebugLevel } from "@/lib/staging/types";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -14,14 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { type ComponentId, previewConfigs } from "@/lib/docs/preview-config";
+import { getStagingConfig } from "@/lib/staging/staging-config";
+import type { DebugLevel } from "@/lib/staging/types";
+import { cn } from "@/lib/ui/cn";
+import { usePresetNames, useStagingStore } from "./use-staging-state";
 
 const COMPONENT_IDS = Object.keys(previewConfigs) as ComponentId[];
 
@@ -40,7 +40,7 @@ function ComponentSelector() {
       value={componentId}
       onValueChange={(v) => setComponent(v as ComponentId)}
     >
-      <SelectTrigger className="h-8 w-[180px] border-none bg-transparent text-sm font-medium shadow-none focus:ring-0">
+      <SelectTrigger className="h-8 w-[180px] border-none bg-transparent font-medium text-sm shadow-none focus:ring-0">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -72,13 +72,13 @@ function PresetPills() {
           key={name}
           onClick={() => setPreset(name)}
           className={cn(
-            "rounded-full px-3 py-1 text-xs font-medium transition-colors",
+            "rounded-full px-3 py-1 font-medium text-xs transition-colors",
             presetName === name
               ? "bg-foreground text-background"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted",
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
           )}
         >
-          <span className="text-muted-foreground mr-1.5 font-mono opacity-60">
+          <span className="mr-1.5 font-mono text-muted-foreground opacity-60">
             {index + 1}
           </span>
           {formatPresetName(name)}
@@ -119,7 +119,7 @@ function SettingsPopover() {
           {hasDebugOverlays && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <Label className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                   Debug Overlay
                 </Label>
                 <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
@@ -136,7 +136,7 @@ function SettingsPopover() {
                     <RadioGroupItem value={level} id={`debug-${level}`} />
                     <Label
                       htmlFor={`debug-${level}`}
-                      className="text-sm cursor-pointer"
+                      className="cursor-pointer text-sm"
                     >
                       {DEBUG_LEVEL_LABELS[level]}
                     </Label>
@@ -147,7 +147,7 @@ function SettingsPopover() {
           )}
 
           <div className="space-y-2">
-            <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <Label className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
               Theme
             </Label>
             <div className="flex gap-1">
@@ -202,7 +202,7 @@ function ViewModeToggle() {
       <button
         onClick={() => setViewMode("static")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors",
+          "flex items-center gap-1.5 rounded-md px-2 py-1 font-medium text-xs transition-colors",
           viewMode === "static"
             ? "bg-foreground text-background"
             : "text-muted-foreground hover:text-foreground",
@@ -215,7 +215,7 @@ function ViewModeToggle() {
       <button
         onClick={() => setViewMode("showcase")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors",
+          "flex items-center gap-1.5 rounded-md px-2 py-1 font-medium text-xs transition-colors",
           viewMode === "showcase"
             ? "bg-foreground text-background"
             : "text-muted-foreground hover:text-foreground",
@@ -244,7 +244,7 @@ function DebugLevelIndicator() {
   return (
     <button
       onClick={cycleDebugLevel}
-      className="flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-muted/80"
+      className="flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs transition-colors hover:bg-muted/80"
       title="Click or press D to cycle"
     >
       <span className={cn("h-2 w-2 rounded-full", colors[debugLevel])} />
@@ -259,13 +259,13 @@ export function StagingToolbar() {
       <div className="flex h-12 items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <ComponentSelector />
-          <div className="bg-border h-4 w-px" />
+          <div className="h-4 w-px bg-border" />
           <PresetPills />
         </div>
 
         <div className="flex items-center gap-2">
           <ViewModeToggle />
-          <div className="bg-border h-4 w-px" />
+          <div className="h-4 w-px bg-border" />
           <DebugLevelIndicator />
           <SettingsPopover />
         </div>

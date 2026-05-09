@@ -2,38 +2,38 @@
 
 import * as React from "react";
 import {
-  cn,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableHeader,
-  TableHead,
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
+  cn,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "./_adapter";
-import {
-  sortData,
-  createDataTableRowKeys,
-  getDataTableMobileDescriptionId,
-} from "./utilities";
+import type { FormatConfig } from "./formatters";
 import { renderFormattedValue } from "./formatters";
 import type {
-  DataTableProps,
-  DataTableContextValue,
-  RowData,
-  DataTableRowData,
-  ColumnKey,
   Column,
+  ColumnKey,
+  DataTableContextValue,
+  DataTableProps,
+  DataTableRowData,
+  RowData,
 } from "./types";
-import type { FormatConfig } from "./formatters";
+import {
+  createDataTableRowKeys,
+  getDataTableMobileDescriptionId,
+  sortData,
+} from "./utilities";
 
 export const DEFAULT_LOCALE = "en-US" as const;
 
@@ -56,7 +56,7 @@ function getAlignmentClass(
 }
 
 const DataTableContext = React.createContext<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: generic context default
   DataTableContextValue<any> | undefined
 >(undefined);
 
@@ -216,13 +216,13 @@ function DataTableLayout({
             ? "block"
             : layout === "cards"
               ? "hidden"
-              : "hidden @md:block",
+              : "@md:block hidden",
         )}
       >
         <div className="relative">
           <div
             className={cn(
-              "bg-card relative w-full overflow-clip overflow-y-auto rounded-lg border",
+              "relative w-full overflow-clip overflow-y-auto rounded-lg border bg-card",
               "touch-pan-x",
               maxHeight && "max-h-[--max-height]",
             )}
@@ -272,11 +272,11 @@ function DataTableLayout({
         </div>
 
         {data.length === 0 ? (
-          <div className="text-muted-foreground py-8 text-center">
+          <div className="py-8 text-center text-muted-foreground">
             {emptyMessage}
           </div>
         ) : (
-          <div className="bg-card flex flex-col overflow-hidden rounded-2xl border shadow-xs">
+          <div className="flex flex-col overflow-hidden rounded-2xl border bg-card shadow-xs">
             {data.map((row, i) => {
               const rowKey = rowKeys[i];
               return (
@@ -380,7 +380,7 @@ function DataTableEmpty({ message }: { message: string }) {
 
   return (
     <TableBody>
-      <TableRow className="bg-card h-24 text-center">
+      <TableRow className="h-24 bg-card text-center">
         <TableCell colSpan={columns.length} role="status" aria-live="polite">
           {message}
         </TableCell>
@@ -530,7 +530,7 @@ function DataTableHead({
                   <abbr
                     title={column.label}
                     className={cn(
-                      "cursor-help border-b border-dotted border-current no-underline",
+                      "cursor-help border-current border-b border-dotted no-underline",
                       labelAlignClass,
                     )}
                   >
@@ -743,7 +743,7 @@ function DataTableAccordionCard({
     >
       <AccordionItem value={accordionItemId} className="group border-0">
         <AccordionTrigger
-          className="group-data-[state=closed]:hover:bg-accent/50 active:bg-accent/50 group-data-[state=open]:bg-muted w-full rounded-none px-4 py-3 hover:no-underline"
+          className="w-full rounded-none px-4 py-3 hover:no-underline active:bg-accent/50 group-data-[state=open]:bg-muted group-data-[state=closed]:hover:bg-accent/50"
           aria-controls={detailsId}
           aria-label={`${rowLabel}. ${secondary.length > 0 ? "Expand for details" : ""}`}
         >
@@ -767,7 +767,7 @@ function DataTableAccordionCard({
 
             {remainingPrimaryColumns.length > 0 && (
               <div
-                className="text-muted-foreground flex w-full flex-wrap gap-x-4 gap-y-0.5"
+                className="flex w-full flex-wrap gap-x-4 gap-y-0.5 text-muted-foreground"
                 role="group"
                 aria-label="Summary information"
               >
@@ -803,12 +803,13 @@ function DataTableAccordionCard({
           aria-labelledby={headingId}
         >
           {secondary.length > 0 && (
+            // biome-ignore lint/a11y/noInteractiveElementToNoninteractiveRole: explicit role disambiguates dl used as a generic list with role="listitem" children
             <dl
               className={cn(
                 "flex flex-col gap-2 pt-4",
-                "motion-safe:group-data-[state=open]:animate-in motion-safe:group-data-[state=open]:fade-in-0",
+                "motion-safe:group-data-[state=open]:fade-in-0 motion-safe:group-data-[state=open]:animate-in",
                 "motion-safe:group-data-[state=open]:slide-in-from-top-1",
-                "motion-safe:group-data-[state=closed]:animate-out motion-safe:group-data-[state=closed]:fade-out-0",
+                "motion-safe:group-data-[state=closed]:fade-out-0 motion-safe:group-data-[state=closed]:animate-out",
                 "motion-safe:group-data-[state=closed]:slide-out-to-top-1",
                 "duration-150",
               )}
@@ -822,14 +823,14 @@ function DataTableAccordionCard({
                   role="listitem"
                 >
                   <dt
-                    className="text-muted-foreground shrink-0"
+                    className="shrink-0 text-muted-foreground"
                     id={`row-${stableRowId}-${String(col.key)}-label`}
                   >
                     {col.label}
                   </dt>
                   <dd
                     className={cn(
-                      "text-foreground min-w-0 text-pretty wrap-break-word",
+                      "wrap-break-word min-w-0 text-pretty text-foreground",
                       col.align === "right" && "text-right",
                       col.align === "center" && "text-center",
                     )}
@@ -915,7 +916,7 @@ function SimpleCard({
           </span>
           <span
             className={cn(
-              "min-w-0 wrap-break-word",
+              "wrap-break-word min-w-0",
               col.align === "right" && "text-right",
               col.align === "center" && "text-center",
             )}

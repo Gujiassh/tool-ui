@@ -1,5 +1,5 @@
-import type { SerializableVideo } from "@/components/tool-ui/video";
 import type { SerializableAction } from "@/components/tool-ui/shared";
+import type { SerializableVideo } from "@/components/tool-ui/video";
 import type { PresetWithCodeGen } from "./types";
 
 interface VideoData {

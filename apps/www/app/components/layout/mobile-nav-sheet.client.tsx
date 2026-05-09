@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
+import { Scroll, Sheet } from "@silk-hq/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sheet, Scroll } from "@silk-hq/components";
+import React from "react";
 import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { componentsRegistry } from "@/lib/docs/component-registry";
 import { BASE_DOCS_PAGES } from "@/app/docs/_components/docs-pages";
-import { cn } from "@/lib/ui/cn";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { componentsRegistry } from "@/lib/docs/component-registry";
 import { SITE_LINKS } from "@/lib/site-config";
+import { cn } from "@/lib/ui/cn";
 import { TrackedExternalAnchor } from "./tracked-external-anchor.client";
 
 import "@/app/styles/nav-sheet.css";
@@ -93,11 +93,11 @@ export function MobileNavSheet() {
 
             {/* handle */}
             <div className="elative absolute top-0 right-0 left-0 z-20 flex items-center justify-center bg-transparent py-4">
-              <div className="bg-muted-foreground h-1 w-12 rounded-full" />
+              <div className="h-1 w-12 rounded-full bg-muted-foreground" />
             </div>
 
             {/* Top Scroll Indicator Gradient */}
-            <div className="from-background pointer-events-none absolute top-0 right-0 left-0 z-10 h-24 rounded-tl-xl rounded-tr-xl bg-linear-to-b to-transparent" />
+            <div className="pointer-events-none absolute top-0 right-0 left-0 z-10 h-24 rounded-tl-xl rounded-tr-xl bg-linear-to-b from-background to-transparent" />
 
             <Scroll.Root className="scrollbar-subtle relative flex-1 overflow-hidden">
               <Scroll.View
@@ -117,7 +117,7 @@ export function MobileNavSheet() {
                         href={href}
                         onClick={() => setPresented(false)}
                         className={cn(
-                          "rounded-lg px-4 py-4 text-3xl font-medium transition-colors",
+                          "rounded-lg px-4 py-4 font-medium text-3xl transition-colors",
                           isActive
                             ? "bg-muted text-foreground"
                             : "text-primary hover:bg-muted/50 hover:text-foreground",
@@ -133,7 +133,7 @@ export function MobileNavSheet() {
 
                   {/* Docs Section */}
                   <div className="flex flex-col gap-1 px-4 py-8">
-                    <div className="text-muted-foreground mb-3 px-4 text-xs tracking-widest uppercase">
+                    <div className="mb-3 px-4 text-muted-foreground text-xs uppercase tracking-widest">
                       Get Started
                     </div>
 
@@ -146,9 +146,9 @@ export function MobileNavSheet() {
                           href={page.path}
                           onClick={() => setPresented(false)}
                           className={cn(
-                            "text-primary rounded-lg px-4 py-3.5",
+                            "rounded-lg px-4 py-3.5 text-primary",
                             isActive
-                              ? "bg-muted text-foreground font-medium"
+                              ? "bg-muted font-medium text-foreground"
                               : "text-primary hover:bg-muted/50 hover:text-foreground",
                           )}
                         >
@@ -160,7 +160,7 @@ export function MobileNavSheet() {
 
                   {/* Components Section */}
                   <div className="flex flex-col gap-1 px-4 pb-8">
-                    <div className="text-muted-foreground mb-3 px-4 text-xs tracking-widest uppercase">
+                    <div className="mb-3 px-4 text-muted-foreground text-xs uppercase tracking-widest">
                       Components
                     </div>
 
@@ -173,9 +173,9 @@ export function MobileNavSheet() {
                           href={component.path}
                           onClick={() => setPresented(false)}
                           className={cn(
-                            "text-primary rounded-lg px-4 py-3.5",
+                            "rounded-lg px-4 py-3.5 text-primary",
                             isActive
-                              ? "bg-muted text-foreground font-medium"
+                              ? "bg-muted font-medium text-foreground"
                               : "text-primary hover:bg-muted/50 hover:text-foreground",
                           )}
                         >

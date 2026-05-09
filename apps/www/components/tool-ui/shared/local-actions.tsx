@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "./_adapter";
 import { ActionButtons } from "./action-buttons";
 import type { LocalAction } from "./schema";
-import { cn } from "./_adapter";
 import { useOptionalToolUI } from "./tool-ui-context";
 
 export interface LocalActionsProps {

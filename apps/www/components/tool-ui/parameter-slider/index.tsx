@@ -1,7 +1,7 @@
 export { ParameterSlider } from "./parameter-slider";
 export type {
   ParameterSliderProps,
+  SerializableParameterSlider,
   SliderConfig,
   SliderValue,
-  SerializableParameterSlider,
 } from "./schema";

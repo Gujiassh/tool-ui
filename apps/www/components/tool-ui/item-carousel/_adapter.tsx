@@ -5,8 +5,9 @@
  * copied to another project by updating these imports to match the target
  * project's paths.
  */
-export { cn } from "@/lib/utils";
+
+export { ChevronLeft, ChevronRight } from "lucide-react";
 
 export { Button } from "@/components/ui/button";
 export { Card } from "@/components/ui/card";
-export { ChevronLeft, ChevronRight } from "lucide-react";
+export { cn } from "@/lib/utils";

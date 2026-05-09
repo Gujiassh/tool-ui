@@ -1,22 +1,21 @@
 "use client";
 
+import { Share, ThumbsUp } from "lucide-react";
 import * as React from "react";
-import { ThumbsUp, Share } from "lucide-react";
+import { resolveSafeNavigationHref } from "../shared/media";
+import { formatCount, formatRelativeTime, getDomain } from "../shared/utils";
 import {
-  cn,
   Button,
+  cn,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./_adapter";
-import { formatCount, formatRelativeTime, getDomain } from "../shared/utils";
-
-import { resolveSafeNavigationHref } from "../shared/media";
 import type {
   LinkedInPostData,
-  LinkedInPostMedia,
   LinkedInPostLinkPreview,
+  LinkedInPostMedia,
 } from "./schema";
 
 const TEXT_PREVIEW_LENGTH = 280;
@@ -66,14 +65,14 @@ function Header({
         className="size-12 rounded-full object-cover"
       />
       <div className="flex min-w-0 flex-1 flex-col leading-tight">
-        <span className="text-sm font-semibold">{author.name}</span>
+        <span className="font-semibold text-sm">{author.name}</span>
         {author.headline && (
-          <span className="text-muted-foreground line-clamp-1 text-xs">
+          <span className="line-clamp-1 text-muted-foreground text-xs">
             {author.headline}
           </span>
         )}
         {createdAt && (
-          <div className="text-muted-foreground mt-0.5 flex items-center gap-1 text-xs">
+          <div className="mt-0.5 flex items-center gap-1 text-muted-foreground text-xs">
             <span>{formatRelativeTime(createdAt)}</span>
             <span>·</span>
             <span>Edited</span>
@@ -92,14 +91,14 @@ function PostBody({ text }: { text?: string }) {
   if (!text) return null;
 
   return (
-    <div className="text-sm leading-relaxed text-pretty wrap-break-word whitespace-pre-wrap">
+    <div className="wrap-break-word whitespace-pre-wrap text-pretty text-sm leading-relaxed">
       {shouldTruncate && !isExpanded ? (
         <>
           {text.slice(0, TEXT_PREVIEW_LENGTH)}
           ...
           <button
             onClick={() => setIsExpanded(true)}
-            className="text-muted-foreground hover:text-foreground ml-1 font-medium hover:underline"
+            className="ml-1 font-medium text-muted-foreground hover:text-foreground hover:underline"
           >
             see more
           </button>
@@ -150,12 +149,12 @@ function PostLinkPreview({ preview }: { preview: LinkedInPostLinkPreview }) {
       )}
       <div className="p-3">
         {preview.title && (
-          <div className="line-clamp-2 font-medium text-pretty">
+          <div className="line-clamp-2 text-pretty font-medium">
             {preview.title}
           </div>
         )}
         {domain && (
-          <div className="text-muted-foreground mt-1 text-xs">{domain}</div>
+          <div className="mt-1 text-muted-foreground text-xs">{domain}</div>
         )}
       </div>
     </>
@@ -172,7 +171,7 @@ function PostLinkPreview({ preview }: { preview: LinkedInPostLinkPreview }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="hover:bg-muted/50 block overflow-hidden rounded-lg border transition-colors"
+      className="block overflow-hidden rounded-lg border transition-colors hover:bg-muted/50"
     >
       {content}
     </a>
@@ -214,7 +213,7 @@ function ActionButton({
           aria-label={label}
         >
           <Icon className="size-4" />
-          <span className="text-xs font-medium">{label}</span>
+          <span className="font-medium text-xs">{label}</span>
           {count !== undefined && (
             <span className="text-muted-foreground text-xs">
               ({formatCount(count)})
@@ -263,7 +262,7 @@ export function LinkedInPost({ post, className, onAction }: LinkedInPostProps) {
       data-tool-ui-id={post.id}
       data-slot="linkedin-post"
     >
-      <article className="bg-card flex flex-col gap-3 rounded-lg border p-3 shadow-sm">
+      <article className="flex flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm">
         <Header author={post.author} createdAt={post.createdAt} />
         <PostBody text={post.text} />
 

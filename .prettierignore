@@ -1,5 +1,0 @@
-# Generated artifacts (managed by build scripts)
-apps/www/public/r/
-apps/www/components/tool-ui/weather-widget/generated/
-apps/www/lib/weather-authoring/weather-widget/effects/generated/
-apps/www/lib/weather-authoring/weather-widget/weather-data-overlay.generated.ts

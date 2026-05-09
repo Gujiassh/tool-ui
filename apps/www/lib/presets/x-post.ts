@@ -1,5 +1,5 @@
-import type { XPostData } from "@/components/tool-ui/x-post";
 import type { ActionsProp } from "@/components/tool-ui/shared";
+import type { XPostData } from "@/components/tool-ui/x-post";
 import type { PresetWithCodeGen } from "./types";
 
 interface XPostPresetData {

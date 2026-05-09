@@ -1,23 +1,23 @@
 "use client";
 
-import {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  Fragment,
-} from "react";
-import type { KeyboardEvent } from "react";
-import type {
-  QuestionFlowProps,
-  QuestionFlowProgressiveProps,
-  QuestionFlowUpfrontProps,
-  QuestionFlowReceiptProps,
-  QuestionFlowOption,
-} from "./schema";
-import { cn, Button, Separator } from "./_adapter";
 import { Check, ChevronLeft } from "lucide-react";
+import type { KeyboardEvent } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Button, cn, Separator } from "./_adapter";
+import type {
+  QuestionFlowOption,
+  QuestionFlowProgressiveProps,
+  QuestionFlowProps,
+  QuestionFlowReceiptProps,
+  QuestionFlowUpfrontProps,
+} from "./schema";
 
 interface SelectionIndicatorProps {
   mode: "single" | "multi";
@@ -72,7 +72,7 @@ function SelectionIndicator({
         shape,
         isSelected && [
           "border-primary bg-primary text-primary-foreground",
-          "motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out",
+          "motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:animate-in motion-safe:duration-300 motion-safe:ease-out",
         ],
         !isSelected && "border-muted-foreground/50",
         disabled && "opacity-50",
@@ -80,12 +80,12 @@ function SelectionIndicator({
     >
       {mode === "multi" && isSelected && (
         <Check
-          className="size-3 motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:delay-75 motion-safe:duration-200 motion-safe:fill-mode-both"
+          className="motion-safe:fade-in motion-safe:zoom-in-75 size-3 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:delay-75 motion-safe:duration-200"
           strokeWidth={3}
         />
       )}
       {mode === "single" && isSelected && (
-        <span className="size-2 rounded-full bg-current motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-75 motion-safe:duration-300 motion-safe:ease-out" />
+        <span className="motion-safe:fade-in motion-safe:zoom-in-75 size-2 rounded-full bg-current motion-safe:animate-in motion-safe:duration-300 motion-safe:ease-out" />
       )}
     </div>
   );
@@ -131,15 +131,15 @@ function OptionItem({
       tabIndex={tabIndex}
       disabled={isDisabled}
       className={cn(
-        "peer group relative h-auto min-h-[50px] w-full justify-start text-left text-sm font-medium",
-        "rounded-none border-0 bg-transparent px-0 py-2 text-base shadow-none transition-none hover:bg-transparent! @md/question-flow:text-sm",
+        "peer group relative h-auto min-h-[50px] w-full justify-start text-left font-medium text-sm",
+        "rounded-none border-0 bg-transparent px-0 py-2 @md/question-flow:text-sm text-base shadow-none transition-none hover:bg-transparent!",
         isFirst && "pb-2.5",
         hasAdjacentOptions && "py-2.5",
       )}
     >
       <span
         className={cn(
-          "bg-primary/5 absolute inset-0 -mx-3 -my-0.5 rounded-xl opacity-0 transition-opacity group-hover:opacity-100",
+          "absolute inset-0 -mx-3 -my-0.5 rounded-xl bg-primary/5 opacity-0 transition-opacity group-hover:opacity-100",
         )}
       />
       <div className="relative flex items-start gap-3">
@@ -154,9 +154,9 @@ function OptionItem({
           <span className="flex h-6 items-center">{option.icon}</span>
         )}
         <div className="flex flex-col text-left">
-          <span className="leading-6 text-pretty">{option.label}</span>
+          <span className="text-pretty leading-6">{option.label}</span>
           {option.description && (
-            <span className="text-muted-foreground text-sm font-normal text-pretty">
+            <span className="text-pretty font-normal text-muted-foreground text-sm">
               {option.description}
             </span>
           )}
@@ -176,7 +176,7 @@ function QuestionFlowReceipt({
       className={cn(
         "@container/question-flow flex w-full min-w-80 max-w-md flex-col",
         "text-foreground",
-        "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:zoom-in-95 motion-safe:duration-300 motion-safe:ease-out motion-safe:fill-mode-both",
+        "motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:blur-in-sm motion-safe:duration-300 motion-safe:ease-out",
         className,
       )}
       data-slot="question-flow"
@@ -187,12 +187,12 @@ function QuestionFlowReceipt({
     >
       <div
         className={cn(
-          "bg-card/60 flex w-full flex-col gap-3 rounded-2xl border px-5 py-4 shadow-xs",
+          "flex w-full flex-col gap-3 rounded-2xl border bg-card/60 px-5 py-4 shadow-xs",
         )}
       >
         <div className="flex items-center justify-between gap-3">
-          <span className="text-base font-medium">{choice.title}</span>
-          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-500">
+          <span className="font-medium text-base">{choice.title}</span>
+          <span className="flex items-center gap-1.5 font-medium text-emerald-600 text-xs dark:text-emerald-500">
             <Check className="size-3.5" />
             Complete
           </span>
@@ -202,7 +202,7 @@ function QuestionFlowReceipt({
             <Fragment key={index}>
               {index > 0 && <Separator className="my-2" />}
               <div
-                className="flex flex-col gap-0.5 text-sm motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:slide-in-from-bottom-1 motion-safe:duration-300 motion-safe:ease-out motion-safe:fill-mode-both"
+                className="motion-safe:fade-in motion-safe:slide-in-from-bottom-1 flex flex-col gap-0.5 text-sm motion-safe:animate-in motion-safe:fill-mode-both motion-safe:blur-in-sm motion-safe:duration-300 motion-safe:ease-out"
                 style={{ animationDelay: `${150 + index * 75}ms` }}
               >
                 <span className="text-muted-foreground">{item.label}</span>
@@ -389,19 +389,19 @@ function StepBodyContent({
         "flex flex-col gap-4",
         isExiting && [
           "absolute inset-0",
-          "motion-safe:animate-out motion-safe:fade-out motion-safe:blur-out-sm motion-safe:duration-250 motion-safe:ease-[var(--cubic-ease-in-out)] motion-safe:fill-mode-forwards",
+          "motion-safe:fade-out motion-safe:animate-out motion-safe:fill-mode-forwards motion-safe:blur-out-sm motion-safe:duration-250 motion-safe:ease-[var(--cubic-ease-in-out)]",
           exitClass,
         ],
         !isExiting &&
           isTransitioning && [
-            "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:duration-250 motion-safe:ease-[var(--cubic-ease-in-out)] motion-safe:fill-mode-both",
+            "motion-safe:fade-in motion-safe:animate-in motion-safe:fill-mode-both motion-safe:blur-in-sm motion-safe:duration-250 motion-safe:ease-[var(--cubic-ease-in-out)]",
             enterClass,
           ],
       )}
       aria-hidden={isExiting}
     >
       <div className="flex flex-col gap-1">
-        <h2 id={titleId} className="text-lg font-semibold leading-tight">
+        <h2 id={titleId} className="font-semibold text-lg leading-tight">
           {title}
         </h2>
         {description && (
@@ -493,13 +493,13 @@ function StepContent({
     >
       <div
         className={cn(
-          "bg-card flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs",
+          "flex w-full flex-col gap-4 rounded-2xl border bg-card p-5 shadow-xs",
         )}
       >
         <div className="flex flex-col gap-1">
           <div className="flex flex-col gap-2">
             <span
-              className="text-muted-foreground text-xs font-medium uppercase tracking-wide"
+              className="font-medium text-muted-foreground text-xs uppercase tracking-wide"
               aria-label={stepLabel}
             >
               {stepLabel}

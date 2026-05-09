@@ -1,11 +1,11 @@
-export { CodeBlock } from "./code-block";
 export type {
-  CodeBlockRootProps,
   CodeBlockComposedProps,
+  CodeBlockRootProps,
   CodeBlockSectionProps,
 } from "./code-block";
+export { CodeBlock } from "./code-block";
 export type {
-  CodeBlockProps,
   CodeBlockLineNumbersMode,
+  CodeBlockProps,
   SerializableCodeBlock,
 } from "./schema";

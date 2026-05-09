@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const apiKey = process.env["NEXT_PUBLIC_POSTHOG_API_KEY"];
+const apiKey = process.env.NEXT_PUBLIC_POSTHOG_API_KEY;
 const isDev = process.env.NODE_ENV === "development";
 let didInit = false;
 let initPromise: Promise<void> | null = null;

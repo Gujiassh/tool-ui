@@ -5,21 +5,19 @@
   "description": "Open source component library for tool call widgets",
   "license": "MIT",
   "scripts": {
-    "prepare": "tsx apps/www/scripts/install-git-hooks.ts",
+    "prepare": "husky",
     "dev": "pnpm --filter tool-ui-www dev",
     "build": "pnpm --filter tool-ui-www build",
     "start": "pnpm --filter tool-ui-www start",
-    "check": "pnpm --filter tool-ui-www check",
-    "lint": "pnpm --filter tool-ui-www lint",
-    "lint:fix": "pnpm --filter tool-ui-www lint:fix",
-    "lint:oxlint": "pnpm --filter tool-ui-www lint:oxlint",
-    "lint:eslint": "pnpm --filter tool-ui-www lint:eslint",
-    "lint:format": "pnpm --filter tool-ui-www lint:format",
+    "lint": "biome lint",
+    "lint:fix": "biome lint --write",
+    "format": "biome format --write",
+    "format:check": "biome format",
+    "check": "biome check",
+    "check:fix": "biome check --write",
     "typecheck": "pnpm --filter tool-ui-www typecheck",
     "test": "pnpm --filter tool-ui-www test",
     "test:watch": "pnpm --filter tool-ui-www test:watch",
-    "format": "pnpm --filter tool-ui-www format",
-    "format:check": "pnpm --filter tool-ui-www format:check",
     "hooks:pre-commit": "pnpm --filter tool-ui-www hooks:pre-commit",
     "hooks:pre-push": "pnpm --filter tool-ui-www hooks:pre-push",
     "registry:build": "pnpm --filter tool-ui-www registry:build",
@@ -28,13 +26,15 @@
     "changelog:generate": "pnpm --filter tool-ui-www changelog:generate",
     "component:new": "pnpm --filter tool-ui-www component:new",
     "weather:check": "pnpm --filter tool-ui-www weather:check",
-    "verify:ci": "pnpm --filter tool-ui-www run check && pnpm --filter tool-ui-www run test && pnpm --filter tool-ui-www run changelog:check && pnpm --filter tool-ui-www run registry:check && pnpm --filter tool-ui-www run weather:check",
+    "verify:ci": "pnpm typecheck && pnpm check && pnpm test && pnpm --filter tool-ui-www run changelog:check && pnpm --filter tool-ui-www run registry:check && pnpm --filter tool-ui-www run weather:check",
     "ci:version": "changeset version && pnpm install --no-frozen-lockfile",
     "ci:publish": "pnpm --filter './packages/*' build && changeset publish",
     "cleanup": "bash scripts/cleanup.sh"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.14",
     "@changesets/cli": "^2.29.8",
+    "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "tsx": "^4.21.0"
   },
@@ -43,7 +43,7 @@
     "pnpm": ">=8.0.0"
   },
   "lint-staged": {
-    "apps/www/**/*.{ts,tsx,js,jsx,mjs,cjs,css,json,jsonc}": "npx oxfmt --no-error-on-unmatched-pattern"
+    "*.{ts,tsx,js,jsx,mjs,cjs,json,jsonc}": "biome check --write --no-errors-on-unmatched"
   },
   "packageManager": "pnpm@10.11.0"
 }

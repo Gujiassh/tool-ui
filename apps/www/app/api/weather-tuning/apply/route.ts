@@ -1,21 +1,20 @@
 import { writeFile } from "fs/promises";
-
+import type { WeatherEffectsTunedPresets } from "../../../../lib/weather-authoring/weather-widget/effects/tuning";
 import type { WeatherConditionCode } from "../../../../lib/weather-authoring/weather-widget/schema";
+import {
+  canonicalizeWeatherPresetData,
+  writeWeatherRuntimeArtifacts,
+} from "../../../../lib/weather-codegen/compile-weather-runtime";
 import type { CheckpointOverrides } from "../../../sandbox/weather-compositor/presets";
 import {
   buildCanonicalToolUiPresetsForEditedConditions,
   replaceEditedConditions,
 } from "../../../sandbox/weather-tuning/lib/tool-ui-export";
-import type { WeatherEffectsTunedPresets } from "../../../../lib/weather-authoring/weather-widget/effects/tuning";
-import {
-  canonicalizeWeatherPresetData,
-  writeWeatherRuntimeArtifacts,
-} from "../../../../lib/weather-codegen/compile-weather-runtime";
+import { mapToolUiPresetsToCompositor } from "../../../sandbox/weather-tuning/lib/tool-ui-import";
 import {
   readToolUiTunedPresetsFromDisk,
   TOOL_UI_TUNED_PRESETS_PATH,
 } from "../_lib/tuned-presets-io";
-import { mapToolUiPresetsToCompositor } from "../../../sandbox/weather-tuning/lib/tool-ui-import";
 
 export const runtime = "nodejs";
 

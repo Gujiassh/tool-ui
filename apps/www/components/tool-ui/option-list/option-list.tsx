@@ -1,28 +1,28 @@
 "use client";
 
+import { Check } from "lucide-react";
+import type { KeyboardEvent } from "react";
 import {
-  useMemo,
-  useState,
+  Fragment,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
-  Fragment,
+  useState,
 } from "react";
-import type { KeyboardEvent } from "react";
+import { ActionButtons } from "../shared/action-buttons";
+import { normalizeActionsConfig } from "../shared/actions-config";
+import type { Action } from "../shared/schema";
+import { Button, cn, Separator } from "./_adapter";
 import type {
+  OptionListOption,
   OptionListProps,
   OptionListSelection,
-  OptionListOption,
 } from "./schema";
 import {
   normalizeSelectionForOptions,
   parseSelectionToIdSet,
 } from "./selection";
-import { ActionButtons } from "../shared/action-buttons";
-import { normalizeActionsConfig } from "../shared/actions-config";
-import type { Action } from "../shared/schema";
-import { cn, Button, Separator } from "./_adapter";
-import { Check } from "lucide-react";
 
 function convertIdSetToSelection(
   selected: Set<string>,
@@ -114,15 +114,15 @@ function OptionItem({
       tabIndex={tabIndex}
       disabled={isDisabled}
       className={cn(
-        "peer group relative h-auto min-h-[50px] w-full justify-start text-left text-sm font-medium",
-        "rounded-none border-0 bg-transparent px-0 py-2 text-base shadow-none transition-none hover:bg-transparent! @md/option-list:text-sm",
+        "peer group relative h-auto min-h-[50px] w-full justify-start text-left font-medium text-sm",
+        "rounded-none border-0 bg-transparent px-0 py-2 @md/option-list:text-sm text-base shadow-none transition-none hover:bg-transparent!",
         isFirst && "pb-2.5",
         hasAdjacentOptions && "py-2.5",
       )}
     >
       <span
         className={cn(
-          "bg-primary/5 absolute inset-0 -mx-3 -my-0.5 rounded-xl opacity-0 transition-opacity group-hover:opacity-100",
+          "absolute inset-0 -mx-3 -my-0.5 rounded-xl bg-primary/5 opacity-0 transition-opacity group-hover:opacity-100",
         )}
       />
       <div className="relative flex items-start gap-3">
@@ -137,9 +137,9 @@ function OptionItem({
           <span className="flex h-6 items-center">{option.icon}</span>
         )}
         <div className="flex flex-col text-left">
-          <span className="leading-6 text-pretty">{option.label}</span>
+          <span className="text-pretty leading-6">{option.label}</span>
           {option.description && (
-            <span className="text-muted-foreground text-sm font-normal text-pretty">
+            <span className="text-pretty font-normal text-muted-foreground text-sm">
               {option.description}
             </span>
           )}
@@ -167,9 +167,9 @@ function OptionListConfirmation({
   return (
     <div
       className={cn(
-        "@container/option-list flex w-full max-w-md min-w-80 flex-col",
+        "@container/option-list flex w-full min-w-80 max-w-md flex-col",
         "text-foreground",
-        "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:zoom-in-95 motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both",
+        "motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:blur-in-sm motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)]",
         className,
       )}
       data-slot="option-list"
@@ -180,7 +180,7 @@ function OptionListConfirmation({
     >
       <div
         className={cn(
-          "bg-card/60 flex w-full flex-col overflow-hidden rounded-2xl border px-5 py-2.5 shadow-xs",
+          "flex w-full flex-col overflow-hidden rounded-2xl border bg-card/60 px-5 py-2.5 shadow-xs",
         )}
       >
         {confirmedOptions.map((option, index) => (
@@ -190,17 +190,17 @@ function OptionListConfirmation({
             )}
             <div className="flex items-start gap-3 py-1">
               <span className="flex h-6 items-center">
-                <Check className="text-primary size-4 shrink-0" />
+                <Check className="size-4 shrink-0 text-primary" />
               </span>
               {option.icon && (
                 <span className="flex h-6 items-center">{option.icon}</span>
               )}
               <div className="flex flex-col text-left">
-                <span className="text-base leading-6 font-medium text-pretty @md/option-list:text-sm">
+                <span className="text-pretty font-medium @md/option-list:text-sm text-base leading-6">
                   {option.label}
                 </span>
                 {option.description && (
-                  <span className="text-muted-foreground text-sm font-normal text-pretty">
+                  <span className="text-pretty font-normal text-muted-foreground text-sm">
                     {option.description}
                   </span>
                 )}
@@ -228,7 +228,7 @@ export function OptionList({
   onBeforeAction,
   className,
 }: OptionListProps) {
-  if (process.env["NODE_ENV"] !== "production") {
+  if (process.env.NODE_ENV !== "production") {
     if (value !== undefined && defaultValue !== undefined) {
       console.warn(
         "[OptionList] Both `value` (controlled) and `defaultValue` (uncontrolled) were provided. `defaultValue` is ignored when `value` is set.",
@@ -559,7 +559,7 @@ export function OptionList({
       ) : (
         <div
           className={cn(
-            "@container/option-list flex w-full max-w-md min-w-80 flex-col gap-3",
+            "@container/option-list flex w-full min-w-80 max-w-md flex-col gap-3",
             "text-foreground",
             className,
           )}
@@ -570,7 +570,7 @@ export function OptionList({
         >
           <div
             className={cn(
-              "group/list bg-card flex w-full flex-col overflow-hidden rounded-2xl border px-4 py-1.5 shadow-xs",
+              "group/list flex w-full flex-col overflow-hidden rounded-2xl border bg-card px-4 py-1.5 shadow-xs",
             )}
             role="listbox"
             aria-multiselectable={selectionMode === "multi"}

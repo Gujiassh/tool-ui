@@ -1,5 +1,5 @@
-import type { SerializableTerminal } from "@/components/tool-ui/terminal";
 import type { SerializableAction } from "@/components/tool-ui/shared";
+import type { SerializableTerminal } from "@/components/tool-ui/terminal";
 import type { PresetWithCodeGen } from "./types";
 
 export type TerminalPresetName =

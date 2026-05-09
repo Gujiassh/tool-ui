@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type ActionsProp } from "../shared/actions-config";
-import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import { defineToolUiContract } from "../shared/contract";
+import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import {
   SerializableActionSchema,
   SerializableActionsConfigSchema,
@@ -98,10 +98,8 @@ export interface SliderValue {
   value: number;
 }
 
-export interface ParameterSliderProps extends Omit<
-  SerializableParameterSlider,
-  "actions"
-> {
+export interface ParameterSliderProps
+  extends Omit<SerializableParameterSlider, "actions"> {
   className?: string;
   values?: SliderValue[];
   onChange?: (values: SliderValue[]) => void;

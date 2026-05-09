@@ -1,5 +1,5 @@
-import { z } from "zod";
 import type { ReactNode } from "react";
+import { z } from "zod";
 import { defineToolUiContract } from "../shared/contract";
 import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
 
@@ -102,7 +102,8 @@ interface BaseRuntimeProps {
 }
 
 export interface QuestionFlowProgressiveProps
-  extends BaseRuntimeProps, Omit<SerializableProgressiveMode, "options"> {
+  extends BaseRuntimeProps,
+    Omit<SerializableProgressiveMode, "options"> {
   options: QuestionFlowOption[];
   defaultValue?: string[];
   onSelect?: (optionIds: string[]) => void | Promise<void>;
@@ -112,7 +113,8 @@ export interface QuestionFlowProgressiveProps
 }
 
 export interface QuestionFlowUpfrontProps
-  extends BaseRuntimeProps, SerializableUpfrontMode {
+  extends BaseRuntimeProps,
+    SerializableUpfrontMode {
   onStepChange?: (stepId: string) => void;
   onComplete?: (answers: Record<string, string[]>) => void | Promise<void>;
   step?: never;
@@ -120,7 +122,8 @@ export interface QuestionFlowUpfrontProps
 }
 
 export interface QuestionFlowReceiptProps
-  extends BaseRuntimeProps, SerializableReceiptMode {
+  extends BaseRuntimeProps,
+    SerializableReceiptMode {
   step?: never;
   steps?: never;
 }

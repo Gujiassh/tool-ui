@@ -1,15 +1,15 @@
 export { QuestionFlow } from "./question-flow";
-export {
-  type SerializableQuestionFlow,
-  type SerializableProgressiveMode,
-  type SerializableUpfrontMode,
-  type SerializableReceiptMode,
-  type QuestionFlowProps,
-  type QuestionFlowProgressiveProps,
-  type QuestionFlowUpfrontProps,
-  type QuestionFlowReceiptProps,
-  type QuestionFlowOption,
-  type QuestionFlowStepDefinition,
-  type QuestionFlowChoice,
-  type QuestionFlowSummaryItem,
+export type {
+  QuestionFlowChoice,
+  QuestionFlowOption,
+  QuestionFlowProgressiveProps,
+  QuestionFlowProps,
+  QuestionFlowReceiptProps,
+  QuestionFlowStepDefinition,
+  QuestionFlowSummaryItem,
+  QuestionFlowUpfrontProps,
+  SerializableProgressiveMode,
+  SerializableQuestionFlow,
+  SerializableReceiptMode,
+  SerializableUpfrontMode,
 } from "./schema";

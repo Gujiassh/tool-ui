@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { PlanTodo } from "@/components/tool-ui/plan/schema";
+import { useEffect, useState } from "react";
 import { Plan } from "@/components/tool-ui/plan";
+import type { PlanTodo } from "@/components/tool-ui/plan/schema";
 import { Button } from "@/components/ui/button";
 import type { StagingConfig } from "../types";
 
@@ -130,9 +130,9 @@ function PlanTuningPanel() {
 
       <div className="space-y-6 border-t pt-6">
         <div>
-          <h3 className="mb-3 text-sm font-semibold">
+          <h3 className="mb-3 font-semibold text-sm">
             Animation Controls
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
+            <span className="ml-2 font-normal text-muted-foreground text-xs">
               (Progress: {completedCount}/{todos.length} = {progress}%)
             </span>
           </h3>
@@ -161,7 +161,7 @@ function PlanTuningPanel() {
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold">Individual Todo Controls</h3>
+          <h3 className="font-semibold text-sm">Individual Todo Controls</h3>
           <div className="grid gap-3">
             {todos.map((todo) => (
               <div
@@ -171,7 +171,7 @@ function PlanTuningPanel() {
                 <div className="flex-1">
                   <div className="font-medium">{todo.label}</div>
                   {todo.description && (
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-muted-foreground text-xs">
                       {todo.description}
                     </div>
                   )}
@@ -218,8 +218,8 @@ function PlanTuningPanel() {
         </div>
 
         <div className="rounded-lg bg-muted p-4">
-          <h4 className="mb-2 text-sm font-semibold">Animation Features</h4>
-          <ul className="space-y-1 text-sm text-muted-foreground">
+          <h4 className="mb-2 font-semibold text-sm">Animation Features</h4>
+          <ul className="space-y-1 text-muted-foreground text-sm">
             <li>• Spring bounce on completion/cancellation icons</li>
             <li>• Stroke-drawing animation for checkmarks and X icons</li>
             <li>• Fast 0.7s spinner for in-progress state</li>

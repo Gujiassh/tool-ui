@@ -1,28 +1,28 @@
 "use client";
 
+import { button, Leva, useControls } from "leva";
 import {
-  useState,
-  useId,
+  type CSSProperties,
   useCallback,
   useEffect,
-  type CSSProperties,
+  useId,
+  useState,
 } from "react";
-import { useControls, button, Leva } from "leva";
-import type { StagingConfig } from "../types";
 import {
-  cn,
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
+  cn,
 } from "@/components/tool-ui/stats-display/_adapter";
 import type {
-  StatsDisplayProps,
-  StatItem,
-  StatFormat,
   StatDiff,
+  StatFormat,
+  StatItem,
+  StatsDisplayProps,
 } from "@/components/tool-ui/stats-display/schema";
+import type { StagingConfig } from "../types";
 
 interface SparklineAnimationParams {
   slideDuration: number;
@@ -139,7 +139,7 @@ function TunableSparkline({
           <polygon
             points={areaPointsString}
             fill={`url(#${gradientId})`}
-            className="animate-in fade-in fill-mode-both"
+            className="fade-in animate-in fill-mode-both"
             style={{
               animationDelay: fillDelay,
               animationDuration: `${animation.fillFadeDuration}ms`,
@@ -290,7 +290,6 @@ function FormattedValue({ value, format, locale }: FormattedValueProps) {
         </span>
       );
     }
-    case "text":
     default:
       return <span className="font-light tabular-nums">{String(value)}</span>;
   }
@@ -328,7 +327,7 @@ function DeltaValue({ diff }: DeltaValueProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums",
+        "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 font-semibold text-xs tabular-nums",
         colorClass,
         bgClass,
       )}
@@ -338,7 +337,7 @@ function DeltaValue({ diff }: DeltaValueProps) {
       )}
       {display}
       {label && (
-        <span className="text-muted-foreground font-normal">{label}</span>
+        <span className="font-normal text-muted-foreground">{label}</span>
       )}
     </span>
   );
@@ -374,7 +373,7 @@ function TunableStatCard({
     >
       {hasSparkline && (
         <TunableSparkline
-          data={stat.sparkline!.data}
+          data={stat.sparkline?.data ?? []}
           color={sparklineColor}
           showFill
           animation={sparklineAnimation}
@@ -388,7 +387,7 @@ function TunableStatCard({
         />
       )}
       <span
-        className="text-muted-foreground relative text-xs font-normal tracking-wider uppercase opacity-0"
+        className="relative font-normal text-muted-foreground text-xs uppercase tracking-wider opacity-0"
         style={{
           animation: `slide-in-label ${cardAnimation.labelDuration}ms cubic-bezier(0.16, 1, 0.3, 1) ${baseDelay + cardAnimation.labelDelay}ms forwards, fade-in-tunable ${cardAnimation.labelDuration}ms cubic-bezier(0.16, 1, 0.3, 1) ${baseDelay + cardAnimation.labelDelay}ms forwards`,
         }}
@@ -472,14 +471,14 @@ function TunableStatsDisplay({
       data-slot="stats-display"
       data-tool-ui-id={id}
       className={cn(
-        "w-full max-w-xl min-w-80",
+        "w-full min-w-80 max-w-xl",
         isSingle && "max-w-sm",
         className,
       )}
     >
-      <Card className={cn("overflow-clip !pt-2 !pb-0", hasHeader && "!gap-0")}>
+      <Card className={cn("!pt-2 !pb-0 overflow-clip", hasHeader && "!gap-0")}>
         {hasHeader && (
-          <CardHeader className="border-border border-b !pt-3 !pb-4">
+          <CardHeader className="!pt-3 !pb-4 border-border border-b">
             {title && <CardTitle className="text-pretty">{title}</CardTitle>}
             {description && (
               <CardDescription className="text-pretty">
@@ -490,7 +489,7 @@ function TunableStatsDisplay({
         )}
         <CardContent className="@container overflow-hidden p-0">
           <div
-            className="grid @[440px]:-mt-px @[440px]:-ml-px"
+            className="@[440px]:-mt-px @[440px]:-ml-px grid"
             style={{
               gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
             }}
@@ -499,7 +498,7 @@ function TunableStatsDisplay({
               <div
                 key={stat.key}
                 className={cn(
-                  "@[440px]:border-border overflow-clip py-3 first:pt-0 @[440px]:border-t @[440px]:border-l @[440px]:py-3 @[440px]:first:pt-3",
+                  "overflow-clip @[440px]:border-border @[440px]:border-t @[440px]:border-l @[440px]:py-3 py-3 @[440px]:first:pt-3 first:pt-0",
                   index > 0 && "border-border border-t",
                 )}
               >

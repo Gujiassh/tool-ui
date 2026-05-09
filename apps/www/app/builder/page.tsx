@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { AssistantRuntimeProvider } from "@assistant-ui/react";
 import {
   AssistantChatTransport,
   useChatRuntime,
 } from "@assistant-ui/react-ai-sdk";
 import { Check, Code, Copy, Eye, Loader2, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CodeBlock, CodeBlockCode } from "@/components/ui/code-block";
+import { useEffect, useState } from "react";
 import { ThreadList } from "@/app/components/assistant-ui/thread-list";
 import WebView from "@/app/components/builder/webview";
+import { Button } from "@/components/ui/button";
+import { CodeBlock, CodeBlockCode } from "@/components/ui/code-block";
 import { getComponentCode } from "@/lib/integrations/freestyle/get-code";
 import { PreviewRefreshContext, PreviewRefreshSetter } from "./preview-refresh";
 import { Thread } from "./thread";
@@ -63,7 +63,7 @@ export default function BuilderPage() {
               const data = await response.json();
               setRepoId(data.repoId);
               repoIdRef.current = data.repoId;
-              setAppId(data.repoId + "-" + timestampRef);
+              setAppId(`${data.repoId}-${timestampRef}`);
             }
           } catch (error) {
             console.error("Failed to create Freestyle project:", error);
@@ -119,7 +119,7 @@ export default function BuilderPage() {
       <AssistantRuntimeProvider runtime={runtime}>
         <PreviewRefreshSetter />
         <div className="flex h-full flex-1 flex-col md:flex-row">
-          <div className="bg-background hidden w-[220px] shrink-0 overflow-y-auto p-4 md:block">
+          <div className="hidden w-[220px] shrink-0 overflow-y-auto bg-background p-4 md:block">
             <ThreadList />
           </div>
 
@@ -134,7 +134,7 @@ export default function BuilderPage() {
             <>
               <div
                 role="separator"
-                className="bg-border hover:bg-primary hidden w-1 cursor-col-resize transition-colors md:block"
+                className="hidden w-1 cursor-col-resize bg-border transition-colors hover:bg-primary md:block"
                 onMouseDown={handleMouseDown}
               />
 
@@ -142,7 +142,7 @@ export default function BuilderPage() {
                 className="flex flex-col"
                 style={{ width: `${webviewWidth}%` }}
               >
-                <div className="bg-background flex h-12 shrink-0 items-center justify-between border-t border-b px-4">
+                <div className="flex h-12 shrink-0 items-center justify-between border-t border-b bg-background px-4">
                   <div className="flex items-center gap-2">
                     <Button
                       variant={viewMode === "rendered" ? "secondary" : "ghost"}
@@ -197,7 +197,7 @@ export default function BuilderPage() {
                         <div className="flex h-full items-center justify-center">
                           <div className="text-center">
                             <Loader2 className="mx-auto h-8 w-8 animate-spin" />
-                            <p className="text-muted-foreground mt-4 text-sm">
+                            <p className="mt-4 text-muted-foreground text-sm">
                               Loading code...
                             </p>
                           </div>

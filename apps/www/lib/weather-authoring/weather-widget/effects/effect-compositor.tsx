@@ -1,22 +1,22 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { WeatherConditionCode } from "../schema";
-import type { EffectSettings } from "./types";
-import type { CustomEffectProps } from "./custom-effect-props";
-import { WeatherEffectsCanvas } from "./weather-effects-canvas";
-import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./generated/tuned-presets.generated";
-import { type WeatherEffectsTunedPresets } from "./tuning";
 import {
   resolveWeatherEffectsCanvasProps,
   type WeatherEffectsCheckpointMode,
 } from "./canvas-resolver";
+import type { CustomEffectProps } from "./custom-effect-props";
 import { mapCustomEffectPropsToCanvasProps } from "./effect-compositor-custom-props";
 import {
   resolveEffectCanvasDpr,
   resolveEffectQuality,
 } from "./effect-compositor-quality";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./generated/tuned-presets.generated";
+import { type WeatherEffectsTunedPresets } from "./tuning";
+import type { EffectSettings } from "./types";
+import { WeatherEffectsCanvas } from "./weather-effects-canvas";
+import type { WeatherEffectsCanvasProps } from "./weather-effects-types";
 
 const DEFAULT_CHECKPOINT_MODE: WeatherEffectsCheckpointMode = "nearest";
 const DEFAULT_TUNED_PRESETS: WeatherEffectsTunedPresets =

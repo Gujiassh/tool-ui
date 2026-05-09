@@ -1,5 +1,5 @@
-import type { SerializableVideo } from "./schema";
 import { resolveSafeNavigationHref, sanitizeHref } from "../shared/media";
+import type { SerializableVideo } from "./schema";
 
 export type VideoMediaEvent = "mute" | "unmute";
 

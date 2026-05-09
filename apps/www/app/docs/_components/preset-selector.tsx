@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/item";
 import { analytics } from "@/lib/analytics";
 import { approvalCardPresets } from "@/lib/presets/approval-card";
+import { audioPresets } from "@/lib/presets/audio";
 import { chartPresets } from "@/lib/presets/chart";
 import { citationPresets } from "@/lib/presets/citation";
 import { codeBlockPresets } from "@/lib/presets/code-block";
@@ -17,11 +18,9 @@ import { dataTablePresets } from "@/lib/presets/data-table";
 import { geoMapPresets } from "@/lib/presets/geo-map";
 import { imagePresets } from "@/lib/presets/image";
 import { imageGalleryPresets } from "@/lib/presets/image-gallery";
-import { videoPresets } from "@/lib/presets/video";
-import { audioPresets } from "@/lib/presets/audio";
+import { itemCarouselPresets } from "@/lib/presets/item-carousel";
 import { linkPreviewPresets } from "@/lib/presets/link-preview";
 import { messageDraftPresets } from "@/lib/presets/message-draft";
-import { itemCarouselPresets } from "@/lib/presets/item-carousel";
 import { optionListPresets } from "@/lib/presets/option-list";
 import { orderSummaryPresets } from "@/lib/presets/order-summary";
 import { parameterSliderPresets } from "@/lib/presets/parameter-slider";
@@ -31,8 +30,9 @@ import { progressTrackerPresets } from "@/lib/presets/progress-tracker";
 import { questionFlowPresets } from "@/lib/presets/question-flow";
 import { statsDisplayPresets } from "@/lib/presets/stats-display";
 import { terminalPresets } from "@/lib/presets/terminal";
-import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
 import type { Preset } from "@/lib/presets/types";
+import { videoPresets } from "@/lib/presets/video";
+import { weatherWidgetPresets } from "@/lib/presets/weather-widget";
 import { cn } from "@/lib/ui/cn";
 
 type PresetMap = Record<string, Preset<unknown>>;
@@ -129,8 +129,8 @@ function PresetItem({
       className={cn(
         "group/item relative py-[2px] pb-[2px] lg:py-3!",
         isSelected
-          ? "bg-primary/5 cursor-pointer border-transparent shadow-xs"
-          : "hover:bg-primary/5 active:bg-primary/10 cursor-pointer transition-[colors,shadow,border,background] duration-150 ease-out",
+          ? "cursor-pointer border-transparent bg-primary/5 shadow-xs"
+          : "cursor-pointer transition-[colors,shadow,border,background] duration-150 ease-out hover:bg-primary/5 active:bg-primary/10",
       )}
       onClick={() => onSelect(preset)}
     >
@@ -142,7 +142,7 @@ function PresetItem({
                 {formatPresetName(preset)}
               </span>
             </ItemTitle>
-            <ItemDescription className="text-sm font-light">
+            <ItemDescription className="font-light text-sm">
               {description}
             </ItemDescription>
           </div>
@@ -162,7 +162,7 @@ function SelectionIndicator({ isSelected }: SelectionIndicatorProps) {
     <span
       aria-hidden="true"
       data-selected={isSelected}
-      className="bg-foreground absolute top-2.5 -left-4.5 h-5 w-1 origin-center -translate-y-1/2 scale-y-0 transform-gpu rounded-full opacity-0 transition-[opacity,transform] delay-100 duration-200 ease-out data-[selected=true]:scale-y-100 data-[selected=true]:opacity-100"
+      className="absolute top-2.5 -left-4.5 h-5 w-1 origin-center -translate-y-1/2 scale-y-0 transform-gpu rounded-full bg-foreground opacity-0 transition-[opacity,transform] delay-100 duration-200 ease-out data-[selected=true]:scale-y-100 data-[selected=true]:opacity-100"
     />
   );
 }

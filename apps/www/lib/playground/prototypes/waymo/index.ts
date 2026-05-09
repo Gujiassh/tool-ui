@@ -1,26 +1,24 @@
 import { z } from "zod";
-
-import { WAYMO_SYSTEM_MESSAGE_V2 } from "./system-message-v2";
-
+import type { Prototype } from "../../types";
+import { checkRidePrices } from "./check-ride-prices";
+import { confirmRideBooking } from "./confirm-ride-booking";
+import { confirmUserPayment } from "./confirm-user-payment";
+import { getProfileContext } from "./get-profile-context";
+import { getUserDestination } from "./get-user-destination";
+import { getUserLocation } from "./get-user-location";
+import { precheckPrices } from "./precheck-prices";
+import { requestPaymentMethod } from "./request-payment-method";
+import { scheduleRide } from "./schedule-ride";
+import { searchPlaces } from "./search-places";
 import {
   candidateArraySchema,
   paymentMethodEnum,
   rideSummarySchema,
 } from "./shared";
-import { getUserLocation } from "./get-user-location";
-import { toggleGps } from "./toggle-gps";
-import { getUserDestination } from "./get-user-destination";
-import { checkRidePrices } from "./check-ride-prices";
-import { requestPaymentMethod } from "./request-payment-method";
-import { confirmUserPayment } from "./confirm-user-payment";
 import { showRideDetails } from "./show-ride-details";
-import { getProfileContext } from "./get-profile-context";
-import { searchPlaces } from "./search-places";
-import { precheckPrices } from "./precheck-prices";
-import { scheduleRide } from "./schedule-ride";
 import { showRideOptions } from "./show-ride-options";
-import { confirmRideBooking } from "./confirm-ride-booking";
-import type { Prototype } from "../../types";
+import { WAYMO_SYSTEM_MESSAGE_V2 } from "./system-message-v2";
+import { toggleGps } from "./toggle-gps";
 
 const getUserLocationInput = z.object({
   allow_gps: z.boolean().optional(),

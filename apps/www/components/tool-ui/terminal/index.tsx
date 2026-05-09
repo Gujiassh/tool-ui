@@ -1,2 +1,2 @@
+export type { SerializableTerminal, TerminalProps } from "./schema";
 export { Terminal } from "./terminal";
-export type { TerminalProps, SerializableTerminal } from "./schema";

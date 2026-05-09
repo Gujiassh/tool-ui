@@ -1,6 +1,5 @@
-import type { NextRequest } from "next/server";
-
 import type { UIMessage } from "ai";
+import type { NextRequest } from "next/server";
 
 import { findPrototype, streamPrototypeResponse } from "@/lib/playground";
 import { PROTOTYPE_SLUG_HEADER } from "@/lib/playground/constants";

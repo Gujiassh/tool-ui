@@ -7,18 +7,27 @@ Copy/paste component library (shadcn/ui model) for AI assistant interfaces. User
 ```bash
 pnpm dev          # Dev server (Turbopack)
 pnpm build        # Production build
-pnpm check        # Parallel: typecheck + oxlint + eslint + format check
-pnpm lint:fix     # Fix lint errors (run before committing)
+pnpm check        # Biome lint + format check (and run typecheck separately)
+pnpm check:fix    # Biome auto-fix lint + format
 pnpm typecheck    # TypeScript checking (tsgo)
 pnpm test         # Run tests (Vitest)
+pnpm verify:ci    # Full CI gate (typecheck + check + test + changelog/registry/weather checks)
 ```
 
 ## Tooling
 
-- **Formatter**: Oxfmt (config: `apps/www/.oxfmtrc.jsonc`) — Tailwind class sorting + import sorting
-- **Linter**: Oxlint (`apps/www/.oxlintrc.json`) handles standard rules; ESLint (`apps/www/eslint.config.ts`) retained only for `no-restricted-syntax`, `no-restricted-imports`, custom `tool-ui/*` rules, and React Compiler hooks
+- **Linter + Formatter**: Biome (config: `/biome.json` at repo root) — handles lint, format, Tailwind class sort, import organize. Run via `pnpm check` (lint+format) or `pnpm check:fix`.
 - **Typecheck**: tsgo (`@typescript/native-preview`) — native TypeScript compiler
-- **Parallel checks**: `pnpm check` runs typecheck + all linters + format in parallel via `npm-run-all2`
+- **Git hooks**: husky (`/.husky/`) — pre-commit runs lint-staged + registry sync; pre-push runs typecheck + biome + registry/changelog checks
+
+### Portability rules (manual — enforce in code review)
+
+The following conventions used to be auto-enforced by lint plugins. They were removed in favor of code-review enforcement; if a violation slips into a PR, push back:
+
+1. **No `window.open()` in `apps/www/components/tool-ui/**`** — use `openSafeNavigationHref` from `shared/media/safe-navigation` (preserves sandbox / noopener attributes).
+2. **No `from "../shared"` barrel imports inside tool-ui components** — use deep paths like `from "../shared/schema"` so the barrel doesn't become a hidden coupling point.
+3. **No `from "@/components/ui/*"` or `from "@/lib/utils"` inside tool-ui components** — import shadcn primitives and `cn` from the colocated `_adapter.tsx`. This is the portability promise: a user who copies a component dir into their project only edits one file.
+4. **No `addResult(...)` inside `<LocalActions>` `onAction` handlers** — `LocalActions` is a non-consequential surface; commits go through `<DecisionActions>` instead.
 
 ## Stack
 

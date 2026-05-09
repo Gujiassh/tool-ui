@@ -8,15 +8,15 @@
  */
 
 import type { ToolCallMessagePartProps } from "@assistant-ui/react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import {
-  Navigation,
-  Home,
   Briefcase,
-  MapPin,
   CheckCircle2,
+  Home,
+  MapPin,
+  Navigation,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { SelectPickupResult } from "../types";
 import { MOCK_LOCATIONS, MOCK_PICKUP } from "../types";
 
@@ -109,7 +109,7 @@ export function PickupPicker({
     <Card className="max-w-md space-y-4 p-4">
       {currentLocation.length > 0 && (
         <div className="space-y-2">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
             <Navigation className="h-3.5 w-3.5" />
             <span>Current Location</span>
           </div>
@@ -118,16 +118,16 @@ export function PickupPicker({
               <Button
                 key={option.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-4 py-3 text-left"
+                className="h-auto w-full justify-start px-4 py-3 text-left hover:bg-accent"
                 onClick={() => handleSelect(option)}
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getOptionIcon(option)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{option.label}</div>
-                    <div className="text-muted-foreground truncate text-sm">
+                    <div className="truncate text-muted-foreground text-sm">
                       {option.address}
                     </div>
                   </div>
@@ -140,7 +140,7 @@ export function PickupPicker({
 
       {savedPlaces.length > 0 && (
         <div className="space-y-2">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
             <MapPin className="h-3.5 w-3.5" />
             <span>Saved Places</span>
           </div>
@@ -149,16 +149,16 @@ export function PickupPicker({
               <Button
                 key={option.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-4 py-3 text-left"
+                className="h-auto w-full justify-start px-4 py-3 text-left hover:bg-accent"
                 onClick={() => handleSelect(option)}
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getOptionIcon(option)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{option.label}</div>
-                    <div className="text-muted-foreground truncate text-sm">
+                    <div className="truncate text-muted-foreground text-sm">
                       {option.address}
                     </div>
                   </div>

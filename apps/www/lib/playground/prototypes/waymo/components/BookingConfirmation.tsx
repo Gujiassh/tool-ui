@@ -11,16 +11,16 @@
 
 "use client";
 
-import type { BookingConfirmationProps } from "../types";
 import {
+  Car,
   CheckCircle,
-  MapPin,
   Clock,
   CreditCard,
-  Car,
-  Share2,
   Map,
+  MapPin,
+  Share2,
 } from "lucide-react";
+import type { BookingConfirmationProps } from "../types";
 
 export function BookingConfirmation({ trip }: BookingConfirmationProps) {
   return (
@@ -30,10 +30,10 @@ export function BookingConfirmation({ trip }: BookingConfirmationProps) {
         <div className="flex items-center gap-3">
           <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
           <div>
-            <h3 className="text-lg font-semibold text-foreground">
+            <h3 className="font-semibold text-foreground text-lg">
               Your Waymo is on the way!
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Trip ID: {trip.tripId}
             </p>
           </div>
@@ -49,19 +49,19 @@ export function BookingConfirmation({ trip }: BookingConfirmationProps) {
             </div>
             <div className="flex-1">
               <div className="font-medium">{trip.pickup.name}</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 {trip.pickup.address}
               </div>
             </div>
           </div>
 
-          <div className="ml-1 h-6 w-0 border-l-2 border-dashed border-muted-foreground/30" />
+          <div className="ml-1 h-6 w-0 border-muted-foreground/30 border-l-2 border-dashed" />
 
           <div className="flex items-start gap-3">
             <MapPin className="mt-1 h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
               <div className="font-medium">{trip.dropoff.name}</div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 {trip.dropoff.address}
               </div>
             </div>
@@ -73,7 +73,7 @@ export function BookingConfirmation({ trip }: BookingConfirmationProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">ETA</span>
+              <span className="text-muted-foreground text-sm">ETA</span>
             </div>
             <span className="font-medium">{trip.etaMinutes} minutes</span>
           </div>
@@ -81,7 +81,7 @@ export function BookingConfirmation({ trip }: BookingConfirmationProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CreditCard className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Payment</span>
+              <span className="text-muted-foreground text-sm">Payment</span>
             </div>
             <span className="text-sm">{trip.paymentSummary}</span>
           </div>
@@ -90,13 +90,13 @@ export function BookingConfirmation({ trip }: BookingConfirmationProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Car className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Vehicle</span>
+                <span className="text-muted-foreground text-sm">Vehicle</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium">
+                <div className="font-medium text-sm">
                   {trip.vehicle.color} {trip.vehicle.make} {trip.vehicle.model}
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-muted-foreground text-xs">
                   License: {trip.vehicle.plate}
                 </div>
               </div>

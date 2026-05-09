@@ -1,12 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
 import type { ComponentProps, ComponentType, ReactNode } from "react";
-import type { PresetWithCodeGen } from "@/lib/presets/types";
-import type { ComponentId } from "@/lib/docs/component-ids";
-
+import { useState } from "react";
 import type { ApprovalCard } from "@/components/tool-ui/approval-card";
+import type { Audio } from "@/components/tool-ui/audio";
 import type { Chart } from "@/components/tool-ui/chart";
 import type { Citation } from "@/components/tool-ui/citation";
 import type { CodeBlockComposedProps } from "@/components/tool-ui/code-block";
@@ -16,13 +14,11 @@ import type { DataTable } from "@/components/tool-ui/data-table";
 import type { GeoMap } from "@/components/tool-ui/geo-map";
 import type { Image } from "@/components/tool-ui/image";
 import type { ImageGallery } from "@/components/tool-ui/image-gallery";
-import type { Video } from "@/components/tool-ui/video";
-import type { Audio } from "@/components/tool-ui/audio";
 import type { InstagramPost } from "@/components/tool-ui/instagram-post";
+import type { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import type { LinkPreview } from "@/components/tool-ui/link-preview";
 import type { LinkedInPost } from "@/components/tool-ui/linkedin-post";
 import type { MessageDraft } from "@/components/tool-ui/message-draft";
-import type { ItemCarousel } from "@/components/tool-ui/item-carousel";
 import type { OptionList } from "@/components/tool-ui/option-list";
 import type { OrderSummary } from "@/components/tool-ui/order-summary";
 import type { ParameterSlider } from "@/components/tool-ui/parameter-slider";
@@ -32,107 +28,111 @@ import type {
   SerializablePreferencesPanelReceipt,
 } from "@/components/tool-ui/preferences-panel";
 import type { ProgressTracker } from "@/components/tool-ui/progress-tracker";
-import type { StatsDisplay } from "@/components/tool-ui/stats-display";
-import type { Terminal } from "@/components/tool-ui/terminal";
-import type { QuestionFlow } from "@/components/tool-ui/question-flow";
-import type { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
-import type { XPost } from "@/components/tool-ui/x-post";
+import type {
+  QuestionFlow,
+  SerializableUpfrontMode,
+} from "@/components/tool-ui/question-flow";
 import {
-  ToolUI,
-  createDecisionResult,
   type Action,
   type DecisionAction,
+  ToolUI,
 } from "@/components/tool-ui/shared";
+import type { StatsDisplay } from "@/components/tool-ui/stats-display";
+import type { Terminal } from "@/components/tool-ui/terminal";
+import type { Video } from "@/components/tool-ui/video";
+import type { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
+import type { XPost } from "@/components/tool-ui/x-post";
+import type { ComponentId } from "@/lib/docs/component-ids";
 
 import {
-  approvalCardPresets,
   type ApprovalCardPresetName,
+  approvalCardPresets,
 } from "@/lib/presets/approval-card";
-import { chartPresets, type ChartPresetName } from "@/lib/presets/chart";
+import { type AudioPresetName, audioPresets } from "@/lib/presets/audio";
+import { type ChartPresetName, chartPresets } from "@/lib/presets/chart";
 import {
-  citationPresets,
   type CitationPresetName,
+  citationPresets,
 } from "@/lib/presets/citation";
 import {
-  codeBlockPresets,
   type CodeBlockPresetName,
+  codeBlockPresets,
 } from "@/lib/presets/code-block";
 import {
-  codeDiffPresets,
   type CodeDiffPresetName,
+  codeDiffPresets,
 } from "@/lib/presets/code-diff";
 import {
-  dataTablePresets,
   type DataTablePresetName,
+  dataTablePresets,
   type SortState,
 } from "@/lib/presets/data-table";
-import { geoMapPresets, type GeoMapPresetName } from "@/lib/presets/geo-map";
-import { imagePresets, type ImagePresetName } from "@/lib/presets/image";
+import { type GeoMapPresetName, geoMapPresets } from "@/lib/presets/geo-map";
+import { type ImagePresetName, imagePresets } from "@/lib/presets/image";
 import {
-  imageGalleryPresets,
   type ImageGalleryPresetName,
+  imageGalleryPresets,
 } from "@/lib/presets/image-gallery";
-import { videoPresets, type VideoPresetName } from "@/lib/presets/video";
-import { audioPresets, type AudioPresetName } from "@/lib/presets/audio";
 import {
-  instagramPostPresets,
   type InstagramPostPresetName,
+  instagramPostPresets,
 } from "@/lib/presets/instagram-post";
 import {
-  linkPreviewPresets,
-  type LinkPreviewPresetName,
-} from "@/lib/presets/link-preview";
-import {
-  linkedInPostPresets,
-  type LinkedInPostPresetName,
-} from "@/lib/presets/linkedin-post";
-import {
-  messageDraftPresets,
-  type MessageDraftPresetName,
-} from "@/lib/presets/message-draft";
-import {
-  itemCarouselPresets,
   type ItemCarouselPresetName,
+  itemCarouselPresets,
 } from "@/lib/presets/item-carousel";
 import {
-  optionListPresets,
+  type LinkPreviewPresetName,
+  linkPreviewPresets,
+} from "@/lib/presets/link-preview";
+import {
+  type LinkedInPostPresetName,
+  linkedInPostPresets,
+} from "@/lib/presets/linkedin-post";
+import {
+  type MessageDraftPresetName,
+  messageDraftPresets,
+} from "@/lib/presets/message-draft";
+import {
   type OptionListPresetName,
+  optionListPresets,
 } from "@/lib/presets/option-list";
 import {
-  orderSummaryPresets,
   type OrderSummaryPresetName,
+  orderSummaryPresets,
 } from "@/lib/presets/order-summary";
 import {
-  parameterSliderPresets,
   type ParameterSliderPresetName,
+  parameterSliderPresets,
 } from "@/lib/presets/parameter-slider";
-import { planPresets, type PlanPresetName } from "@/lib/presets/plan";
+import { type PlanPresetName, planPresets } from "@/lib/presets/plan";
 import {
-  preferencesPanelPresets,
   type PreferencesPanelPresetName,
+  preferencesPanelPresets,
 } from "@/lib/presets/preferences-panel";
 import {
-  progressTrackerPresets,
   type ProgressTrackerPresetName,
+  progressTrackerPresets,
 } from "@/lib/presets/progress-tracker";
 import {
-  statsDisplayPresets,
-  type StatsDisplayPresetName,
-} from "@/lib/presets/stats-display";
-import {
-  terminalPresets,
-  type TerminalPresetName,
-} from "@/lib/presets/terminal";
-import {
-  questionFlowPresets,
   type QuestionFlowPresetName,
+  questionFlowPresets,
 } from "@/lib/presets/question-flow";
 import {
-  weatherWidgetPresets,
+  type StatsDisplayPresetName,
+  statsDisplayPresets,
+} from "@/lib/presets/stats-display";
+import {
+  type TerminalPresetName,
+  terminalPresets,
+} from "@/lib/presets/terminal";
+import type { PresetWithCodeGen } from "@/lib/presets/types";
+import { type VideoPresetName, videoPresets } from "@/lib/presets/video";
+import {
   type WeatherWidgetPresetName,
+  weatherWidgetPresets,
 } from "@/lib/presets/weather-widget";
-import { xPostPresets, type XPostPresetName } from "@/lib/presets/x-post";
-import type { SerializableUpfrontMode } from "@/components/tool-ui/question-flow";
+import { type XPostPresetName, xPostPresets } from "@/lib/presets/x-post";
 
 const DynamicApprovalCard = dynamic(() =>
   import("@/components/tool-ui/approval-card").then((m) => m.ApprovalCard),
@@ -318,14 +318,14 @@ function resolveActionItems(actions: unknown): Action[] | null {
   }
 
   const record = toRecord(actions);
-  const items = record?.["items"];
+  const items = record?.items;
   return Array.isArray(items) ? (items as Action[]) : null;
 }
 
 function resolveLocalActionItems(data: unknown): Action[] | null {
   const record = toRecord(data);
   if (!record) return null;
-  return resolveActionItems(record["localActions"]);
+  return resolveActionItems(record.localActions);
 }
 
 function renderWithLocalActions(
@@ -712,7 +712,7 @@ export const previewConfigs: Record<
     renderComponent: ({ data, state, setState }) => {
       const orderData = data as Parameters<typeof OrderSummary>[0];
       const decisionActions = (resolveActionItems(
-        toRecord(data)?.["decisionActions"],
+        toRecord(data)?.decisionActions,
       ) as DecisionAction[] | null) ?? [
         { id: "cancel", label: "Cancel", variant: "outline" },
         { id: "confirm", label: "Purchase", variant: "default" },
@@ -738,13 +738,9 @@ export const previewConfigs: Record<
           </ToolUI.Surface>
           <ToolUI.Actions>
             <ToolUI.DecisionActions
+              decisionId={`${orderData.id}-decision`}
               actions={decisionActions}
-              onAction={(action) =>
-                createDecisionResult({
-                  decisionId: `${orderData.id}-decision`,
-                  action,
-                })
-              }
+              onAction={() => undefined}
               onCommit={(result) => {
                 if (result.actionId === "confirm") {
                   setState({

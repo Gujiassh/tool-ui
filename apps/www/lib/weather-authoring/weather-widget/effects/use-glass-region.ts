@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
   type RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 
 export interface GlassRegion {
@@ -173,7 +173,6 @@ export function useAdaptiveGlassParams(
         chromaticAberration: 1.2,
         specularIntensity: 1.5,
       };
-    case "lg":
     default:
       return {
         refractionScale: 35,

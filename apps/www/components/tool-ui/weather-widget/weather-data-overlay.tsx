@@ -1,34 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
 import {
-  Sun,
   Cloud,
-  CloudSun,
-  CloudFog,
   CloudDrizzle,
-  CloudRain,
-  CloudLightning,
-  Snowflake,
+  CloudFog,
   CloudHail,
-  Wind,
+  CloudLightning,
+  CloudRain,
+  CloudSun,
   type LucideIcon,
+  Snowflake,
+  Sun,
+  Wind,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  getSceneBrightnessFromTimeOfDay,
+  getTimeOfDay,
+  getWeatherTheme,
+  resolveGlassBackdropFilterStyles,
+  useGlassStyles,
+} from "./generated/weather-runtime-core.generated";
 import type {
   ForecastDay,
   TemperatureUnit,
   WeatherConditionCode,
 } from "./schema-runtime";
-import {
-  getSceneBrightnessFromTimeOfDay,
-  getTimeOfDay,
-  getWeatherTheme,
-} from "./generated/weather-runtime-core.generated";
-import {
-  resolveGlassBackdropFilterStyles,
-  useGlassStyles,
-} from "./generated/weather-runtime-core.generated";
 
 type WeatherTheme = "light" | "dark";
 

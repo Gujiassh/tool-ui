@@ -1,7 +1,7 @@
 "use client";
 
+import { Button, cn } from "./_adapter";
 import type { Action } from "./schema";
-import { cn, Button } from "./_adapter";
 import { useActionButtons } from "./use-action-buttons";
 
 export interface ActionButtonsProps {
@@ -55,7 +55,7 @@ export function ActionButtons({
               "min-h-11 w-full text-base",
               "@sm/actions:min-h-0 @sm/actions:w-auto @sm/actions:px-3 @sm/actions:py-2 @sm/actions:text-sm",
               action.isConfirming &&
-                "ring-destructive ring-2 ring-offset-2 motion-safe:animate-pulse",
+                "ring-2 ring-destructive ring-offset-2 motion-safe:animate-pulse",
             )}
             aria-label={
               action.shortcut ? `${label} (${action.shortcut})` : label
@@ -88,7 +88,7 @@ export function ActionButtons({
             )}
             {label}
             {action.shortcut && !action.isLoading && (
-              <kbd className="border-border bg-muted ml-2.5 hidden rounded-lg border px-2 py-0.5 font-mono text-xs font-medium sm:inline-block">
+              <kbd className="ml-2.5 hidden rounded-lg border border-border bg-muted px-2 py-0.5 font-medium font-mono text-xs sm:inline-block">
                 {action.shortcut}
               </kbd>
             )}

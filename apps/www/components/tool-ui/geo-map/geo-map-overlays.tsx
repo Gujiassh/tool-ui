@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { Popup, Tooltip, cn } from "./_adapter";
+import { cn, Popup, Tooltip } from "./_adapter";
 
 function GeoMapPopupContent({
   label,
@@ -14,12 +14,12 @@ function GeoMapPopupContent({
   return (
     <div className="flex flex-col gap-0.5">
       {label && (
-        <p className="block text-sm leading-tight font-semibold tracking-tight text-foreground">
+        <p className="block font-semibold text-foreground text-sm leading-tight tracking-tight">
           {label}
         </p>
       )}
       {description && (
-        <p className="block text-xs leading-relaxed text-muted-foreground">
+        <p className="block text-muted-foreground text-xs leading-relaxed">
           {description}
         </p>
       )}

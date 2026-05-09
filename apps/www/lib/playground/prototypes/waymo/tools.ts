@@ -10,15 +10,15 @@
  */
 
 import type {
-  RiderContext,
-  Location,
-  PaymentMethod,
-  RideQuote,
   BookedTrip,
+  BookTripInput,
   GetPickupLocationInput,
   GetPickupLocationOutput,
   GetQuoteInput,
-  BookTripInput,
+  Location,
+  PaymentMethod,
+  RideQuote,
+  RiderContext,
 } from "./types";
 
 // Mock data

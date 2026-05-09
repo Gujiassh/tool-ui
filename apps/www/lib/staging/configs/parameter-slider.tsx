@@ -1,11 +1,11 @@
 "use client";
 
 import { Fragment, type RefObject } from "react";
-import type { StagingConfig, DebugLevel } from "../types";
 import {
   RoundedRectOverlay,
   ThumbIndicator,
 } from "@/app/staging/_components/rounded-rect-overlay";
+import type { DebugLevel, StagingConfig } from "../types";
 
 interface SliderElementRects {
   label: DOMRect | null;
@@ -76,7 +76,7 @@ function ParameterSliderDebugOverlay({
   const container = componentRef.current;
   if (!container) {
     return (
-      <div className="absolute top-2 left-2 rounded bg-yellow-500/80 px-2 py-1 text-xs text-black">
+      <div className="absolute top-2 left-2 rounded bg-yellow-500/80 px-2 py-1 text-black text-xs">
         Debug: No container ref
       </div>
     );
@@ -87,7 +87,7 @@ function ParameterSliderDebugOverlay({
 
   if (sliderElements.length === 0) {
     return (
-      <div className="absolute top-2 left-2 rounded bg-red-500/80 px-2 py-1 text-xs text-white">
+      <div className="absolute top-2 left-2 rounded bg-red-500/80 px-2 py-1 text-white text-xs">
         Debug: No slider elements found in container
       </div>
     );

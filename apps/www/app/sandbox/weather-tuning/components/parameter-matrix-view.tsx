@@ -1,22 +1,14 @@
 "use client";
 
-import { useMemo, useState, useCallback, useEffect } from "react";
-import { cn } from "@/lib/ui/cn";
 import {
-  WeatherEffectsCanvas,
-  getMaxConcurrentWeatherWebglCanvases,
-  setMaxConcurrentWeatherWebglCanvases,
-} from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
-import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
-import {
-  WEATHER_CONDITIONS,
-  CONDITION_LABELS,
-} from "../../weather-compositor/presets";
-import { TIME_CHECKPOINTS, TIME_CHECKPOINT_ORDER } from "../lib/constants";
-import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
-import type { TimeCheckpoint } from "../types";
-import type { TuningStateReturn } from "../hooks/use-tuning-state";
-import { Slider } from "@/components/ui/slider";
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Copy,
+  Globe,
+  Layers,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,22 +16,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/ui/cn";
 import {
-  ChevronDown,
-  ChevronRight,
-  Copy,
-  Layers,
-  Clock,
-  Globe,
-} from "lucide-react";
+  getMaxConcurrentWeatherWebglCanvases,
+  setMaxConcurrentWeatherWebglCanvases,
+  WeatherEffectsCanvas,
+} from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
+import {
+  CONDITION_LABELS,
+  WEATHER_CONDITIONS,
+} from "../../weather-compositor/presets";
+import type { TuningStateReturn } from "../hooks/use-tuning-state";
+import { TIME_CHECKPOINT_ORDER, TIME_CHECKPOINTS } from "../lib/constants";
+import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
+import type { TimeCheckpoint } from "../types";
 import {
   PARAMETER_GROUPS,
   type ParameterDef,
   type TunableLayerKey,
 } from "./parameter-definitions";
 import {
-  WeatherDataOverlay,
   createWeatherOverlayStubData,
+  WeatherDataOverlay,
 } from "./weather-data-overlay";
 
 // -----------------------------------------------------------------------------
@@ -179,7 +179,7 @@ function ConditionPreview({
   );
 
   return (
-    <div className="border-border/50 relative aspect-4/3 w-full overflow-hidden rounded-md border bg-black @container/weather [container-type:size]">
+    <div className="@container/weather relative aspect-4/3 w-full overflow-hidden rounded-md border border-border/50 bg-black [container-type:size]">
       <WeatherEffectsCanvas className="absolute inset-0" {...canvasProps} />
       <div className="absolute inset-0 z-10">
         <WeatherDataOverlay
@@ -212,7 +212,7 @@ function BulkApplyMenu({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground rounded p-1"
+          className="rounded p-1 text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground"
           title="Apply value to..."
         >
           <Copy className="size-3" />
@@ -225,7 +225,7 @@ function BulkApplyMenu({
         >
           <Layers className="size-3.5" />
           All conditions
-          <span className="text-muted-foreground ml-auto text-[10px]">
+          <span className="ml-auto text-[10px] text-muted-foreground">
             this time
           </span>
         </DropdownMenuItem>
@@ -235,18 +235,18 @@ function BulkApplyMenu({
         >
           <Clock className="size-3.5" />
           All times
-          <span className="text-muted-foreground ml-auto text-[10px]">
+          <span className="ml-auto text-[10px] text-muted-foreground">
             this condition
           </span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={onApplyEverywhere}
-          className="gap-2 text-xs font-medium"
+          className="gap-2 font-medium text-xs"
         >
           <Globe className="size-3.5" />
           Everywhere
-          <span className="text-muted-foreground ml-auto text-[10px]">
+          <span className="ml-auto text-[10px] text-muted-foreground">
             all × all
           </span>
         </DropdownMenuItem>
@@ -282,7 +282,7 @@ function ConditionSlider({
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-muted-foreground w-24 truncate text-[10px]">
+      <span className="w-24 truncate text-[10px] text-muted-foreground">
         {CONDITION_LABELS[condition]}
       </span>
       <Slider
@@ -293,7 +293,7 @@ function ConditionSlider({
         onValueChange={([v]) => setValue(condition, v)}
         className="flex-1"
       />
-      <span className="text-muted-foreground w-12 text-right font-mono text-[10px]">
+      <span className="w-12 text-right font-mono text-[10px] text-muted-foreground">
         {value.toFixed(2)}
       </span>
       <BulkApplyMenu
@@ -325,10 +325,10 @@ function ParameterRow({
     <div className="border-border/30 border-b">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="hover:bg-muted/30 flex w-full items-center gap-2 px-3 py-2 text-left"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-muted/30"
       >
-        <ChevronIcon className="text-muted-foreground size-3.5" />
-        <span className="text-xs font-medium">{param.label}</span>
+        <ChevronIcon className="size-3.5 text-muted-foreground" />
+        <span className="font-medium text-xs">{param.label}</span>
       </button>
 
       {expanded && (
@@ -358,9 +358,9 @@ function ParameterListHeader({
   onSelectCheckpoint: (checkpoint: TimeCheckpoint) => void;
 }) {
   return (
-    <div className="border-border/50 bg-background sticky top-0 z-10 border-b p-3">
-      <h2 className="text-sm font-medium">Parameters</h2>
-      <p className="text-muted-foreground mt-1 text-[10px]">
+    <div className="sticky top-0 z-10 border-border/50 border-b bg-background p-3">
+      <h2 className="font-medium text-sm">Parameters</h2>
+      <p className="mt-1 text-[10px] text-muted-foreground">
         Edit parameters across all conditions
       </p>
 
@@ -370,7 +370,7 @@ function ParameterListHeader({
             key={checkpoint}
             onClick={() => onSelectCheckpoint(checkpoint)}
             className={cn(
-              "flex-1 rounded px-2 py-1.5 text-[10px] font-medium transition-all",
+              "flex-1 rounded px-2 py-1.5 font-medium text-[10px] transition-all",
               selectedCheckpoint === checkpoint
                 ? "bg-foreground text-background"
                 : "bg-muted/50 text-muted-foreground hover:bg-muted",
@@ -387,8 +387,8 @@ function ParameterListHeader({
 /** Sticky group header for parameter sections */
 function GroupHeader({ name }: { name: string }) {
   return (
-    <div className="border-border/30 bg-muted/50 sticky top-[88px] z-5 border-t border-b px-3 py-1.5">
-      <span className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
+    <div className="sticky top-[88px] z-5 border-border/30 border-t border-b bg-muted/50 px-3 py-1.5">
+      <span className="font-medium text-[10px] text-muted-foreground uppercase tracking-wider">
         {name}
       </span>
     </div>
@@ -414,7 +414,7 @@ export function ParameterMatrixView({ tuningState }: ParameterMatrixViewProps) {
   return (
     <div className="flex h-full">
       {/* Left: Parameter list */}
-      <div className="border-border/50 w-80 shrink-0 overflow-y-auto border-r">
+      <div className="w-80 shrink-0 overflow-y-auto border-border/50 border-r">
         <ParameterListHeader
           selectedCheckpoint={selectedCheckpoint}
           onSelectCheckpoint={setSelectedCheckpoint}
@@ -424,7 +424,7 @@ export function ParameterMatrixView({ tuningState }: ParameterMatrixViewProps) {
           {PARAMETER_GROUPS.map((group) => (
             <div key={group.name}>
               <GroupHeader name={group.name} />
-              <div className="divide-border/30 divide-y">
+              <div className="divide-y divide-border/30">
                 {group.params.map((param) => (
                   <ParameterRow
                     key={`${group.layer}-${param.key}`}
@@ -443,8 +443,8 @@ export function ParameterMatrixView({ tuningState }: ParameterMatrixViewProps) {
       {/* Right: Condition grid preview */}
       <div className="flex-1 overflow-y-auto p-4">
         <div className="mb-4">
-          <h2 className="text-sm font-medium">Preview Grid</h2>
-          <p className="text-muted-foreground mt-1 text-[10px]">
+          <h2 className="font-medium text-sm">Preview Grid</h2>
+          <p className="mt-1 text-[10px] text-muted-foreground">
             All conditions at{" "}
             {TIME_CHECKPOINTS[selectedCheckpoint].label.toLowerCase()}
           </p>

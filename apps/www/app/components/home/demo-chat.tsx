@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import {
   AssistantRuntimeProvider,
   ThreadPrimitive,
@@ -12,12 +11,13 @@ import {
   useChatRuntime,
 } from "@assistant-ui/react-ai-sdk";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { DEMO_CHAT_TOOLKIT } from "@/lib/demo-chat/toolkit";
+import { useMemo } from "react";
 import {
   AssistantMessage,
   Composer,
   UserMessage,
 } from "@/app/playground/chat-ui";
+import { DEMO_CHAT_TOOLKIT } from "@/lib/demo-chat/toolkit";
 
 // Prompts designed to trigger specific tools: get_tasks, show_plan, show_stats, show_terminal
 const SUGGESTIONS = [
@@ -47,7 +47,7 @@ function SuggestionChip({
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-2xl border px-6 py-4 text-left text-base font-medium transition-colors ${colorClass}`}
+      className={`cursor-pointer rounded-2xl border px-6 py-4 text-left font-medium text-base transition-colors ${colorClass}`}
     >
       {children}
     </button>
@@ -96,10 +96,10 @@ export function DemoChat() {
   return (
     <AssistantRuntimeProvider runtime={runtime} aui={aui}>
       <ThreadPrimitive.Root className="flex h-full flex-col overflow-hidden">
-        <ThreadPrimitive.Viewport className="scrollbar-subtle bg-muted/30 flex flex-1 flex-col overflow-y-auto px-6 pt-20 pb-6">
+        <ThreadPrimitive.Viewport className="scrollbar-subtle flex flex-1 flex-col overflow-y-auto bg-muted/30 px-6 pt-20 pb-6">
           <ThreadPrimitive.If empty>
-            <div className="text-muted-foreground mx-auto flex max-w-md flex-1 flex-col items-center justify-center gap-6 text-center">
-              <p className="text-2xl font-semibold">Try Tool UI</p>
+            <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center gap-6 text-center text-muted-foreground">
+              <p className="font-semibold text-2xl">Try Tool UI</p>
               <p className="text-sm">
                 Ask to see a plan, support tickets, metrics, or run a command.
                 Each response uses a different Tool UI component.
@@ -114,7 +114,7 @@ export function DemoChat() {
             }}
           />
         </ThreadPrimitive.Viewport>
-        <div className="border-t px-4 pb-4 pt-3">
+        <div className="border-t px-4 pt-3 pb-4">
           <Composer />
         </div>
       </ThreadPrimitive.Root>

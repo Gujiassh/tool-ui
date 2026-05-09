@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { cn } from "@/lib/ui/cn";
-import { TIME_CHECKPOINTS, TIME_CHECKPOINT_ORDER } from "../lib/constants";
+import { TIME_CHECKPOINT_ORDER, TIME_CHECKPOINTS } from "../lib/constants";
 import type { TimeCheckpoint } from "../types";
 
 interface TimeDialProps {
@@ -127,23 +127,23 @@ export function TimeDial({
           })}
 
           <div
-            className="absolute left-1/2 top-1/2 h-px w-4 origin-left bg-foreground/50"
+            className="absolute top-1/2 left-1/2 h-px w-4 origin-left bg-foreground/50"
             style={{
               transform: `translate(0, -50%) rotate(${angle}deg)`,
             }}
           />
-          <div className="absolute left-1/2 top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground" />
+          <div className="absolute top-1/2 left-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground" />
         </div>
       </div>
 
       <div className="flex flex-col items-start gap-0.5">
-        <span className="font-mono text-sm tabular-nums text-foreground">
+        <span className="font-mono text-foreground text-sm tabular-nums">
           {formatTime(value)}
         </span>
         {isPreviewing && (
           <button
             onClick={onExitPreview}
-            className="text-[10px] uppercase tracking-wide text-muted-foreground/60 hover:text-foreground"
+            className="text-[10px] text-muted-foreground/60 uppercase tracking-wide hover:text-foreground"
           >
             Preview / Click to edit {editCheckpointInfo.label}
           </button>
@@ -163,7 +163,7 @@ export function TimeDial({
               key={checkpoint}
               onClick={() => onCheckpointClick(checkpoint)}
               className={cn(
-                "px-2 py-1 text-[11px] font-medium uppercase tracking-wide transition-colors",
+                "px-2 py-1 font-medium text-[11px] uppercase tracking-wide transition-colors",
                 isEditingHere
                   ? "bg-muted-foreground/20 text-foreground"
                   : isViewingHere

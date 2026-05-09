@@ -11,21 +11,21 @@
 
 "use client";
 
-import { useState, useCallback } from "react";
-import { RideQuote, BookingConfirmation } from "./components";
+import { useCallback, useState } from "react";
+import { BookingConfirmation, RideQuote } from "./components";
 import {
-  getRiderContext,
+  bookTrip,
   getPickupLocation,
   getQuote,
-  bookTrip,
+  getRiderContext,
   resolveAddress,
 } from "./tools";
 import type {
-  RiderContext,
-  RideQuote as RideQuoteType,
-  ToolUIMessage,
-  RideQuoteProps,
   BookingConfirmationProps,
+  RideQuoteProps,
+  RideQuote as RideQuoteType,
+  RiderContext,
+  ToolUIMessage,
 } from "./types";
 
 interface Message {
@@ -298,7 +298,7 @@ export function WaymoDemo() {
     if (message.role === "user") {
       return (
         <div key={index} className="flex justify-end">
-          <div className="bg-primary text-primary-foreground max-w-[80%] rounded-lg px-4 py-2">
+          <div className="max-w-[80%] rounded-lg bg-primary px-4 py-2 text-primary-foreground">
             {message.content as string}
           </div>
         </div>
@@ -309,7 +309,7 @@ export function WaymoDemo() {
     if (typeof message.content === "string") {
       return (
         <div key={index} className="flex justify-start">
-          <div className="bg-muted max-w-[80%] rounded-lg px-4 py-2">
+          <div className="max-w-[80%] rounded-lg bg-muted px-4 py-2">
             {message.content}
           </div>
         </div>
@@ -345,9 +345,9 @@ export function WaymoDemo() {
 
   return (
     <div className="mx-auto max-w-4xl p-6">
-      <div className="bg-card mb-6 rounded-lg border p-4">
-        <h1 className="text-2xl font-bold">Waymo Demo (v0)</h1>
-        <p className="text-muted-foreground mt-2">
+      <div className="mb-6 rounded-lg border bg-card p-4">
+        <h1 className="font-bold text-2xl">Waymo Demo (v0)</h1>
+        <p className="mt-2 text-muted-foreground">
           Golden path implementation: &ldquo;I need a ride home&rdquo; → 1 click
           booking
         </p>
@@ -359,11 +359,11 @@ export function WaymoDemo() {
 
         {isProcessing && (
           <div className="flex justify-start">
-            <div className="bg-muted rounded-lg px-4 py-2">
+            <div className="rounded-lg bg-muted px-4 py-2">
               <div className="flex items-center gap-2">
-                <div className="bg-foreground/50 h-2 w-2 animate-pulse rounded-full" />
-                <div className="bg-foreground/50 animation-delay-200 h-2 w-2 animate-pulse rounded-full" />
-                <div className="bg-foreground/50 animation-delay-400 h-2 w-2 animate-pulse rounded-full" />
+                <div className="h-2 w-2 animate-pulse rounded-full bg-foreground/50" />
+                <div className="animation-delay-200 h-2 w-2 animate-pulse rounded-full bg-foreground/50" />
+                <div className="animation-delay-400 h-2 w-2 animate-pulse rounded-full bg-foreground/50" />
               </div>
             </div>
           </div>
@@ -384,13 +384,12 @@ export function WaymoDemo() {
                 }
               }}
               placeholder="Enter destination address..."
-              className="bg-background border-input flex-1 rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              autoFocus
+              className="flex-1 rounded-lg border border-input bg-background px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               onClick={handleDestinationSubmit}
               disabled={!destinationInput.trim()}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground rounded-lg px-4 py-2 font-medium transition-colors"
+              className="rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
             >
               Send
             </button>
@@ -404,7 +403,7 @@ export function WaymoDemo() {
           <div>
             <button
               onClick={handleGoldenPath}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-6 py-3 font-medium transition-colors"
+              className="rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               Golden Path: &ldquo;I need a ride home&rdquo;
             </button>
@@ -412,7 +411,7 @@ export function WaymoDemo() {
           <div>
             <button
               onClick={handleFrictionPath}
-              className="bg-muted text-muted-foreground hover:bg-muted/80 rounded-lg px-6 py-3 font-medium transition-colors"
+              className="rounded-lg bg-muted px-6 py-3 font-medium text-muted-foreground transition-colors hover:bg-muted/80"
             >
               Friction: No Saved Address
             </button>

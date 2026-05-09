@@ -1,11 +1,10 @@
 import { describe, expect, test } from "vitest";
-
-import { TIME_CHECKPOINTS } from "@/lib/weather-authoring/weather-widget/effects/tuning";
-import type { TimeCheckpoint } from "@/lib/weather-authoring/weather-widget/effects/tuning";
+import type { CheckpointOverrides } from "@/app/sandbox/weather-compositor/interpolation";
 import type { FullCompositorParams } from "@/app/sandbox/weather-compositor/presets";
 import { mergeWithOverrides } from "@/app/sandbox/weather-compositor/presets";
-import type { CheckpointOverrides } from "@/app/sandbox/weather-compositor/interpolation";
 import { resolveCompositorParamsAtTime } from "@/app/sandbox/weather-tuning/lib/resolve-params";
+import type { TimeCheckpoint } from "@/lib/weather-authoring/weather-widget/effects/tuning";
+import { TIME_CHECKPOINTS } from "@/lib/weather-authoring/weather-widget/effects/tuning";
 
 function makeBase(timeOfDay: number): FullCompositorParams {
   // Only a few fields are relevant to this test; the rest are just required for mergeWithOverrides.

@@ -1,6 +1,7 @@
-import { z } from "zod";
 import type { ReactNode } from "react";
+import { z } from "zod";
 import type { ActionsProp } from "../shared/actions-config";
+import { defineToolUiContract } from "../shared/contract";
 import type { EmbeddedActionsProps } from "../shared/embedded-actions";
 import {
   ActionSchema,
@@ -10,7 +11,6 @@ import {
   ToolUIReceiptSchema,
   ToolUIRoleSchema,
 } from "../shared/schema";
-import { defineToolUiContract } from "../shared/contract";
 
 export const OptionListOptionSchema = z.object({
   id: z.string().min(1),

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import { LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
-import { LayoutDashboardIcon } from "lucide-react";
+import React, { useEffect, useMemo } from "react";
 import { analytics } from "@/lib/analytics";
 import {
-  componentsRegistry,
-  componentsByCategory,
   CATEGORY_META,
   type ComponentCategory,
+  componentsByCategory,
+  componentsRegistry,
 } from "@/lib/docs/component-registry";
 import { cn } from "@/lib/ui/cn";
 import { CONCEPTS_DOCS_PAGES, GET_STARTED_DOCS_PAGES } from "./docs-pages";
@@ -138,7 +138,7 @@ function SidebarSection({
 }) {
   return (
     <div className="mt-6">
-      <p className="mb-1 py-1 text-[13.5px] font-medium text-foreground">
+      <p className="mb-1 py-1 font-medium text-[13.5px] text-foreground">
         {section.label}
       </p>
       <div className="flex flex-col">

@@ -1,25 +1,24 @@
 "use client";
 
+import { Check, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import {
-  useState,
+  createContext,
+  type ReactNode,
+  use,
   useCallback,
   useEffect,
-  createContext,
-  use,
-  type ReactNode,
+  useState,
 } from "react";
 import {
   createHighlighter,
   createJavaScriptRegexEngine,
   type Highlighter,
 } from "shiki";
-import { Copy, Check, ChevronDown, ChevronUp } from "lucide-react";
 import pierreDarkTheme from "../shared/pierre-dark-theme.js";
 import pierreLightTheme from "../shared/pierre-light-theme.js";
-import type { CodeBlockLineNumbersMode, CodeBlockProps } from "./schema";
 import { useCopyToClipboard } from "../shared/use-copy-to-clipboard";
-
-import { Button, cn, Collapsible, CollapsibleTrigger } from "./_adapter";
+import { Button, Collapsible, CollapsibleTrigger, cn } from "./_adapter";
+import type { CodeBlockLineNumbersMode, CodeBlockProps } from "./schema";
 
 const COPY_ID = "codeblock-code";
 const MAX_HTML_CACHE_ENTRIES = 64;
@@ -340,7 +339,7 @@ function CodeBlockRoot({
         data-tool-ui-id={id}
         data-slot="code-block"
       >
-        <div className="border-border bg-card overflow-hidden rounded-lg border shadow-xs">
+        <div className="overflow-hidden rounded-lg border border-border bg-card shadow-xs">
           <Collapsible open={!isCollapsed}>{children}</Collapsible>
         </div>
       </div>
@@ -357,7 +356,7 @@ function CodeBlockHeader({ className }: CodeBlockSectionProps) {
   return (
     <div
       className={cn(
-        "bg-card flex items-center justify-between border-b px-4 py-2",
+        "flex items-center justify-between border-b bg-card px-4 py-2",
         className,
       )}
     >
@@ -368,7 +367,7 @@ function CodeBlockHeader({ className }: CodeBlockSectionProps) {
         {filename && (
           <>
             <span className="text-muted-foreground/50">•</span>
-            <span className="text-foreground text-sm font-medium">
+            <span className="font-medium text-foreground text-sm">
               {filename}
             </span>
           </>
@@ -384,7 +383,7 @@ function CodeBlockHeader({ className }: CodeBlockSectionProps) {
         {isCopied ? (
           <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
         ) : (
-          <Copy className="text-muted-foreground h-4 w-4" />
+          <Copy className="h-4 w-4 text-muted-foreground" />
         )}
       </Button>
     </div>
@@ -420,7 +419,7 @@ function CodeBlockCollapseToggle({ className }: CodeBlockSectionProps) {
         variant="ghost"
         onClick={toggleExpanded}
         className={cn(
-          "text-muted-foreground w-full rounded-none border-t font-normal",
+          "w-full rounded-none border-t font-normal text-muted-foreground",
           className,
         )}
       >

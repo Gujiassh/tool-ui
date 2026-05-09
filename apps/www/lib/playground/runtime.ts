@@ -1,19 +1,18 @@
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
+import { frontendTools } from "@assistant-ui/react-ai-sdk";
 import {
   convertToModelMessages,
+  type LanguageModel,
   stepCountIs,
   streamText,
-  tool,
-  type LanguageModel,
   type ToolSet,
+  tool,
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { frontendTools } from "@assistant-ui/react-ai-sdk";
-
-import type { Prototype } from "./types";
 import { hasToolUi } from "./tool-uis";
+import type { Prototype } from "./types";
 
 const DEFAULT_MODEL = "openai/gpt-4.1-mini";
 
@@ -109,7 +108,7 @@ export const streamPrototypeResponse = async (
   // Merge frontend tools with prototype tools
   const tools = clientTools
     ? {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: dynamic frontendTools shape
         ...(frontendTools(clientTools as any) as any),
         ...prototypeTools,
       }

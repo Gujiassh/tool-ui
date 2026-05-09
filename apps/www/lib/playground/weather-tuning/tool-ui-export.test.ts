@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-
+import {
+  type CheckpointOverrides,
+  getRawBaseParamsForCondition,
+} from "@/app/sandbox/weather-compositor/presets";
+import { createStudioTimestamp } from "@/app/sandbox/weather-tuning/lib/studio-timestamp";
 import {
   buildCanonicalToolUiPresetsForEditedConditions,
   mergeTunedPresets,
@@ -7,11 +11,6 @@ import {
   toToolUiDelta,
 } from "@/app/sandbox/weather-tuning/lib/tool-ui-export";
 import { mapToolUiPresetsToCompositor } from "@/app/sandbox/weather-tuning/lib/tool-ui-import";
-import {
-  getRawBaseParamsForCondition,
-  type CheckpointOverrides,
-} from "@/app/sandbox/weather-compositor/presets";
-import { createStudioTimestamp } from "@/app/sandbox/weather-tuning/lib/studio-timestamp";
 
 describe("weather-tuning tool-ui export", () => {
   test("mergeTunedPresets preserves untouched conditions", () => {

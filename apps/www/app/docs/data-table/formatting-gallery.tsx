@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import {
-  renderFormattedValue,
   type FormatConfig,
+  renderFormattedValue,
 } from "@/components/tool-ui/data-table";
 
 type Row = Record<
@@ -43,16 +43,16 @@ function FormatSample({
   const inputSnippet = JSON.stringify(value);
 
   return (
-    <div className="bg-card rounded-lg border p-4 shadow-sm">
-      <div className="text-foreground mb-2 text-sm font-medium">{title}</div>
+    <div className="rounded-lg border bg-card p-4 shadow-sm">
+      <div className="mb-2 font-medium text-foreground text-sm">{title}</div>
       <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
         <div className="space-y-1">
           <div className="text-muted-foreground">Format</div>
-          <pre className="bg-muted/40 overflow-auto rounded-md p-2 leading-relaxed">
+          <pre className="overflow-auto rounded-md bg-muted/40 p-2 leading-relaxed">
             <code className="language-ts">{codeSnippet}</code>
           </pre>
           {note ? (
-            <div className="text-muted-foreground mt-1">{note}</div>
+            <div className="mt-1 text-muted-foreground">{note}</div>
           ) : null}
         </div>
         <div className="space-y-2">
@@ -240,7 +240,7 @@ export function FormatInlineExample({
   }, [value, format, row, locale, output]);
 
   return (
-    <div className="not-prose bg-card mt-2 rounded-md border p-3">
+    <div className="not-prose mt-2 rounded-md border bg-card p-3">
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground">Input</span>{" "}
@@ -254,7 +254,7 @@ export function FormatInlineExample({
         </div>
       </div>
       {note ? (
-        <div className="text-muted-foreground mt-2 text-[11px]">{note}</div>
+        <div className="mt-2 text-[11px] text-muted-foreground">{note}</div>
       ) : null}
     </div>
   );

@@ -3,7 +3,7 @@
 // DO NOT EDIT MANUALLY.
 
 "use client";
-import { useRef, useState, useEffect, useCallback, useMemo, type ReactNode, type CSSProperties, type RefObject, } from "react";
+import { type CSSProperties, type ReactNode, type RefObject, useCallback, useEffect, useMemo, useRef, useState, } from "react";
 interface Dimensions {
     width: number;
     height: number;
@@ -57,7 +57,7 @@ function buildDisplacementMapSvg({ width, height, radius, depth, }: Displacement
       <rect x="${depth}" y="${depth}" height="${innerHeight}" width="${innerWidth}" fill="#808080" rx="${radius}" ry="${radius}" filter="blur(${depth}px)" />
     </g>
   </svg>`;
-    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 interface DisplacementFilterParams extends DisplacementMapParams {
     strength: number;
@@ -94,7 +94,7 @@ function buildDisplacementFilterUrl({ width, height, radius, depth, strength, ch
       <filter id="displace" color-interpolation-filters="sRGB">${filterContent}</filter>
     </defs>
   </svg>`;
-    return "data:image/svg+xml;utf8," + encodeURIComponent(svg) + "#displace";
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}#displace`;
 }
 interface BackdropFilterParams {
     filterUrl: string;

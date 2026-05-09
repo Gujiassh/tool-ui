@@ -1,9 +1,9 @@
 "use client";
 
-import type { MouseEventHandler } from "react";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import { Button } from "@/components/ui/button";
 import { Check, Copy as CopyIcon } from "lucide-react";
+import type { MouseEventHandler } from "react";
+import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 
 type CopyMarkdownButtonProps = {

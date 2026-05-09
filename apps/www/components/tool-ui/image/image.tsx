@@ -1,15 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "./_adapter";
-
 import {
-  RATIO_CLASS_MAP,
   getFitClass,
   openSafeNavigationHref,
+  RATIO_CLASS_MAP,
   resolveSafeNavigationHref,
   sanitizeHref,
 } from "../shared/media";
+import { cn } from "./_adapter";
 import type { SerializableImage, Source } from "./schema";
 
 const FALLBACK_LOCALE = "en-US";
@@ -80,7 +79,7 @@ export function Image(props: ImageProps) {
 
   return (
     <article
-      className={cn("relative w-full max-w-md min-w-80", className)}
+      className={cn("relative w-full min-w-80 max-w-md", className)}
       lang={locale}
       data-tool-ui-id={id}
       data-slot="image"
@@ -88,51 +87,49 @@ export function Image(props: ImageProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden rounded-xl",
-          "border-border bg-card border text-sm shadow-xs",
+          "border border-border bg-card text-sm shadow-xs",
         )}
       >
-        <>
-          <div
-            className={cn(
-              "bg-muted group relative w-full overflow-hidden",
-              ratio !== "auto" ? RATIO_CLASS_MAP[ratio] : "min-h-[160px]",
-              sanitizedHref && "cursor-pointer",
-            )}
-            onClick={sanitizedHref ? handleImageClick : undefined}
-            role={sanitizedHref ? "link" : undefined}
-            tabIndex={sanitizedHref ? 0 : undefined}
-            onKeyDown={
-              sanitizedHref
-                ? (e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      handleImageClick();
-                    }
+        <div
+          className={cn(
+            "group relative w-full overflow-hidden bg-muted",
+            ratio !== "auto" ? RATIO_CLASS_MAP[ratio] : "min-h-[160px]",
+            sanitizedHref && "cursor-pointer",
+          )}
+          onClick={sanitizedHref ? handleImageClick : undefined}
+          role={sanitizedHref ? "link" : undefined}
+          tabIndex={sanitizedHref ? 0 : undefined}
+          onKeyDown={
+            sanitizedHref
+              ? (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleImageClick();
                   }
-                : undefined
-            }
-          >
-            <img
-              src={src}
-              alt={alt}
-              loading="lazy"
-              decoding="async"
-              className={cn("absolute inset-0 h-full w-full", getFitClass(fit))}
+                }
+              : undefined
+          }
+        >
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            decoding="async"
+            className={cn("absolute inset-0 h-full w-full", getFitClass(fit))}
+          />
+        </div>
+        {hasMetadata && (
+          <div className="flex items-center gap-3 px-4 py-3">
+            <SourceAttribution
+              source={source}
+              sourceLabel={sourceLabel}
+              fallbackInitial={fallbackInitial}
+              hasClickableUrl={Boolean(resolvedSourceUrl)}
+              onSourceClick={handleSourceClick}
+              title={title}
             />
           </div>
-          {hasMetadata && (
-            <div className="flex items-center gap-3 px-4 py-3">
-              <SourceAttribution
-                source={source}
-                sourceLabel={sourceLabel}
-                fallbackInitial={fallbackInitial}
-                hasClickableUrl={Boolean(resolvedSourceUrl)}
-                onSourceClick={handleSourceClick}
-                title={title}
-              />
-            </div>
-          )}
-        </>
+        )}
       </div>
     </article>
   );
@@ -171,18 +168,18 @@ function SourceAttribution({
           decoding="async"
         />
       ) : fallbackInitial ? (
-        <div className="bg-muted text-muted-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold uppercase">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted font-semibold text-muted-foreground text-xs uppercase">
           {fallbackInitial}
         </div>
       ) : null}
       <div className="min-w-0 flex-1">
         {title && (
-          <div className="text-foreground line-clamp-1 text-sm font-medium">
+          <div className="line-clamp-1 font-medium text-foreground text-sm">
             {title}
           </div>
         )}
         {sourceLabel && (
-          <div className="text-muted-foreground line-clamp-1 text-xs">
+          <div className="line-clamp-1 text-muted-foreground text-xs">
             {sourceLabel}
           </div>
         )}
@@ -195,7 +192,7 @@ function SourceAttribution({
       <button
         type="button"
         onClick={onSourceClick}
-        className="focus-visible:ring-ring flex w-full items-center gap-3 text-left hover:opacity-80 focus-visible:ring-2 focus-visible:outline-none"
+        className="flex w-full items-center gap-3 text-left hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {content}
       </button>

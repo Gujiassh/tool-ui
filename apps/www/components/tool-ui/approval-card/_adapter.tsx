@@ -7,5 +7,5 @@
  *   cn → Your Tailwind merge utility (e.g., "@/lib/utils", "~/lib/cn")
  */
 
-export { cn } from "@/lib/utils";
 export { Separator } from "@/components/ui/separator";
+export { cn } from "@/lib/utils";

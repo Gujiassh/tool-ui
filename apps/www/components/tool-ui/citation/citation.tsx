@@ -1,23 +1,22 @@
 "use client";
 
-import * as React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
+  Code2,
+  Database,
+  ExternalLink,
+  File,
   FileText,
   Globe,
-  Code2,
   Newspaper,
-  Database,
-  File,
-  ExternalLink,
 } from "lucide-react";
-import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
-
+import * as React from "react";
 import { openSafeNavigationHref, sanitizeHref } from "../shared/media";
+import { cn, Popover, PopoverContent, PopoverTrigger } from "./_adapter";
 import type {
-  SerializableCitation,
   CitationType,
   CitationVariant,
+  SerializableCitation,
 } from "./schema";
 
 const FALLBACK_LOCALE = "en-US";
@@ -133,7 +132,7 @@ export function Citation(props: CitationProps) {
       aria-hidden="true"
       width={14}
       height={14}
-      className="bg-muted size-3.5 shrink-0 rounded object-cover"
+      className="size-3.5 shrink-0 rounded bg-muted object-cover"
     />
   ) : (
     <TypeIcon className="size-3.5 shrink-0 opacity-60" aria-hidden="true" />
@@ -159,7 +158,7 @@ export function Citation(props: CitationProps) {
               "bg-muted/60 text-sm outline-none",
               "transition-colors duration-150",
               "hover:bg-muted",
-              "focus-visible:ring-ring focus-visible:ring-2",
+              "focus-visible:ring-2 focus-visible:ring-ring",
               className,
             )}
           >
@@ -177,14 +176,14 @@ export function Citation(props: CitationProps) {
           onCloseAutoFocus={(e) => e.preventDefault()}
           onClick={handleClick}
         >
-          <div className="hover:bg-muted/50 flex flex-col gap-2 p-3 transition-colors">
+          <div className="flex flex-col gap-2 p-3 transition-colors hover:bg-muted/50">
             <div className="flex items-start gap-2">
               {iconElement}
               <span className="text-muted-foreground text-xs">{domain}</span>
             </div>
-            <p className="text-sm leading-snug font-medium">{title}</p>
+            <p className="font-medium text-sm leading-snug">{title}</p>
             {snippet && (
-              <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
+              <p className="line-clamp-2 text-muted-foreground text-xs leading-relaxed">
                 {snippet}
               </p>
             )}
@@ -197,7 +196,7 @@ export function Citation(props: CitationProps) {
   // Default variant: full card
   return (
     <article
-      className={cn("relative w-full max-w-md min-w-72", className)}
+      className={cn("relative w-full min-w-72 max-w-md", className)}
       lang={locale}
       data-tool-ui-id={id}
       data-slot="citation"
@@ -205,12 +204,12 @@ export function Citation(props: CitationProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden rounded-xl",
-          "border-border bg-card border text-sm shadow-xs",
+          "border border-border bg-card text-sm shadow-xs",
           "transition-colors duration-150",
           sanitizedHref && [
             "cursor-pointer",
             "hover:border-foreground/25",
-            "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           ],
         )}
         onClick={sanitizedHref ? handleClick : undefined}
@@ -219,7 +218,7 @@ export function Citation(props: CitationProps) {
         onKeyDown={handleKeyDown}
       >
         <div className="flex flex-col gap-2 p-4">
-          <div className="text-muted-foreground flex min-w-0 items-center justify-between gap-1.5 text-xs">
+          <div className="flex min-w-0 items-center justify-between gap-1.5 text-muted-foreground text-xs">
             <div className="flex min-w-0 items-center gap-1.5">
               {iconElement}
               <span className="truncate font-medium">{domain}</span>
@@ -241,14 +240,14 @@ export function Citation(props: CitationProps) {
             )}
           </div>
 
-          <h3 className="text-foreground text-[15px] leading-snug font-medium text-pretty">
-            <span className="group-hover:decoration-foreground/30 line-clamp-2 group-hover:underline group-hover:underline-offset-2">
+          <h3 className="text-pretty font-medium text-[15px] text-foreground leading-snug">
+            <span className="line-clamp-2 group-hover:underline group-hover:decoration-foreground/30 group-hover:underline-offset-2">
               {title}
             </span>
           </h3>
 
           {snippet && (
-            <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
+            <p className="text-pretty text-[13px] text-muted-foreground leading-relaxed">
               <span className="line-clamp-3">{snippet}</span>
             </p>
           )}

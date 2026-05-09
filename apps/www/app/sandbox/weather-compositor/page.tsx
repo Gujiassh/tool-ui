@@ -1,44 +1,44 @@
 "use client";
 
-import { useControls, Leva } from "leva";
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { CloudCanvas } from "@/app/sandbox/cloud-effect/cloud-canvas";
-import { RainCanvas } from "@/app/sandbox/rain-effect/rain-canvas";
-import { LightningCanvas } from "@/app/sandbox/lightning-effect/lightning-canvas";
-import { SnowCanvas } from "@/app/sandbox/snow-effect/snow-canvas";
-import { CelestialCanvas } from "./celestial-canvas";
+import { Leva, useControls } from "leva";
 import {
   Download,
-  Upload,
-  RotateCcw,
   Eye,
   Layers,
+  RotateCcw,
   Sparkles,
+  Upload,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CloudCanvas } from "@/app/sandbox/cloud-effect/cloud-canvas";
+import { LightningCanvas } from "@/app/sandbox/lightning-effect/lightning-canvas";
+import { RainCanvas } from "@/app/sandbox/rain-effect/rain-canvas";
+import { SnowCanvas } from "@/app/sandbox/snow-effect/snow-canvas";
 import { WeatherWidget as AuthoringWeatherWidget } from "@/lib/weather-authoring/weather-widget";
-import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 import type { WeatherEffectLayer } from "@/lib/weather-authoring/weather-widget/effects";
+import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
-import {
-  WEATHER_CONDITIONS,
-  CONDITION_LABELS,
-  getBaseParamsForCondition,
-  mergeWithOverrides,
-  extractOverrides,
-  loadFromStorage,
-  saveToStorage,
-  exportToFile,
-  importFromFile,
-  type FullCompositorParams,
-  type CheckpointOverrides,
-  type GlobalSettings,
-} from "./presets";
+import { TIME_CHECKPOINTS } from "../weather-tuning/lib/constants";
+import type { TimeCheckpoint } from "../weather-tuning/types";
+import { CelestialCanvas } from "./celestial-canvas";
 import {
   getInterpolatedOverrides,
   getNearestCheckpoint,
 } from "./interpolation";
-import { TIME_CHECKPOINTS } from "../weather-tuning/lib/constants";
-import type { TimeCheckpoint } from "../weather-tuning/types";
+import {
+  type CheckpointOverrides,
+  CONDITION_LABELS,
+  exportToFile,
+  extractOverrides,
+  type FullCompositorParams,
+  type GlobalSettings,
+  getBaseParamsForCondition,
+  importFromFile,
+  loadFromStorage,
+  mergeWithOverrides,
+  saveToStorage,
+  WEATHER_CONDITIONS,
+} from "./presets";
 
 function formatTimeLabel(timeOfDay: number): string {
   const totalMinutes = timeOfDay * 24 * 60;
@@ -65,7 +65,7 @@ function ConditionPill({
   return (
     <button
       onClick={onClick}
-      className={`relative rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all ${
+      className={`relative whitespace-nowrap rounded-full px-3 py-1.5 font-medium text-xs transition-all ${
         isActive
           ? "bg-white/20 text-white ring-1 ring-white/30"
           : "bg-white/10 text-white/60 hover:bg-white/15 hover:text-white/80"
@@ -1059,7 +1059,7 @@ export default function WeatherCompositorSandbox() {
               onClick={() => handleConditionChange(condition)}
             />
           ))}
-          <div className="ml-2 flex items-center gap-1 border-l border-white/20 pl-2">
+          <div className="ml-2 flex items-center gap-1 border-white/20 border-l pl-2">
             <button
               onClick={handleExport}
               className="rounded p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"

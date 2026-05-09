@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 
 interface GlassEffectOptions {
   depth: number;
@@ -61,7 +61,7 @@ function buildDisplacementMapSvg({
     </g>
   </svg>`;
 
-  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 interface DisplacementFilterParams extends DisplacementMapParams {
@@ -109,7 +109,7 @@ function buildDisplacementFilterUrl({
     </defs>
   </svg>`;
 
-  return "data:image/svg+xml;utf8," + encodeURIComponent(svg) + "#displace";
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}#displace`;
 }
 
 interface BackdropFilterParams {

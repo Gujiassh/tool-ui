@@ -1,21 +1,21 @@
-import type { MDXComponents } from "mdx/types";
-import defaultMdxComponents from "fumadocs-ui/mdx";
-import { Steps, Step } from "fumadocs-ui/components/steps";
+import { File, Files, Folder } from "fumadocs-ui/components/files";
+import { Step, Steps } from "fumadocs-ui/components/steps";
 import {
+  Tab,
   Tabs,
+  TabsContent,
   TabsList,
   TabsTrigger,
-  TabsContent,
-  Tab,
 } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
-import { Files, File, Folder } from "fumadocs-ui/components/files";
-import * as React from "react";
+import defaultMdxComponents from "fumadocs-ui/mdx";
+import type { MDXComponents } from "mdx/types";
 import dynamic from "next/dynamic";
-import { AutoLinkChildren, withAutoLink } from "@/lib/docs/auto-link";
-import { TrackedDynamicCodeBlock } from "@/app/docs/_components/tracked-dynamic-codeblock";
+import * as React from "react";
+import { Feature, FeatureGrid } from "@/app/components/mdx/features";
 import { InstallCommandBlock } from "@/app/docs/_components/install-command-block";
-import { FeatureGrid, Feature } from "@/app/components/mdx/features";
+import { TrackedDynamicCodeBlock } from "@/app/docs/_components/tracked-dynamic-codeblock";
+import { AutoLinkChildren, withAutoLink } from "@/lib/docs/auto-link";
 
 const Mermaid = dynamic(() =>
   import("@/app/components/mdx/mermaid").then((m) => m.Mermaid),

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Content from "./content.mdx";
 import { DocsArticle } from "../_components/docs-article";
+import Content from "./content.mdx";
 
 export const metadata: Metadata = {
   title: "Quick Start",

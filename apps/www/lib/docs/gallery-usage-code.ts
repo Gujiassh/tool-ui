@@ -1,6 +1,6 @@
-import { getPreviewConfig } from "./preview-config";
 import type { ComponentId } from "./component-ids";
 import type { GalleryComponentDocId } from "./gallery-component-docs";
+import { getPreviewConfig } from "./preview-config";
 
 function toPascalCase(kebab: string): string {
   return kebab

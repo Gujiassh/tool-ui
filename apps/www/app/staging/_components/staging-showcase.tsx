@@ -1,18 +1,18 @@
 "use client";
 
+import { AnimatePresence, motion, type Transition } from "motion/react";
 import {
+  type ReactNode,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ReactNode,
 } from "react";
-import { AnimatePresence, motion, type Transition } from "motion/react";
-import { cn } from "@/lib/ui/cn";
-import { previewConfigs, type ComponentId } from "@/lib/docs/preview-config";
+import { type ComponentId, previewConfigs } from "@/lib/docs/preview-config";
 import { getStagingConfig } from "@/lib/staging/staging-config";
 import type { DebugLevel } from "@/lib/staging/types";
+import { cn } from "@/lib/ui/cn";
 
 const TIMING = {
   durations: {
@@ -82,7 +82,7 @@ function ChatBubble({ role, children, className }: ChatBubbleProps) {
 function TypingIndicator() {
   return (
     <motion.span
-      className="bg-foreground/50 block size-3 rounded-full"
+      className="block size-3 rounded-full bg-foreground/50"
       animate={{ opacity: [0.4, 1, 0.4] }}
       transition={{
         duration: 1.4,

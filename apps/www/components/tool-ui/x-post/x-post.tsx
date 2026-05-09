@@ -1,19 +1,18 @@
 "use client";
 
-import * as React from "react";
 import { Heart, Share } from "lucide-react";
+import * as React from "react";
+import { resolveSafeNavigationHref } from "../shared/media";
+import { formatCount, formatRelativeTime, getDomain } from "../shared/utils";
 import {
-  cn,
   Button,
+  cn,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./_adapter";
-import { formatCount, formatRelativeTime, getDomain } from "../shared/utils";
-
-import { resolveSafeNavigationHref } from "../shared/media";
-import type { XPostData, XPostMedia, XPostLinkPreview } from "./schema";
+import type { XPostData, XPostLinkPreview, XPostMedia } from "./schema";
 
 export interface XPostProps {
   post: XPostData;
@@ -82,7 +81,7 @@ function AuthorInfo({
       {verified && (
         <VerifiedBadge className="size-[18px] shrink-0 text-blue-500" />
       )}
-      <span className="text-muted-foreground truncate">@{handle}</span>
+      <span className="truncate text-muted-foreground">@{handle}</span>
       {createdAt && (
         <>
           <span className="text-muted-foreground">·</span>
@@ -98,7 +97,7 @@ function AuthorInfo({
 function PostBody({ text }: { text?: string }) {
   if (!text) return null;
   return (
-    <p className="text-[15px] leading-normal text-pretty wrap-break-word whitespace-pre-wrap">
+    <p className="wrap-break-word whitespace-pre-wrap text-pretty text-[15px] leading-normal">
       {text}
     </p>
   );
@@ -121,7 +120,7 @@ function PostMedia({
   return (
     <button
       type="button"
-      className="bg-muted mt-2 w-full overflow-hidden rounded-xl"
+      className="mt-2 w-full overflow-hidden rounded-xl bg-muted"
       style={{ aspectRatio }}
       onClick={() => onOpen?.()}
     >
@@ -162,10 +161,10 @@ function PostLinkPreview({ preview }: { preview: XPostLinkPreview }) {
           <div className="text-muted-foreground text-xs">{domain}</div>
         )}
         {preview.title && (
-          <div className="font-medium text-pretty">{preview.title}</div>
+          <div className="text-pretty font-medium">{preview.title}</div>
         )}
         {preview.description && (
-          <div className="text-muted-foreground line-clamp-2 text-sm text-pretty">
+          <div className="line-clamp-2 text-pretty text-muted-foreground text-sm">
             {preview.description}
           </div>
         )}
@@ -186,7 +185,7 @@ function PostLinkPreview({ preview }: { preview: XPostLinkPreview }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="hover:bg-muted/50 mt-2 block overflow-hidden rounded-xl border transition-colors"
+      className="mt-2 block overflow-hidden rounded-xl border transition-colors hover:bg-muted/50"
     >
       {content}
     </a>
@@ -195,7 +194,7 @@ function PostLinkPreview({ preview }: { preview: XPostLinkPreview }) {
 
 function QuotedPostCard({ post }: { post: XPostData }) {
   return (
-    <div className="hover:bg-muted/30 mt-2 rounded-xl border p-3 transition-colors">
+    <div className="mt-2 rounded-xl border p-3 transition-colors hover:bg-muted/30">
       <div className="flex min-w-0 items-center gap-1">
         <img
           src={post.author.avatarUrl}
@@ -208,13 +207,13 @@ function QuotedPostCard({ post }: { post: XPostData }) {
         {post.author.verified && (
           <VerifiedBadge className="size-3.5 shrink-0 text-blue-500" />
         )}
-        <span className="text-muted-foreground truncate">
+        <span className="truncate text-muted-foreground">
           @{post.author.handle}
         </span>
         {post.createdAt && (
           <>
-            <span className="text-muted-foreground shrink-0">·</span>
-            <span className="text-muted-foreground shrink-0">
+            <span className="shrink-0 text-muted-foreground">·</span>
+            <span className="shrink-0 text-muted-foreground">
               {formatRelativeTime(post.createdAt)}
             </span>
           </>
@@ -314,7 +313,7 @@ export function XPost({ post, className, onAction }: XPostProps) {
       data-tool-ui-id={post.id}
       data-slot="x-post"
     >
-      <article className="bg-card rounded-xl border p-3 shadow-sm">
+      <article className="rounded-xl border bg-card p-3 shadow-sm">
         <div className="flex gap-3">
           <Avatar
             src={post.author.avatarUrl}
@@ -328,7 +327,7 @@ export function XPost({ post, className, onAction }: XPostProps) {
                 verified={post.author.verified}
                 createdAt={post.createdAt}
               />
-              <XLogo className="text-muted-foreground/40 size-4" />
+              <XLogo className="size-4 text-muted-foreground/40" />
             </div>
             <PostBody text={post.text} />
             {post.media && <PostMedia media={post.media} />}

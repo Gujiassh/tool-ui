@@ -49,7 +49,9 @@ const ALL_TASKS: Task[] = [
 
 export async function getMockTasks({
   assignee,
-}: { assignee?: string } = {}): Promise<Task[]> {
+}: {
+  assignee?: string;
+} = {}): Promise<Task[]> {
   let items = ALL_TASKS;
   if (assignee)
     items = items.filter((t) =>

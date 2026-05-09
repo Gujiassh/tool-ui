@@ -1,6 +1,7 @@
-import * as React from "react";
 import { Github, MessagesSquare } from "lucide-react";
 import Link from "next/link";
+import * as React from "react";
+import { ThreadList } from "@/components/assistant-ui/thread-list";
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +12,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { ThreadList } from "@/components/assistant-ui/thread-list";
 
 export function ThreadListSidebar({
   ...props

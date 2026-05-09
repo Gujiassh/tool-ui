@@ -1,7 +1,7 @@
 "use client";
 
+import { Clock, LayoutGrid, Sliders } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
-import { LayoutGrid, Sliders, Clock } from "lucide-react";
 
 export type ViewMode = "condition" | "parameter" | "time";
 
@@ -16,7 +16,7 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
       <button
         onClick={() => onChange("condition")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all",
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-medium text-xs transition-all",
           value === "condition"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground",
@@ -28,7 +28,7 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
       <button
         onClick={() => onChange("parameter")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all",
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-medium text-xs transition-all",
           value === "parameter"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground",
@@ -40,7 +40,7 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
       <button
         onClick={() => onChange("time")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all",
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-medium text-xs transition-all",
           value === "time"
             ? "bg-background text-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground",

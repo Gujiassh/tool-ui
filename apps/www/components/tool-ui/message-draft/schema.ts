@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
 import { defineToolUiContract } from "../shared/contract";
+import { ToolUIIdSchema, ToolUIRoleSchema } from "../shared/schema";
 
 export const MessageDraftChannelSchema = z.enum(["email", "slack"]);
 

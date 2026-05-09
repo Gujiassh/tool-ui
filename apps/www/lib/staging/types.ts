@@ -1,4 +1,4 @@
-import type { RefObject, ReactNode } from "react";
+import type { ReactNode, RefObject } from "react";
 import type { ComponentId } from "@/lib/docs/preview-config";
 
 export type DebugLevel = "off" | "boundaries" | "margins" | "full";

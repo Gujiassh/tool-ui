@@ -11,9 +11,9 @@
  */
 
 import type { ToolCallMessagePartProps } from "@assistant-ui/react";
-import { Card } from "@/components/ui/card";
+import { Briefcase, CheckCircle2, Clock, Home, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Home, Briefcase, MapPin, Clock, CheckCircle2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import type { Location, SelectDestinationResult } from "../types";
 import { MOCK_LOCATIONS } from "../types";
 
@@ -80,7 +80,7 @@ export function DestinationPicker({
     <Card className="max-w-md space-y-4 p-4">
       {favorites.length > 0 && (
         <div className="space-y-2">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
             {getCategoryIcon("favorite")}
             <span>Favorites</span>
           </div>
@@ -89,16 +89,16 @@ export function DestinationPicker({
               <Button
                 key={location.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-4 py-3 text-left"
+                className="h-auto w-full justify-start px-4 py-3 text-left hover:bg-accent"
                 onClick={() => handleSelect(location)}
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getLocationIcon(location)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{location.label}</div>
-                    <div className="text-muted-foreground truncate text-sm">
+                    <div className="truncate text-muted-foreground text-sm">
                       {location.address}
                     </div>
                   </div>
@@ -111,7 +111,7 @@ export function DestinationPicker({
 
       {recents.length > 0 && (
         <div className="space-y-2">
-          <div className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+          <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
             {getCategoryIcon("recent")}
             <span>Recent</span>
           </div>
@@ -120,16 +120,16 @@ export function DestinationPicker({
               <Button
                 key={location.id}
                 variant="outline"
-                className="hover:bg-accent h-auto w-full justify-start px-4 py-3 text-left"
+                className="h-auto w-full justify-start px-4 py-3 text-left hover:bg-accent"
                 onClick={() => handleSelect(location)}
               >
                 <div className="flex w-full items-start gap-3">
-                  <div className="text-muted-foreground mt-0.5">
+                  <div className="mt-0.5 text-muted-foreground">
                     {getLocationIcon(location)}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="font-medium">{location.label}</div>
-                    <div className="text-muted-foreground truncate text-sm">
+                    <div className="truncate text-muted-foreground text-sm">
                       {location.address}
                     </div>
                   </div>

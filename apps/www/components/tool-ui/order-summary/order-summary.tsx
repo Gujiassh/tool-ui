@@ -2,11 +2,11 @@ import { CheckCircle, Package } from "lucide-react";
 import type { ReactElement } from "react";
 import { cn, Separator } from "./_adapter";
 import type {
-  OrderSummaryProps,
-  OrderItem,
-  Pricing,
   OrderDecision,
+  OrderItem,
+  OrderSummaryProps,
   OrderSummaryVariant,
+  Pricing,
 } from "./schema";
 
 function formatCurrency(amount: number, currency: string): string {
@@ -27,11 +27,11 @@ function formatQuantity(quantity: number): string {
 function ItemImage({ src, alt }: { src?: string; alt: string }) {
   if (!src) {
     return (
-      <div className="bg-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-md">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-muted">
         <Package
           aria-hidden="true"
           focusable="false"
-          className="text-muted-foreground h-5 w-5"
+          className="h-5 w-5 text-muted-foreground"
         />
       </div>
     );
@@ -66,13 +66,13 @@ function OrderItemRow({
       <div className="flex min-w-0 flex-1 items-center justify-between">
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between">
-            <span className="truncate text-sm font-medium">{item.name}</span>
+            <span className="truncate font-medium text-sm">{item.name}</span>
             <span className="truncate text-sm tabular-nums">
               {formatCurrency(lineTotal, currency)}
             </span>
           </div>
           {hasDescription && (
-            <div className="text-muted-foreground truncate text-sm">
+            <div className="truncate text-muted-foreground text-sm">
               {[item.description, quantityText].filter(Boolean).join(" · ")}
             </div>
           )}
@@ -142,7 +142,7 @@ function PricingBreakdown({
 function formatDate(isoString: string): string | undefined {
   try {
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return undefined;
+    if (Number.isNaN(date.getTime())) return undefined;
     return date.toLocaleDateString(undefined, {
       month: "short",
       day: "numeric",
@@ -166,7 +166,7 @@ function ReceiptBadge({
   if (parts.length === 0) return null;
 
   return (
-    <p className="text-muted-foreground mt-1 text-sm">{parts.join(" · ")}</p>
+    <p className="mt-1 text-muted-foreground text-sm">{parts.join(" · ")}</p>
   );
 }
 
@@ -195,13 +195,13 @@ function OrderSummaryRoot({
         data-slot="order-summary"
         data-tool-ui-id={id}
         aria-labelledby={titleId}
-        className={cn("flex max-w-md min-w-80 flex-col gap-3", className)}
+        className={cn("flex min-w-80 max-w-md flex-col gap-3", className)}
       >
-        <div className="text-card-foreground rounded-lg border bg-card p-4 shadow-sm">
-          <h2 id={titleId} className="text-base font-semibold">
+        <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+          <h2 id={titleId} className="font-semibold text-base">
             {title}
           </h2>
-          <p className="text-muted-foreground mt-2 text-sm">
+          <p className="mt-2 text-muted-foreground text-sm">
             Unable to render order summary
           </p>
         </div>
@@ -214,11 +214,11 @@ function OrderSummaryRoot({
       data-slot="order-summary"
       data-tool-ui-id={id}
       aria-labelledby={titleId}
-      className={cn("flex max-w-md min-w-80 flex-col gap-3", className)}
+      className={cn("flex min-w-80 max-w-md flex-col gap-3", className)}
     >
       <div
         className={cn(
-          "text-card-foreground rounded-lg border shadow-sm",
+          "rounded-lg border text-card-foreground shadow-sm",
           isReceipt ? "bg-card/60" : "bg-card",
         )}
       >
@@ -226,7 +226,7 @@ function OrderSummaryRoot({
           <div>
             <h2
               id={titleId}
-              className="flex items-center gap-2 text-base font-semibold"
+              className="flex items-center gap-2 font-semibold text-base"
             >
               {isReceipt && (
                 <CheckCircle
@@ -270,10 +270,8 @@ function OrderSummaryDisplay(props: OrderSummaryDisplayProps) {
   return <OrderSummaryRoot {...props} variant="summary" />;
 }
 
-export interface OrderSummaryReceiptProps extends Omit<
-  OrderSummaryProps,
-  "choice"
-> {
+export interface OrderSummaryReceiptProps
+  extends Omit<OrderSummaryProps, "choice"> {
   choice: OrderDecision;
 }
 

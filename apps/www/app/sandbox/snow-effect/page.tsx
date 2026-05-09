@@ -1,6 +1,6 @@
 "use client";
 
-import { useControls, Leva } from "leva";
+import { Leva, useControls } from "leva";
 import { SnowCanvas } from "./snow-canvas";
 
 export default function SnowEffectSandbox() {

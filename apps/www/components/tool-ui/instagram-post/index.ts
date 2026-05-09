@@ -1,8 +1,8 @@
-export { InstagramPost } from "./instagram-post";
 export type { InstagramPostProps } from "./instagram-post";
+export { InstagramPost } from "./instagram-post";
 export type {
-  InstagramPostData,
   InstagramPostAuthor,
+  InstagramPostData,
   InstagramPostMedia,
   InstagramPostStats,
 } from "./schema";

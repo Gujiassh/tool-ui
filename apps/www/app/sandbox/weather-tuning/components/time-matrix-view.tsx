@@ -1,34 +1,34 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { cn } from "@/lib/ui/cn";
-import { Slider } from "@/components/ui/slider";
-import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 import type { LucideIcon } from "lucide-react";
 import {
   Cloud,
   CloudLightning,
   CloudRain,
   CloudSnow,
-  Sparkles,
   SlidersHorizontal,
+  Sparkles,
   SunDim,
   SunMedium,
 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/ui/cn";
+import { WeatherEffectsCanvas } from "@/lib/weather-authoring/weather-widget/effects/weather-effects-canvas";
 import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
-import type { TimeCheckpoint } from "../types";
 import type { TuningStateReturn } from "../hooks/use-tuning-state";
 import { TIME_CHECKPOINT_ORDER } from "../lib/constants";
 import { mapCompositorParamsToCanvasProps } from "../lib/map-to-canvas-props";
-import {
-  WeatherDataOverlay,
-  createWeatherOverlayStubData,
-} from "./weather-data-overlay";
+import type { TimeCheckpoint } from "../types";
 import {
   PARAMETER_GROUPS,
   type ParameterDef,
   type TunableLayerKey,
 } from "./parameter-definitions";
+import {
+  createWeatherOverlayStubData,
+  WeatherDataOverlay,
+} from "./weather-data-overlay";
 
 const PARAMETER_GROUP_ICONS: Record<string, LucideIcon> = {
   Sky: SunDim,
@@ -110,7 +110,7 @@ function CheckpointSlider({
           max={max}
           step={step}
           onValueChange={([next]) => onChange(next, { bulkAcrossTimes })}
-          className="relative w-full [&_[data-slot=slider-track]]:h-0.5 [&_[data-slot=slider-range]]:bg-foreground/20"
+          className="relative w-full [&_[data-slot=slider-range]]:bg-foreground/20 [&_[data-slot=slider-track]]:h-0.5"
         />
       </div>
       <span
@@ -167,9 +167,9 @@ function ParameterTimeRow({
   if (!hasValue) return null;
 
   return (
-    <div className="border-b border-border/20 py-2">
+    <div className="border-border/20 border-b py-2">
       <div className="grid grid-cols-[160px_repeat(4,minmax(0,1fr))] items-start gap-3">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
+        <div className="flex items-center gap-2 text-muted-foreground/70 text-xs">
           <span>{param.label}</span>
         </div>
         {values.map(({ checkpoint, value, baseValue }) => {
@@ -177,7 +177,7 @@ function ParameterTimeRow({
             return (
               <div
                 key={checkpoint}
-                className="text-xs text-muted-foreground/40"
+                className="text-muted-foreground/40 text-xs"
               >
                 —
               </div>
@@ -243,7 +243,7 @@ function CheckpointPreview({
   );
 
   return (
-    <div className="border-border/50 relative aspect-4/3 w-full overflow-hidden rounded-md border bg-black @container/weather [container-type:size]">
+    <div className="@container/weather relative aspect-4/3 w-full overflow-hidden rounded-md border border-border/50 bg-black [container-type:size]">
       <WeatherEffectsCanvas className="absolute inset-0" {...canvasProps} />
       <div className="absolute inset-0 z-10">
         <WeatherDataOverlay
@@ -269,7 +269,7 @@ export function TimeMatrixView({
   return (
     <div className="flex h-full flex-col">
       {/* Keep the widgets always visible while scrolling parameters */}
-      <div className="border-border/30 bg-background/95 shrink-0 border-b px-4 py-4 backdrop-blur">
+      <div className="shrink-0 border-border/30 border-b bg-background/95 px-4 py-4 backdrop-blur">
         <div className="grid grid-cols-4 gap-3">
           {TIME_CHECKPOINT_ORDER.map((checkpoint) => (
             <CheckpointPreview
@@ -292,8 +292,8 @@ export function TimeMatrixView({
 
           return (
             <div key={group.name} className="mt-6">
-              <div className="sticky top-0 z-10 -mx-4 border-b border-border/30 bg-background/95 px-4 py-2 backdrop-blur">
-                <div className="flex items-center gap-2 text-xs font-medium tracking-wider uppercase">
+              <div className="sticky top-0 z-10 -mx-4 border-border/30 border-b bg-background/95 px-4 py-2 backdrop-blur">
+                <div className="flex items-center gap-2 font-medium text-xs uppercase tracking-wider">
                   {Icon ? (
                     <div
                       className={cn(

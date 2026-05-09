@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { act, render, waitFor } from "@testing-library/react";
-import { createElement, type ComponentProps, type ReactNode } from "react";
+import { type ComponentProps, createElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { GeoMap } from "@/components/tool-ui/geo-map";

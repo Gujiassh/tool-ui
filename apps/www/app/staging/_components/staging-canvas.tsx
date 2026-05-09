@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
-import { previewConfigs, type ComponentId } from "@/lib/docs/preview-config";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ChatContextPreview } from "@/app/docs/_components/chat-context-preview";
+import { type ComponentId, previewConfigs } from "@/lib/docs/preview-config";
 import { getStagingConfig } from "@/lib/staging/staging-config";
 import type { DebugLevel } from "@/lib/staging/types";
-import { ChatContextPreview } from "@/app/docs/_components/chat-context-preview";
 
 interface StagingCanvasProps {
   componentId: ComponentId;
@@ -117,7 +117,7 @@ export function StagingCanvas({
           {debugLevel !== "off" && (
             <div className="pointer-events-none absolute inset-0">
               {!hasDebugOverlay && (
-                <div className="absolute top-0 left-0 bg-orange-500 px-2 py-1 text-xs text-white rounded">
+                <div className="absolute top-0 left-0 rounded bg-orange-500 px-2 py-1 text-white text-xs">
                   No debug overlay for {componentId}
                 </div>
               )}

@@ -10,14 +10,6 @@
 import type { Prototype } from "../../types";
 import { WAYMO_V2_SYSTEM_PROMPT } from "./system-prompt";
 
-// Export tools for mounting in chat-pane
-export {
-  SelectDestinationTool,
-  SelectPickupTool,
-  GetRideQuoteTool,
-  GetTripStatusTool,
-} from "./tools";
-
 // Export components
 export {
   DestinationPicker,
@@ -25,6 +17,13 @@ export {
   RideQuote,
   TripStatus,
 } from "./components";
+// Export tools for mounting in chat-pane
+export {
+  GetRideQuoteTool,
+  GetTripStatusTool,
+  SelectDestinationTool,
+  SelectPickupTool,
+} from "./tools";
 
 /**
  * The waymo-v2 prototype definition.

@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { cn, Badge, Tooltip, TooltipContent, TooltipTrigger } from "./_adapter";
 import { resolveSafeNavigationHref } from "../shared/media";
+import { Badge, cn, Tooltip, TooltipContent, TooltipTrigger } from "./_adapter";
 
 type Tone = "success" | "warning" | "danger" | "info" | "neutral";
 
@@ -177,7 +177,7 @@ export function DateValue({ value, options, locale }: DateValueProps) {
   const dateFormat = options?.dateFormat ?? "short";
   const date = new Date(value);
 
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return <span className="text-muted-foreground">{value}</span>;
   }
 
@@ -280,7 +280,7 @@ export function LinkValue({ value, options, row }: LinkValueProps) {
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="text-accent-foreground inline-block max-w-full break-words underline underline-offset-2 hover:opacity-90"
+      className="inline-block max-w-full break-words text-accent-foreground underline underline-offset-2 hover:opacity-90"
       aria-label={external ? `${value} (opens in a new tab)` : undefined}
       onClick={(e) => e.stopPropagation()}
     >
@@ -384,7 +384,7 @@ export function ArrayValue({ value, options }: ArrayValueProps) {
       {visible.map((item, i) => (
         <span
           key={i}
-          className="bg-muted text-muted-foreground inline-flex items-center rounded-md px-2 py-0.5"
+          className="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-muted-foreground"
         >
           {item === null ? "null" : String(item)}
         </span>
@@ -392,7 +392,7 @@ export function ArrayValue({ value, options }: ArrayValueProps) {
       {remaining > 0 && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className="text-muted-foreground cursor-default">
+            <span className="cursor-default text-muted-foreground">
               +{remaining} more
             </span>
           </TooltipTrigger>
@@ -466,7 +466,6 @@ export function renderFormattedValue({
           options={fmt}
         />
       );
-    case "text":
     default:
       return String(value);
   }

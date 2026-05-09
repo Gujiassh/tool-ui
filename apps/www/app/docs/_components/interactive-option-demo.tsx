@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import { MockThread, MockMessage } from "./mock-thread";
+import { useCallback, useState } from "react";
 import { OptionList } from "@/components/tool-ui/option-list";
-import { cn, Button } from "@/components/tool-ui/option-list/_adapter";
+import { Button, cn } from "@/components/tool-ui/option-list/_adapter";
+import { MockMessage, MockThread } from "./mock-thread";
 
 const OPTIONS = [
   {
@@ -81,14 +81,14 @@ export function InteractiveOptionDemo() {
         <div
           className={cn(
             "flex justify-center",
-            "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-200",
+            "motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:animate-in motion-safe:duration-200",
           )}
         >
           <Button
             variant="outline"
             size="sm"
             onClick={handleReset}
-            className="bg-background gap-1.5 rounded-full border shadow-sm"
+            className="gap-1.5 rounded-full border bg-background shadow-sm"
           >
             <RotateCcw className="size-3" />
             Try again

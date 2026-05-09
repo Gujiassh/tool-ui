@@ -1,13 +1,7 @@
 "use client";
 
+import { AlertCircle, Check } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import type {
-  PreferencesPanelProps,
-  PreferencesPanelReceiptProps,
-  PreferencesValue,
-  PreferenceItem,
-  PreferenceSection,
-} from "./schema";
 import { ActionButtons } from "../shared/action-buttons";
 import { normalizeActionsConfig } from "../shared/actions-config";
 import { type Action } from "../shared/schema";
@@ -16,18 +10,24 @@ import { useSignatureReset } from "../shared/use-signature-reset";
 
 import {
   cn,
-  Switch,
-  ToggleGroup,
-  ToggleGroupItem,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Separator,
-  Label,
+  Switch,
+  ToggleGroup,
+  ToggleGroupItem,
 } from "./_adapter";
-import { Check, AlertCircle } from "lucide-react";
+import type {
+  PreferenceItem,
+  PreferenceSection,
+  PreferencesPanelProps,
+  PreferencesPanelReceiptProps,
+  PreferencesValue,
+} from "./schema";
 import { createPreferencesSectionSignature } from "./signature";
 
 function getInitialValue(item: PreferenceItem): string | boolean {
@@ -238,15 +238,15 @@ function ItemLabel({
   if (isReceipt) {
     return (
       <>
-        <span className="text-sm leading-6 font-medium text-pretty">
+        <span className="text-pretty font-medium text-sm leading-6">
           {item.label}
         </span>
         {error ? (
-          <span className="text-destructive text-sm font-normal text-pretty">
+          <span className="text-pretty font-normal text-destructive text-sm">
             {error}
           </span>
         ) : item.description ? (
-          <span className="text-muted-foreground text-sm font-normal text-pretty">
+          <span className="text-pretty font-normal text-muted-foreground text-sm">
             {item.description}
           </span>
         ) : null}
@@ -256,11 +256,11 @@ function ItemLabel({
 
   return (
     <>
-      <Label htmlFor={htmlFor} className="leading-6 font-medium text-pretty">
+      <Label htmlFor={htmlFor} className="text-pretty font-medium leading-6">
         {item.label}
       </Label>
       {item.description && (
-        <p className="text-muted-foreground text-sm font-normal text-pretty">
+        <p className="text-pretty font-normal text-muted-foreground text-sm">
           {item.description}
         </p>
       )}
@@ -283,11 +283,11 @@ function ItemValue({
 
   return (
     <div className="flex shrink-0 items-center gap-2">
-      <span className="text-muted-foreground text-sm font-medium">
+      <span className="font-medium text-muted-foreground text-sm">
         {displayValue}
       </span>
       {error ? (
-        <AlertCircle className="text-destructive size-3.5" />
+        <AlertCircle className="size-3.5 text-destructive" />
       ) : showSuccessIndicators ? (
         <Check className="size-3.5 text-emerald-600 dark:text-emerald-500" />
       ) : null}
@@ -313,7 +313,7 @@ function PreferenceItemRow({
         "flex items-start justify-between gap-4",
         isFirstInSectionWithoutHeading ? "pt-0 pb-3" : "py-3",
         shouldStack &&
-          "flex-col gap-3 @sm/preferences-panel:flex-row @sm/preferences-panel:gap-4",
+          "@sm/preferences-panel:flex-row flex-col @sm/preferences-panel:gap-4 gap-3",
       )}
     >
       <div className="flex flex-col gap-1">
@@ -435,7 +435,7 @@ function PreferencesSection({
   if (section.heading) {
     return (
       <fieldset className="flex flex-col">
-        <legend className="text-muted-foreground pb-1 text-xs tracking-widest uppercase">
+        <legend className="pb-1 text-muted-foreground text-xs uppercase tracking-widest">
           {section.heading}
         </legend>
         {content}
@@ -455,14 +455,14 @@ function ReceiptHeader({ title, hasErrors }: ReceiptHeaderProps) {
   return (
     <>
       <div className="flex items-center justify-between gap-3 px-5 py-4">
-        <h2 className="text-base leading-none font-semibold">{title}</h2>
+        <h2 className="font-semibold text-base leading-none">{title}</h2>
         {hasErrors === true ? (
-          <span className="text-destructive flex items-center gap-1.5 text-xs font-medium">
+          <span className="flex items-center gap-1.5 font-medium text-destructive text-xs">
             <AlertCircle className="size-3.5" />
             Error
           </span>
         ) : (
-          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-500">
+          <span className="flex items-center gap-1.5 font-medium text-emerald-600 text-xs dark:text-emerald-500">
             <Check className="size-3.5" />
             Saved
           </span>
@@ -493,11 +493,11 @@ export function PreferencesPanelReceipt({
         hasErrors ? "Preferences with errors" : "Confirmed preferences"
       }
       className={cn(
-        "@container/preferences-panel flex w-full max-w-md min-w-80 flex-col",
+        "@container/preferences-panel flex w-full min-w-80 max-w-md flex-col",
         className,
       )}
     >
-      <div className="bg-card/60 flex w-full flex-col overflow-hidden rounded-2xl border opacity-95 shadow-xs">
+      <div className="flex w-full flex-col overflow-hidden rounded-2xl border bg-card/60 opacity-95 shadow-xs">
         {title && <ReceiptHeader title={title} hasErrors={!!hasErrors} />}
         <div
           className={cn("flex flex-col gap-4 px-5", title ? "py-6" : "py-2")}
@@ -625,15 +625,15 @@ function PreferencesPanelRoot({
       data-tool-ui-id={id}
       role="form"
       className={cn(
-        "text-foreground @container/preferences-panel flex w-full max-w-md min-w-80 flex-col gap-3",
+        "@container/preferences-panel flex w-full min-w-80 max-w-md flex-col gap-3 text-foreground",
         className,
       )}
     >
-      <div className="bg-card flex w-full flex-col overflow-hidden rounded-2xl border shadow-xs">
+      <div className="flex w-full flex-col overflow-hidden rounded-2xl border bg-card shadow-xs">
         {title && (
           <>
             <div className="px-5 py-4">
-              <h2 className="text-base leading-none font-semibold">{title}</h2>
+              <h2 className="font-semibold text-base leading-none">{title}</h2>
             </div>
             <Separator />
           </>

@@ -1,8 +1,8 @@
-import * as p from "@clack/prompts";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import * as p from "@clack/prompts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,7 +31,7 @@ function readConfig(): AgentConfig | null {
 function writeConfig(config: AgentConfig): void {
   const dir = join(process.cwd(), CONFIG_DIR);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  writeFileSync(getConfigPath(), JSON.stringify(config, null, 2) + "\n");
+  writeFileSync(getConfigPath(), `${JSON.stringify(config, null, 2)}\n`);
 }
 
 function getPluginPath(): string {

@@ -1,7 +1,7 @@
 import {
   mapWeatherCompositorParamsToCanvasProps,
-  type WeatherStudioCompositorParams,
   type WeatherEffectsCanvasProps,
+  type WeatherStudioCompositorParams,
 } from "@/lib/weather-authoring/weather-widget/effects";
 import type { FullCompositorParams } from "../../weather-compositor/presets";
 

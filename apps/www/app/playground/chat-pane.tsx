@@ -1,16 +1,17 @@
 "use client";
 
-import {
-  useMemo,
-  useCallback,
-  useImperativeHandle,
-  forwardRef,
-  useEffect,
-} from "react";
+import type {
+  ExportedMessageRepository,
+  MessageFormatAdapter,
+  MessageFormatItem,
+  MessageFormatRepository,
+  ThreadHistoryAdapter,
+  Toolkit,
+} from "@assistant-ui/react";
 import {
   AssistantRuntimeProvider,
-  Tools,
   ThreadPrimitive,
+  Tools,
   useAui,
   useAuiState,
 } from "@assistant-ui/react";
@@ -18,29 +19,28 @@ import {
   AssistantChatTransport,
   useChatRuntime,
 } from "@assistant-ui/react-ai-sdk";
-import type {
-  ExportedMessageRepository,
-  MessageFormatAdapter,
-  MessageFormatItem,
-  MessageFormatRepository,
-  Toolkit,
-  ThreadHistoryAdapter,
-} from "@assistant-ui/react";
 import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+} from "react";
 
 import type { Prototype } from "@/lib/playground";
 import { PROTOTYPE_SLUG_HEADER } from "@/lib/playground/constants";
-import { AssistantMessage, Composer, UserMessage } from "./chat-ui";
 import { SelectFrequentLocationTool } from "@/lib/playground/prototypes/waymo/select-frequent-location-tool";
 import {
-  SelectDestinationTool,
-  SelectPickupTool,
   GetRideQuoteTool,
   GetTripStatusTool,
+  SelectDestinationTool,
+  SelectPickupTool,
 } from "@/lib/playground/prototypes/waymo-v2";
+import { AssistantMessage, Composer, UserMessage } from "./chat-ui";
 
 const THREAD_STORAGE_KEY_PREFIX = "playground:thread:";
 
@@ -342,8 +342,8 @@ export const ChatPane = forwardRef<ChatPaneRef, ChatPaneProps>(
         <ThreadPrimitive.Root className="flex flex-1 flex-col overflow-hidden">
           <ThreadPrimitive.Viewport className="flex flex-1 flex-col overflow-y-auto px-6 py-6">
             <ThreadPrimitive.If empty>
-              <div className="text-muted-foreground mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-3 text-center">
-                <p className="text-base font-medium">Start exploring {title}</p>
+              <div className="mx-auto flex max-w-lg flex-1 flex-col items-center justify-center gap-3 text-center text-muted-foreground">
+                <p className="font-medium text-base">Start exploring {title}</p>
                 <p className="text-sm">
                   Describe a task or ask a question to see how this tool
                   collection responds.

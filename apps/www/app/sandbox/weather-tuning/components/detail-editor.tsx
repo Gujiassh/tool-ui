@@ -1,26 +1,7 @@
 "use client";
 
+import { CheckCircle2, Copy, Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useMemo } from "react";
-import { RotateCcw, Eye, EyeOff, CheckCircle2, Copy } from "lucide-react";
-import { cn } from "@/lib/ui/cn";
-import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
-import {
-  WeatherEffectsCanvas,
-  type WeatherEffectsCanvasProps,
-} from "@/lib/weather-authoring/weather-widget/effects";
-import {
-  WeatherDataOverlay,
-  createWeatherOverlayStubData,
-} from "./weather-data-overlay";
-import { GlassControls } from "./glass-controls";
-import { CONDITION_LABELS } from "../../weather-compositor/presets";
-import type {
-  FullCompositorParams,
-  GlassParams,
-} from "../../weather-compositor/presets";
-import { ParameterPanel } from "./parameter-panel";
-import { TIME_CHECKPOINT_ORDER, TIME_CHECKPOINTS } from "../lib/constants";
-import type { ConditionCheckpoints, TimeCheckpoint } from "../types";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +9,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/ui/cn";
+import {
+  WeatherEffectsCanvas,
+  type WeatherEffectsCanvasProps,
+} from "@/lib/weather-authoring/weather-widget/effects";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
+import type {
+  FullCompositorParams,
+  GlassParams,
+} from "../../weather-compositor/presets";
+import { CONDITION_LABELS } from "../../weather-compositor/presets";
+import { TIME_CHECKPOINT_ORDER, TIME_CHECKPOINTS } from "../lib/constants";
+import type { ConditionCheckpoints, TimeCheckpoint } from "../types";
+import { GlassControls } from "./glass-controls";
+import { ParameterPanel } from "./parameter-panel";
+import {
+  createWeatherOverlayStubData,
+  WeatherDataOverlay,
+} from "./weather-data-overlay";
 
 type LayerKey =
   | "layers"
@@ -105,7 +105,7 @@ export function DetailEditor({
   return (
     <div className="flex h-full gap-5">
       <div className="flex w-[420px] shrink-0 flex-col gap-3">
-        <div className="group/widget border-border relative aspect-4/3 overflow-hidden rounded-xl border shadow-xl @container/weather [container-type:size]">
+        <div className="group/widget @container/weather relative aspect-4/3 overflow-hidden rounded-xl border border-border shadow-xl [container-type:size]">
           <div className="absolute inset-0 bg-black">
             <WeatherEffectsCanvas
               className="absolute inset-0"
@@ -140,15 +140,15 @@ export function DetailEditor({
           {!showWidgetOverlay && (
             <div className="absolute top-2.5 left-2.5 z-20">
               <div className="rounded bg-black/50 px-2 py-1 backdrop-blur-sm">
-                <h2 className="text-xs font-medium text-white">{label}</h2>
+                <h2 className="font-medium text-white text-xs">{label}</h2>
               </div>
             </div>
           )}
         </div>
 
-        <div className="border-border/40 bg-card/50 rounded-lg border p-3">
+        <div className="rounded-lg border border-border/40 bg-card/50 p-3">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-muted-foreground/50 text-[10px] font-medium tracking-wider uppercase">
+            <span className="font-medium text-[10px] text-muted-foreground/50 uppercase tracking-wider">
               Checkpoints
             </span>
             <div className="flex items-center gap-2">
@@ -156,7 +156,7 @@ export function DetailEditor({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
-                      className="text-muted-foreground/50 hover:bg-accent/50 hover:text-muted-foreground flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] transition-colors"
+                      className="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] text-muted-foreground/50 transition-colors hover:bg-accent/50 hover:text-muted-foreground"
                       title={`Copy ${TIME_CHECKPOINTS[activeEditCheckpoint].label} to other checkpoints`}
                     >
                       <Copy className="size-2.5" />
@@ -171,7 +171,7 @@ export function DetailEditor({
                         ) as TimeCheckpoint[];
                         onCopyCheckpoint(targets);
                       }}
-                      className="text-xs font-medium"
+                      className="font-medium text-xs"
                     >
                       All checkpoints
                     </DropdownMenuItem>
@@ -192,7 +192,7 @@ export function DetailEditor({
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-              <span className="text-muted-foreground/40 font-mono text-[10px]">
+              <span className="font-mono text-[10px] text-muted-foreground/40">
                 {reviewedCount}/4
               </span>
             </div>
@@ -211,7 +211,7 @@ export function DetailEditor({
                   key={checkpoint}
                   onClick={() => onCheckpointClick(checkpoint)}
                   className={cn(
-                    "relative py-2 text-[11px] font-medium tracking-wide uppercase transition-colors",
+                    "relative py-2 font-medium text-[11px] uppercase tracking-wide transition-colors",
                     isEditing
                       ? "bg-muted-foreground/20 text-foreground"
                       : isActive
@@ -235,7 +235,7 @@ export function DetailEditor({
         <div className="flex gap-1.5">
           <button
             onClick={onReset}
-            className="border-border/40 bg-card/30 text-muted-foreground/60 hover:bg-accent/50 hover:text-muted-foreground flex flex-1 items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-all"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border/40 bg-card/30 px-3 py-1.5 text-muted-foreground/60 text-xs transition-all hover:bg-accent/50 hover:text-muted-foreground"
           >
             <RotateCcw className="size-3" />
             Reset
@@ -249,7 +249,7 @@ export function DetailEditor({
                 ? "border border-green-500/20 bg-green-500/10 text-green-600/70 dark:text-green-400/70"
                 : allCheckpointsReviewed
                   ? "bg-foreground/10 text-foreground/70 hover:bg-foreground/15"
-                  : "bg-muted/20 text-muted-foreground/30 cursor-not-allowed",
+                  : "cursor-not-allowed bg-muted/20 text-muted-foreground/30",
             )}
             title={
               !allCheckpointsReviewed && !isSignedOff
@@ -277,7 +277,7 @@ export function DetailEditor({
           }
         />
 
-        <div className="border-border/40 bg-card/30 min-h-0 flex-1 overflow-hidden rounded-lg border">
+        <div className="min-h-0 flex-1 overflow-hidden rounded-lg border border-border/40 bg-card/30">
           <div className="scrollbar-subtle h-full overflow-y-auto">
             <ParameterPanel
               params={params}

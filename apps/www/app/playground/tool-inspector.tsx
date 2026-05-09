@@ -13,7 +13,7 @@ import type { Tool } from "@/lib/playground";
 const ToolItem = ({ tool }: { tool: Tool }) => (
   <Item variant="outline" className="shadow-none">
     <ItemContent>
-      <ItemTitle className="text-base font-semibold">{tool.name}</ItemTitle>
+      <ItemTitle className="font-semibold text-base">{tool.name}</ItemTitle>
       <div className="mt-1 flex flex-wrap gap-4 text-sm">
         <span className="text-muted-foreground">
           UI: {tool.uiId ?? "fallback"}

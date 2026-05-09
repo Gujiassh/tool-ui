@@ -4,9 +4,9 @@
 // The tuning studio must use the exact same overlay as the production widget,
 // otherwise you end up tuning against a different composition.
 export {
+  type GlassEffectParams,
   WeatherDataOverlay,
   type WeatherDataOverlayProps,
-  type GlassEffectParams,
 } from "@/components/tool-ui/weather-widget/weather-data-overlay";
 
 import type {

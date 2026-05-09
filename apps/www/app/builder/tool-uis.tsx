@@ -2,7 +2,6 @@
 
 import { makeAssistantTool, makeAssistantToolUI } from "@assistant-ui/react";
 import { FileEdit, FileText, PencilIcon } from "lucide-react";
-import { CodeBlock, CodeBlockCode } from "@/components/ui/code-block";
 import {
   Card,
   CardContent,
@@ -10,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CodeBlock, CodeBlockCode } from "@/components/ui/code-block";
 import { triggerPreviewRefresh } from "./preview-refresh";
 
 export const EditFileToolUI = makeAssistantTool<
@@ -37,7 +37,7 @@ export const EditFileToolUI = makeAssistantTool<
       <Card className="mb-4 w-full">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <PencilIcon className="text-primary h-4 w-4" />
+            <PencilIcon className="h-4 w-4 text-primary" />
             <CardTitle className="text-base">Editing File</CardTitle>
           </div>
           {path && (
@@ -64,10 +64,10 @@ export const EditFileToolUI = makeAssistantTool<
                               .slice(0, 5)
                               .join("\n")}
                             language="tsx"
-                            className="col-start-1 col-end-1 row-start-1 row-end-1 overflow-visible bg-red-200 [&_code]:bg-red-200 [&>pre]:py-0"
+                            className="col-start-1 col-end-1 row-start-1 row-end-1 overflow-visible bg-red-200 [&>pre]:py-0 [&_code]:bg-red-200"
                           />
                           {edit.oldText.split("\n").length > 5 && (
-                            <div className="px-4 font-mono text-xs text-red-700">
+                            <div className="px-4 font-mono text-red-700 text-xs">
                               +{edit.oldText.split("\n").length - 5} more
                             </div>
                           )}
@@ -82,10 +82,10 @@ export const EditFileToolUI = makeAssistantTool<
                               .slice(0, 5)
                               .join("\n")}
                             language="tsx"
-                            className="col-start-1 col-end-1 row-start-1 row-end-1 overflow-visible bg-green-200 [&_code]:bg-green-200 [&>pre]:py-0"
+                            className="col-start-1 col-end-1 row-start-1 row-end-1 overflow-visible bg-green-200 [&>pre]:py-0 [&_code]:bg-green-200"
                           />
                           {edit.newText.split("\n").length > 5 && (
-                            <div className="px-4 font-mono text-xs text-green-700">
+                            <div className="px-4 font-mono text-green-700 text-xs">
                               +{edit.newText.split("\n").length - 5} more
                             </div>
                           )}
@@ -119,7 +119,7 @@ export const WriteFileToolUI = makeAssistantTool<
       <Card className="mb-4 w-full">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileEdit className="text-primary h-4 w-4" />
+            <FileEdit className="h-4 w-4 text-primary" />
             <CardTitle className="text-base">Writing File</CardTitle>
           </div>
           <CardDescription className="mt-1 font-mono text-xs">
@@ -140,7 +140,7 @@ export const ReadFileToolUI = makeAssistantToolUI<{ path?: string }, {}>({
       <Card className="mb-4 w-full">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <FileText className="text-primary h-4 w-4" />
+            <FileText className="h-4 w-4 text-primary" />
             <CardTitle className="text-base">Reading File</CardTitle>
           </div>
           <CardDescription className="mt-1 font-mono text-xs">

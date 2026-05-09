@@ -1,10 +1,10 @@
 import { z } from "zod";
-import {
-  ToolUISurfaceSchema,
-  ToolUIReceiptSchema,
-  type ToolUIReceipt,
-} from "../shared/schema";
 import { defineToolUiContract } from "../shared/contract";
+import {
+  type ToolUIReceipt,
+  ToolUIReceiptSchema,
+  ToolUISurfaceSchema,
+} from "../shared/schema";
 
 /**
  * Receipt state for ProgressTracker showing the outcome of a workflow.

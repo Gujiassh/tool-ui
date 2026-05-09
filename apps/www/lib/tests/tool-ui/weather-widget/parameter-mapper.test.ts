@@ -5,8 +5,8 @@ import {
   configToSnowProps,
   getMoonPhase,
   getSceneBrightness,
-  timeOfDayToSunAltitude,
   mapWeatherToEffects,
+  timeOfDayToSunAltitude,
 } from "@/lib/weather-authoring/weather-widget/effects/parameter-mapper";
 
 describe("weather-widget parameter-mapper", () => {

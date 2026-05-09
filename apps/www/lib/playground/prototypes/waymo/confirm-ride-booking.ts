@@ -1,5 +1,5 @@
-import { MOCK_NOW } from "./shared";
 import type { RideSummary } from "./shared";
+import { MOCK_NOW } from "./shared";
 
 type ConfirmRideBookingArgs = RideSummary;
 

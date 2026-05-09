@@ -1,22 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useState, type ReactNode } from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { ComponentPreviewShell } from "../component-preview-shell";
-import { ChatContextPreview } from "../chat-context-preview";
-import { XPost } from "@/components/tool-ui/x-post";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { InstagramPost } from "@/components/tool-ui/instagram-post";
 import { LinkedInPost } from "@/components/tool-ui/linkedin-post";
-import { ToolUI, type Action } from "@/components/tool-ui/shared";
-import { xPostPresets, type XPostPresetName } from "@/lib/presets/x-post";
-import {
-  instagramPostPresets,
-  type InstagramPostPresetName,
-} from "@/lib/presets/instagram-post";
-import {
-  linkedInPostPresets,
-  type LinkedInPostPresetName,
-} from "@/lib/presets/linkedin-post";
+import { type Action, ToolUI } from "@/components/tool-ui/shared";
+import { XPost } from "@/components/tool-ui/x-post";
 import {
   Item,
   ItemContent,
@@ -25,7 +14,18 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  type InstagramPostPresetName,
+  instagramPostPresets,
+} from "@/lib/presets/instagram-post";
+import {
+  type LinkedInPostPresetName,
+  linkedInPostPresets,
+} from "@/lib/presets/linkedin-post";
+import { type XPostPresetName, xPostPresets } from "@/lib/presets/x-post";
 import { cn } from "@/lib/ui/cn";
+import { ChatContextPreview } from "../chat-context-preview";
+import { ComponentPreviewShell } from "../component-preview-shell";
 
 type Platform = "x" | "instagram" | "linkedin";
 type PresetName =
@@ -85,7 +85,7 @@ function PlatformSelector({
 }) {
   return (
     <div className="mb-4">
-      <div className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
+      <div className="mb-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
         Platform
       </div>
       <Tabs
@@ -135,8 +135,8 @@ function PresetSelector({
           className={cn(
             "group/item relative py-[2px] lg:py-3!",
             currentPreset === preset
-              ? "bg-muted cursor-pointer border-transparent shadow-xs"
-              : "hover:bg-primary/5 active:bg-primary/10 cursor-pointer transition-[colors,shadow,border,background] duration-150 ease-out",
+              ? "cursor-pointer border-transparent bg-muted shadow-xs"
+              : "cursor-pointer transition-[colors,shadow,border,background] duration-150 ease-out hover:bg-primary/5 active:bg-primary/10",
           )}
           onClick={() => onSelectPreset(preset as PresetName)}
         >
@@ -148,7 +148,7 @@ function PresetSelector({
                     {preset.replace("-", " ").replace("_", " ")}
                   </span>
                 </ItemTitle>
-                <ItemDescription className="text-sm font-light">
+                <ItemDescription className="font-light text-sm">
                   {presets[preset].description}
                 </ItemDescription>
               </div>
@@ -156,7 +156,7 @@ function PresetSelector({
             <span
               aria-hidden="true"
               data-selected={currentPreset === preset}
-              className="bg-foreground absolute top-2.5 -left-4.5 h-5 w-1 origin-center -translate-y-1/2 scale-y-0 transform-gpu rounded-full opacity-0 transition-[opacity,transform] delay-100 duration-200 ease-out data-[selected=true]:scale-y-100 data-[selected=true]:opacity-100"
+              className="absolute top-2.5 -left-4.5 h-5 w-1 origin-center -translate-y-1/2 scale-y-0 transform-gpu rounded-full bg-foreground opacity-0 transition-[opacity,transform] delay-100 duration-200 ease-out data-[selected=true]:scale-y-100 data-[selected=true]:opacity-100"
             />
           </ItemContent>
         </Item>
@@ -366,7 +366,7 @@ export function SocialPostPreview({
       preview={previewContent}
       chatPanel={chatPanel}
       codePanel={
-        <div className="text-muted-foreground flex h-full items-center justify-center">
+        <div className="flex h-full items-center justify-center text-muted-foreground">
           Code panel coming soon
         </div>
       }

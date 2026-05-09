@@ -1,32 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
-import { cn } from "@/lib/ui/cn";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CitationList } from "@/components/tool-ui/citation";
-import { DataTable } from "@/components/tool-ui/data-table";
-import { LinkPreview } from "@/components/tool-ui/link-preview";
-import { Plan } from "@/components/tool-ui/plan";
-import { Terminal } from "@/components/tool-ui/terminal";
 import { CodeBlock } from "@/components/tool-ui/code-block";
+import { DataTable } from "@/components/tool-ui/data-table";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
-import { ParameterSlider } from "@/components/tool-ui/parameter-slider";
-import { StatsDisplay } from "@/components/tool-ui/stats-display";
-import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
+import { LinkPreview } from "@/components/tool-ui/link-preview";
 import { MessageDraft } from "@/components/tool-ui/message-draft";
+import { ParameterSlider } from "@/components/tool-ui/parameter-slider";
+import { Plan } from "@/components/tool-ui/plan";
+import { ProgressTracker } from "@/components/tool-ui/progress-tracker";
+import { StatsDisplay } from "@/components/tool-ui/stats-display";
+import { Terminal } from "@/components/tool-ui/terminal";
 import { WeatherWidget } from "@/components/tool-ui/weather-widget/runtime";
 import {
   type Flight,
-  TABLE_COLUMNS,
-  TABLE_DATA,
-  LINK_PREVIEW,
-  PLAN_TODO_LABELS,
   ITEM_CAROUSEL_DATA,
+  LINK_PREVIEW,
   LLM_CITATIONS,
   PARAMETER_SLIDER_DATA,
-  STATS_DISPLAY_DATA,
+  PLAN_TODO_LABELS,
   PROGRESS_TRACKER_DATA,
+  STATS_DISPLAY_DATA,
+  TABLE_COLUMNS,
+  TABLE_DATA,
 } from "@/lib/mocks/chat-showcase-data";
+import { cn } from "@/lib/ui/cn";
 
 const TIMING = {
   durations: {
@@ -179,7 +179,7 @@ function ToolReveal({ children }: { children: React.ReactNode }) {
 function TypingIndicator() {
   return (
     <motion.span
-      className="bg-foreground/50 block size-4 rounded-full"
+      className="block size-4 rounded-full bg-foreground/50"
       animate={{ opacity: [0.4, 1, 0.4] }}
       transition={{
         duration: 1.4,

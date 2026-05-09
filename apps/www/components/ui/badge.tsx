@@ -1,11 +1,11 @@
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 import { cn } from "@/lib/ui/cn";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:ring-2 focus-visible:ring-brand/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-colors overflow-hidden",
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden whitespace-nowrap rounded-full border px-2 py-0.5 font-medium text-xs transition-colors focus-visible:ring-2 focus-visible:ring-brand/30 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ const badgeVariants = cva(
         secondary:
           "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/80",
         destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/30 dark:bg-destructive/60",
+          "border-transparent bg-destructive text-white focus-visible:ring-destructive/30 dark:bg-destructive/60 [a&]:hover:bg-destructive/90",
         outline:
           "border-border/60 text-foreground [a&]:hover:bg-accent/60 [a&]:hover:text-foreground",
         brand:

@@ -1,16 +1,16 @@
 "use client";
 
 import type { Toolkit } from "@assistant-ui/react";
-import { Plan } from "@/components/tool-ui/plan";
-import { DataTable } from "@/components/tool-ui/data-table";
-import { StatsDisplay } from "@/components/tool-ui/stats-display";
-import { Terminal } from "@/components/tool-ui/terminal";
-import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
-import { safeParseSerializableDataTable } from "@/components/tool-ui/data-table/schema";
-import { safeParseSerializableStatsDisplay } from "@/components/tool-ui/stats-display/schema";
-import { safeParseSerializableTerminal } from "@/components/tool-ui/terminal/schema";
-import { ToolUI } from "@/components/tool-ui/shared";
 import { ToolFallback } from "@/app/components/assistant-ui/tool-fallback";
+import { DataTable } from "@/components/tool-ui/data-table";
+import { safeParseSerializableDataTable } from "@/components/tool-ui/data-table/schema";
+import { Plan } from "@/components/tool-ui/plan";
+import { safeParseSerializablePlan } from "@/components/tool-ui/plan/schema";
+import { ToolUI } from "@/components/tool-ui/shared";
+import { StatsDisplay } from "@/components/tool-ui/stats-display";
+import { safeParseSerializableStatsDisplay } from "@/components/tool-ui/stats-display/schema";
+import { Terminal } from "@/components/tool-ui/terminal";
+import { safeParseSerializableTerminal } from "@/components/tool-ui/terminal/schema";
 
 export const DEMO_CHAT_TOOLKIT: Toolkit = {
   show_plan: {

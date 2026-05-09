@@ -1,12 +1,11 @@
 "use client";
 
+import { Check, icons, X } from "lucide-react";
 import * as React from "react";
-import { cn, Separator } from "./_adapter";
-import type { ApprovalCardProps, ApprovalDecision } from "./schema";
 import { ActionButtons } from "../shared/action-buttons";
 import { type Action } from "../shared/schema";
-
-import { icons, Check, X } from "lucide-react";
+import { cn, Separator } from "./_adapter";
+import type { ApprovalCardProps, ApprovalDecision } from "./schema";
 
 type LucideIcon = React.ComponentType<{ className?: string }>;
 
@@ -43,7 +42,7 @@ function ApprovalCardReceipt({
       className={cn(
         "flex w-full min-w-64 max-w-md flex-col",
         "text-foreground",
-        "motion-safe:animate-in motion-safe:fade-in motion-safe:blur-in-sm motion-safe:zoom-in-95 motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:fill-mode-both",
+        "motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:animate-in motion-safe:fill-mode-both motion-safe:blur-in-sm motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.16,1,0.3,1)]",
         className,
       )}
       data-slot="approval-card"
@@ -54,7 +53,7 @@ function ApprovalCardReceipt({
     >
       <div
         className={cn(
-          "bg-card/60 flex w-full items-center gap-3 rounded-2xl border px-4 py-3 shadow-xs",
+          "flex w-full items-center gap-3 rounded-2xl border bg-card/60 px-4 py-3 shadow-xs",
         )}
       >
         <span
@@ -66,7 +65,7 @@ function ApprovalCardReceipt({
           {isApproved ? <Check className="size-4" /> : <X className="size-4" />}
         </span>
         <div className="flex flex-col">
-          <span className="text-sm font-medium">{displayLabel}</span>
+          <span className="font-medium text-sm">{displayLabel}</span>
           <span className="text-muted-foreground text-sm">{title}</span>
         </div>
       </div>
@@ -154,7 +153,7 @@ export function ApprovalCard({
           aria-describedby={description ? `${id}-description` : undefined}
           onKeyDown={handleKeyDown}
         >
-          <div className="bg-card flex w-full flex-col gap-4 rounded-2xl border p-5 shadow-xs">
+          <div className="flex w-full flex-col gap-4 rounded-2xl border bg-card p-5 shadow-xs">
             <div className="flex items-start gap-3">
               {Icon && (
                 <span
@@ -171,7 +170,7 @@ export function ApprovalCard({
               <div className="flex flex-1 flex-col gap-1">
                 <h2
                   id={`${id}-title`}
-                  className="text-base font-semibold leading-tight"
+                  className="font-semibold text-base leading-tight"
                 >
                   {title}
                 </h2>
@@ -192,7 +191,7 @@ export function ApprovalCard({
                 <dl className="flex flex-col gap-2 text-sm">
                   {metadata.map((item, index) => (
                     <div key={index} className="flex justify-between gap-4">
-                      <dt className="text-muted-foreground shrink-0">
+                      <dt className="shrink-0 text-muted-foreground">
                         {item.key}
                       </dt>
                       <dd className="min-w-0 truncate">{item.value}</dd>

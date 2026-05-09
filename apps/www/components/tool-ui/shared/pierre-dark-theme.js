@@ -1366,8 +1366,8 @@ var pierre_dark_default = {
 //#endregion
 export {
   colors,
-  pierre_dark_default as default,
   name,
+  pierre_dark_default as default,
   semanticTokenColors,
   tokenColors,
   type,

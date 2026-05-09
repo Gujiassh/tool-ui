@@ -1,27 +1,27 @@
 "use client";
 
-import { cn } from "@/lib/ui/cn";
 import {
   Check,
   Cloud,
+  CloudDrizzle,
+  CloudFog,
+  CloudHail,
   CloudRain,
   CloudSnow,
+  Cloudy,
+  Snowflake,
   Sun,
   Wind,
   Zap,
-  CloudFog,
-  CloudHail,
-  Cloudy,
-  CloudDrizzle,
-  Snowflake,
 } from "lucide-react";
+import { cn } from "@/lib/ui/cn";
 import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
   CONDITION_GROUPS,
   CONDITION_LABELS,
 } from "../../weather-compositor/presets";
-import { CheckpointDots } from "./checkpoint-dots";
 import type { ConditionCheckpoints } from "../types";
+import { CheckpointDots } from "./checkpoint-dots";
 
 interface ConditionSidebarProps {
   selectedCondition: WeatherConditionCode | null;
@@ -71,9 +71,9 @@ export function ConditionSidebar({
   onSelectCondition,
 }: ConditionSidebarProps) {
   return (
-    <aside className="flex w-44 shrink-0 flex-col border-r border-border/40">
-      <div className="border-b border-border/40 px-3 py-2">
-        <h2 className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/50">
+    <aside className="flex w-44 shrink-0 flex-col border-border/40 border-r">
+      <div className="border-border/40 border-b px-3 py-2">
+        <h2 className="font-medium text-[10px] text-muted-foreground/50 uppercase tracking-wider">
           Conditions
         </h2>
       </div>
@@ -82,8 +82,8 @@ export function ConditionSidebar({
         <nav className="flex flex-col">
           {CONDITION_GROUPS.map((group) => (
             <div key={group.name}>
-              <div className="sticky top-0 z-[5] border-b border-border/30 bg-background/95 px-3 py-1.5 backdrop-blur-sm">
-                <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground/40">
+              <div className="sticky top-0 z-[5] border-border/30 border-b bg-background/95 px-3 py-1.5 backdrop-blur-sm">
+                <span className="font-medium text-[9px] text-muted-foreground/40 uppercase tracking-wider">
                   {group.name}
                 </span>
               </div>
@@ -164,7 +164,7 @@ export function ConditionSidebar({
         </nav>
       </div>
 
-      <div className="border-t border-border/40 px-3 py-2">
+      <div className="border-border/40 border-t px-3 py-2">
         <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/40">
           <kbd className="rounded border border-border/50 bg-muted/30 px-1 py-0.5 font-mono">
             ↑↓

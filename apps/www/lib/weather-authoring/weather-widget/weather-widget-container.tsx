@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 
-import { cn, Card } from "./_adapter";
+import { Card, cn } from "./_adapter";
 import { EffectCompositorRuntime } from "./effects/effect-compositor-runtime";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./effects/generated/tuned-presets.generated";
 import {
   getSceneBrightnessFromTimeOfDay,
   getWeatherTheme,
 } from "./effects/parameter-mapper";
 import { getNearestCheckpoint } from "./effects/tuning";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "./effects/generated/tuned-presets.generated";
 import type { WeatherWidgetRuntimeProps } from "./schema-runtime";
 import { resolveWeatherTime, snapTimeOfDayToNearestCheckpoint } from "./time";
 import { WeatherDataOverlay } from "./weather-data-overlay";

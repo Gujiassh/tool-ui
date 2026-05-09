@@ -1,10 +1,10 @@
-import { AnimatedHeaderFrame } from "@/app/components/layout/app-shell-animated.client";
-import { SiteFooter } from "@/app/components/layout/site-footer";
 import { ThemeToggle } from "@/app/components/builder/theme-toggle";
-import { HomeHero } from "@/app/components/home/home-hero";
-import { HomeMockup } from "@/app/components/home/home-mockup";
 import { HomeFeatures } from "@/app/components/home/home-features";
 import { HomeFinalCta } from "@/app/components/home/home-final-cta";
+import { HomeHero } from "@/app/components/home/home-hero";
+import { HomeMockup } from "@/app/components/home/home-mockup";
+import { AnimatedHeaderFrame } from "@/app/components/layout/app-shell-animated.client";
+import { SiteFooter } from "@/app/components/layout/site-footer";
 
 export default function HomePage() {
   return (
@@ -22,15 +22,15 @@ export default function HomePage() {
           </section>
 
           {/* Features */}
-          <section className="mt-24 border-t border-border/30 pt-14 lg:mt-32">
-            <p className="mb-10 text-[13.5px] font-medium text-foreground">
+          <section className="mt-24 border-border/30 border-t pt-14 lg:mt-32">
+            <p className="mb-10 font-medium text-[13.5px] text-foreground">
               What you get
             </p>
             <HomeFeatures />
           </section>
 
           {/* Final CTA */}
-          <section className="mt-16 border-t border-border/30 lg:mt-24">
+          <section className="mt-16 border-border/30 border-t lg:mt-24">
             <HomeFinalCta />
           </section>
         </main>

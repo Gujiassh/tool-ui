@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
-import { cn, Button, Card, ChevronLeft, ChevronRight } from "./_adapter";
-import { ItemCard } from "./item-card";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "../shared/utils";
+import { Button, Card, ChevronLeft, ChevronRight, cn } from "./_adapter";
+import { ItemCard } from "./item-card";
 import type { ItemCarouselProps } from "./schema";
 
 const SCROLL_PADDING_STYLE = { scrollPaddingInline: "1rem" };
@@ -69,7 +69,7 @@ function useSmoothScroll() {
 
         const elapsed = performance.now() - anim.startTime;
         const progress = Math.min(elapsed / anim.duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
+        const eased = 1 - (1 - progress) ** 3;
 
         element.scrollLeft = anim.start + (anim.target - anim.start) * eased;
 
@@ -171,7 +171,7 @@ function CarouselNavButton({
       size="icon-sm"
       className={cn(
         "pointer-events-none scale-90 border-none opacity-0",
-        "bg-background/60 absolute inset-y-0 z-20 my-auto hidden h-[6cqh] min-h-[50px] rounded-2xl backdrop-blur-lg",
+        "absolute inset-y-0 z-20 my-auto hidden h-[6cqh] min-h-[50px] rounded-2xl bg-background/60 backdrop-blur-lg",
         "transition-[opacity,transform] duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
         "@md:flex",
         isLeft ? "left-1.5" : "right-1.5",
@@ -199,12 +199,12 @@ function ItemCarouselHeader({ title, description }: ItemCarouselHeaderProps) {
   return (
     <div className="px-4 pt-4 pb-1">
       {title && (
-        <h3 className="text-[15px] leading-tight font-semibold tracking-tight">
+        <h3 className="font-semibold text-[15px] leading-tight tracking-tight">
           {title}
         </h3>
       )}
       {description && (
-        <p className="text-muted-foreground mt-1 text-sm leading-snug">
+        <p className="mt-1 text-muted-foreground text-sm leading-snug">
           {description}
         </p>
       )}
@@ -339,7 +339,7 @@ function ItemCarouselRoot({
       data-tool-ui-id={id}
       data-slot="item-carousel"
       className={cn(
-        "bg-background @container relative isolate w-full gap-0 overflow-hidden rounded-2xl border p-0",
+        "@container relative isolate w-full gap-0 overflow-hidden rounded-2xl border bg-background p-0",
         className,
       )}
     >

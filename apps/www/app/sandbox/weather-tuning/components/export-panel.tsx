@@ -1,8 +1,8 @@
 "use client";
 
+import { Check, FileCode } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, FileCode } from "lucide-react";
 import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import type { CheckpointOverrides } from "../../weather-compositor/presets";
 import { hasAnyTuningDelta } from "../lib/has-any-tuning-delta";
@@ -177,12 +177,12 @@ export function ExportPanel({
         </Button>
       </div>
       {applyError && (
-        <span className="ml-2 text-xs text-red-500/80">{applyError}</span>
+        <span className="ml-2 text-red-500/80 text-xs">{applyError}</span>
       )}
       {toast && (
         <div
           style={{ zIndex: 2147483647 }}
-          className={`fixed bottom-6 right-6 z-50 max-h-56 max-w-[44rem] overflow-auto rounded-md border px-3 py-2 text-xs shadow-lg ${
+          className={`fixed right-6 bottom-6 z-50 max-h-56 max-w-[44rem] overflow-auto rounded-md border px-3 py-2 text-xs shadow-lg ${
             toast.tone === "success"
               ? "border-emerald-500/60 bg-emerald-950/95 text-emerald-50"
               : toast.tone === "error"

@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { useQueryState } from "nuqs";
+import { type RefObject, useCallback, useEffect, useRef } from "react";
 
 interface UseTabSearchParamOptions<T extends string> {
   paramName?: string;

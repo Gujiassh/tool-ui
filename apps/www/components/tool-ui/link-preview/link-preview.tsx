@@ -1,14 +1,13 @@
 "use client";
 
 import { Globe } from "lucide-react";
-import { cn } from "./_adapter";
-
 import {
-  RATIO_CLASS_MAP,
   getFitClass,
   openSafeNavigationHref,
+  RATIO_CLASS_MAP,
   sanitizeHref,
 } from "../shared/media";
+import { cn } from "./_adapter";
 import type { SerializableLinkPreview } from "./schema";
 
 const FALLBACK_LOCALE = "en-US";
@@ -55,7 +54,7 @@ export function LinkPreview(props: LinkPreviewProps) {
 
   return (
     <article
-      className={cn("relative w-full max-w-md min-w-80", className)}
+      className={cn("relative w-full min-w-80 max-w-md", className)}
       lang={locale}
       data-tool-ui-id={id}
       data-slot="link-preview"
@@ -63,7 +62,7 @@ export function LinkPreview(props: LinkPreviewProps) {
       <div
         className={cn(
           "group @container relative isolate flex w-full min-w-0 flex-col overflow-hidden rounded-xl",
-          "border-border bg-card border text-sm shadow-xs",
+          "border border-border bg-card text-sm shadow-xs",
           sanitizedHref && "cursor-pointer",
         )}
         onClick={sanitizedHref ? handleClick : undefined}
@@ -84,7 +83,7 @@ export function LinkPreview(props: LinkPreviewProps) {
           {image && (
             <div
               className={cn(
-                "bg-muted relative w-full overflow-hidden",
+                "relative w-full overflow-hidden bg-muted",
                 ratio !== "auto" ? RATIO_CLASS_MAP[ratio] : "aspect-[5/3]",
               )}
             >
@@ -103,7 +102,7 @@ export function LinkPreview(props: LinkPreviewProps) {
           )}
           <div className={cn("flex flex-col", CONTENT_SPACING)}>
             {domain && (
-              <div className="text-muted-foreground flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-2 text-muted-foreground text-xs">
                 {favicon ? (
                   <img
                     src={favicon}
@@ -116,7 +115,7 @@ export function LinkPreview(props: LinkPreviewProps) {
                     decoding="async"
                   />
                 ) : (
-                  <div className="border-border/60 bg-muted flex size-4 shrink-0 items-center justify-center rounded-full border">
+                  <div className="flex size-4 shrink-0 items-center justify-center rounded-full border border-border/60 bg-muted">
                     <Globe className="h-2.5 w-2.5" aria-hidden="true" />
                   </div>
                 )}
@@ -124,12 +123,12 @@ export function LinkPreview(props: LinkPreviewProps) {
               </div>
             )}
             {title && (
-              <h3 className="text-foreground text-base font-medium text-pretty">
+              <h3 className="text-pretty font-medium text-base text-foreground">
                 <span className="line-clamp-2">{title}</span>
               </h3>
             )}
             {description && (
-              <p className="text-muted-foreground leading-snug text-pretty">
+              <p className="text-pretty text-muted-foreground leading-snug">
                 <span className="line-clamp-2">{description}</span>
               </p>
             )}

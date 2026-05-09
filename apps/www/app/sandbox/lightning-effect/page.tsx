@@ -1,7 +1,7 @@
 "use client";
 
+import { button, Leva, useControls } from "leva";
 import { useState } from "react";
-import { useControls, Leva, button } from "leva";
 import { LightningCanvas } from "./lightning-canvas";
 
 export default function LightningEffectSandbox() {

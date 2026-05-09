@@ -1,17 +1,16 @@
 "use client";
 
-import * as React from "react";
 import { ExternalLink, Play } from "lucide-react";
-import { cn, Button } from "./_adapter";
-
+import * as React from "react";
 import {
   formatDuration,
   getFitClass,
-  openSafeNavigationHref,
   OVERLAY_GRADIENT,
+  openSafeNavigationHref,
   RATIO_CLASS_MAP,
 } from "../shared/media";
-import { VideoProvider, useVideo } from "./context";
+import { Button, cn } from "./_adapter";
+import { useVideo, VideoProvider } from "./context";
 import type { SerializableVideo } from "./schema";
 import {
   getMuteMediaEvent,
@@ -198,10 +197,10 @@ function VideoInner(props: Omit<VideoProps, "defaultMuted">) {
           {hasOverlay && (
             <>
               <div
-                className="pointer-events-none absolute inset-x-0 top-0 z-20 h-32 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+                className="pointer-events-none absolute inset-x-0 top-0 z-20 h-32 opacity-0 transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100"
                 style={{ backgroundImage: OVERLAY_GRADIENT }}
               />
-              <div className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-5 pt-4 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
+              <div className="absolute inset-x-0 top-0 z-30 flex items-start justify-between gap-2 px-5 pt-4 opacity-0 transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100">
                 {title ? (
                   <div className="line-clamp-2 max-w-[70%] font-semibold text-white drop-shadow-sm">
                     {title}
@@ -242,11 +241,11 @@ function VideoInner(props: Omit<VideoProps, "defaultMuted">) {
         {hasMetadata && (
           <div className="flex flex-col gap-1.5 px-4 py-3">
             {description && (
-              <p className="text-foreground line-clamp-2 text-sm leading-snug">
+              <p className="line-clamp-2 text-foreground text-sm leading-snug">
                 {description}
               </p>
             )}
-            <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-xs">
               {sourceLabel && <span>{sourceLabel}</span>}
               {metadataDomain && <span>{metadataDomain}</span>}
               {typeof durationMs === "number" && (

@@ -11,10 +11,10 @@ type FauxChatShellMobileProps = {
 function DynamicIsland() {
   return (
     <div
-      className="absolute left-1/2 top-3 z-30 -translate-x-1/2"
+      className="absolute top-3 left-1/2 z-30 -translate-x-1/2"
       aria-hidden="true"
     >
-      <div className="border-gradient-glow-notch h-9 w-32 rounded-full" />
+      <div className="h-9 w-32 rounded-full border-gradient-glow-notch" />
     </div>
   );
 }
@@ -66,7 +66,7 @@ export function FauxChatShellMobile({ className }: FauxChatShellMobileProps) {
   return (
     <div
       className={cn(
-        "border-gradient-glow relative flex h-full w-full max-w-[430px] flex-col overflow-hidden rounded-[2.5rem] backdrop-blur-lg",
+        "relative flex h-full w-full max-w-[430px] flex-col overflow-hidden rounded-[2.5rem] border-gradient-glow backdrop-blur-lg",
         className,
       )}
       style={{

@@ -1,9 +1,9 @@
 import { openai } from "@ai-sdk/openai";
-import { streamText, convertToModelMessages, tool } from "ai";
+import { convertToModelMessages, streamText, tool } from "ai";
 import { z } from "zod";
 import { checkRateLimit } from "@/lib/integrations/rate-limit/upstash";
-import { getMockTasks } from "@/lib/mocks/tasks";
 import { STATS_DISPLAY_DATA } from "@/lib/mocks/chat-showcase-data";
+import { getMockTasks } from "@/lib/mocks/tasks";
 
 export const runtime = "edge";
 

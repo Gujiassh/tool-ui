@@ -1,7 +1,7 @@
 export { OptionList } from "./option-list";
 export type {
-  OptionListProps,
   OptionListOption,
+  OptionListProps,
   OptionListSelection,
   SerializableOptionList,
 } from "./schema";

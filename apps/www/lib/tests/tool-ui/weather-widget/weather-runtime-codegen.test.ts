@@ -1,12 +1,11 @@
 // @vitest-environment node
 
-import { describe, expect, test } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
+import { describe, expect, test } from "vitest";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES as bundledRuntimeTunedOverrides } from "@/components/tool-ui/weather-widget/generated/weather-runtime-core.generated";
 import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/lib/weather-authoring/weather-widget/effects/generated/tuned-presets.generated";
 import * as generatedShaders from "@/lib/weather-authoring/weather-widget/effects/generated/weather-effect-shaders.generated";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES as bundledRuntimeTunedOverrides } from "@/components/tool-ui/weather-widget/generated/weather-runtime-core.generated";
 import {
   canonicalizeWeatherPresetData,
   getStaleWeatherRuntimeArtifacts,

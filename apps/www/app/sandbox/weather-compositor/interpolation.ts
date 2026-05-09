@@ -1,10 +1,10 @@
-import type { ConditionOverrides, FullCompositorParams } from "./presets";
 import {
-  TIME_CHECKPOINTS,
-  TIME_CHECKPOINT_ORDER,
   getNearestCheckpoint as getNearestCheckpointCore,
+  TIME_CHECKPOINT_ORDER,
+  TIME_CHECKPOINTS,
   type TimeCheckpoint,
 } from "@/lib/weather-authoring/weather-widget/effects/tuning";
+import type { ConditionOverrides, FullCompositorParams } from "./presets";
 
 export interface CheckpointOverrides {
   dawn: ConditionOverrides;

@@ -9,9 +9,9 @@ import {
   Marker,
   Polyline,
   TileLayer,
-  ZoomControl,
   useMap,
   useMapEvents,
+  ZoomControl,
 } from "./_adapter";
 import { createClusterIcon, resolveMarkerIcon } from "./geo-map-icons";
 import { GeoMapOverlays } from "./geo-map-overlays";

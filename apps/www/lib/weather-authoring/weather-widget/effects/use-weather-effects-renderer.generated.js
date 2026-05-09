@@ -5,11 +5,6 @@
 "use client";
 import { useCallback, useEffect, useRef } from "react";
 import {
-  releaseWeatherWebglBudgetSlotOnInitFailure,
-  releaseWeatherWebglCanvasBudgetSlot,
-  tryAcquireWeatherWebglCanvasBudgetSlot,
-} from "./weather-webgl-budget";
-import {
   CELESTIAL_FRAGMENT,
   CLOUD_FRAGMENT,
   COMPOSITE_FRAGMENT,
@@ -33,6 +28,11 @@ import {
   renderRainPass,
   renderSnowPass,
 } from "./weather-effect-render-passes.generated.js";
+import {
+  releaseWeatherWebglBudgetSlotOnInitFailure,
+  releaseWeatherWebglCanvasBudgetSlot,
+  tryAcquireWeatherWebglCanvasBudgetSlot,
+} from "./weather-webgl-budget";
 export function useWeatherEffectsRenderer(props) {
   const canvasRef = useRef(null);
   const glRef = useRef(null);

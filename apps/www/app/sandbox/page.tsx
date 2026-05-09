@@ -1,15 +1,15 @@
-import Link from "next/link";
 import {
-  Sun,
   Cloud,
-  CloudRain,
   CloudLightning,
-  Snowflake,
+  CloudRain,
   Layers,
-  SlidersHorizontal,
-  ThermometerSun,
   Palette,
+  SlidersHorizontal,
+  Snowflake,
+  Sun,
+  ThermometerSun,
 } from "lucide-react";
+import Link from "next/link";
 
 const sandboxes = [
   {
@@ -86,7 +86,7 @@ export default function SandboxIndex() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-black p-8">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-2 text-3xl font-semibold tracking-tight text-white">
+        <h1 className="mb-2 font-semibold text-3xl text-white tracking-tight">
           Weather Effects Sandbox
         </h1>
         <p className="mb-8 text-zinc-400">
@@ -94,7 +94,7 @@ export default function SandboxIndex() {
         </p>
 
         <section className="mb-8">
-          <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-zinc-500">
+          <h2 className="mb-4 font-medium text-sm text-zinc-500 uppercase tracking-wider">
             Compositors
           </h2>
           <div className="grid gap-3">
@@ -117,7 +117,7 @@ export default function SandboxIndex() {
         </section>
 
         <section>
-          <h2 className="mb-4 text-sm font-medium uppercase tracking-wider text-zinc-500">
+          <h2 className="mb-4 font-medium text-sm text-zinc-500 uppercase tracking-wider">
             Individual Effects
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -131,7 +131,7 @@ export default function SandboxIndex() {
                   <sandbox.icon className="size-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-white">
+                  <h3 className="font-medium text-sm text-white">
                     {sandbox.title}
                   </h3>
                   <p className="text-xs text-zinc-500">{sandbox.description}</p>

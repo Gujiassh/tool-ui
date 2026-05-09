@@ -1,17 +1,15 @@
 "use client";
 
-import { ChatPane } from "./chat-pane";
-import type { ChatPaneRef } from "./chat-pane";
+import { Check, Copy, RotateCcw } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Suspense,
+  useCallback,
   useEffect,
   useMemo,
-  useState,
   useRef,
-  useCallback,
+  useState,
 } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,9 +18,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { RotateCcw, Copy, Check } from "lucide-react";
-import { listPrototypes } from "@/lib/playground";
 import type { Prototype } from "@/lib/playground";
+import { listPrototypes } from "@/lib/playground";
+import type { ChatPaneRef } from "./chat-pane";
+import { ChatPane } from "./chat-pane";
 import { ToolInspector } from "./tool-inspector";
 
 const PROTOTYPES = listPrototypes();
@@ -145,7 +144,7 @@ const PlaygroundContent = () => {
 
   if (PROTOTYPES.length === 0 || !activePrototype) {
     return (
-      <div className="bg-background text-foreground flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="flex min-h-screen items-center justify-center bg-background px-6 py-12 text-foreground">
         <Card className="max-w-xl">
           <CardHeader>
             <CardTitle>Playground</CardTitle>
@@ -154,9 +153,9 @@ const PlaygroundContent = () => {
               started.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-muted-foreground space-y-3 text-sm">
+          <CardContent className="space-y-3 text-muted-foreground text-sm">
             <p>Example entry:</p>
-            <pre className="bg-muted text-muted-foreground rounded-lg p-3 text-xs">
+            <pre className="rounded-lg bg-muted p-3 text-muted-foreground text-xs">
               {`const prototype: Prototype = {
   slug: "my-prototype",
   title: "My Prototype",
@@ -171,10 +170,10 @@ const PlaygroundContent = () => {
   }
 
   return (
-    <div className="bg-background text-foreground flex h-screen overflow-hidden">
-      <aside className="border-border/60 bg-muted/30 flex w-64 flex-col overflow-hidden border-r">
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+      <aside className="flex w-64 flex-col overflow-hidden border-border/60 border-r bg-muted/30">
         <div className="border-border/60 border-b px-4 py-5">
-          <h1 className="text-lg font-semibold">Tool UI Playground</h1>
+          <h1 className="font-semibold text-lg">Tool UI Playground</h1>
         </div>
         <div className="flex-1 overflow-y-auto px-2 py-4">
           <div className="flex flex-col gap-2">
@@ -188,7 +187,7 @@ const PlaygroundContent = () => {
                   onClick={() => setActiveSlug(prototype.slug)}
                 >
                   <div className="flex flex-col items-start">
-                    <span className="text-sm font-medium">
+                    <span className="font-medium text-sm">
                       {prototype.title}
                     </span>
                   </div>
@@ -199,9 +198,9 @@ const PlaygroundContent = () => {
         </div>
       </aside>
       <main className="flex flex-1 flex-col overflow-hidden">
-        <header className="border-border bg-background/95 flex items-center justify-between border-b px-6 py-4">
+        <header className="flex items-center justify-between border-border border-b bg-background/95 px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold">{activePrototype.title}</h2>
+            <h2 className="font-semibold text-xl">{activePrototype.title}</h2>
             {activePrototype.summary ? (
               <p className="text-muted-foreground text-sm">
                 {activePrototype.summary}
@@ -255,7 +254,7 @@ const PlaygroundContent = () => {
 const PlaygroundPage = () => (
   <Suspense
     fallback={
-      <div className="bg-background text-foreground flex min-h-screen items-center justify-center px-6 py-12">
+      <div className="flex min-h-screen items-center justify-center bg-background px-6 py-12 text-foreground">
         <Card className="max-w-xl">
           <CardHeader>
             <CardTitle>Tool UI Playground</CardTitle>

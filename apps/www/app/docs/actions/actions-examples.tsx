@@ -15,7 +15,7 @@ import {
   PreferencesPanel,
   type PreferencesValue,
 } from "@/components/tool-ui/preferences-panel";
-import { ToolUI, createDecisionResult } from "@/components/tool-ui/shared";
+import { ToolUI } from "@/components/tool-ui/shared";
 import { Button } from "@/components/ui/button";
 import { MockMessage, MockThread } from "../_components/mock-thread";
 
@@ -75,9 +75,9 @@ export function ActionFlowToolCallVisual() {
         Show last month&apos;s travel expenses.
       </MockMessage>
       <MockMessage role="assistant">
-        <div className="border-border bg-card rounded-xl border p-3 text-sm">
+        <div className="rounded-xl border border-border bg-card p-3 text-sm">
           Calling <code>getExpenses</code> with args:
-          <pre className="bg-muted mt-2 overflow-x-auto rounded-md p-2 text-xs">
+          <pre className="mt-2 overflow-x-auto rounded-md bg-muted p-2 text-xs">
             {`{
   "month": "2026-01",
   "category": "travel"
@@ -148,9 +148,9 @@ export function ActionFlowRuntimeHandleVisual() {
 
   return (
     <div className="not-prose flex max-w-xl flex-col gap-3">
-      <div className="border-border bg-card rounded-xl border p-4">
-        <p className="text-sm font-medium">Runtime status</p>
-        <p className="text-muted-foreground mt-1 text-sm">
+      <div className="rounded-xl border border-border bg-card p-4">
+        <p className="font-medium text-sm">Runtime status</p>
+        <p className="mt-1 text-muted-foreground text-sm">
           {state === "idle" && "Waiting for a user action."}
           {state === "handling" && "Handling action and running side effect..."}
           {state === "done" && "Action handled successfully."}
@@ -205,22 +205,18 @@ export function ActionFlowCommitVisual() {
         {!orderChoice && (
           <ToolUI.Actions>
             <ToolUI.DecisionActions
+              decisionId="flow-order-decision"
               actions={[
                 { id: "cancel", label: "Cancel", variant: "outline" },
                 { id: "confirm", label: "Purchase", variant: "default" },
               ]}
               onAction={(action) =>
-                createDecisionResult({
-                  decisionId: "flow-order-decision",
-                  action,
-                  payload:
-                    action.id === "confirm"
-                      ? {
-                          orderId: `ORD-${Date.now()}`,
-                          confirmedAt: new Date().toISOString(),
-                        }
-                      : undefined,
-                })
+                action.id === "confirm"
+                  ? {
+                      orderId: `ORD-${Date.now()}`,
+                      confirmedAt: new Date().toISOString(),
+                    }
+                  : undefined
               }
               onCommit={(result) => {
                 if (result.actionId !== "confirm") {
@@ -335,22 +331,18 @@ export function DecisionSurfaceExample() {
         {!orderChoice && (
           <ToolUI.Actions>
             <ToolUI.DecisionActions
+              decisionId="decision-actions-order-decision"
               actions={[
                 { id: "cancel", label: "Cancel", variant: "outline" },
                 { id: "confirm", label: "Purchase", variant: "default" },
               ]}
               onAction={(action) =>
-                createDecisionResult({
-                  decisionId: "decision-actions-order-decision",
-                  action,
-                  payload:
-                    action.id === "confirm"
-                      ? {
-                          orderId: `ORD-${Date.now()}`,
-                          confirmedAt: new Date().toISOString(),
-                        }
-                      : undefined,
-                })
+                action.id === "confirm"
+                  ? {
+                      orderId: `ORD-${Date.now()}`,
+                      confirmedAt: new Date().toISOString(),
+                    }
+                  : undefined
               }
               onCommit={(result) => {
                 if (result.actionId !== "confirm") {
@@ -420,7 +412,7 @@ export function ActionCentricExceptionsExample() {
     <div className="not-prose grid gap-8">
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="flex flex-col gap-2">
-          <h4 className="text-base font-semibold">OptionList</h4>
+          <h4 className="font-semibold text-base">OptionList</h4>
           <OptionList
             id="action-centric-option-list"
             selectionMode="single"
@@ -474,12 +466,12 @@ export function ActionCentricExceptionsExample() {
             )}
           </div>
         </div>
-        <div className="border-border bg-card rounded-xl border p-3">
-          <p className="text-sm font-medium">Mock output</p>
-          <p className="text-muted-foreground mt-1 text-xs">
+        <div className="rounded-xl border border-border bg-card p-3">
+          <p className="font-medium text-sm">Mock output</p>
+          <p className="mt-1 text-muted-foreground text-xs">
             <code>onAction(actionId, state)</code>
           </p>
-          <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs leading-relaxed">
+          <pre className="mt-3 overflow-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
             {optionOutput
               ? JSON.stringify(optionOutput, null, 2)
               : `{
@@ -492,7 +484,7 @@ export function ActionCentricExceptionsExample() {
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="flex flex-col gap-2">
-          <h4 className="text-base font-semibold">ParameterSlider</h4>
+          <h4 className="font-semibold text-base">ParameterSlider</h4>
           <ParameterSlider
             id="action-centric-parameter-slider"
             sliders={[
@@ -527,12 +519,12 @@ export function ActionCentricExceptionsExample() {
             }}
           />
         </div>
-        <div className="border-border bg-card rounded-xl border p-3">
-          <p className="text-sm font-medium">Mock output</p>
-          <p className="text-muted-foreground mt-1 text-xs">
+        <div className="rounded-xl border border-border bg-card p-3">
+          <p className="font-medium text-sm">Mock output</p>
+          <p className="mt-1 text-muted-foreground text-xs">
             <code>onAction(actionId, state)</code>
           </p>
-          <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs leading-relaxed">
+          <pre className="mt-3 overflow-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
             {sliderOutput
               ? JSON.stringify(sliderOutput, null, 2)
               : `{
@@ -548,7 +540,7 @@ export function ActionCentricExceptionsExample() {
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
         <div className="flex flex-col gap-2">
-          <h4 className="text-base font-semibold">PreferencesPanel</h4>
+          <h4 className="font-semibold text-base">PreferencesPanel</h4>
           <PreferencesPanel
             id="action-centric-preferences-panel"
             title="Notification Preferences"
@@ -570,12 +562,12 @@ export function ActionCentricExceptionsExample() {
             }}
           />
         </div>
-        <div className="border-border bg-card rounded-xl border p-3">
-          <p className="text-sm font-medium">Mock output</p>
-          <p className="text-muted-foreground mt-1 text-xs">
+        <div className="rounded-xl border border-border bg-card p-3">
+          <p className="font-medium text-sm">Mock output</p>
+          <p className="mt-1 text-muted-foreground text-xs">
             <code>onAction(actionId, state)</code>
           </p>
-          <pre className="bg-muted mt-3 overflow-auto rounded-md p-3 text-xs leading-relaxed">
+          <pre className="mt-3 overflow-auto rounded-md bg-muted p-3 text-xs leading-relaxed">
             {preferencesOutput
               ? JSON.stringify(preferencesOutput, null, 2)
               : `{
@@ -587,7 +579,7 @@ export function ActionCentricExceptionsExample() {
 }`}
           </pre>
           {savedPreferences && (
-            <p className="text-muted-foreground mt-2 text-xs">
+            <p className="mt-2 text-muted-foreground text-xs">
               Last saved values are shown in the callback payload.
             </p>
           )}

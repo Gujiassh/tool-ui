@@ -1,7 +1,7 @@
 import {
   generateOgImage,
-  size as ogSize,
   contentType as ogContentType,
+  size as ogSize,
 } from "@/lib/og/og-image";
 
 export const runtime = "nodejs";

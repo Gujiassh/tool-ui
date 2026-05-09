@@ -40,20 +40,20 @@ export function MockThread({ children, className, caption }: MockThreadProps) {
         className,
       )}
     >
-      <div className="border-border bg-background flex flex-1 flex-col overflow-hidden rounded-xl border shadow-sm">
+      <div className="flex flex-1 flex-col overflow-hidden rounded-xl border border-border bg-background shadow-sm">
         {/* Title bar */}
-        <div className="bg-muted/50 border-border border-b px-4 py-1 text-center">
-          <span className="text-muted-foreground text-xs font-medium">
+        <div className="border-border border-b bg-muted/50 px-4 py-1 text-center">
+          <span className="font-medium text-muted-foreground text-xs">
             Chat
           </span>
         </div>
         {/* Messages */}
-        <div className="flex flex-col gap-4 p-4 [&>[data-role=user]+[data-role=assistant]]:mt-2 [&>[data-role=assistant]+[data-role=user]]:mt-2">
+        <div className="flex flex-col gap-4 p-4 [&>[data-role=assistant]+[data-role=user]]:mt-2 [&>[data-role=user]+[data-role=assistant]]:mt-2">
           {children}
         </div>
       </div>
       {caption && (
-        <figcaption className="text-muted-foreground mt-3 text-center text-sm">
+        <figcaption className="mt-3 text-center text-muted-foreground text-sm">
           {caption}
         </figcaption>
       )}

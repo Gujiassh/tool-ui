@@ -248,7 +248,8 @@ export interface DataTableClientProps<T extends object = RowData> {
  * ```
  */
 export interface DataTableProps<T extends object = RowData>
-  extends DataTableSerializableProps<T>, DataTableClientProps<T> {}
+  extends DataTableSerializableProps<T>,
+    DataTableClientProps<T> {}
 
 export interface DataTableContextValue<T extends object = RowData> {
   columns: Column<T>[];

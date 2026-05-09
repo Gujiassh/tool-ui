@@ -1,10 +1,10 @@
+import type { Candidate } from "./shared";
 import {
   DEFAULT_PICKUP,
   MOCK_NOW,
   SUGGESTION_REASONS,
   SUGGESTION_SERVICES,
 } from "./shared";
-import type { Candidate } from "./shared";
 
 type ShowRideOptionsArgs = {
   pickup: string;

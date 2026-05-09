@@ -1,47 +1,47 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
-import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
-import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/lib/weather-authoring/weather-widget/effects/tuned-presets";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   resolveWeatherEffectsCanvasProps,
   type WeatherEffectsCanvasProps,
   type WeatherEffectsCheckpointMode,
 } from "@/lib/weather-authoring/weather-widget/effects";
-import type {
-  ConditionOverrides,
-  FullCompositorParams,
-  CheckpointOverrides,
-} from "../../weather-compositor/presets";
+import { TUNED_WEATHER_EFFECTS_CHECKPOINT_OVERRIDES } from "@/lib/weather-authoring/weather-widget/effects/tuned-presets";
+import type { WeatherConditionCode } from "@/lib/weather-authoring/weather-widget/schema";
 import {
-  getRawBaseParamsForCondition,
-  mergeWithOverrides,
-  extractOverrides,
-  loadFromStorage,
-  saveToStorage,
-  WEATHER_CONDITIONS,
-  type CompositorState,
-} from "../../weather-compositor/presets";
-import {
-  getNearestCheckpoint,
   getInterpolatedOverrides,
+  getNearestCheckpoint,
 } from "../../weather-compositor/interpolation";
 import type {
-  ConditionCheckpoints,
-  CompareMode,
-  TimeCheckpoint,
-} from "../types";
+  CheckpointOverrides,
+  ConditionOverrides,
+  FullCompositorParams,
+} from "../../weather-compositor/presets";
+import {
+  type CompositorState,
+  extractOverrides,
+  getRawBaseParamsForCondition,
+  loadFromStorage,
+  mergeWithOverrides,
+  saveToStorage,
+  WEATHER_CONDITIONS,
+} from "../../weather-compositor/presets";
 import {
   DEFAULT_TIME_OF_DAY,
-  TIME_CHECKPOINTS,
   TIME_CHECKPOINT_ORDER,
+  TIME_CHECKPOINTS,
 } from "../lib/constants";
-import { mapToolUiPresetsToCompositor } from "../lib/tool-ui-import";
-import { resolveCompositorParamsAtTime } from "../lib/resolve-params";
 import { recoverRepoCheckpointOverrides } from "../lib/recover-repo-overrides";
+import { resolveCompositorParamsAtTime } from "../lib/resolve-params";
 import { createStudioTimestamp } from "../lib/studio-timestamp";
 import { mergeTunedPresets, toToolUiDelta } from "../lib/tool-ui-export";
+import { mapToolUiPresetsToCompositor } from "../lib/tool-ui-import";
 import { loadWorkflowState, saveWorkflowState } from "../lib/workflow-state";
+import type {
+  CompareMode,
+  ConditionCheckpoints,
+  TimeCheckpoint,
+} from "../types";
 
 export type LayerKey =
   | "layers"

@@ -1,25 +1,54 @@
-export { ActionButtons } from "./action-buttons";
 export type { ActionButtonsProps } from "./action-buttons";
-export { DecisionActions } from "./decision-actions";
+export { ActionButtons } from "./action-buttons";
+export { type ActionsProp, normalizeActionsConfig } from "./actions-config";
+export * from "./contract";
 export type { DecisionActionsProps } from "./decision-actions";
-export { LocalActions } from "./local-actions";
-export type { LocalActionsProps } from "./local-actions";
-export { ToolUI } from "./tool-ui";
-export type {
-  ToolUIProps,
-  ToolUISurfaceProps,
-  ToolUIActionsProps,
-} from "./tool-ui";
-export { useToolUI } from "./tool-ui-context";
-export { normalizeActionsConfig, type ActionsProp } from "./actions-config";
+export { DecisionActions } from "./decision-actions";
 export type {
   EmbeddedActionHandler,
-  EmbeddedBeforeActionHandler,
   EmbeddedActionsProps,
+  EmbeddedBeforeActionHandler,
 } from "./embedded-actions";
-export * from "./contract";
+export type { LocalActionsProps } from "./local-actions";
+export { LocalActions } from "./local-actions";
 export * from "./parse";
-export * from "./schema";
+export type {
+  Action,
+  ActionsConfig,
+  DecisionAction,
+  DecisionResult,
+  LocalAction,
+  SerializableAction,
+  SerializableActionsConfig,
+  ToolUIId,
+  ToolUIReceipt,
+  ToolUIReceiptOutcome,
+  ToolUIRole,
+  ToolUISurface,
+} from "./schema";
+// Schema exports — `createDecisionResult` is intentionally NOT re-exported.
+// DecisionActions builds the envelope internally so callers cannot construct
+// invalid envelopes. See decision-actions.tsx for the typed wrapper.
+export {
+  ActionButtonsPropsSchema,
+  ActionSchema,
+  DecisionResultSchema,
+  SerializableActionSchema,
+  SerializableActionsConfigSchema,
+  SerializableActionsSchema,
+  ToolUIIdSchema,
+  ToolUIReceiptOutcomeSchema,
+  ToolUIReceiptSchema,
+  ToolUIRoleSchema,
+  ToolUISurfaceSchema,
+} from "./schema";
+export type {
+  ToolUIActionsProps,
+  ToolUIProps,
+  ToolUISurfaceProps,
+} from "./tool-ui";
+export { ToolUI } from "./tool-ui";
+export { useToolUI } from "./tool-ui-context";
 export * from "./toolkit";
 export * from "./use-controllable-state";
 export * from "./use-copy-to-clipboard";

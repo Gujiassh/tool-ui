@@ -61,12 +61,12 @@ function Header({ title, description }: HeaderProps) {
   return (
     <div className="border-border/60 border-b px-4 pt-4 pb-3">
       {title && (
-        <h3 className="text-[15px] leading-tight font-semibold tracking-tight">
+        <h3 className="font-semibold text-[15px] leading-tight tracking-tight">
           {title}
         </h3>
       )}
       {description && (
-        <p className="text-muted-foreground mt-1 text-sm leading-snug">
+        <p className="mt-1 text-muted-foreground text-sm leading-snug">
           {description}
         </p>
       )}
