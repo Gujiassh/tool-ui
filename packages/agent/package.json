@@ -17,8 +17,9 @@
     "@clack/prompts": "^0.10.0"
   },
   "devDependencies": {
+    "@tool-ui/tsconfig": "workspace:*",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=20"

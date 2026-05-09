@@ -30,7 +30,8 @@
     "weather:check": "pnpm --filter tool-ui-www weather:check",
     "verify:ci": "pnpm --filter tool-ui-www run check && pnpm --filter tool-ui-www run test && pnpm --filter tool-ui-www run changelog:check && pnpm --filter tool-ui-www run registry:check && pnpm --filter tool-ui-www run weather:check",
     "ci:version": "changeset version && pnpm install --no-frozen-lockfile",
-    "ci:publish": "pnpm --filter './packages/*' build && changeset publish"
+    "ci:publish": "pnpm --filter './packages/*' build && changeset publish",
+    "cleanup": "bash scripts/cleanup.sh"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.8",
