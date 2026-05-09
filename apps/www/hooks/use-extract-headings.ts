@@ -8,15 +8,19 @@ export type Heading = {
   text: string;
 };
 
-export function useExtractHeadings(container: HTMLElement | null): Heading[] {
+export function useExtractHeadings(
+  container: HTMLElement | null = null,
+): Heading[] {
   const [headings, setHeadings] = useState<Heading[]>([]);
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!container) return;
+    const root: Document | HTMLElement | null =
+      container ?? (typeof document !== "undefined" ? document : null);
+    if (!root) return;
 
     const timer = setTimeout(() => {
-      const h2ElementsWithId = container.querySelectorAll("h2[id]");
+      const h2ElementsWithId = root.querySelectorAll("h2[id]");
       const extracted = Array.from(h2ElementsWithId).map((el) => ({
         id: el.id,
         text: el.textContent || "",

@@ -1,91 +1,66 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import type { Heading } from "./use-extract-headings";
 
 export function useHeadingsObserver(
   headings: Heading[],
-  container: HTMLElement | null,
+  _container: HTMLElement | null = null,
 ): string | null {
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const calculateActiveHeading = useCallback(() => {
-    if (!container || headings.length === 0) return;
+  useEffect(() => {
+    if (headings.length === 0 || typeof window === "undefined") return;
 
-    const stickyHeader = container.querySelector('[role="tablist"]');
-    const offset = stickyHeader
-      ? stickyHeader.getBoundingClientRect().height + 40
-      : 100;
+    const elements = headings
+      .map((h) => document.getElementById(h.id))
+      .filter((el): el is HTMLElement => el !== null);
 
-    const scrollTop = container.scrollTop + offset;
+    if (elements.length === 0) return;
 
-    let active = headings[0];
-    for (const heading of headings) {
-      const el = document.getElementById(heading.id);
-      if (el && el.offsetTop <= scrollTop) {
-        active = heading;
-      } else {
-        break;
-      }
-    }
+    const visibleHeadings = new Set<string>();
 
-    const scrollHeight = container.scrollHeight;
-    const clientHeight = container.clientHeight;
-    const maxScroll = scrollHeight - clientHeight;
-    const isAtMaxScroll =
-      maxScroll > 0 && container.scrollTop >= maxScroll - 10;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            visibleHeadings.add(entry.target.id);
+          } else {
+            visibleHeadings.delete(entry.target.id);
+          }
+        }
 
-    if (isAtMaxScroll) {
-      const lastHeading = headings[headings.length - 1];
-      const lastHeadingEl = document.getElementById(lastHeading.id);
-      if (lastHeadingEl) {
-        const lastHeadingTop = lastHeadingEl.getBoundingClientRect().top;
-        const containerTop = container.getBoundingClientRect().top;
-        const relativeTop = lastHeadingTop - containerTop;
-
-        if (relativeTop < clientHeight * 0.6) {
-          setActiveId(lastHeading.id);
+        if (visibleHeadings.size > 0) {
+          const firstVisible = headings.find((h) => visibleHeadings.has(h.id));
+          if (firstVisible) setActiveId(firstVisible.id);
           return;
         }
-      }
-    }
 
-    setActiveId(active.id);
-  }, [container, headings]);
+        const scrollY = window.scrollY + 100;
+        let closest: Heading | null = null;
+        for (const heading of headings) {
+          const el = document.getElementById(heading.id);
+          if (
+            el &&
+            el.getBoundingClientRect().top + window.scrollY <= scrollY
+          ) {
+            closest = heading;
+          } else {
+            break;
+          }
+        }
+        if (closest) setActiveId(closest.id);
+      },
+      {
+        rootMargin: "-80px 0px -70% 0px",
+        threshold: 0,
+      },
+    );
 
-  useEffect(() => {
-    if (!container || headings.length === 0) return;
+    elements.forEach((el) => observer.observe(el));
 
-    const timeoutId = setTimeout(calculateActiveHeading, 50);
-
-    return () => clearTimeout(timeoutId);
-  }, [container, headings, calculateActiveHeading]);
-
-  useEffect(() => {
-    if (!container) return;
-
-    let frameId: number | null = null;
-
-    const handleScroll = () => {
-      if (frameId !== null) {
-        return;
-      }
-
-      frameId = window.requestAnimationFrame(() => {
-        frameId = null;
-        calculateActiveHeading();
-      });
-    };
-
-    container.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-      if (frameId !== null) {
-        window.cancelAnimationFrame(frameId);
-      }
-    };
-  }, [container, calculateActiveHeading]);
+    return () => observer.disconnect();
+  }, [headings]);
 
   return activeId;
 }

@@ -27,6 +27,12 @@ function toStablePanelIdSegment(value: string): string {
   return normalized || "component";
 }
 
+const toggleItemClass = cn(
+  "size-7 rounded-md border-0 bg-transparent text-muted-foreground",
+  "hover:text-foreground hover:bg-accent/40",
+  "data-[state=on]:bg-accent/60 data-[state=on]:text-foreground",
+);
+
 function ViewModeToggle({
   value,
   onValueChange,
@@ -40,28 +46,28 @@ function ViewModeToggle({
       value={value}
       onValueChange={(v) => v && onValueChange(v as ViewMode)}
       size="sm"
-      className="bg-primary/5 rounded-lg p-[3px]"
+      className="gap-0.5 rounded-md border border-border/50 bg-background/80 p-0.5 backdrop-blur-md"
     >
       <ToggleGroupItem
         value="canvas"
         aria-label="View canvas"
-        className="text-muted-foreground hover:text-primary data-[state=on]:bg-background data-[state=on]:text-foreground hover:bg-transparent data-[state=on]:rounded-md data-[state=on]:shadow-sm"
+        className={toggleItemClass}
       >
-        <Eye className="size-4" />
+        <Eye className="size-3.5" />
       </ToggleGroupItem>
       <ToggleGroupItem
         value="chat"
         aria-label="View in chat context"
-        className="text-muted-foreground hover:text-primary data-[state=on]:bg-background data-[state=on]:text-foreground hover:bg-transparent data-[state=on]:rounded-md data-[state=on]:shadow-sm"
+        className={toggleItemClass}
       >
-        <MessageCircle className="size-4" />
+        <MessageCircle className="size-3.5" />
       </ToggleGroupItem>
       <ToggleGroupItem
         value="code"
         aria-label="View code"
-        className="text-muted-foreground hover:text-primary data-[state=on]:bg-background data-[state=on]:text-foreground hover:bg-transparent data-[state=on]:rounded-md data-[state=on]:shadow-sm"
+        className={toggleItemClass}
       >
-        <Code className="size-4" />
+        <Code className="size-3.5" />
       </ToggleGroupItem>
     </ToggleGroup>
   );
@@ -171,7 +177,6 @@ export function ComponentPreviewShell({
   const handleViewModeChange = useCallback(
     (nextViewMode: ViewMode) => {
       if (nextViewMode === viewMode) return;
-
       analytics.component.tabSwitched(componentId, nextViewMode);
       analytics.component.previewInteracted(
         componentId,
@@ -183,30 +188,27 @@ export function ComponentPreviewShell({
   );
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-clip lg:flex-row">
+    <div className="flex w-full flex-1 flex-col lg:flex-row">
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "bg-background scrollbar-subtle",
-          "hidden h-full w-72 shrink-0 flex-col",
-          "overflow-x-hidden overflow-y-auto overscroll-contain",
+          "scrollbar-subtle hidden w-64 shrink-0 flex-col",
+          "border-r border-border/40",
           "lg:flex",
         )}
       >
-        <div className="z-10 flex min-h-0 flex-1 flex-col gap-4 px-3 pb-24">
-          {sidebar}
-        </div>
+        <div className="flex flex-1 flex-col gap-3 px-3 py-4">{sidebar}</div>
       </aside>
 
       {/* Main content area */}
       <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-        {/* Install commands - above the gray preview, in main column only */}
-        <div className="shrink-0 border-b px-4 py-3 sm:px-6 lg:px-6">
+        {/* Install commands */}
+        <div className="shrink-0 border-b border-border/40 px-4 py-3 sm:px-6">
           <InstallCommandBlock componentId={componentId} variant="block" />
         </div>
 
         {/* Mobile toolbar */}
-        <div className="flex flex-col gap-3 border-b px-4 pt-3 pb-3 lg:hidden">
+        <div className="flex flex-col gap-3 border-b border-border/40 px-4 pt-3 pb-3 lg:hidden">
           <div className="scrollbar-subtle overflow-x-auto">{sidebar}</div>
           <div className="flex items-center justify-end">
             <ViewModeToggle
@@ -218,9 +220,8 @@ export function ComponentPreviewShell({
 
         <div
           className={cn(
-            "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-neutral-100 dark:bg-neutral-950",
-            "z-10",
-            "border lg:mr-4 lg:mb-4 lg:rounded-lg lg:border-l",
+            "relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+            "bg-neutral-100 dark:bg-neutral-950",
           )}
         >
           {viewMode === "canvas" && (
@@ -241,7 +242,7 @@ export function ComponentPreviewShell({
             />
           )}
 
-          {/* View mode toggle - top left corner */}
+          {/* View mode toggle - top left */}
           <div className="absolute top-3 left-3 z-30 hidden lg:block">
             <ViewModeToggle
               value={viewMode}
@@ -249,7 +250,7 @@ export function ComponentPreviewShell({
             />
           </div>
 
-          {/* Copy button - top right corner (code view only) */}
+          {/* Copy button - top right (code view only) */}
           {viewMode === "code" && (
             <div className="absolute top-3 right-3 z-30 hidden lg:block">
               <Button

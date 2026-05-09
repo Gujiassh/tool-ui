@@ -6,7 +6,6 @@ import {
   GalleryPageAnalytics,
   GalleryPreviewImpression,
 } from "@/app/docs/_components/gallery-analytics.client";
-import { DocsBorderedShell } from "@/app/docs/_components/docs-bordered-shell";
 import { GalleryCardHeader } from "@/app/docs/_components/gallery-card-header";
 import { DataTable } from "@/components/tool-ui/data-table";
 import { ItemCarousel } from "@/components/tool-ui/item-carousel";
@@ -411,40 +410,26 @@ export default function ComponentsGalleryPage() {
   );
 
   return (
-    <DocsBorderedShell>
-      <main
-        aria-label="Tool UI component gallery"
-        className="scrollbar-subtle z-10 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain p-6 sm:p-10 lg:p-12"
-      >
-        <h1 className="sr-only">Tool UI Component Gallery</h1>
-        <GalleryPageAnalytics />
-        <div className={GALLERY_LAYOUT_CLASS}>
-          <div className={GALLERY_MOBILE_STACK_CLASS}>
-            {rankedGalleryCards.map(renderGalleryCard)}
-          </div>
-
-          <div className={GALLERY_DESKTOP_GRID_CLASS}>
-            <div className={GALLERY_COLUMN_STACK_CLASS}>
-              {leftColumnCards.map(renderGalleryCard)}
-            </div>
-            <div className={GALLERY_COLUMN_STACK_CLASS}>
-              {rightColumnCards.map(renderGalleryCard)}
-            </div>
-          </div>
-
-          {/* <div className="mb-5 flex justify-center break-inside-avoid 2xl:mb-5">
-            <Link
-              href="/builder"
-              className="bg-foreground/5 text-muted-foreground bg-dot-grid hover:text-foreground hover:bg-primary/7 group flex min-h-[180px] w-full flex-row items-center justify-center gap-2 rounded-2xl p-6 text-center shadow-[inset_0_6px_20px_rgba(0,0,0,0.09)] transition-colors duration-300"
-            >
-              <span className="text-primary text-2xl font-light tracking-wide transition-transform duration-600 will-change-transform group-hover:scale-105">
-                Build your own tool UI
-              </span>
-              <ArrowRightIcon className="size-6 shrink-0 transition-transform duration-600 will-change-transform group-hover:translate-x-3 group-hover:scale-105" />
-            </Link>
-          </div> */}
+    <main
+      aria-label="Tool UI component gallery"
+      className="w-full p-6 sm:p-10 lg:p-12"
+    >
+      <h1 className="sr-only">Tool UI Component Gallery</h1>
+      <GalleryPageAnalytics />
+      <div className={GALLERY_LAYOUT_CLASS}>
+        <div className={GALLERY_MOBILE_STACK_CLASS}>
+          {rankedGalleryCards.map(renderGalleryCard)}
         </div>
-      </main>
-    </DocsBorderedShell>
+
+        <div className={GALLERY_DESKTOP_GRID_CLASS}>
+          <div className={GALLERY_COLUMN_STACK_CLASS}>
+            {leftColumnCards.map(renderGalleryCard)}
+          </div>
+          <div className={GALLERY_COLUMN_STACK_CLASS}>
+            {rightColumnCards.map(renderGalleryCard)}
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

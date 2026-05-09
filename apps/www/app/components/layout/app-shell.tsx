@@ -8,34 +8,32 @@ export type HeaderFrameProps = {
   background?: ReactNode;
 };
 
-function HeaderFrameBase({
+export function HeaderFrameLayout({
   children,
   rightContent,
   background,
-  shouldAnimate,
-}: HeaderFrameProps & { shouldAnimate: boolean }) {
+  animateClassName,
+}: HeaderFrameProps & { animateClassName?: string }) {
   return (
-    <div className="relative flex h-full flex-col items-center overflow-hidden">
+    <div className="relative flex min-h-screen flex-col">
       {background ? (
-        <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="pointer-events-none fixed inset-0 z-0">
           {background}
         </div>
       ) : null}
-      <div
+      <header
         className={cn(
-          "relative z-10 w-full max-w-[1440px] shrink-0 px-4 md:px-8",
-          shouldAnimate && "animate-navbar-fade-in",
+          "sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md",
+          animateClassName,
         )}
       >
         <ResponsiveHeader rightContent={rightContent} />
-      </div>
-      <div className="relative z-10 flex min-h-0 w-full flex-1 justify-center">
-        {children}
-      </div>
+      </header>
+      <div className="relative z-10 flex w-full flex-1">{children}</div>
     </div>
   );
 }
 
 export function HeaderFrame(props: HeaderFrameProps) {
-  return <HeaderFrameBase {...props} shouldAnimate={false} />;
+  return <HeaderFrameLayout {...props} />;
 }

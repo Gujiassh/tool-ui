@@ -1,39 +1,36 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { PencilIcon } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
 import { useDocsToc } from "./docs-toc-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useTocKeyboardNav } from "@/hooks/use-toc-keyboard-nav";
 import { analytics } from "@/lib/analytics";
 
+const HEADER_OFFSET = 80;
+const REPO_EDIT_BASE =
+  "https://github.com/assistant-ui/tool-ui/edit/main/apps/www";
+
 export function DocsToc() {
-  const { scrollContainer, headings, activeId } = useDocsToc();
+  const pathname = usePathname();
+  const { headings, activeId } = useDocsToc();
   const reducedMotion = useReducedMotion();
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const previousIndicatorTopRef = useRef<number | null>(null);
-  const [indicatorTop, setIndicatorTop] = useState<number | null>(null);
 
   const scrollToHeading = useCallback(
     (id: string) => {
       const element = document.getElementById(id);
-      const container = scrollContainer;
-      if (!element || !container) return;
-
-      const stickyHeader = container.querySelector('[role="tablist"]');
-      const offset = stickyHeader
-        ? stickyHeader.getBoundingClientRect().height + 20
-        : 80;
-
-      const targetScroll = element.offsetTop - offset;
-
-      if (reducedMotion) {
-        container.scrollTop = targetScroll;
-      } else {
-        container.scrollTo({ top: targetScroll, behavior: "smooth" });
-      }
+      if (!element) return;
+      const targetScroll =
+        element.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+      window.scrollTo({
+        top: targetScroll,
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
     },
-    [scrollContainer, reducedMotion],
+    [reducedMotion],
   );
 
   const { handleKeyDown, setLinkRef: setKeyboardLinkRef } = useTocKeyboardNav(
@@ -53,7 +50,6 @@ export function DocsToc() {
 
   useEffect(() => {
     if (typeof window === "undefined" || headings.length === 0) return;
-
     const hash = window.location.hash.slice(1);
     if (hash && headings.some((h) => h.id === hash)) {
       setTimeout(() => scrollToHeading(hash), 200);
@@ -64,38 +60,15 @@ export function DocsToc() {
     linkRefs.current = linkRefs.current.slice(0, headings.length);
   }, [headings]);
 
-  // Update indicator position when activeId changes
-  useEffect(() => {
-    const activeIndex = headings.findIndex((h) => h.id === activeId);
-    if (activeIndex >= 0 && linkRefs.current[activeIndex]) {
-      const activeLink = linkRefs.current[activeIndex];
-      if (activeLink) {
-        const linkRect = activeLink.getBoundingClientRect();
-        const navRect = activeLink.parentElement?.getBoundingClientRect();
-        if (navRect) {
-          const relativeTop = linkRect.top - navRect.top + 8;
-          setIndicatorTop(relativeTop);
-          return;
-        }
-      }
-    }
+  const editUrl = useMemo(() => {
+    const slug = pathname.replace(/^\/docs\/?/, "").split("?")[0];
+    if (!slug || slug === "gallery" || slug.includes("/")) return null;
+    return `${REPO_EDIT_BASE}/app/docs/${slug}/content.mdx`;
+  }, [pathname]);
 
-    setIndicatorTop(null);
-  }, [activeId, headings]);
-
-  useEffect(() => {
-    previousIndicatorTopRef.current = indicatorTop;
-  }, [indicatorTop]);
-
-  if (headings.length === 0) {
+  if (headings.length === 0 && !editUrl) {
     return null;
   }
-
-  const activeIndex = headings.findIndex((h) => h.id === activeId);
-  const shouldAnimateIndicator =
-    !reducedMotion &&
-    previousIndicatorTopRef.current !== null &&
-    indicatorTop !== null;
 
   const setLinkRef = (index: number) => (el: HTMLAnchorElement | null) => {
     linkRefs.current[index] = el;
@@ -105,44 +78,59 @@ export function DocsToc() {
   return (
     <nav
       aria-label="Table of contents"
-      className="relative space-y-1"
+      className="flex flex-col"
       onKeyDown={handleKeyDown}
     >
-      <p className="text-primary/60 mb-4 cursor-default text-xs tracking-widest uppercase select-none">
-        On This Page
-      </p>
-      {activeIndex >= 0 && indicatorTop !== null && (
-        <span
-          aria-hidden="true"
-          className="bg-foreground pointer-events-none absolute -left-3 h-3 w-0.5 rounded-full"
-          style={{
-            top: indicatorTop,
-            opacity: 1,
-            transition: shouldAnimateIndicator ? "top 150ms ease-out" : "none",
-          }}
-        />
+      {headings.length > 0 && (
+        <>
+          <p className="mb-2 text-[10px] font-medium tracking-widest text-muted-foreground/70 uppercase">
+            On This Page
+          </p>
+          <div className="flex flex-col gap-1">
+            {headings.map((heading, index) => {
+              const isActive = heading.id === activeId;
+              return (
+                <a
+                  key={heading.id}
+                  ref={setLinkRef(index)}
+                  href={`#${heading.id}`}
+                  onClick={(e) => handleClick(e, heading.id, heading.text)}
+                  className={cn(
+                    "block py-1 text-[13px] transition-colors outline-none",
+                    "hover:text-foreground focus-visible:text-foreground",
+                    isActive
+                      ? "font-medium text-foreground"
+                      : "text-muted-foreground",
+                  )}
+                  aria-current={isActive ? "true" : undefined}
+                  title={heading.text}
+                >
+                  <span className="line-clamp-2">{heading.text}</span>
+                </a>
+              );
+            })}
+          </div>
+        </>
       )}
-      {headings.map((heading, index) => {
-        const isActive = heading.id === activeId;
-        return (
+
+      {editUrl && (
+        <div
+          className={cn(
+            "flex flex-col gap-2",
+            headings.length > 0 && "mt-6 border-t border-border/40 pt-4",
+          )}
+        >
           <a
-            key={heading.id}
-            ref={setLinkRef(index)}
-            href={`#${heading.id}`}
-            onClick={(e) => handleClick(e, heading.id, heading.text)}
-            className={cn(
-              "relative block py-1 text-sm transition-colors",
-              "hover:text-foreground focus-visible:outline-none focus-visible:text-foreground",
-              isActive && "text-foreground font-medium",
-              !isActive && "text-muted-foreground",
-            )}
-            aria-current={isActive ? "true" : undefined}
-            title={heading.text}
+            href={editUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
           >
-            <span className="line-clamp-2">{heading.text}</span>
+            <PencilIcon className="size-3" />
+            Edit on GitHub
           </a>
-        );
-      })}
+        </div>
+      )}
     </nav>
   );
 }

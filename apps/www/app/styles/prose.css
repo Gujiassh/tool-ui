@@ -1,29 +1,29 @@
 @layer utilities {
   .prose {
-    @apply text-foreground;
+    @apply text-foreground text-[14px] leading-[1.7];
   }
 
   .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mt-0 mb-2 flex flex-wrap items-center gap-3 text-4xl font-medium tracking-normal;
+    @apply mt-0 mb-2 flex flex-wrap items-center gap-3 text-2xl font-medium tracking-tight;
   }
 
   .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mb-4 text-2xl font-medium;
+    @apply mb-3 text-[20px] font-medium tracking-tight;
   }
 
   .prose
     :where(h2:not(:first-child)):not(
       :where([class~="not-prose"], [class~="not-prose"] *)
     ) {
-    @apply mt-16;
+    @apply mt-10;
   }
 
   .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mt-8 mb-3 text-xl font-medium;
+    @apply mt-7 mb-2 text-[16px] font-medium tracking-tight;
   }
 
   .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mt-6 mb-2 text-lg;
+    @apply mt-5 mb-2 text-[14px] font-medium;
   }
 
   .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -32,7 +32,7 @@
 
   .prose
     :where(.lead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply text-muted-foreground mb-6 text-xl leading-relaxed;
+    @apply text-muted-foreground mb-6 text-[15px] leading-relaxed;
   }
 
   .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -46,11 +46,9 @@
 
   .prose
     :where(ul, ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    /* Reduce default left indent for lists */
-    @apply my-4 ml-4 space-y-2;
+    @apply my-4 ml-4 space-y-1.5;
   }
 
-  /* Reduce indent for nested lists as well */
   .prose
     :where(li > ul, li > ol):not(
       :where([class~="not-prose"], [class~="not-prose"] *)
@@ -67,27 +65,26 @@
   }
 
   .prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply leading-7;
+    @apply leading-[1.7];
   }
 
   .prose
     :where(li > p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply my-2;
+    @apply my-1.5;
   }
 
   .prose
     :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply bg-primary/10 dark:bg-primary/15 rounded-md border-none px-1.5 py-1 font-mono;
+    @apply bg-muted rounded-md border-none px-1.5 py-0.5 font-mono text-[13px];
   }
 
-  /* Remove Tailwind Typography's visible backtick quotes around inline code */
   .prose :where(:not(pre) > code)::before,
   .prose :where(:not(pre) > code)::after {
     content: none !important;
   }
 
   .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply my-6 overflow-x-auto rounded-lg bg-muted p-4;
+    @apply bg-muted my-5 overflow-x-auto rounded-xl p-4 text-[13px];
   }
 
   .prose
@@ -99,10 +96,9 @@
     :where(blockquote):not(
       :where([class~="not-prose"], [class~="not-prose"] *)
     ) {
-    @apply border-primary text-muted-foreground my-6 border-l-4 pl-4 font-normal italic;
+    @apply border-border text-muted-foreground my-5 border-l-2 pl-4 font-normal italic;
   }
 
-  /* Remove quote marks around blockquoted text */
   .prose :where(blockquote)::before,
   .prose :where(blockquote)::after {
     content: none !important;
@@ -114,7 +110,7 @@
 
   .prose
     :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply my-6 w-full border-collapse;
+    @apply my-5 w-full border-collapse text-[13px];
   }
 
   .prose
@@ -123,10 +119,10 @@
   }
 
   .prose :where(th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply p-2 text-left font-semibold;
+    @apply p-2 text-left font-medium;
   }
 
   .prose :where(td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply border-border border-t p-2;
+    @apply border-border/50 border-t p-2;
   }
 }

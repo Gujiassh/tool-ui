@@ -23,63 +23,68 @@ export function HomeHero() {
   };
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-6">
       <motion.div
-        className="-mb-4 -ml-4 flex items-end justify-start"
+        className="-mb-2 -ml-4 flex w-fit items-end justify-start"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ ...smoothSpring, delay: 0.1 }}
       >
         <HomeHexnutScene />
       </motion.div>
+
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3">
-          <motion.h1
-            className="text-6xl font-bold tracking-wide"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ...smoothSpring, delay: 0.1 }}
-          >
-            Tool UI
-          </motion.h1>
-        </div>
-        <motion.h2
-          className="text-2xl text-pretty"
+        <motion.h1
+          className="text-5xl font-medium tracking-tight"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...smoothSpring, delay: 0.1 }}
+        >
+          Tool UI
+        </motion.h1>
+        <motion.p
+          className="text-xl tracking-tight text-foreground/80"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...smoothSpring, delay: 0.3 }}
         >
           UI components for AI interfaces
-        </motion.h2>
+        </motion.p>
       </div>
+
       <motion.p
-        className="text-muted-foreground mb-2 text-lg text-pretty"
+        className="text-[15px] leading-[1.7] text-muted-foreground"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...smoothSpring, delay: 0.4 }}
       >
-        JSON-native, typed, accessible, copy-pasteable.{" "}
-        <br className="hidden md:block" />
-        Built on Tailwind, Radix, and shadcn/ui. Open Source.
+        JSON-native, typed, accessible, copy-pasteable. Built on Tailwind,
+        Radix, and shadcn/ui. Open source.
       </motion.p>
+
       <motion.div
+        className="flex flex-wrap items-center gap-3 pt-2"
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ ...smoothSpring, delay: 0.5 }}
       >
-        <Button
-          asChild
-          className="group font-medium tracking-wide"
-          size="homeCTA"
-        >
+        <Button asChild className="group font-medium" size="lg">
           <Link
             href="/docs/gallery"
             onMouseEnter={preloadGallery}
             onFocus={preloadGallery}
             onClick={() => analytics.cta.clicked("see_components", "home_hero")}
           >
-            See the Components
-            <ArrowRight className="size-5 shrink-0 transition-transform group-hover:translate-x-1" />
+            See the components
+            <ArrowRight className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </Button>
+        <Button asChild variant="ghost" size="lg" className="font-medium">
+          <Link
+            href="/docs/overview"
+            onClick={() => analytics.cta.clicked("read_docs", "home_hero")}
+          >
+            Read the docs
           </Link>
         </Button>
       </motion.div>

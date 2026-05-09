@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
-import { LayoutDashboardIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { ChevronDownIcon, LayoutDashboardIcon } from "lucide-react";
 import { analytics } from "@/lib/analytics";
 import {
   componentsRegistry,
@@ -15,44 +16,32 @@ import {
 import { cn } from "@/lib/ui/cn";
 import { CONCEPTS_DOCS_PAGES, GET_STARTED_DOCS_PAGES } from "./docs-pages";
 
-const STORAGE_KEY = "tool-ui-components-nav-collapsed:v1";
+type SidebarItem = {
+  key: string;
+  path: string;
+  label: string;
+  href: string;
+};
+
+type Section = {
+  id: string;
+  label: string;
+  items: SidebarItem[];
+  defaultOpen?: boolean;
+};
+
+const ACCORDION_TRANSITION = {
+  duration: 0.22,
+  ease: [0.16, 1, 0.3, 1] as const,
+};
 
 export function DocsNav() {
   const pathname = usePathname();
   const [currentTab] = useQueryState("tab");
   const [currentView] = useQueryState("view");
-  const [collapsed, setCollapsed] = useState(false);
-  const [isPressing, setIsPressing] = useState(false);
-  const [prevPathname, setPrevPathname] = useState(pathname);
   const previousPathRef = React.useRef<string | null>(null);
 
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
-    setIsPressing(false);
-  }
-
-  React.useEffect(() => {
-    try {
-      if (typeof window !== "undefined") {
-        const stored = window.localStorage.getItem(STORAGE_KEY);
-        if (stored != null) setCollapsed(stored === "true");
-      }
-    } catch {}
-  }, []);
-
-  React.useEffect(() => {
-    const handleMouseUp = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isNavLink = target.closest('a[href^="/docs"]');
-      if (!isNavLink) {
-        setIsPressing(false);
-      }
-    };
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => document.removeEventListener("mouseup", handleMouseUp);
-  }, []);
-
-  React.useEffect(() => {
+  useEffect(() => {
     const component = componentsRegistry.find(
       (entry) => entry.path === pathname,
     );
@@ -61,173 +50,173 @@ export function DocsNav() {
         previousPathRef.current === "/docs/gallery" ? "gallery" : "direct";
       analytics.component.viewed(component.id, source);
     }
-
     previousPathRef.current = pathname;
   }, [pathname]);
 
-  const buildLinkClasses = (isActive: boolean) =>
-    cn(
-      "flex items-center gap-2 rounded-lg px-4  bg-background text-primary  py-2 text-sm transition-[colors,background] duration-75",
+  const sections = useMemo<Section[]>(() => {
+    const buildComponentHref = (path: string) => {
+      if (currentTab !== "examples") return path;
+      const params = new URLSearchParams();
+      params.set("tab", "examples");
+      if (currentView === "chat" || currentView === "code") {
+        params.set("view", currentView);
+      }
+      return `${path}?${params.toString()}`;
+    };
+
+    const componentSections: Section[] = (
+      Object.entries(CATEGORY_META) as [
+        ComponentCategory,
+        (typeof CATEGORY_META)[ComponentCategory],
+      ][]
+    )
+      .sort(([, a], [, b]) => a.order - b.order)
+      .map(([category, meta]) => ({
+        id: `category-${category}`,
+        label: meta.label,
+        items: (componentsByCategory.get(category) || []).map((c) => ({
+          key: c.id,
+          path: c.path,
+          label: c.label,
+          href: buildComponentHref(c.path),
+        })),
+      }));
+
+    return [
       {
-        "justify-center px-0": collapsed,
-
-        "bg-primary/5": isActive && !isPressing,
-        "hover:bg-primary/2": !isActive,
-        "hover:bg-primary/5": isPressing && !isActive,
+        id: "get-started",
+        label: "Get Started",
+        defaultOpen: true,
+        items: GET_STARTED_DOCS_PAGES.map((p) => ({
+          key: p.path,
+          path: p.path,
+          label: p.label,
+          href: p.path,
+        })),
       },
-    );
-
-  const handleLinkMouseDown = () => setIsPressing(true);
-
-  const galleryPath = "/docs/gallery";
-  const isGalleryActive = pathname === galleryPath;
-
-  const categorizedComponents = (
-    Object.entries(CATEGORY_META) as [
-      ComponentCategory,
-      (typeof CATEGORY_META)[ComponentCategory],
-    ][]
-  )
-    .sort(([, a], [, b]) => a.order - b.order)
-    .map(([category, meta]) => ({
-      category,
-      label: meta.label,
-      components: componentsByCategory.get(category) || [],
-    }));
+      {
+        id: "concepts",
+        label: "Concepts",
+        items: CONCEPTS_DOCS_PAGES.map((p) => ({
+          key: p.path,
+          path: p.path,
+          label: p.label,
+          href: p.path,
+        })),
+      },
+      ...componentSections,
+    ];
+  }, [currentTab, currentView]);
 
   return (
-    <aside
-      className={cn(
-        "bg-background flex h-full shrink-0 flex-col transition-all duration-300",
-        collapsed ? "w-16" : "w-full",
-      )}
-    >
-      <nav className="flex flex-1 flex-col py-4 pb-24">
-        <div className="mb-4 flex flex-col gap-2 px-4">
-          <Link
-            href={galleryPath}
-            className={buildLinkClasses(isGalleryActive)}
-            title={collapsed ? "Gallery" : undefined}
-            onMouseDown={handleLinkMouseDown}
-            onClick={() =>
-              analytics.docs.navigationClicked("Gallery", galleryPath)
-            }
+    <nav className="flex flex-col gap-0.5 px-3 py-4">
+      <Link
+        href="/docs/gallery"
+        className={cn(
+          "flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition-colors",
+          pathname === "/docs/gallery"
+            ? "bg-accent/40 font-medium text-foreground"
+            : "text-muted-foreground hover:bg-accent/30 hover:text-foreground",
+        )}
+        onClick={() =>
+          analytics.docs.navigationClicked("Gallery", "/docs/gallery")
+        }
+      >
+        <LayoutDashboardIcon className="size-3.5 shrink-0" />
+        Gallery
+      </Link>
+
+      <div className="my-3 border-t border-border/40" />
+
+      {sections.map((section) => {
+        const containsActive = section.items.some((i) => i.path === pathname);
+        return (
+          <SidebarSection
+            key={section.id}
+            section={section}
+            pathname={pathname}
+            initialOpen={section.defaultOpen ?? containsActive}
+            containsActive={containsActive}
+          />
+        );
+      })}
+    </nav>
+  );
+}
+
+type SidebarSectionProps = {
+  section: Section;
+  pathname: string;
+  initialOpen: boolean;
+  containsActive: boolean;
+};
+
+function SidebarSection({
+  section,
+  pathname,
+  initialOpen,
+  containsActive,
+}: SidebarSectionProps) {
+  const [isOpen, setIsOpen] = useState(initialOpen);
+
+  useEffect(() => {
+    if (containsActive) setIsOpen(true);
+  }, [containsActive]);
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className={cn(
+          "flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-[13px] font-medium",
+          "text-foreground/80 transition-colors hover:bg-accent/30 hover:text-foreground",
+        )}
+        aria-expanded={isOpen}
+      >
+        <span>{section.label}</span>
+        <motion.span
+          animate={{ rotate: isOpen ? 0 : -90 }}
+          transition={{ duration: 0.18 }}
+          className="text-muted-foreground"
+        >
+          <ChevronDownIcon className="size-3.5" />
+        </motion.span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={ACCORDION_TRANSITION}
+            className="overflow-hidden"
           >
-            {!collapsed && (
-              <div className="flex flex-col overflow-hidden">
-                <span className="truncate">Gallery</span>
-              </div>
-            )}
-            <LayoutDashboardIcon
-              className={cn("text-muted-foreground size-4 shrink-0", {
-                "text-primary": isGalleryActive,
+            <div className="mt-0.5 mb-1 ml-3 border-l border-border/40 pl-1.5">
+              {section.items.map((item) => {
+                const isActive = pathname === item.path;
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    className={cn(
+                      "block rounded-md px-2 py-1.5 text-[13px] transition-colors",
+                      isActive
+                        ? "bg-accent/40 font-medium text-foreground"
+                        : "text-muted-foreground hover:bg-accent/30 hover:text-foreground",
+                    )}
+                    onClick={() =>
+                      analytics.docs.navigationClicked(item.label, item.href)
+                    }
+                  >
+                    {item.label}
+                  </Link>
+                );
               })}
-            />
-          </Link>
-        </div>
-
-        <div className="flex flex-col gap-1 px-4 pt-4">
-          {!collapsed && (
-            <div className="text-primary/60 mb-3 cursor-default px-4 text-xs tracking-widest uppercase select-none">
-              Get Started
             </div>
-          )}
-          {GET_STARTED_DOCS_PAGES.map((page) => {
-            const isActive = pathname === page.path;
-            return (
-              <Link
-                key={page.path}
-                href={page.path}
-                className={buildLinkClasses(isActive)}
-                title={collapsed ? page.label : undefined}
-                onMouseDown={handleLinkMouseDown}
-                onClick={() =>
-                  analytics.docs.navigationClicked(page.label, page.path)
-                }
-              >
-                {!collapsed && (
-                  <div className="overflow-hidden">
-                    <span className="truncate">{page.label}</span>
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col gap-1 px-4 pt-8">
-          {!collapsed && (
-            <div className="text-primary/60 mb-3 cursor-default px-4 text-xs tracking-widest uppercase select-none">
-              Concepts
-            </div>
-          )}
-          {CONCEPTS_DOCS_PAGES.map((page) => {
-            const isActive = pathname === page.path;
-            return (
-              <Link
-                key={page.path}
-                href={page.path}
-                className={buildLinkClasses(isActive)}
-                title={collapsed ? page.label : undefined}
-                onMouseDown={handleLinkMouseDown}
-                onClick={() =>
-                  analytics.docs.navigationClicked(page.label, page.path)
-                }
-              >
-                {!collapsed && (
-                  <div className="overflow-hidden">
-                    <span className="truncate">{page.label}</span>
-                  </div>
-                )}
-              </Link>
-            );
-          })}
-        </div>
-
-        {categorizedComponents.map(({ category, label, components }) => (
-          <div key={category} className="flex flex-col gap-1 px-4 pt-8">
-            {!collapsed && (
-              <div className="text-primary/60 mb-3 cursor-default px-4 text-xs tracking-widest uppercase select-none">
-                {label}
-              </div>
-            )}
-            {components.map((component) => {
-              const isActive = pathname === component.path;
-              const href = (() => {
-                if (currentTab !== "examples") return component.path;
-
-                const params = new URLSearchParams();
-                params.set("tab", "examples");
-
-                // Preserve view mode across component navigation when browsing examples.
-                if (currentView === "chat" || currentView === "code") {
-                  params.set("view", currentView);
-                }
-
-                return `${component.path}?${params.toString()}`;
-              })();
-              return (
-                <Link
-                  key={component.id}
-                  href={href}
-                  className={buildLinkClasses(isActive)}
-                  title={collapsed ? component.label : undefined}
-                  onMouseDown={handleLinkMouseDown}
-                  onClick={() =>
-                    analytics.docs.navigationClicked(component.label, href)
-                  }
-                >
-                  {!collapsed && (
-                    <div className="overflow-hidden">
-                      <span className="truncate">{component.label}</span>
-                    </div>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        ))}
-      </nav>
-    </aside>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

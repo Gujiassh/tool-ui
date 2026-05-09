@@ -10,23 +10,13 @@ export default function ContentLayout({
   sidebar,
 }: ContentLayoutProps) {
   return (
-    <div className="flex min-h-0 w-full max-w-[1440px] flex-1">
+    <div className="flex w-full flex-1">
       {sidebar ? (
-        <div className="relative hidden w-[220px] shrink-0 md:block">
-          <div
-            className="from-background pointer-events-none absolute top-0 right-2 left-0 z-10 h-12 bg-linear-to-b to-transparent"
-            aria-hidden="true"
-          />
-          <div className="scrollbar-subtle h-full overflow-y-auto pt-4">
-            {sidebar}
-          </div>
-          <div
-            className="from-background pointer-events-none absolute right-2 bottom-0 left-0 z-10 h-12 bg-linear-to-t to-transparent"
-            aria-hidden="true"
-          />
-        </div>
+        <aside className="scrollbar-subtle sticky top-12 hidden h-[calc(100vh-3rem)] w-[260px] shrink-0 overflow-y-auto border-r border-border/40 md:block">
+          {sidebar}
+        </aside>
       ) : null}
-      <div className="flex min-h-0 min-w-0 w-full flex-1">{children}</div>
+      <div className="flex w-full min-w-0 flex-1 flex-col">{children}</div>
     </div>
   );
 }

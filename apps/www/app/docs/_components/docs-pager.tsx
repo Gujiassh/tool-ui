@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { getAllDocsPageLinks } from "./docs-pages";
 import { cn } from "@/lib/ui/cn";
-import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 
 function useDocsPagination() {
@@ -32,38 +31,27 @@ type PagerLinkProps = {
 function PagerLink({ href, label, direction }: PagerLinkProps) {
   const isPrev = direction === "prev";
   return (
-    <Button
-      asChild
-      variant="outline"
+    <Link
+      href={href}
+      onClick={() => analytics.docs.navigationClicked(label, href)}
+      aria-label={`Go to ${label}`}
       className={cn(
-        "w-fit gap-3 py-5",
+        "group inline-flex items-center gap-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground",
         isPrev ? "justify-start" : "justify-end text-right",
       )}
-      aria-label={`Go to ${label}`}
     >
-      <Link
-        href={href}
-        onClick={() => analytics.docs.navigationClicked(label, href)}
-        className={cn(
-          "inline-flex items-center gap-3",
-          isPrev ? "text-left" : "text-right",
-        )}
-      >
-        {isPrev ? (
-          <>
-            <ArrowLeft className="text-muted-foreground size-4 shrink-0" />
-            <span className="text-foreground font-medium">{label}</span>
-          </>
-        ) : (
-          <>
-            <span className="text-foreground flex-1 text-right font-medium">
-              {label}
-            </span>
-            <ArrowRight className="text-muted-foreground size-4 shrink-0" />
-          </>
-        )}
-      </Link>
-    </Button>
+      {isPrev ? (
+        <>
+          <ArrowLeft className="size-3.5 shrink-0 transition-transform group-hover:-translate-x-0.5" />
+          <span>{label}</span>
+        </>
+      ) : (
+        <>
+          <span>{label}</span>
+          <ArrowRight className="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+        </>
+      )}
+    </Link>
   );
 }
 
@@ -73,19 +61,20 @@ export function DocsPager() {
   if (!prev && !next) return null;
 
   return (
-    <div className="not-prose mt-24">
-      <div className="flex flex-row items-center justify-between gap-4">
-        {prev ? (
-          <PagerLink href={prev.path} label={prev.label} direction="prev" />
-        ) : (
-          <span className="flex-1" />
-        )}
-        {next ? (
-          <PagerLink href={next.path} label={next.label} direction="next" />
-        ) : (
-          <span className="flex-1" />
-        )}
-      </div>
-    </div>
+    <nav
+      aria-label="Pagination"
+      className="not-prose mt-16 flex flex-row items-center justify-between gap-4 border-t border-border/40 pt-6"
+    >
+      {prev ? (
+        <PagerLink href={prev.path} label={prev.label} direction="prev" />
+      ) : (
+        <span className="flex-1" />
+      )}
+      {next ? (
+        <PagerLink href={next.path} label={next.label} direction="next" />
+      ) : (
+        <span className="flex-1" />
+      )}
+    </nav>
   );
 }

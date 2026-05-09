@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import { useExtractHeadings, type Heading } from "@/hooks/use-extract-headings";
 import { useHeadingsObserver } from "@/hooks/use-headings-observer";
 
 type DocsTocContextValue = {
-  scrollContainerRef: (node: HTMLElement | null) => void;
-  scrollContainer: HTMLElement | null;
   headings: Heading[];
   activeId: string | null;
 };
@@ -28,28 +20,11 @@ export function useDocsToc() {
 }
 
 export function DocsTocProvider({ children }: { children: ReactNode }) {
-  const [scrollContainer, setScrollContainer] = useState<HTMLElement | null>(
-    null,
-  );
-
-  const scrollContainerRef = useCallback((node: HTMLElement | null) => {
-    if (node) {
-      setScrollContainer(node);
-    }
-  }, []);
-
-  const headings = useExtractHeadings(scrollContainer);
-  const activeId = useHeadingsObserver(headings, scrollContainer);
+  const headings = useExtractHeadings();
+  const activeId = useHeadingsObserver(headings);
 
   return (
-    <DocsTocContext.Provider
-      value={{
-        scrollContainerRef,
-        scrollContainer,
-        headings,
-        activeId,
-      }}
-    >
+    <DocsTocContext.Provider value={{ headings, activeId }}>
       {children}
     </DocsTocContext.Provider>
   );
