@@ -4,17 +4,13 @@ import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { LogoMark } from "@/components/ui/logo";
 import { cn } from "@/lib/ui/cn";
-import { ActiveNavLink } from "./header-active-link.client";
+import { SITE_LINKS } from "@/lib/site-config";
+import { NavMenu } from "./nav-menu.client";
 import { TrackedExternalAnchor } from "./tracked-external-anchor.client";
 
 interface ResponsiveHeaderProps {
   rightContent?: ReactNode;
 }
-
-const navLinks = [
-  { href: "/docs/overview", label: "Docs" },
-  { href: "/docs/gallery", label: "Gallery" },
-];
 
 const iconButtonClass = cn(
   "flex size-8 items-center justify-center rounded-md text-muted-foreground",
@@ -32,14 +28,7 @@ export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
         <span className="text-sm font-medium tracking-tight">Tool UI</span>
       </Link>
 
-      {/* Desktop nav */}
-      <nav className="hidden flex-1 items-center gap-0.5 pl-3 md:flex">
-        {navLinks.map(({ href, label }) => (
-          <ActiveNavLink key={href} href={href}>
-            {label}
-          </ActiveNavLink>
-        ))}
-      </nav>
+      <NavMenu />
 
       {/* Mobile spacer */}
       <div className="flex-1 md:hidden" />
@@ -48,7 +37,7 @@ export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
       <div className="flex items-center gap-0.5">
         {rightContent}
         <TrackedExternalAnchor
-          href="https://github.com/assistant-ui/tool-ui"
+          href={SITE_LINKS.github}
           destination="github"
           target="_blank"
           rel="noopener noreferrer"
@@ -58,7 +47,7 @@ export function ResponsiveHeader({ rightContent }: ResponsiveHeaderProps) {
           <span className="sr-only">GitHub Repository</span>
         </TrackedExternalAnchor>
         <TrackedExternalAnchor
-          href="https://x.com/assistantui"
+          href={SITE_LINKS.twitter}
           destination="other"
           target="_blank"
           rel="noopener noreferrer"

@@ -8,10 +8,9 @@ import { useDocsToc } from "./docs-toc-context";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { useTocKeyboardNav } from "@/hooks/use-toc-keyboard-nav";
 import { analytics } from "@/lib/analytics";
+import { getDocsEditUrl, getDocsSlug } from "@/lib/site-config";
 
 const HEADER_OFFSET = 80;
-const REPO_EDIT_BASE =
-  "https://github.com/assistant-ui/tool-ui/edit/main/apps/www";
 
 export function DocsToc() {
   const pathname = usePathname();
@@ -61,9 +60,8 @@ export function DocsToc() {
   }, [headings]);
 
   const editUrl = useMemo(() => {
-    const slug = pathname.replace(/^\/docs\/?/, "").split("?")[0];
-    if (!slug || slug === "gallery" || slug.includes("/")) return null;
-    return `${REPO_EDIT_BASE}/app/docs/${slug}/content.mdx`;
+    const slug = getDocsSlug(pathname);
+    return slug ? getDocsEditUrl(slug) : null;
   }, [pathname]);
 
   if (headings.length === 0 && !editUrl) {

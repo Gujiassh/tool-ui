@@ -49,8 +49,7 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
 
   const preset =
     config.presets[currentPreset] ?? config.presets[config.defaultPreset];
-  const selectedPreset = config.presets[currentPreset] ?? preset;
-  const body = selectedPreset.generateExampleCode(selectedPreset.data);
+  const body = preset.generateExampleCode(preset.data);
   const code = `${getImportLine(componentId)}\n\n${body}`;
 
   const previewContent = config.renderComponent({
@@ -66,14 +65,12 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
     previewContent
   );
 
-  const displayPreview = wrappedPreview;
-
   const chatPanel = (
     <ChatContextPreview
       userMessage={config.chatContext.userMessage}
       preamble={config.chatContext.preamble}
     >
-      {displayPreview}
+      {wrappedPreview}
     </ChatContextPreview>
   );
 
@@ -87,7 +84,7 @@ export function ComponentPreview({ componentId }: ComponentPreviewProps) {
           onSelectPreset={handleSelectPreset}
         />
       }
-      preview={displayPreview}
+      preview={wrappedPreview}
       chatPanel={chatPanel}
       codePanel={
         <div className="code-panel-fullbleed scrollbar-subtle">

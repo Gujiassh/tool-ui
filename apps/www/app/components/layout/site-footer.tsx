@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { LogoMark } from "@/components/ui/logo";
+import { SITE_LINKS } from "@/lib/site-config";
 
 type FooterLinkItem = {
   label: string;
@@ -26,38 +27,18 @@ const FOOTER_LINKS: Record<string, FooterLinkItem[]> = {
     { label: "Receipts", href: "/docs/receipts" },
   ],
   Project: [
-    {
-      label: "GitHub",
-      href: "https://github.com/assistant-ui/tool-ui",
-      external: true,
-    },
-    {
-      label: "Issues",
-      href: "https://github.com/assistant-ui/tool-ui/issues",
-      external: true,
-    },
-    {
-      label: "Releases",
-      href: "https://github.com/assistant-ui/tool-ui/releases",
-      external: true,
-    },
+    { label: "GitHub", href: SITE_LINKS.github, external: true },
+    { label: "Issues", href: SITE_LINKS.githubIssues, external: true },
+    { label: "Releases", href: SITE_LINKS.githubReleases, external: true },
   ],
   Ecosystem: [
-    {
-      label: "assistant-ui",
-      href: "https://www.assistant-ui.com",
-      external: true,
-    },
+    { label: "assistant-ui", href: SITE_LINKS.assistantUi, external: true },
     {
       label: "assistant-ui Cloud",
-      href: "https://cloud.assistant-ui.com",
+      href: SITE_LINKS.assistantUiCloud,
       external: true,
     },
-    {
-      label: "Discord",
-      href: "https://discord.gg/S9dwgCNEFs",
-      external: true,
-    },
+    { label: "Discord", href: SITE_LINKS.discord, external: true },
   ],
 };
 
@@ -97,7 +78,7 @@ export function SiteFooter() {
 
           <div className="flex gap-3 pt-1">
             <a
-              href="https://github.com/assistant-ui/tool-ui"
+              href={SITE_LINKS.github}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -106,7 +87,7 @@ export function SiteFooter() {
               <FaGithub className="size-[18px]" />
             </a>
             <a
-              href="https://x.com/assistantui"
+              href={SITE_LINKS.twitter}
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -117,7 +98,7 @@ export function SiteFooter() {
           </div>
 
           <a
-            href="https://www.assistant-ui.com"
+            href={SITE_LINKS.assistantUi}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-auto inline-flex w-fit items-center gap-1 text-[13px] text-muted-foreground transition-colors hover:text-foreground"

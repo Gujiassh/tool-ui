@@ -5,14 +5,9 @@ import { DocsPager } from "./docs-pager";
 interface DocsContentProps {
   children: ReactNode;
   className?: string;
-  includePager?: boolean;
 }
 
-export function DocsContent({
-  children,
-  className,
-  includePager = true,
-}: DocsContentProps) {
+export function DocsContent({ children, className }: DocsContentProps) {
   return (
     <div
       className={cn(
@@ -21,7 +16,7 @@ export function DocsContent({
       )}
     >
       {children}
-      {includePager && <DocsPager />}
+      <DocsPager />
     </div>
   );
 }

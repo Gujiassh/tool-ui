@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
+import { SITE_LINKS } from "@/lib/site-config";
 
 export function HomeFinalCta() {
   return (
@@ -29,7 +30,7 @@ export function HomeFinalCta() {
         </Button>
         <Button asChild variant="outline" size="lg">
           <a
-            href="https://github.com/assistant-ui/tool-ui"
+            href={SITE_LINKS.github}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => analytics.cta.clicked("github_star", "home_footer")}

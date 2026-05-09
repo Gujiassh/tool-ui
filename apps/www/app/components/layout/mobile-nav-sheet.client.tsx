@@ -11,6 +11,7 @@ import { BASE_DOCS_PAGES } from "@/app/docs/_components/docs-pages";
 import { cn } from "@/lib/ui/cn";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { SITE_LINKS } from "@/lib/site-config";
 import { TrackedExternalAnchor } from "./tracked-external-anchor.client";
 
 import "@/app/styles/nav-sheet.css";
@@ -197,7 +198,7 @@ export function MobileNavSheet() {
               <div className="MobileNavSheet-footerInner">
                 <Button variant="outline" size="lg" className="flex-1" asChild>
                   <TrackedExternalAnchor
-                    href="https://github.com/assistant-ui/tool-ui"
+                    href={SITE_LINKS.github}
                     destination="github"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -207,7 +208,7 @@ export function MobileNavSheet() {
                 </Button>
                 <Button variant="outline" size="lg" className="flex-1" asChild>
                   <TrackedExternalAnchor
-                    href="https://x.com/assistantui"
+                    href={SITE_LINKS.twitter}
                     destination="other"
                     target="_blank"
                     rel="noopener noreferrer"
