@@ -4,11 +4,11 @@
   }
 
   .prose :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mt-0 mb-2 flex flex-wrap items-center gap-3 text-2xl font-medium tracking-tight;
+    @apply mt-0 mb-3 flex flex-wrap items-center gap-3 text-[32px] font-normal leading-[1.2] tracking-[-0.02em];
   }
 
   .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mb-3 text-[20px] font-medium tracking-tight;
+    @apply mb-3 text-[18px] font-bold tracking-tight;
   }
 
   .prose
@@ -19,11 +19,11 @@
   }
 
   .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mt-7 mb-2 text-[16px] font-medium tracking-tight;
+    @apply mt-7 mb-2 text-[15px] font-semibold tracking-tight;
   }
 
   .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-    @apply mt-5 mb-2 text-[14px] font-medium;
+    @apply mt-5 mb-2 text-[14px] font-semibold;
   }
 
   .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

@@ -20,13 +20,17 @@ export function DocsHeader({ title, description, mdxPath }: DocsHeaderProps) {
       : null;
 
   return (
-    <header className="not-prose mb-8 flex flex-col gap-2">
+    <header className="not-prose mb-8 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-3">
-        <h1 className="text-2xl font-medium tracking-tight">{title}</h1>
+        <h1 className="text-[32px] font-normal leading-[1.2] tracking-[-0.02em]">
+          {title}
+        </h1>
         {markdown && <CopyMarkdownButton markdown={markdown} />}
       </div>
       {description && (
-        <p className="text-[14px] text-muted-foreground">{description}</p>
+        <p className="text-[15px] leading-[1.5] text-muted-foreground">
+          {description}
+        </p>
       )}
       {componentId && (
         <InstallCommandLine componentId={componentId} className="mt-3" />

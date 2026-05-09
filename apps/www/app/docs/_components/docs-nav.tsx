@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
-import { AnimatePresence, motion } from "motion/react";
-import { ChevronDownIcon, LayoutDashboardIcon } from "lucide-react";
+import { LayoutDashboardIcon } from "lucide-react";
 import { analytics } from "@/lib/analytics";
 import {
   componentsRegistry,
@@ -27,12 +26,6 @@ type Section = {
   id: string;
   label: string;
   items: SidebarItem[];
-  defaultOpen?: boolean;
-};
-
-const ACCORDION_TRANSITION = {
-  duration: 0.22,
-  ease: [0.16, 1, 0.3, 1] as const,
 };
 
 export function DocsNav() {
@@ -86,7 +79,6 @@ export function DocsNav() {
       {
         id: "get-started",
         label: "Get Started",
-        defaultOpen: true,
         items: GET_STARTED_DOCS_PAGES.map((p) => ({
           key: p.path,
           path: p.path,
@@ -109,14 +101,14 @@ export function DocsNav() {
   }, [currentTab, currentView]);
 
   return (
-    <nav className="flex flex-col gap-0.5 px-3 py-4">
+    <nav className="flex flex-col px-5 py-5">
       <Link
         href="/docs/gallery"
         className={cn(
-          "flex items-center gap-2 rounded-md px-2 py-1.5 text-[13px] transition-colors",
+          "flex items-center gap-2 py-1.5 text-[13.5px] transition-colors",
           pathname === "/docs/gallery"
-            ? "bg-accent/40 font-medium text-foreground"
-            : "text-muted-foreground hover:bg-accent/30 hover:text-foreground",
+            ? "font-medium text-brand"
+            : "text-foreground/85 hover:text-foreground",
         )}
         onClick={() =>
           analytics.docs.navigationClicked("Gallery", "/docs/gallery")
@@ -126,97 +118,57 @@ export function DocsNav() {
         Gallery
       </Link>
 
-      <div className="my-3 border-t border-border/40" />
-
-      {sections.map((section) => {
-        const containsActive = section.items.some((i) => i.path === pathname);
-        return (
-          <SidebarSection
-            key={section.id}
-            section={section}
-            pathname={pathname}
-            initialOpen={section.defaultOpen ?? containsActive}
-            containsActive={containsActive}
-          />
-        );
-      })}
+      {sections.map((section) => (
+        <SidebarSection
+          key={section.id}
+          section={section}
+          pathname={pathname}
+        />
+      ))}
     </nav>
   );
 }
 
-type SidebarSectionProps = {
-  section: Section;
-  pathname: string;
-  initialOpen: boolean;
-  containsActive: boolean;
-};
-
 function SidebarSection({
   section,
   pathname,
-  initialOpen,
-  containsActive,
-}: SidebarSectionProps) {
-  const [isOpen, setIsOpen] = useState(initialOpen);
-
-  useEffect(() => {
-    if (containsActive) setIsOpen(true);
-  }, [containsActive]);
-
+}: {
+  section: Section;
+  pathname: string;
+}) {
   return (
-    <div>
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-[13px] font-medium",
-          "text-foreground/80 transition-colors hover:bg-accent/30 hover:text-foreground",
-        )}
-        aria-expanded={isOpen}
-      >
-        <span>{section.label}</span>
-        <motion.span
-          animate={{ rotate: isOpen ? 0 : -90 }}
-          transition={{ duration: 0.18 }}
-          className="text-muted-foreground"
-        >
-          <ChevronDownIcon className="size-3.5" />
-        </motion.span>
-      </button>
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={ACCORDION_TRANSITION}
-            className="overflow-hidden"
-          >
-            <div className="mt-0.5 mb-1 ml-3 border-l border-border/40 pl-1.5">
-              {section.items.map((item) => {
-                const isActive = pathname === item.path;
-                return (
-                  <Link
-                    key={item.key}
-                    href={item.href}
-                    className={cn(
-                      "block rounded-md px-2 py-1.5 text-[13px] transition-colors",
-                      isActive
-                        ? "bg-accent/40 font-medium text-foreground"
-                        : "text-muted-foreground hover:bg-accent/30 hover:text-foreground",
-                    )}
-                    onClick={() =>
-                      analytics.docs.navigationClicked(item.label, item.href)
-                    }
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="mt-6">
+      <p className="mb-1 py-1 text-[13.5px] font-medium text-foreground">
+        {section.label}
+      </p>
+      <div className="flex flex-col">
+        {section.items.map((item) => {
+          const isActive = pathname === item.path;
+          return (
+            <Link
+              key={item.key}
+              href={item.href}
+              className={cn(
+                "relative block py-1.5 text-[13.5px] transition-colors",
+                isActive
+                  ? "font-medium text-brand"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              onClick={() =>
+                analytics.docs.navigationClicked(item.label, item.href)
+              }
+            >
+              {isActive && (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-1/2 -left-3.5 size-1 -translate-y-1/2 rounded-full bg-brand"
+                />
+              )}
+              {item.label}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

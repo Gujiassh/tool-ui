@@ -23,7 +23,7 @@ export function HeaderFrameLayout({
       ) : null}
       <header
         className={cn(
-          "sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md",
+          "sticky top-0 z-50 w-full border-b border-border/30 bg-background/70 backdrop-blur-xl",
           animateClassName,
         )}
       >

@@ -145,13 +145,15 @@ function GalleryPreviewCard({
   return (
     <article
       className={cn(
-        "group/gallery-card relative flex items-center justify-center w-full min-w-0 max-w-full flex-col gap-3 overflow-hidden rounded-xl  bg-card/40 p-3 pb-5 shadow-sm transition-[background-color,box-shadow] duration-200 hover:bg-card/80 focus-within:bg-card/80",
+        "group/gallery-card relative flex w-full min-w-0 max-w-full flex-col gap-4 overflow-hidden rounded-xl border border-border/40 bg-card p-4 pb-6 transition-colors hover:border-border/70 focus-within:border-border/70",
         className,
       )}
     >
       <GalleryPreviewImpression componentId={componentId} />
       <GalleryCardHeader componentId={componentId} hideDescription />
-      {children}
+      <div className="flex w-full min-w-0 items-center justify-center">
+        {children}
+      </div>
     </article>
   );
 }

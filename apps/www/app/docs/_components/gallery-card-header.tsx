@@ -20,6 +20,14 @@ import { InstallCommandBlock } from "./install-command-block";
 
 const registryById = new Map(componentsRegistry.map((c) => [c.id, c]));
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+      {children}
+    </p>
+  );
+}
+
 interface GalleryCardHeaderProps {
   componentId: GalleryComponentDocId;
   className?: string;
@@ -68,28 +76,28 @@ export function GalleryCardHeader({
               side="right"
               className="flex w-full flex-col gap-0 sm:max-w-2xl"
             >
-              <SheetHeader className="shrink-0 border-b border-border/50 pb-4 pr-10">
-                <SheetTitle className="text-lg">Code</SheetTitle>
-                <SheetDescription className="text-sm">
-                  Copy the command to install, then use the example in your app.
-                </SheetDescription>
+              <SheetHeader className="shrink-0 border-b border-border/30 px-6 py-5 pr-12">
+                <SheetTitle className="text-[15px] font-medium tracking-tight">
+                  {name}
+                </SheetTitle>
+                {description && (
+                  <SheetDescription className="text-[13px] leading-[1.5]">
+                    {description}
+                  </SheetDescription>
+                )}
               </SheetHeader>
-              <div className="scrollbar-subtle flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4">
-                <section className="space-y-2">
-                  <h3 className="text-foreground text-sm font-medium">
-                    Install
-                  </h3>
+              <div className="scrollbar-subtle flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-6 py-6">
+                <section className="flex flex-col gap-3">
+                  <SectionLabel>Install</SectionLabel>
                   <InstallCommandBlock
                     componentId={componentId}
                     variant="block"
                   />
                 </section>
                 {usageCode && (
-                  <section className="flex min-h-0 flex-1 flex-col space-y-2">
-                    <h3 className="text-foreground text-sm font-medium">
-                      Example
-                    </h3>
-                    <div className="scrollbar-subtle min-h-[200px] flex-1 overflow-auto rounded-lg border border-border/60 bg-muted/50 [&_pre]:!rounded-lg [&_pre]:!border-0 [&_pre]:!bg-transparent [&_pre]:!p-4 [&_pre]:!text-sm [&_pre]:!leading-relaxed">
+                  <section className="flex min-h-0 flex-1 flex-col gap-3">
+                    <SectionLabel>Example</SectionLabel>
+                    <div className="scrollbar-subtle relative flex min-h-[200px] flex-1 flex-col overflow-hidden rounded-lg border border-border/40 bg-muted/40 [&_figure]:!my-0 [&_figure]:!rounded-none [&_figure]:!border-0 [&_figure]:!bg-transparent [&_pre]:!my-0 [&_pre]:!rounded-none [&_pre]:!border-0 [&_pre]:!bg-transparent [&_pre]:!p-4 [&_pre]:!text-[13px] [&_pre]:!leading-[1.6]">
                       <TrackedDynamicCodeBlock
                         lang="tsx"
                         code={usageCode}

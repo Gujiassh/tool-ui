@@ -83,10 +83,10 @@ export function DocsToc() {
     >
       {headings.length > 0 && (
         <>
-          <p className="mb-2 text-[10px] font-medium tracking-widest text-muted-foreground/70 uppercase">
-            On This Page
+          <p className="mb-3 text-[13px] font-medium text-foreground">
+            On this page
           </p>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
             {headings.map((heading, index) => {
               const isActive = heading.id === activeId;
               return (
@@ -96,10 +96,10 @@ export function DocsToc() {
                   href={`#${heading.id}`}
                   onClick={(e) => handleClick(e, heading.id, heading.text)}
                   className={cn(
-                    "block py-1 text-[13px] transition-colors outline-none",
+                    "block py-1 text-[13px] outline-none transition-colors",
                     "hover:text-foreground focus-visible:text-foreground",
                     isActive
-                      ? "font-medium text-foreground"
+                      ? "font-medium text-brand"
                       : "text-muted-foreground",
                   )}
                   aria-current={isActive ? "true" : undefined}
@@ -117,16 +117,16 @@ export function DocsToc() {
         <div
           className={cn(
             "flex flex-col gap-2",
-            headings.length > 0 && "mt-6 border-t border-border/40 pt-4",
+            headings.length > 0 && "mt-6 border-t border-border/30 pt-4",
           )}
         >
           <a
             href={editUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
           >
-            <PencilIcon className="size-3" />
+            <PencilIcon className="size-3.5" />
             Edit on GitHub
           </a>
         </div>

@@ -19,8 +19,8 @@ export function ActiveNavLink({ href, children }: ActiveNavLinkProps) {
       className={cn(
         "rounded-md px-2.5 py-1 text-sm transition-colors",
         isActive
-          ? "text-foreground font-medium"
-          : "text-muted-foreground hover:bg-accent/30 hover:text-foreground",
+          ? "font-medium text-brand"
+          : "text-muted-foreground hover:text-foreground",
       )}
       aria-current={isActive ? "page" : undefined}
     >

@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="bg-background overscroll-none">
-        <div id="app-root" className="flex h-screen h-svh flex-col">
+        <div id="app-root" className="flex min-h-screen flex-col">
           <ThemeProvider
             attribute="class"
             defaultTheme="light"

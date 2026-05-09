@@ -20,11 +20,14 @@ export function useExtractHeadings(
     if (!root) return;
 
     const timer = setTimeout(() => {
-      const h2ElementsWithId = root.querySelectorAll("h2[id]");
-      const extracted = Array.from(h2ElementsWithId).map((el) => ({
-        id: el.id,
-        text: el.textContent || "",
-      }));
+      const h2ElementsWithId = root.querySelectorAll(".prose h2[id]");
+      const seen = new Set<string>();
+      const extracted: Heading[] = [];
+      for (const el of Array.from(h2ElementsWithId)) {
+        if (seen.has(el.id)) continue;
+        seen.add(el.id);
+        extracted.push({ id: el.id, text: el.textContent || "" });
+      }
       setHeadings(extracted);
     }, 100);
 
